@@ -175,55 +175,8 @@ cmsyModule <- function(input, output, session) {
         cmsy$fast <- list()
         js$disableAllButtons()
         flog.info("Starting CMSY computation")
-
-        ret <- runCmsy(region=region_,
-                       subregion=toString(sub_region_),
-                       stock=input$stock,
-                       group=toString(group_),
-                       name=toString(name_),
-                       englishName=toString(en_name_),
-                       scientificName=toString(scientific_name_),
-                       source="-",
-                       minOfYear=unique(min(cmsyFileData()$yr)),
-                       maxOfYear=unique(max(cmsyFileData()$yr)),
-                       startYear=min(input$CMSY_years_selected),
-                       endYear=max(input$CMSY_years_selected)-1,
-                       flim=if(input$cmsy_checkbox_comparison){input$flim}else{"NA"},
-                       fpa=if(input$cmsy_checkbox_comparison){input$fpa}else{"NA"},
-                       blim=if(input$cmsy_checkbox_comparison){input$blim}else{"NA"},
-                       bpa=if(input$cmsy_checkbox_comparison){input$bpa}else{"NA"},
-                       bmsy=if(input$cmsy_checkbox_comparison){input$bmsy}else{"NA"},
-                       fmsy=if(input$cmsy_checkbox_comparison){input$fmsy}else{"NA"},
-                       msy=if(input$cmsy_checkbox_comparison){input$msy}else{"NA"},
-                       msyBTrigger=if(input$cmsy_checkbox_comparison){input$msyBTrigger}else{"NA"},
-                       b40=if(input$cmsy_checkbox_comparison){input$b40}else{"NA"},
-                       m=if(input$cmsy_checkbox_comparison){input$m}else{"NA"},
-                       fofl=if(input$cmsy_checkbox_comparison){input$fofl}else{"NA"},
-                       last_f=if(input$cmsy_checkbox_comparison){input$last_f}else{"NA"},
-                       resiliance="Medium",
-                       #r.low="NA",
-                       #r.hi="NA",
-                       r.low=min(input$resiliance),
-                       r.hi=max(input$resiliance),
-                       stb.low=min(input$stb),
-                       stb.hi=max(input$stb),
-                       int.yr=if(input$cmsy_checkbox_intb){input$int.yr}else{"NA"},
-                       intb.low=if(input$cmsy_checkbox_intb){min(input$intb)}else{"NA"},
-                       intb.hi=if(input$cmsy_checkbox_intb){max(input$intb)}else{"NA"},
-                       endb.low=min(input$endb),
-                       endb.hi=max(input$endb),
-                       #q.start="NA",
-                       #q.end="NA",
-                       q.start=min(input$CMSY_years_q),
-                       q.end=max(input$CMSY_years_q),
-                       btype=input$btype,
-                       force.cmsy=FALSE,
-                       comments=input$comments,
-                       token=vreToken, 
-                       inputCsvFile=filePath$datapath, 
-                       templateFile=templateFileDlmTools)
-        
-
+      # ret <- runCmsy(region_,toString(sub_region_),input$stock,toString(group_),toString(name_),toString(en_name_),toString(scientific_name_),"-",input$minOfYear,input$maxOfYear,input$startYear,input$endYear,input$flim,input$fpa,input$blim,input$bpa,input$bmsy,input$fmsy,input$msy,input$msyBTrigger,input$b40,input$m,input$fofl,input$last_f,input$resiliance,input$r.low,input$r.hi,input$stb.low,input$stb.hi,input$int.yr,input$intb.low,input$intb.hi,input$endb.low,input$endb.hi,input$q.start,input$q.end,input$btype,input$force.cmsy,input$comments, vreToken, filePath$datapath, templateFileDlmTools)
+        ret <- runCmsy(region_,toString(sub_region_),input$stock,toString(group_),toString(name_),toString(en_name_),toString(scientific_name_),"-",input$minOfYear,input$maxOfYear,input$startYear,input$endYear,input$flim,input$fpa,input$blim,input$bpa,input$bmsy,input$fmsy,input$msy,input$msyBTrigger,input$b40,input$m,input$fofl,input$last_f,input$resiliance,input$r.low,input$r.hi,min(input$stb),max(input$stb),input$int.yr,input$intb.low,input$intb.hi,min(input$endb),max(input$endb),input$q.start,input$q.end,input$btype,input$force.cmsy,input$comments, vreToken, filePath$datapath, templateFileDlmTools)
         js$enableAllButtons()
         js$hideComputing()
         js$showBox("box_cmsy_results")
