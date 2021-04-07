@@ -324,6 +324,7 @@ cmsyModule <- function(input, output, session) {
           if (row$description == "analysis_charts") {
             #fileAnalisysChart <- tempfile(fileext=".jpeg")
             fileAnalisysChart <- paste(tempdir(),"/","cmsy_fileAnalisysChart",".jpeg",sep="")
+        #    fileAnalisysChart <- if(Sys.info()[["sysname"]] == "Windows") {paste(gsub("\\\\", "/", fileAnalisysChart)) } else {fileAnalisysChart}
             print(fileAnalisysChart)
             downloadFile(row$url, fileAnalisysChart)
             cmsy$method$analisysChart <- fileAnalisysChart
@@ -332,6 +333,7 @@ cmsyModule <- function(input, output, session) {
           if (row$description == "management_charts") {
             #fileManagementChart <- tempfile(fileext=".jpeg")
             fileManagementChart <-paste(tempdir(),"/","cmsy_fileManagementChart",".jpeg",sep="")
+         #   fileManagementChart <- if(Sys.info()[["sysname"]] == "Windows") {paste(gsub("\\\\", "/", fileManagementChart)) } else {fileManagementChart}
             print(fileManagementChart)
             downloadFile(row$url, fileManagementChart)
             cmsy$method$managementChart <- fileManagementChart
