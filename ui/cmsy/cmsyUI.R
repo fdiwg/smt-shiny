@@ -451,7 +451,7 @@ prior to the last year with high biomass.</p>")),
               collapsible = FALSE,
               solidHeader = TRUE,
               class = "collapsed-box",
-              collapsed = FALSe,
+              collapsed = FALSE,
               
               fluidRow(
                 div(style = "display: inline-block; vertical-align:center; margin-left: 50px;",
@@ -471,10 +471,8 @@ prior to the last year with high biomass.</p>")),
                     uiOutput(ns("CmsyVREUpload"))
                 ),
               ),
-              br(),br()
+              br()
           ),
-          
-          br(),
           
           htmlOutput("cmsyWarning"),
           hr(),
@@ -491,7 +489,8 @@ prior to the last year with high biomass.</p>")),
                
                fluidRow(
                  box(
-                   "The upper left panel shows catches relative to the estimate of MSY, with indication of 95% confidence limits in grey. The upper right panel shows the development of relative total biomass (B/Bmsy), with the grey area indicating uncertainty. The lower left graph shows relative exploitation (F/Fmsy), with Fmsy corrected for reduced recruitment below 0.5 Bmsy. The lower-right panel shows the trajectory of relative stock size (B/Bmsy) over relative exploitation (F/Fmsy).",
+                   
+                   htmlOutput(ns("titleCmsyAnalisysChart")),
                    htmlOutput(ns("renderCmsyLog")),
                    htmlOutput(ns("renderCmsyInfo"))
                  ),
@@ -499,9 +498,9 @@ prior to the last year with high biomass.</p>")),
                  
                  box(id = "box_cmsy_results_charts",
                      htmlOutput(ns("titleCmsyManagementChart")),
-                     "Panel A shows in black the time series of catches and in blue the three-years moving average with indication of highest and lowest catch, as used in the estimation of prior biomass by the default rules. Panel B shows the explored r-k log space and in dark grey the r-k pairs which were found by the CMSY model to be compatible with the catches and the prior information. Panel C shows the most probable r-k pair and its approximate 95% confidence limits in blue. Panel D shows in blue the biomass trajectory estimated by CMSY. Dotted lines indicate the 2.5th and 97.5th percentiles. Vertical blue lines indicate the prior biomass ranges. Panel E shows in blue the harvest rate from CMSY. Panel F shows the Schaefer equilibrium curve of catch/MSY relative to B/k, here indented at B/k < 0.25 to account for reduced recruitment at low stock sizes. The blue dots are scaled by CMSY estimates.",
+                     htmlOutput(ns("captionCmsyManagementChart")),
                      imageOutput(ns("renderCmsyManagementChart")),
-                     htmlOutput(ns("titleCmsyAnalisysChart")),
+                     htmlOutput(ns("captionCmsyAnalysisChart")),
                      imageOutput(ns("renderCmsyAnalysisChart"))
                  )
                )

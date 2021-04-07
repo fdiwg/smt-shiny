@@ -487,11 +487,29 @@ cmsyModule <- function(input, output, session) {
       } else {  "" }
     } else {  "" }
   })
+  output$captionCmsyManagementChart <- renderText({
+    if ("method" %in% names(cmsy)) {
+      if (!is.null(cmsy$method)) {
+  caption <- "The upper left panel shows catches relative to the estimate of MSY, with indication of 95% confidence limits in grey. The upper right panel shows the development of relative total biomass (B/Bmsy), with the grey area indicating uncertainty. The lower left graph shows relative exploitation (F/Fmsy), with Fmsy corrected for reduced recruitment below 0.5 Bmsy. The lower-right panel shows the trajectory of relative stock size (B/Bmsy) over relative exploitation (F/Fmsy)."
+  caption
+      } else {  "" }
+    } else {  "" }
+  })
+  
+  output$captionCmsyAnalisysChart <- renderText({
+    if ("method" %in% names(cmsy)) {
+      if (!is.null(cmsy$method)) {
+        caption <- "Panel A shows in black the time series of catches and in blue the three-years moving average with indication of highest and lowest catch, as used in the estimation of prior biomass by the default rules. Panel B shows the explored r-k log space and in dark grey the r-k pairs which were found by the CMSY model to be compatible with the catches and the prior information. Panel C shows the most probable r-k pair and its approximate 95% confidence limits in blue. Panel D shows in blue the biomass trajectory estimated by CMSY. Dotted lines indicate the 2.5th and 97.5th percentiles. Vertical blue lines indicate the prior biomass ranges. Panel E shows in blue the harvest rate from CMSY. Panel F shows the Schaefer equilibrium curve of catch/MSY relative to B/k, here indented at B/k < 0.25 to account for reduced recruitment at low stock sizes. The blue dots are scaled by CMSY estimates."
+        caption
+      } else {  "" }
+    } else {  "" }
+  })
+  
   output$titleCmsyAnalisysChart <- renderText({
     if ("method" %in% names(cmsy)) {
       if (!is.null(cmsy$method)) {
-        #title <- "<h2> Analysis Charts </h2>"
-        #title
+        title <- "<h2> Summary Analysis </h2>"
+        title
       } else {  "" }
     } else {  "" }
   })
