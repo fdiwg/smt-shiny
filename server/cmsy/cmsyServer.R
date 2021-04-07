@@ -108,7 +108,7 @@ cmsyModule <- function(input, output, session) {
     print(maxYear)
     #updateTextInput(session, "minOfYear", value=as.integer(minYear))
     #updateTextInput(session, "maxOfYear", value=as.integer(maxYear))
-    updateNumericInput(session,"int.yr", value=maxYear-5, min = minYear, max = maxYear, step=1)
+    
     # updateTextInput(session, "startYear", value=as.integer(minYear))
     # updateTextInput(session, "endYear", value=as.integer(maxYear))
     updateSliderInput(session, "rangeYear", value=c(as.integer(minYear),as.integer(maxYear)))
@@ -151,8 +151,8 @@ cmsyModule <- function(input, output, session) {
       maxY <- 2030
       minY <- 1990
     }else{
-      minY <- try(round(min(contents$yr)),silent=TRUE)
-      maxY <- try(round(max(contents$yr)),silent=TRUE)
+      minY <- try(min(input$CMSY_years_selected),silent=TRUE)
+      maxY <- try(max(input$CMSY_years_selected),silent=TRUE)
       
       if(inherits(maxY,"try-error")){
         maxY <- 2030
@@ -162,6 +162,23 @@ cmsyModule <- function(input, output, session) {
     sliderInput(ns("CMSY_years_q"),"", value=c(minY,maxY), min = minY, max = maxY, step=1,sep='')
     
   } )
+  
+  observe({
+    contents <- cmsyFileData()
+    if(is.null(contents)){
+      maxY <- 2030
+      minY <- 1990
+    }else{
+      minY <- try(min(input$CMSY_years_selected),silent=TRUE)
+      maxY <- try(max(input$CMSY_years_selected),silent=TRUE)
+      
+      if(inherits(maxY,"try-error")){
+        maxY <- 2030
+        minY <- 1990
+      }
+    }
+  updateNumericInput(session,"int.yr", value=maxY-5, min = minY, max = maxY, step=1)
+  })
   
   observe({
     if(!input$cmsy_checkbox_intb){
