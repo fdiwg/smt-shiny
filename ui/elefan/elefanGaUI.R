@@ -51,27 +51,27 @@ tabElefanGa <- function(id) {
                         size = "large",
                         htmlOutput(ns("elefanGADataConsiderationsText2"))),
 
-                bsModal("modalMethod", "Methodological Considerations - TropFishR",
+                bsModal("modalMethodGA", "Methodological Considerations - TropFishR",
                         ns("methodConsiderations"),
                         size = "large",
-                        htmlOutput(ns("methodConsiderationsText"))),
+                        htmlOutput(ns("elefanGAmethodConsiderationsText"))),
 
-                bsModal("modalMethod2", "Methodological Considerations - TropFishR",
+                bsModal("modalMethodGA2", "Methodological Considerations - TropFishR",
                         ns("methodConsiderations2"),
                         size = "large",
-                        htmlOutput(ns("methodConsiderationsText2"))),
+                        htmlOutput(ns("elefanGAmethodConsiderationsText2"))),
 
-                bsModal("modalResults", "Results Considerations - TropFishR",
+                bsModal("modalResultsGA", "Results Considerations - TropFishR",
                         ns("resultConsiderations"),
                         size = "large",
-                        htmlOutput(ns("resultConsiderationsText"))),
+                        htmlOutput(ns("elefanGAresultConsiderationsText"))),
 
-                bsModal("modalResults2", "Results Considerations - TropFishR",
+                bsModal("modalResultsGA2", "Results Considerations - TropFishR",
                         ns("resultConsiderations2"),
                         size = "large",
-                        htmlOutput(ns("resultConsiderationsText2"))),
+                        htmlOutput(ns("elefanGAresultConsiderationsText2"))),
 
-                bsModal("info_yearsel", "Selected years", ns("infoYearSel"),
+                bsModal("info_yearsel_GA", "Selected years", ns("infoYearSel"),
                         size = "large",
                         HTML("<p>Select all or a range of years in the uploaded data set to be included in the analysis. <br><br> In theory, the longer the period covered by the data set, the better. However, data sets covering a long period with monthly aggregated data, might lead to a long run time and make the assumption that the growth parameters did not change over this period. In this case, you could consider to choose only the most recent years.</p>")),
 
@@ -191,7 +191,7 @@ tabElefanGa <- function(id) {
                         HTML("<p>The natural mortality rate (M) is required to estimate the fishing mortality (F) from the total mortality (Z) estimated by the catch curve (F = Z - M). The natural mortality is estimated by an empirical formula based on estimated growth parameters. The options are: <br> - Then's growth formula (Then et al. 2015), <br> - Pauly's growth and temperature formula (Pauly et al. 1980), and <br> - Then's maximum age formula (Then et al. 2015); <br> While the first option does not require any additional information, the second requires the average annual sea surface temperature (SST) in grad Celsius and allows to correct for schooling fish (multiplication with 0.8) and third option requires an estimate of the maximum age of the fish.<br>Please see the Natural Mortality estimator page in the Supporting Tools menu for more information. </p>")
                         ),
 
-                bsModal("info_assessment", "Check & Assessment & Reset & Report", ns("infoAssessment"),
+                bsModal("info_assessmentGA", "Check & Assessment & Reset & Report", ns("infoAssessment"),
                         size = "large",
                         HTML("<p>It is recommended to run a quick check by pressing <b>'Run Check'</b> before running the main assessment. While the main assessment can take up to a few minutes dependent on the settings of the ELEFAN optimation routine and the sample size of the dataset, the check is performed in a matter of a few seconds and can already identify issues regarding the data or settings. The check does not produce results (figures or tables), but a notification in the lower right corner of the screen will inform you whether the check was successful. <br> <br> <b>'Run Assessment'</b> performs the main assessment and should yield plenty of figures and tables in the result section upon successful completion. A progress bar in the lower right corner will inform you about the computation progress of ELEFAN first and then YPR. <br> <br> <b>'Reset'</b> removes all results, the uploaded dataset, and resets all settings to default values. <br> <br> After successful completion of the main assessment, an additional button <b>'Download Report'</b> allows you to download a pdf document with all results.</p>"
                              )),

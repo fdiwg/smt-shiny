@@ -1046,20 +1046,20 @@ elefanGaModule <- function(input, output, session) {
         text
     })
 
-    output$methodConsiderationsText <- renderText({
+    output$elefanGAmethodConsiderationsText <- renderText({
         text <- gsub("%%ELEFAN%%", "ELEFAN_GA", getMethodConsiderationTextForElefan())
         text
     })
-    output$methodConsiderationsText2 <- renderText({
+    output$elefanGAmethodConsiderationsText2 <- renderText({
         text <- gsub("%%ELEFAN%%", "ELEFAN_GA", getMethodConsiderationTextForElefan())
         text
     })
 
-    output$resultConsiderationsText <- renderText({
+    output$elefanGAresultConsiderationsText <- renderText({
         text <- gsub("%%ELEFAN%%", "ELEFAN_GA", getResultConsiderationTextForElefan())
         text
     })
-    output$resultConsiderationsText2 <- renderText({
+    output$elefanGAresultConsiderationsText2 <- renderText({
         text <- gsub("%%ELEFAN%%", "ELEFAN_GA", getResultConsiderationTextForElefan())
         text
     })
