@@ -2,78 +2,88 @@
 output$homeInfo <- renderText({
     session$userData$page("home")
     text <- "<h3>Stock Monitoring Tool for limited data</h3>"
+    
+    text <- paste0(text,"<p>")
+    text <- paste0(text,"The Stock Monitoring Tool (SMT), developed by FAO, is an R-Shiny application, available to the global community and hosted via remote computational facilities with considerable processing resources.
+This tool was designed to allow users with little to no programming experience to run methods developed for data-limited situations to evaluate and monitor the sustainability of fish stocks.  ")
+    text <- paste0(text,'</p>')
+    
+    text <- paste0(text,"<h4>Navigating the Stock Monitoring Tool</h4>")
+    
+    text <- paste0(text,"<p>")
+    
+    text <- paste0(text,"<h5><b>Workflow</b></h5>")
+    text <- paste0(text,"Each method is accessible in the menu to the left of the SMT, and by clicking on the desired method, further information is exposed in a dropdown 
+                   menu. Each method includes an <b>Introduction</b> page that gives background information on the method, including where the user can find details about the method 
+                   in the <a href='https://elearning.fao.org/course/view.php?id=502' target='blank_'>FAO SDG 14.4.1 eLearning module</a>. Additional detail for on the workflow method is available in the <b>Workflow</b> information tab at the top of each method's page. Each method follows the same broad workflow where data should be uploaded, parameters are set, the method is run, and the results can be downloaded. ")
+    text <- paste0(text,"</p>")
+    
+    text <- paste0(text,"<p>")
+    text <- paste0(text,"<h5><b>Data</b></h5>")
+    text <- paste0(text,"Advice is given on the formatting requirements and data considerations for each method on the introduction page, but also in the <b>Data</b> information tab on the top of 
+                   each method's page. If you would like to run the method(s) on your own dataset, we encourage you to review these considerations and align you data to the 
+                   required format. Each method has a sample dataset that the user can download from the <b>Sample Dataset</b> page. This can be used as a template to 
+                   format your own dataset. ")
+    text <- paste0(text,"</p>")
+    
+    text <- paste0(text,"<p>")
+    text <- paste0(text,"<h5><b>Method</b></h5>")
+    text <- paste0(text,"Finally, you must navigate to the <b>method</b> page to upload either the sample dataset or your customised dataset. On the left hand side you can choose between the catch-based method, <b>CMSY</b>, or a <b>length-based workflow</b> including ELEFAN and YPR/SBPR methods. The <b>Supporting Tools</b> gives additional information on the underlying theory behind the stock monitoring methods. Additional information about the method, including key assumptions is available in the method information button at the top of each page. 
+                   Information and advice on <b>parameter settings</b> are available in the grey information buttons to the right of each field. 
+                   Once the optional parameters or priors are set for the method, <b>run</b> the method. ")
+    text <- paste0(text,'</p>')
+    
     text <- paste0(text, "<p>")
-    text <- paste0(text, "On the left hand side you can choose between <b>CMSY</b>, <b>ELEFAN</b> and <b>YPR</b>/<b>SBPR</b> methods.")
+    text <- paste0(text, "The <b>CMSY</b> method is provided by the <a href='http://www.bluebridge-vres.eu/'> iMarine Infrastructure</a> and requires internet connection to run.")
     text <- paste0(text, "</p>")
-
+    
     text <- paste0(text, "<p>")
-    text <- paste0(text, "The <b>CMSY</b> method is provided by the <a href='http://www.bluebridge-vres.eu/' target='blank_'>iMarine Infrastructure</a> and requires internet connection to run.")
+    text <- paste0(text, "The length-based workflow is based on the expert-recommended genetic algorithm of <b>ELEFAN</b> (ELEFAN_GA), and yield per recruit (YPR)/spawning biomass per recruit (SBPR) of the 
+                   <a href='https://cran.r-project.org/web/packages/TropFishR/index.html'> TropFishR </a> R package version ", packageVersion("TropFishR"))
     text <- paste0(text, "</p>")
-
+    
+    text <- paste0(text,"<p>")
+    text <- paste0(text,"<h5><b>Results</b></h5>")
+    text <- paste0(text,"The <b>results</b> will display as table and figures at the bottom of the method's page. <b>Download</b> the report to save these reports locally. They are also automatically saved to your private workspace. ")
+    text <- paste0(text,'</p>')
+    
+    # text <- paste0(text, "<p>")
+    # text <- paste0(text, "On the left hand side you can choose between the catch-based method, <b>CMSY</b>, or a <b>length-based workflow</b> including ELEFAN and YPR/SBPR methods. The Supporting Tools gives additional information on the underlying theory behind the stock monitoring methods.")
+    # text <- paste0(text, "</p>")
+    
+    
     text <- paste0(text, "<p>")
-    text <- paste0(text, "For <b>ELEFAN</b> you can choose between ELEFAN_GA, ELEFAN_SA and ELEFAN. These methods are provided by the <a href='https://cran.r-project.org/web/packages/TropFishR/index.html' target='_blank'>TropFishR</a> R library version ", packageVersion("TropFishR"))
+    text <- paste0(text,"<h5><b>Run time</b></h5>")
+    text <- paste0(text, "Run time with sample dataset for both methods is <b>about 1 min</b>. Run time for CMSY depends on the length of the catch time series analysed. Run time for the length-based workflow depends on the search space of input parameters as specified by the user. The information buttons for the parameters note this effect.<br><br>")
     text <- paste0(text, "</p>")
-
-    text <- paste0(text, "<p>")
-    text <- paste0(text, "<ul>")
-    text <- paste0(text, "<li><b>ELEFAN GA:</b>&nbsp;Electronic LEngth Frequency ANalysis with genetic algorithm used for estimating growth parameters.</li>")
-    text <- paste0(text, "<li><b>ELEFAN SA:</b>&nbsp;Electronic LEngth Frequency ANalysis with simulated annealing for estimating growth parameters.</li>")
-    text <- paste0(text, "<li><b>ELEFAN:</b>&nbsp;Electronic LEngth Frequency ANalysis for estimating growth parameter.</li>")
-    text <- paste0(text, "</ul>")
-    text <- paste0(text, "</p>")
-
-    text <- paste0(text, "<p>")
-    text <- paste0(text, "<b>YPR</b> and <b>SBPR</b> are provided by the <a href='https://cran.r-project.org/web/packages/fishmethods/index.html' target='_blank'>fishmethods</a> R library version ", packageVersion("fishmethods"))
-    text <- paste0(text, "</p>")
-
-    text <- paste0(text, "<p>")
-    text <- paste0(text, "<ul>")
-    text <- paste0(text, "<li><b>YPR:</b>&nbsp;Yield-per-recruit.</li>")
-    text <- paste0(text, "<li><b>SBPR:</b>&nbsp;Spawning stock biomass-per-recruit.</li>")
-    text <- paste0(text, "</ul>")
-    text <- paste0(text, "</p>")
-
-    text <- paste0(text, "<h4>Running time with sample dataset for each methods : </h4>")
-    text <- paste0(text, "<p>")
-    text <- paste0(text, "<ul>")
-    text <- paste0(text, "<li><b>CMSY:</b>&nbsp;< 1 min</li>")
-    text <- paste0(text, "<li><b>ELEFAN GA:</b>&nbsp;30 sec</li>")
-    text <- paste0(text, "<li><b>ELEFAN SA:</b>&nbsp;< 1 min 20 sec</li>")
-    text <- paste0(text, "<li><b>ELEFAN:</b>&nbsp;2-4 min</li>")
-    text <- paste0(text, "<li><b>YPR:</b>&nbsp;< 10 sec</li>")
-    text <- paste0(text, "<li><b>SBPR:</b>&nbsp;10 sec</li>")
-    text <- paste0(text, "</ul>")
-    text <- paste0(text, "</p>")
-
+    
     text <- paste0(text, "<h4>Instruction to build a Docker image of this application : </h4>")
     text <- paste0(text, "<p>")
-    text <- paste0(text, "A Dockerfile is provided and can be used to build up containers with the application.")
-    text <- paste0(text, "To build and run the application issue the following commands")
+    text <- paste0(text, "A Dockerfile is provided that allows this tool to be run offline on any operating system.")
+    text <- paste0(text, "To build and run the application issue the following commands in your terminal :")
     text <- paste0(text, "<ul>")
     text <- paste0(text, "<li>sudo wget https://raw.githubusercontent.com/pink-sh/StockMonitoringTool/master/Dockerfile</li>")
     text <- paste0(text, "<li>sudo docker build -t stock_monitoring_tool . </li>")
     text <- paste0(text, "<li>sudo docker run -p 3839:3838 stock_monitoring_tool</li>")
     text <- paste0(text, "</ul>")
-    text <- paste0(text, "And then point your browser to http://localhost:3839")
+    text <- paste0(text, "And then set your browser to http://localhost:3839")
     text <- paste0(text, "</p>")
-
+    
     text
 })
+
 output$cmsyIntroOut <- renderText({
     session$userData$page("cmsy-intro")
     text <- "<h3><b>CMSY - Catch-Maximum Sustainable Yield</b></h3>"
     text <- paste0(text, "<p>")
-                                        # text <- paste0(text, "The <b>CMSY</b> method for data-limited stock assessment. Described in <a target='_blank' href='https://www.researchgate.net/publication/309283306_Estimating_fisheries_reference_points_from_catch_and_resilience'>Froese et al.</a>")
+    # text <- paste0(text, "The <b>CMSY</b> method for data-limited stock assessment. Described in <a target='_blank' href='https://www.researchgate.net/publication/309283306_Estimating_fisheries_reference_points_from_catch_and_resilience'>Froese et al.</a>")
     text <- paste0(text, "The <b>CMSY</b> method for data-limited stock assessment. Described in <a target='_blank' href='https://github.com/SISTA16/cmsy/blob/master/CMSY_2019_9f_UserGuide.pdf'>Froese et al.</a>")
     text <- paste0(text, "<br/>")
-    text <- paste0(text, "The CMSY algorithm can be found <a href='https://github.com/SISTA16/cmsy' target='_blank'>here on Github</a>")
+    text <- paste0(text, "The algorithm can be found <a href='https://github.com/SISTA16/cmsy' target='_blank'>here on Github</a>")
     text <- paste0(text, "</p>")
     text <- paste0(text, "<p>")
     text <- paste0(text, "<h4>Method Description</h4>")
-    text <- paste0(text, "The Schaefer production model parameters are r and k. Different combinations of these parameters will produce different time series of biomass. In CMSY, the Schaefer model is run many times to calculate annual biomasses for r-k pairs randomly drawn from the prior distributions. The model determines which r-k pairs are valid: e.g., those pairs that result in a biomass time series that do not (1) result in a stock collapse or (2) allow the stock to exceed carrying capacity. Also, those r-k pairs that result in a final relative biomass estimate between the values specified in the inputs (the final depletion range), are accepted and used to calculate MSY (rk/4) and biomass over time.")
-    text <- paste0(text, "</p>")
-    text <- paste0(text, "<p>")
-    text <- paste0(text, "The geometric means of the resulting density distributions of r, k and MSY are taken as the most probable values.")
+    text <- paste0(text, "The Schaefer production model parameters are r and k. Different combinations of these parameters will produce different time series of biomass. In CMSY, the Schaefer model is run many times to calculate annual biomasses for r-k pairs randomly drawn from the prior distributions. The model determines which r-k pairs are valid: e.g., those pairs that result in a biomass time series that do not (1) result in a stock collapse or (2) allow the stock to exceed carrying capacity. Also, those r-k pairs that result in a final relative biomass estimate between the values specified in the inputs (the final depletion range), are accepted and used to calculate MSY (rk/4) and biomass over time. The geometric means of the resulting density distributions of r, k and MSY are taken as the most probable values.")
     text <- paste0(text, "</p>")
     text <- paste0(text, "<p>")
     text <- paste0(text, "<h4>Further information</h4>")
@@ -88,29 +98,58 @@ output$cmsyIntroOut <- renderText({
     text <- paste0(text, "</ul>")
     text <- paste0(text, "</p>")
     text <- paste0(text, "<p>")
-    text <- paste0(text, "<h4>Data Considerations</h4>")
+    text <- paste0(text, "<h4>The dataset must include:</h4>")
     text <- paste0(text, "Mandatory fields to run CMSY are:")
     text <- paste0(text, "<ul>")
-    text <- paste0(text, "<li>Stock (fish stock name)</li>")
-    text <- paste0(text, "<li>yr (year of the catch)</li>")
-    text <- paste0(text, "<li>ct (catch)</li>")
-    text <- paste0(text, "<li>bt (biomass estimates, if available; otherwise input “NA”)</li>")
-    text <- paste0(text, "<li>Other columns are identifiers that may be included, but are not necessary to run the model.</li>")
-    text <- paste0(text, "<li>Ensure your data are in .csv format and use a “.” to separate decimals in the data.</li>")
-    text <- paste0(text, "<li>Please ensure your time-series at least 15 years in length from starting year to ending year.</li>")
+    text <- paste0(text, "<li><b>Stock</b>: a unique fish stock name or identifier (e.g. “cod-2532”), repeated for each year.</li>")
+    text <- paste0(text, "<li><b>yr</b>: the reporting year of the catch (e.g. 2004). One row for each year. Years have to be consecutive from the first to the last year without any missing years.</li>")
+    text <- paste0(text, "<li><b>ct</b>: catch value, in tonnes (e.g. 12345). One row for each year. Gaps with no entries are not accepted and must be filled by interpolating missing or incorrect values, e.g., do not accept zero as entry if data are missing, instead use mean of adjacent values to replace zero or fill any gaps.</li>")
+    text <- paste0(text, "<li><b>bt</b>: the value of the biomass (in tonnes, e.g. 34567), or the value of the CPUE or stock size index (e.g. 0.123), or NA if there is no information. Gaps filled with NA are acceptable for bt, i.e., abundance data can be fewer than catch data.</li>")
+    text <- paste0(text, "</ul>")
+    text <- paste0(text, "Other columns are identifiers that you may choose to include, but they are not necessary to run the model.<br><br>")
+    text <- paste0(text, "Use the <a href=https://data.d4science.net/qhX2> sample dataset </a> as a template to prepare your data.<br><br>")
+    text <- paste0(text, "<b>Specific considerations regarding your own dataset:</b>")
+    text <- paste0(text, "<ul>")
+    text <- paste0(text, "<li>Save your dataset in 'csv' format.</li>")
+    text <- paste0(text, "<li>The separator for the .csv file should be a comma ‘,’. The default might differ depending on the language settings of your spreadsheet manipulation program (e.g. Excel).</li>")
     text <- paste0(text, "<li>Note that years with missing data should be filled with an 'NA' value.</li>")
-    text <- paste0(text, "<li>**If desired, the life history parameters pulled from FishBase.org in the Supporting Tools: 'Natural Mortality Estimators' tool could be used to provide estimates of natural mortality (M) for the Optional Parameters section.
-</li>")
+    text <- paste0(text, "<li>Note that the column names of your dataset should exactly match those of the sample dataset.</li>")
+    text <- paste0(text, "<li><b>Please ensure your time-series at least 15 years in length from starting year to ending year.</b></li>")
     text <- paste0(text, "</ul>")
     text <- paste0(text, "</p>")
-
+    
     text <- paste0(text, "<p>")
-    text <- paste0(text, "<h4>Running time with sample dataset</h4>")
+    text <- paste0(text, "<h4>Run time with sample dataset</h4>")
     text <- paste0(text, "<ul>")
     text <- paste0(text, "<li><b>CMSY:</b>&nbsp;< 1 min</li>")
     text <- paste0(text, "</ul>")
     text <- paste0(text, "</p>")
-
+    
+    text <- paste0(text,"<h4> To run the CMSY method in the Stock Monitoring Tool :</h4>")
+    text <- paste0(text, "<ol>")
+    text <- paste0(text, "<li>Upload a csv file data set of catch time series for one or multiple stocks (see Data Considerations or the <a href='https://data.d4science.net/qhX2'>CMSY Sample dataset</a>).</li>")
+    text <- paste0(text, "<ol type='a'>")
+    text <- paste0(text, "<li> Select the stock upon which to perform the analysis </li>")
+    text <- paste0(text, "</ol>")
+    text <- paste0(text, "<li> Adjust the Assessment Settings")
+    text <- paste0(text, "<ol type='a'>")
+    text <- paste0(text, "<li> Data Selection - select the years of data to include in the analysis,and over which to calculate the catchability. </li>")
+    text <- paste0(text, "<li> Assessment settings - set the search space of the CMSY algorithm to estimate probalble r-K pairs (set resilience and depletion). </li>")
+    text <- paste0(text, "<li> Optional information - if you have reference point values from previous assessments, you can choose to enter and compare them to the results of the present analysis.</li>")
+    text <- paste0(text, "</ol>")
+    text <- paste0(text, "</li>")
+    text <- paste0(text, "<li> Check and Run the Assessment:")
+    text <- paste0(text, "<ol type='a'>")
+    text <- paste0(text, "<li> Run a check on the parameterisations prior to running the full assessment (Run Check button)</li>")
+    text <- paste0(text, "<li> Run the assessment (Run Assessment button). This may take some time. For example, the sample dataset takes about 1 min.</li>")
+    text <- paste0(text, "</ol>")
+    text <- paste0(text, "</li>")
+    text <- paste0(text, "<li> Download the report as a pdf (Download Report button)</li>")
+    text <- paste0(text, "<li> The Reset button removes the uploaded data and resets the settings to default</li>")
+    text <- paste0(text, "</ol>")
+    text <- paste0(text, "Further information can be found in the popup information buttons at each field, and in the Data, Methods, and Results Considerations tabs. Note that error messages may display in the center of the page and in place of any figures where an error has occurred.")
+    text <- paste0(text, "</p>")    
+    
     text <- paste0(text, "<p>")
     text <- paste0(text, "<strong>References</strong><br/>")
     text <- paste0(text,"&nbsp;&nbsp;Froese, Rainer & Demirel, Nazli & Coro, Gianpaolo & Kleisner, Kristin & Winker, Henning. (2017). Estimating fisheries reference points from catch and resilience. Fish and Fisheries. 18. 506-526. 10.1111/faf.12190.")
@@ -273,7 +312,7 @@ output$elefanIntroOut <- renderText({
     text <- paste0(text, "<li>Y. Xiang, S. Gubian. B. Suomela, J. Hoeng (2013). Generalized Simulated Annealing for Efficient Global Optimization: the GenSA Package for R. The R Journal, Volume 5/1, June 2013. <a href='https://journal.r-project.org/archive/2013/RJ-2013-002/index.html' target='_blank'>https://journal.r-project.org/archive/2013/RJ-2013-002/index.html</a></li>")
     text <- paste0(text, "<li>Taylor, Marc (2016): fishdynr. figshare. Software. <a href='https://doi.org/10.6084/m9.figshare.4212726.v2' target='_blank'>https://doi.org/10.6084/m9.figshare.4212726.v2</a></li>")
     text <- paste0(text, "</ul>")
-
+    
     text <- paste0(text, "<p>")
     text
 })
@@ -323,7 +362,7 @@ output$fishMethodsIntroOut <- renderText({
     text <- paste0(text, "<li><b>incrF: </b> Fishing mortality (F) increment for YPR calculation</li>")
     text <- paste0(text, "</ul>")
     text <- paste0(text, "</p>")
-
+    
     text <- paste0(text, "<p>")
     text <- paste0(text, "<h4>Running time with sample dataset</h4>")
     text <- paste0(text, "<ul>")
@@ -331,7 +370,7 @@ output$fishMethodsIntroOut <- renderText({
     text <- paste0(text, "<li><b>YPR:</b>&nbsp;< 10 sec</li>")
     text <- paste0(text, "</ul>")
     text <- paste0(text, "</p>")
-
+    
     text <- paste0(text, "<p>")
     text <- paste0(text, "W. L. Gabriel, M. P. Sissenwine & W. J. Overholtz (1989) Analysis of Spawning Stock Biomass per Recruit: An Example for Georges Bank Haddock, North American Journal of Fisheries Management, 9:4, 383-391, DOI: <a href='https://doi.org/10.1577/1548-8675(1989)009%3C0383:AOSSBP%3E2.3.CO;2' target='_blank'>10.1577/1548-8675(1989)009<0383:AOSSBP>2.3.CO;2</a>")
     text <- paste0(text, "</p>")
@@ -343,24 +382,26 @@ output$cmsySampleDataset <- renderText({
     link <- "<a href='https://data.d4science.net/qhX2' target='_blank'>Click Here</a>"
     text <- paste0("<p><h4>", link,"&nbsp; to download a sample dataset that can be used with <b>CMSY</b> methods", "</h4></p>")
     text <- paste0(text, "<hr />")
-    text <- paste0(text, "<strong>If you are creating your own dataset</strong>")
+    text <- paste0(text, "<p>")
+    text <- paste0(text, "<h4>To run CMSY, the dataset must include:</h4>")
+    text <- paste0(text, "Mandatory fields to run CMSY are:")
     text <- paste0(text, "<ul>")
-    text <- paste0(text, "<li>Ensure your time-series at least 15 years in length from the start year to end year.</li>")
-    text <- paste0(text, "<li>Ensure that the column names are identical to the sample dataset.</li>")
-    text <- paste0(text, "<li>Ensure your data are in .csv format.</li>")
-    text <- paste0(text, "<li>Use a “.” to separate decimals in the data.</li>")
-    text <- paste0(text, "<li>Years with missing data should be filled with an 'NA' value.</li>")
-    text <- paste0(text, "<li>Mandatory fields required to run CMSY are</li>")
+    text <- paste0(text, "<li><b>Stock</b>: a unique fish stock name or identifier (e.g. “cod-2532”), repeated for each year.</li>")
+    text <- paste0(text, "<li><b>yr</b>: the reporting year of the catch (e.g. 2004). One row for each year. Years have to be consecutive from the first to the last year without any missing years.</li>")
+    text <- paste0(text, "<li><b>ct</b>: catch value, in tonnes (e.g. 12345). One row for each year. Gaps with no entries are not accepted and must be filled by interpolating missing or incorrect values, e.g., do not accept zero as entry if data are missing, instead use mean of adjacent values to replace zero or fill any gaps.</li>")
+    text <- paste0(text, "<li><b>bt</b>: the value of the biomass (in tonnes, e.g. 34567), or the value of the CPUE or stock size index (e.g. 0.123), or NA if there is no information. Gaps filled with NA are acceptable for bt, i.e., abundance data can be fewer than catch data.</li>")
+    text <- paste0(text, "</ul>")
+    text <- paste0(text, "Other columns are identifiers that you may choose to include, but they are not necessary to run the model.<br><br>")
+    text <- paste0(text, "Use the <a href=https://data.d4science.net/qhX2> sample dataset </a> as a template to prepare your data.<br><br>")
+    text <- paste0(text, "<b>Specific considerations regarding your own dataset:</b>")
     text <- paste0(text, "<ul>")
-    text <- paste0(text, "<li>Stock (fish stock name)</li>")
-    text <- paste0(text, "<li>yr (year of the catch)</li>")
-    text <- paste0(text, "<li>ct (catch)</li>")
-    text <- paste0(text, "<li>bt (biomass estimates, if available; otherwise input “NA”)</li>")
-    text <- paste0(text, "<li>Other columns are identifiers that may be included, but are not necessary to run the model.</li>")
+    text <- paste0(text, "<li>Save your dataset in 'csv' format.</li>")
+    text <- paste0(text, "<li>The separator for the .csv file should be a comma ‘,’. The default might differ depending on the language settings of your spreadsheet manipulation program (e.g. Excel).</li>")
+    text <- paste0(text, "<li>Note that years with missing data should be filled with an 'NA' value.</li>")
+    text <- paste0(text, "<li>Note that the column names of your dataset should exactly match those of the sample dataset.</li>")
+    text <- paste0(text, "<li><b>Please ensure your time-series at least 15 years in length from starting year to ending year.</b></li>")
     text <- paste0(text, "</ul>")
-    text <- paste0(text, "</ul>")
-    text <- paste0(text, "**If desired, the life history parameters pulled from FishBase.org in the Supporting Tools: 'Natural Mortality Estimators' tool could be used to provide estimates of natural mortality (M) for the Optional Parameters section.")
-
+    text <- paste0(text, "</p>")
     text
 })
 output$elefanSampleDataset <- renderText({
@@ -386,7 +427,7 @@ output$elefanSampleDataset <- renderText({
     text <- paste0(text, "<li>", "Use a “.” to separate decimals in the data.", "</li>")
     text <- paste0(text, "<li>", "**If desired, the life history parameters pulled from FishBase.org in the Supporting Tools: 'Natural Mortality Estimators' tool could be used to provide estimates of L∞ and von Bertalanffy K in the Optional Parameters section in the ELEFAN_GA tool.", "</li>")
     text <- paste0(text, "</ul>")
-
+    
     text
 })
 output$fishMethodsSampleDataset <- renderText({

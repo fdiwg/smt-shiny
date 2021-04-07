@@ -75,6 +75,11 @@ tabCmsy <- function(id) {
                     size = "large",
                     htmlOutput(ns("cmsyResultConsiderationsText2"))),
             
+            bsModal("info_Assessment", "Run assessment", ns("infoAssessment"),
+                    size = "large",
+                    HTML("<p><b>'Run CMSY Method'</b> performs the main assessment and should yield figures and tables in the result section upon successful completion. 
+                         A progress notification in the middle of the screen will be present while the method is running. CMSY takes about 1 minute with the sample dataset, but run time depends on the length of the catch time series analysed.
+                         <br> <br> <b>'Reset'</b> removes all results, the uploaded dataset, and resets all settings to default values. <br> <br> After successful completion of the main assessment, an additional button <b>'Download Report'</b> allows you to download a pdf document with all results.</p>")),
             
             bsModal("info_yearsel", "Selected years", ns("infoYearSel"),
                     size = "large",
@@ -384,7 +389,7 @@ prior to the last year with high biomass.</p>")),
             
             box(width=12,
                 checkboxInput(ns("cmsy_checkbox_comparison"),
-                              p("Do you have data from a previous assessment to compare? (optional)",
+                              p("Optional : Check this box if you have fisheries reference points from previous assessments to use for comparison to the results from this analysis.",
                                 actionButton(ns("infocomp"),
                                              tags$i(class = "fas fa-info",
                                                     style="font-size: 8px"),
