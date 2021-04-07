@@ -185,7 +185,12 @@ prior to the last year with high biomass.</p>")),
                     HTML("<p>If Fmsy is known, the resilience prior range (lowest and highest resilience estimates) 
                          could be defined to include the estimate of Fmsy considering that r ~ 2*Fmsy</p>")),
             
-
+            bsModal("info_Assessment", "Run assessment", ns("infoAssessment"),
+                    size = "large",
+                    HTML("<p><b>'Run CMSY Method'</b> performs the main assessment and should yield figures and tables in the result section upon successful completion. 
+                         A progress notification in the middle of the screen will be present while the method is running. CMSY takes about 1 minute with the sample dataset, but run time depends on the length of the catch time series analysed.
+                         <br> <br> <b>'Reset'</b> removes all results, the uploaded dataset, and resets all settings to default values. <br> <br> After successful completion of the main assessment, an additional button <b>'Download Report'</b> allows you to download a pdf document with all results.</p>"
+                         )),
             
             
             ################## cmsy
@@ -193,8 +198,8 @@ prior to the last year with high biomass.</p>")),
                 title = p("Data Upload",
                           actionButton(ns("cmsyDataConsiderations2"),
                                        tags$i(class = "fas fa-info",
-                                              style="font-size: 12px"),
-                                       class="topLevelInformationButton")),
+                                              style="font-size: 8px"),
+                                       class="infoBubbleButton")),
                 width = NULL,
                 collapsible = FALSE,
                 solidHeader = TRUE,
@@ -205,7 +210,7 @@ prior to the last year with high biomass.</p>")),
                             accept = c(
                               "text/csv",
                               "text/comma-separated-values,text/plain",
-                              ".csv")
+                              ".csv", id="fileCmsy")
                   )
                 ),
                 box(
@@ -218,19 +223,19 @@ prior to the last year with high biomass.</p>")),
             
             ## Input - Settings
             ## -------------------------------
-
+            
             box(id = "box_settings",
                 title = p("Assessment Settings",
                           actionButton(ns("cmsyMethodConsiderations2"),
                                        tags$i(class = "fas fa-info",
-                                              style="font-size: 12px"),
-                                       class="topLevelInformationButton")),
+                                              style="font-size: 8px"),
+                                       class="infoBubbleButton")),
                 width = NULL,
                 collapsible = FALSE, ## careful: if made collapsible the renderUi does not update! see: https://github.com/rstudio/shinydashboard/issues/234
                 solidHeader = TRUE,
                 class = "collapsed-box",
                 
-
+                
                 box(title = "Data selection",
                     width=6,
                     
@@ -241,8 +246,8 @@ prior to the last year with high biomass.</p>")),
                       div(style = "display: inline-block; vertical-align:center; margin-left: 3px;",
                           actionButton(ns("infoYearSel"),
                                        tags$i(class = "fas fa-info",
-                                              style="font-size: 12px"),
-                                       class="topLevelInformationButton")
+                                              style="font-size: 8px"),
+                                       class="infoBubbleButton")
                       ),
                       div(style = "margin-top:-3px",
                           uiOutput(ns("CMSY_years_selected_out"))
@@ -260,8 +265,8 @@ prior to the last year with high biomass.</p>")),
                       div(style = "display: inline-block; vertical-align:center; margin-left: 3px;",
                           actionButton(ns("infoq"),
                                        tags$i(class = "fas fa-info",
-                                              style="font-size: 12px"),
-                                       class="topLevelInformationButton")
+                                              style="font-size: 8px"),
+                                       class="infoBubbleButton")
                       ),
                       div(style = "margin-top:-3px",
                           uiOutput(ns("CMSY_years_q_out"))
@@ -269,7 +274,7 @@ prior to the last year with high biomass.</p>")),
                     )
                 ),
                 
-
+                
                 box(title = "Catch time series",
                     id = "box_cmsy_exploPlots",
                     width = 6,
@@ -282,227 +287,239 @@ prior to the last year with high biomass.</p>")),
                       style = "margin-left: 10%;"
                     )
                 )),
+            
+            
+            box(title = p("Resilience",
+                          actionButton(ns("infor"),
+                                       tags$i(class = "fas fa-info",
+                                              style="font-size: 8px"),
+                                       class="infoBubbleButton")),
+                width = 6,
                 
-
-                box(title = p("Resilience",
-                               actionButton(ns("infor"),
-                                            tags$i(class = "fas fa-info",
-                                                   style="font-size: 12px"),
-                                            class="topLevelInformationButton")),
-                    width = 6,
-
-                    fluidPage(
-                      sliderInput(ns("resiliance"),
-                                  label = div(style='width:400px;',style = "margin-top:-3px",
-                                              div(style='float:left;', 'Very Low'),
-                                              div(style='float:right;', 'High'),style='font-size: 10px'),
-                                  min = 0.015, max = 1.5, value = c(0.2,0.8), step=0.001, width = '400px')
-                      
-                    )
-                ),
-
-                
-
-                box(
-                  title = p("Depletion",
-                            actionButton(ns("infodepletion"),
-                                         tags$i(class = "fas fa-info",
-                                                style="font-size: 12px"),
-                                         class="topLevelInformationButton")),
-                  width=12,
+                fluidPage(
+                  sliderInput(ns("resiliance"),
+                              label = div(style='width:400px;',style = "margin-top:-3px",
+                                          div(style='float:left;', 'Very Low'),
+                                          div(style='float:right;', 'High'),style='font-size: 10px'),
+                              min = 0.015, max = 1.5, value = c(0.2,0.8), step=0.001, width = '400px')
                   
-                  
-                  box(width=4,
-                      fluidRow(
-                        div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
-                            HTML("<b>Starting depletion range (B/k) </b>")
-                        ),
-                        div(style = "display: inline-block; vertical-align:center; margin-left: 3px;",
-                            actionButton(ns("infostb"),
-                                         tags$i(class = "fas fa-info",
-                                                style="font-size: 12px"),
-                                         class="topLevelInformationButton")
-                        ),
-                        sliderInput(ns("stb"),label="",min = 0.01, max = 1,step=0.001,value = c(0.01,0.4))
-                      )),
-                  
-                  
-                  box(width=4,
-                      checkboxInput(ns("cmsy_checkbox_intb"),
-                                    p("Does the catch time series have an intermediate year where biomass is particularly high or low?",
-                                      actionButton(ns("infointb"),
-                                                   tags$i(class = "fas fa-info",
-                                                          style="font-size: 12px"),
-                                                   class="topLevelInformationButton")),
-                                    FALSE),
-                  
-                      
-                      br(),
-                     
-                      
-                       box(id="box_cmsy_intb",  
-                          width = '100%',
-                          fluidRow(
-                            numericInput(ns("int.yr"),
-                                         p(HTML(paste0("Intermediate year")),
-                                           actionButton(ns("infointyr"),
-                                                        tags$i(class = "fas fa-info",
-                                                               style="font-size: 12px"),
-                                                        class="topLevelInformationButton")),
-                                         value=c(NA), min = 1990, max=2030, step=1), ## MAKE THE MIN/MAX RELATE TO THE MIN/MAX OF THE TIME SERIES. SET DEFAULT TO MAX OF RANGE MINUS 5
-                            br(),
-                            sliderInput(ns("intb"),
-                                        p(HTML(paste0("Intermediate depletion range (B/k)",
-                                                      actionButton(ns("infointbval"),
-                                                                   tags$i(class = "fas fa-info",
-                                                                          style="font-size: 12px"),
-                                                                   class="topLevelInformationButton")))),
-                                        value=c(0.01,0.4), min = 0.01, max = 1, step=0.001)
-                          )
-                      )
-                  ),
-                  
-                  
-                  
-                  box(width=4,  
-                      fluidRow(
-                        div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
-                            HTML("<b>Ending depletion range (B/k) </b>")
-                        ),
-                        div(style = "display: inline-block; vertical-align:center; margin-left: 3px;",
-                            actionButton(ns("infoendb"),
-                                         tags$i(class = "fas fa-info",
-                                                style="font-size: 12px"),
-                                         class="topLevelInformationButton")
-                        ),
-                        sliderInput(ns("endb"),label="",min = 0.01, max = 1,step=0.001,value = c(0.01,0.4))
-                      ))
-                  
-                ),
-                
-                
-                
-                box(width=12,
-                    checkboxInput(ns("cmsy_checkbox_comparison"),
-                                  p("Do you have data from a previous assessment to compare? (optional)",
-                                    actionButton(ns("infocomp"),
-                                                 tags$i(class = "fas fa-info",
-                                                        style="font-size: 12px"),
-                                                 class="topLevelInformationButton")),
-                                  FALSE),
-                    
-                    br(),
-                    
-                    
-                    box(id='biomass_ref_points',
-                        width=6,
-                        title='Biomass reference points and MSY',
-
-                        textInput(ns("msy"), p("Maximum Sustainable Yield (", withMathJax("\\(MSY\\)"), ")"), "NA"),
-                        textInput(ns("blim"), p("Biomass biological limit (", withMathJax("\\(B_{lim}\\)"), ")"), "NA"),
-                        textInput(ns("bpa"), p("Biomass precautionary value (",withMathJax("\\(B_{pa}\\)") , ")"), "NA"),
-                        textInput(ns("bmsy"), p("Biomass maximum sustainable yield (", withMathJax("\\(B_{MSY}\\)"), ")"), "NA"),
-                        textInput(ns("b40"), p("Biomass at 40% over the unfished level (", withMathJax("\\(B_{40\\%}\\)"), ")"), "NA"),
-                        textInput(ns("msyBTrigger"), p("Spawning Stock Biomass at MSY (", withMathJax("\\(SSB_{MSY}\\)"), ")"), "NA")
-                    ),
-                    
-                    
-                    box(id='fish_mort_ref_pts',
-                        width=6,
-                        title='Fishing mortality values',
-                         textInput(ns("fmsy"),
-                                  p(HTML(paste0('Fishing mortality at Maximum Sustainable Yield (',withMathJax('\\(F_{MSY}\\'),')',
-                                                actionButton(ns("infofmsy"),
-                                                             tags$i(class = "fas fa-info",
-                                                                    style="font-size: 12px"),
-                                                             class="topLevelInformationButton")))),"NA"),
-                        textInput(ns("flim"), p("Fishing mortality biological limit (", withMathJax("\\(F_{lim}\\)"), ")"), "NA"),
-                        textInput(ns("fpa"), p("Fishing mortality precautionary value (", withMathJax("\\(F_{pa}\\)"), ")"), "NA"),
-                        textInput(ns("fofl"), p("Fishing mortality at overfishing level (", withMathJax("\\(F_{ofl}\\)"),")"), "NA"),
-                        textInput(ns("last_f"), "Last known exploitation rate", "NA"),
-                        textInput(ns("m"),
-                                  p(HTML(paste0("Natural mortality",
-                                                actionButton(ns("infom"),
-                                                             tags$i(class = "fas fa-info",
-                                                                    style="font-size: 12px"),
-                                                             class="topLevelInformationButton")))),"NA")
-  
-                        #textInput("btype", "btype indicates if the catch file contains biomass, CPUE or no information associated with the catch time series", "None"),
-                        #textInput("comments", "Comments on data and computation", "landings"),
-                        #checkboxInput(ns("force.cmsy"), "Check this if CMSY results are to be preferred over the Bayesian State Model results (only when biomass or CPUE is available)", FALSE)
-                    )
-
                 )
             ),
             
             
-            tags$div(disabled(actionButton(ns("go_cmsy"), "Run CMSY Method", class="topLevelInformationButton")),
-                     actionButton(ns("reset_cmsy"), "Reset", class="topLevelInformationButton"), style="margin-left: 15px;")
-            ,
-            htmlOutput("cmsyWarning"),
-            hr(),
-            box( width= 100, id = "box_cmsy_results",
-                 title = p("Results of CMSY Method",
-                           actionButton(ns("cmsyResultConsiderations2"),
-                                        tags$i(class = "fas fa-info",
-                                               style="font-size: 12px"),
-                                        class="topLevelInformationButton")),
-                 tags$style(type="text/css",
-                            ".recalculating {opacity: 1.0;}"
-                 ),
-                 
-                 
-                 fluidRow(
-                   box(
-                     uiOutput(ns("downloadCmsyReportButton")),
-                     uiOutput(ns("CmsyVREUpload"))
-                   )
-                 ),
-                 
-                 
-                 fluidRow(
-                   box(
-                     "The upper left panel shows catches relative to the estimate of MSY, with indication of 95% confidence limits in grey. The upper right panel shows the development of relative total biomass (B/Bmsy), with the grey area indicating uncertainty. The lower left graph shows relative exploitation (F/Fmsy), with Fmsy corrected for reduced recruitment below 0.5 Bmsy. The lower-right panel shows the trajectory of relative stock size (B/Bmsy) over relative exploitation (F/Fmsy).",
-                     htmlOutput(ns("renderCmsyLog")),
-                     htmlOutput(ns("renderCmsyInfo"))
-                   ),
-                 
-                   
-                     box(id = "box_cmsy_results_charts",
-                       htmlOutput(ns("titleCmsyManagementChart")),
-                       "Panel A shows in black the time series of catches and in blue the three-years moving average with indication of highest and lowest catch, as used in the estimation of prior biomass by the default rules. Panel B shows the explored r-k log space and in dark grey the r-k pairs which were found by the CMSY model to be compatible with the catches and the prior information. Panel C shows the most probable r-k pair and its approximate 95% confidence limits in blue. Panel D shows in blue the biomass trajectory estimated by CMSY. Dotted lines indicate the 2.5th and 97.5th percentiles. Vertical blue lines indicate the prior biomass ranges. Panel E shows in blue the harvest rate from CMSY. Panel F shows the Schaefer equilibrium curve of catch/MSY relative to B/k, here indented at B/k < 0.25 to account for reduced recruitment at low stock sizes. The blue dots are scaled by CMSY estimates.",
-                       imageOutput(ns("renderCmsyManagementChart")),
-                       htmlOutput(ns("titleCmsyAnalisysChart")),
-                       imageOutput(ns("renderCmsyAnalysisChart"))
-                   )
-                 )
+            
+            box(
+              title = p("Depletion",
+                        actionButton(ns("infodepletion"),
+                                     tags$i(class = "fas fa-info",
+                                            style="font-size: 8px"),
+                                     class="infoBubbleButton")),
+              width=12,
+              
+              
+              box(width=4,
+                  fluidRow(
+                    div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
+                        HTML("<b>Starting depletion range (B/k) </b>")
+                    ),
+                    div(style = "display: inline-block; vertical-align:center; margin-left: 3px;",
+                        actionButton(ns("infostb"),
+                                     tags$i(class = "fas fa-info",
+                                            style="font-size: 8px"),
+                                     class="infoBubbleButton")
+                    ),
+                    sliderInput(ns("stb"),label="",min = 0.01, max = 1,step=0.001,value = c(0.01,0.4))
+                  )),
+              
+              
+              box(width=4,
+                  checkboxInput(ns("cmsy_checkbox_intb"),
+                                p("Does the catch time series have an intermediate year where biomass is particularly high or low?",
+                                  actionButton(ns("infointb"),
+                                               tags$i(class = "fas fa-info",
+                                                      style="font-size: 8px"),
+                                               class="infoBubbleButton")),
+                                FALSE),
+                  
+                  
+                  br(),
+                  
+                  
+                  box(id="box_cmsy_intb",  
+                      width = '100%',
+                      fluidRow(
+                        numericInput(ns("int.yr"),
+                                     p(HTML(paste0("Intermediate year")),
+                                       actionButton(ns("infointyr"),
+                                                    tags$i(class = "fas fa-info",
+                                                           style="font-size: 8px"),
+                                                    class="infoBubbleButton")),
+                                     value=c(NA), min = 1990, max=2030, step=1), ## MAKE THE MIN/MAX RELATE TO THE MIN/MAX OF THE TIME SERIES. SET DEFAULT TO MAX OF RANGE MINUS 5
+                        br(),
+                        sliderInput(ns("intb"),
+                                    p(HTML(paste0("Intermediate depletion range (B/k)",
+                                                  actionButton(ns("infointbval"),
+                                                               tags$i(class = "fas fa-info",
+                                                                      style="font-size: 8px"),
+                                                               class="infoBubbleButton")))),
+                                    value=c(0.01,0.4), min = 0.01, max = 1, step=0.001)
+                      )
+                  )
+              ),
+              
+              
+              
+              box(width=4,  
+                  fluidRow(
+                    div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
+                        HTML("<b>Ending depletion range (B/k) </b>")
+                    ),
+                    div(style = "display: inline-block; vertical-align:center; margin-left: 3px;",
+                        actionButton(ns("infoendb"),
+                                     tags$i(class = "fas fa-info",
+                                            style="font-size: 8px"),
+                                     class="infoBubbleButton")
+                    ),
+                    sliderInput(ns("endb"),label="",min = 0.01, max = 1,step=0.001,value = c(0.01,0.4))
+                  ))
+              
+            ),
+            
+            
+            
+            box(width=12,
+                checkboxInput(ns("cmsy_checkbox_comparison"),
+                              p("Optional : Check this box if you have fisheries reference points from previous assessments to use for comparison to the results from this analysis.",
+                                actionButton(ns("infocomp"),
+                                             tags$i(class = "fas fa-info",
+                                                    style="font-size: 8px"),
+                                             class="infoBubbleButton")),
+                              FALSE),
+                
+                br(),
+                
+                
+                box(id='biomass_ref_points',
+                    width=6,
+                    title='Biomass reference points and MSY',
+                    
+                    textInput(ns("msy"), p("Maximum Sustainable Yield (", withMathJax("\\(MSY\\)"), ")"), "NA"),
+                    textInput(ns("blim"), p("Biomass biological limit (", withMathJax("\\(B_{lim}\\)"), ")"), "NA"),
+                    textInput(ns("bpa"), p("Biomass precautionary value (",withMathJax("\\(B_{pa}\\)") , ")"), "NA"),
+                    textInput(ns("bmsy"), p("Biomass maximum sustainable yield (", withMathJax("\\(B_{MSY}\\)"), ")"), "NA"),
+                    textInput(ns("b40"), p("Biomass at 40% over the unfished level (", withMathJax("\\(B_{40\\%}\\)"), ")"), "NA"),
+                    textInput(ns("msyBTrigger"), p("Spawning Stock Biomass at MSY (", withMathJax("\\(SSB_{MSY}\\)"), ")"), "NA")
+                ),
+                
+                
+                box(id='fish_mort_ref_pts',
+                    width=6,
+                    title='Fishing mortality values',
+                    textInput(ns("fmsy"),
+                              p(HTML(paste0('Fishing mortality at Maximum Sustainable Yield (',withMathJax('\\(F_{MSY}\\)'),')',
+                                            actionButton(ns("infofmsy"),
+                                                         tags$i(class = "fas fa-info",
+                                                                style="font-size: 8px"),
+                                                         class="infoBubbleButton")))),"NA"),
+                    textInput(ns("flim"), p("Fishing mortality biological limit (", withMathJax("\\(F_{lim}\\)"), ")"), "NA"),
+                    textInput(ns("fpa"), p("Fishing mortality precautionary value (", withMathJax("\\(F_{pa}\\)"), ")"), "NA"),
+                    textInput(ns("fofl"), p("Fishing mortality at overfishing level (", withMathJax("\\(F_{ofl}\\)"),")"), "NA"),
+                    textInput(ns("last_f"), "Last known exploitation rate", "NA"),
+                    textInput(ns("m"),
+                              p(HTML(paste0("Natural mortality",
+                                            actionButton(ns("infom"),
+                                                         tags$i(class = "fas fa-info",
+                                                                style="font-size: 8px"),
+                                                         class="infoBubbleButton")))),"NA")
+                    
+                    #textInput("btype", "btype indicates if the catch file contains biomass, CPUE or no information associated with the catch time series", "None"),
+                    #textInput("comments", "Comments on data and computation", "landings"),
+                    #checkboxInput(ns("force.cmsy"), "Check this if CMSY results are to be preferred over the Bayesian State Model results (only when biomass or CPUE is available)", FALSE)
+                )
+                
             )
+          ),
+          
+          ## Action buttons
+          ## -------------------------------
+          box(title = p("Run Assessment & Download Report",
+                        actionButton(ns("infoAssessment"),
+                                     tags$i(class = "fas fa-info",
+                                            style="font-size: 8px"),
+                                     class="infoBubbleButton")),
+              width = NULL,
+              collapsible = FALSE,
+              solidHeader = TRUE,
+              class = "collapsed-box",
+              collapsed = FALSe,
+              
+              fluidRow(
+                div(style = "display: inline-block; vertical-align:center; margin-left: 50px;",
+                    disabled(actionButton(ns("go_cmsy"),
+                                          "Run CMSY Method", 
+                                          class="topLevelInformationButton"))
+                ),
+                div(style = "display: inline-block; vertical-align:center; margin-left: 20px;",
+                    actionButton(ns("reset_cmsy"), 
+                                 "Reset", 
+                                 class="topLevelInformationButton"), 
+                ),
+                div(style = "display: inline-block; vertical-align:center; margin-left: 20px;",
+                    uiOutput(ns("downloadCmsyReportButton"))
+                ),
+                div(style = "display: inline-block; vertical-align:center; margin-left: 20px;",
+                    uiOutput(ns("CmsyVREUpload"))
+                ),
+              ),
+              br(),br()
+          ),
+          
+          br(),
+          
+          htmlOutput("cmsyWarning"),
+          hr(),
+          box( width= 100, id = "box_cmsy_results",
+               title = p("Results of CMSY Method",
+                         actionButton(ns("cmsyResultConsiderations2"),
+                                      tags$i(class = "fas fa-info",
+                                             style="font-size: 8px"),
+                                      class="infoBubbleButton")),
+               tags$style(type="text/css",
+                          ".recalculating {opacity: 1.0;}"
+               ),
+               
+               
+               fluidRow(
+                 box(
+                   "The upper left panel shows catches relative to the estimate of MSY, with indication of 95% confidence limits in grey. The upper right panel shows the development of relative total biomass (B/Bmsy), with the grey area indicating uncertainty. The lower left graph shows relative exploitation (F/Fmsy), with Fmsy corrected for reduced recruitment below 0.5 Bmsy. The lower-right panel shows the trajectory of relative stock size (B/Bmsy) over relative exploitation (F/Fmsy).",
+                   htmlOutput(ns("renderCmsyLog")),
+                   htmlOutput(ns("renderCmsyInfo"))
+                 ),
+                 
+                 
+                 box(id = "box_cmsy_results_charts",
+                     htmlOutput(ns("titleCmsyManagementChart")),
+                     "Panel A shows in black the time series of catches and in blue the three-years moving average with indication of highest and lowest catch, as used in the estimation of prior biomass by the default rules. Panel B shows the explored r-k log space and in dark grey the r-k pairs which were found by the CMSY model to be compatible with the catches and the prior information. Panel C shows the most probable r-k pair and its approximate 95% confidence limits in blue. Panel D shows in blue the biomass trajectory estimated by CMSY. Dotted lines indicate the 2.5th and 97.5th percentiles. Vertical blue lines indicate the prior biomass ranges. Panel E shows in blue the harvest rate from CMSY. Panel F shows the Schaefer equilibrium curve of catch/MSY relative to B/k, here indented at B/k < 0.25 to account for reduced recruitment at low stock sizes. The blue dots are scaled by CMSY estimates.",
+                     imageOutput(ns("renderCmsyManagementChart")),
+                     htmlOutput(ns("titleCmsyAnalisysChart")),
+                     imageOutput(ns("renderCmsyAnalysisChart"))
+                 )
+               )
           )
   )
+  
 }
 
 resetCmsyInputValues <- function() {
   shinyjs::reset("fileCmsy")
-  shinyjs::reset("minOfYear")
-  shinyjs::reset("maxOfYear")
   shinyjs::reset("rangeYear")
   shinyjs::reset("resiliance")
-  shinyjs::reset("r.low")
-  shinyjs::reset("r.hi")
-  #shinyjs::reset("stb.low")
-  #shinyjs::reset("stb.hi")
   shinyjs::reset("stb")
   shinyjs::reset("int.yr")
   shinyjs::reset("intb")
-  # shinyjs::reset("intb.low")
-  # shinyjs::reset("intb.hi")
-  #shinyjs::reset("endb.low")
-  #shinyjs::reset("endb.hi")
   shinyjs::reset("endb")
-  shinyjs::reset("q.start")
-  shinyjs::reset("q.end")
-  shinyjs::reset("startYear")
-  shinyjs::reset("endYear")
+  shinyjs::reset("CMSY_years_q")
+  shinyjs::reset("CMSY_years_selected")
   shinyjs::reset("blim")
   shinyjs::reset("bpa")
   shinyjs::reset("bmsy")
@@ -515,7 +532,6 @@ resetCmsyInputValues <- function() {
   shinyjs::reset("msy")
   shinyjs::reset("msyBTrigger")
   shinyjs::reset("m")
-  shinyjs::reset("force.cmsy")
   #careful removeUI conflict with event
   removeUI(selector="#stockSelectorContainerInner")
   shinyjs::disable("go_cmsy")
