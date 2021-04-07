@@ -500,7 +500,7 @@ prior to the last year with high biomass.</p>")),
                      htmlOutput(ns("titleCmsyManagementChart")),
                      htmlOutput(ns("captionCmsyManagementChart")),
                      imageOutput(ns("renderCmsyManagementChart")),
-                     htmlOutput(ns("captionCmsyAnalysisChart")),
+                     htmlOutput(ns("captionCmsyAnalisysChart")),
                      imageOutput(ns("renderCmsyAnalysisChart"))
                  )
                )
