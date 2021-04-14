@@ -309,51 +309,84 @@ cmsyModule <- function(input, output, session) {
         js$hideComputing()
         js$showBox("box_cmsy_results")
         
-        for(i in 1:nrow(ret)) {
-          row <- ret[i,]
-          if (row$description == "estimates") {
-            contents <- getURL(row$url)
-            print (paste0("Cmsy text url", row$url))
-            contents <- gsub("Results for Management", "Reference points and indicators", contents)
-            cmsy$method$textRaw <- contents
-            contents <- gsub("\n\r", "<br/>", contents)
-            contents <- gsub("\n", "<br/>", contents)
-            contents <- gsub("B/Bmsy in last year", "<b>B/Bmsy in last year</b>", contents)
-            contents <- gsub("----------------------------------------------------------", "", contents)
-            cmsy$method$text <- contents
-          }
-          if (row$description == "analysis_charts") {
-            #fileAnalisysChart <- tempfile(fileext=".jpeg")
-            fileAnalisysChart <- paste(tempdir(),"/","cmsy_fileAnalisysChart",".jpeg",sep="")
-            fileAnalisysChart <- if(Sys.info()[["sysname"]] == "Windows") {paste(gsub("\\\\", "/", fileAnalisysChart)) } else {fileAnalisysChart}
-            print(fileAnalisysChart)
-            downloadFile(row$url, fileAnalisysChart)
-            cmsy$method$analisysChart <- fileAnalisysChart
-            cmsy$method$analisysChartUrl <- row$url
-          }
-          if (row$description == "management_charts") {
-            #fileManagementChart <- tempfile(fileext=".jpeg")
-            fileManagementChart <-paste(tempdir(),"/","cmsy_fileManagementChart",".jpeg",sep="")
-            fileManagementChart <- if(Sys.info()[["sysname"]] == "Windows") {paste(gsub("\\\\", "/", fileManagementChart)) } else {fileManagementChart}
-            print(fileManagementChart)
-            downloadFile(row$url, fileManagementChart)
-            cmsy$method$managementChart <- fileManagementChart
-            cmsy$method$managementChartUrl <- row$url
-          }
-          if (row$description == "Log of the computation") {
-            cmsy$method$log <- row$url
-          }
-        }
+        print("Create a temp dir for CMSY")
+        cmsy_temp_dir <- tempdir()
+        print(cmsy_temp_dir)
+        print("Analyze ret object")
+        print(sapply(colnames(ret), function(x){class(ret[,x])}))
         
-        if (!is.null(session$userData$sessionMode()) && session$userData$sessionMode()=="GCUBE") {
+        invisible(lapply(1:nrow(ret), function(i){
+          row <- ret[i,]
+          row_out <- switch(row$description,
+            "Log of the computation" = {
+              print("Report computation logs")
+              cmsy$method$log <- row$url
+            },
+            "estimates" = {
+              print("Downloading Estimates")
+              print(row$url)
+              contents <- httr::content(httr::GET(row$url),"text")
+              print (paste0("Cmsy text url", row$url))
+              contents <- gsub("Results for Management", "Reference points and indicators", contents)
+              cmsy$method$textRaw <<- contents
+              contents <- gsub("\n\r", "<br/>", contents)
+              contents <- gsub("\n", "<br/>", contents)
+              contents <- gsub("B/Bmsy in last year", "<b>B/Bmsy in last year</b>", contents)
+              contents <- gsub("----------------------------------------------------------", "", contents)
+              cmsy$method$text <<- contents
+            },
+            "management_charts" = {
+              print("Downloading Management charts")
+              print(row$url)
+              #fileManagementChart <- tempfile(fileext=".jpeg")
+              fileManagementChart <-paste(cmsy_temp_dir,"/","cmsy_fileManagementChart",".jpeg",sep="")
+              fileManagementChart <- if(Sys.info()[["sysname"]] == "Windows") {paste(gsub("\\\\", "/", fileManagementChart)) } else {fileManagementChart}
+              print(fileManagementChart)
+              downloadFile(row$url, fileManagementChart)
+              cmsy$method$managementChart <<- fileManagementChart
+              cmsy$method$managementChartUrl <<- row$url
+            },
+            "analysis_charts" = {
+              print("Downloading Analysis charts")
+              print(row$url)
+              #fileAnalisysChart <- tempfile(fileext=".jpeg")
+              fileAnalisysChart <- paste(cmsy_temp_dir,"/","cmsy_fileAnalisysChart",".jpeg",sep="")
+              fileAnalisysChart <- if(Sys.info()[["sysname"]] == "Windows") {paste(gsub("\\\\", "/", fileAnalisysChart)) } else {fileAnalisysChart}
+              print(fileAnalisysChart)
+              downloadFile(row$url, fileAnalisysChart)
+              cmsy$method$analisysChart <<- fileAnalisysChart
+              cmsy$method$analisysChartUrl <<- row$url
+            }
+          )
+        }))
+
+        if (!is.null(session$userData$sessionMode())) if(session$userData$sessionMode()=="GCUBE") {
           flog.info("Uploading CMSY report to i-Marine workspace")
           reportFileName <- paste(tempdir(),"/","CMSY_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
           createCmsyPDFReport(reportFileName, cmsy, input)
           cmsyUploadVreResult$res <- FALSE
           
-          basePath <- paste0("/Home/",session$userData$sessionUsername(),"/Workspace/")
+          basePath <- paste0("/Home/",session$userData$sessionUsername(),"/Workspace")
+          flog.info(paste0("Base path for upload: ", basePath))
+          flog.info(paste0("Username for upload: ", session$userData$sessionUsername()))
+          flog.info(paste0("Token for upload: ", session$userData$sessionToken()))
+          
+          #instantiate storagehub manager
+          SH_MANAGER <- d4storagehub4R::StoragehubManager$new(token = session$userData$sessionToken(), logger = "INFO")
+          
           tryCatch({
-            uploadToIMarineFolder(reportFileName, basePath, uploadFolderName)
+            folderID <- SH_MANAGER$searchWSFolderID(folderPath = uploadFolderName)
+            if (is.null(folderID)) {
+              flog.info("Creating folder [%s] in i-Marine workspace", uploadFolderName)
+              SH_MANAGER$createFolder(name = uploadFolderName)
+            }
+            flog.info("Trying to upload %s to i-Marine workspace folder %s", reportFileName, file.path(basePath, uploadFolderName))
+            SH_MANAGER$uploadFile(
+              folderPath = file.path(basePath, uploadFolderName),
+              file = reportFileName,
+              description = "CMSY report"
+            )
+            flog.info("File %s successfully uploaded to the i-Marine folder %s", reportFileName, file.path(basePath, uploadFolderName))
             cmsyUploadVreResult$res <- TRUE
           }, error = function(err) {
             flog.error("Error uploading CMSY report to the i-Marine Workspace: %s", err)
@@ -413,7 +446,7 @@ cmsyModule <- function(input, output, session) {
   })
   output$renderCmsyManagementChart <- renderImage({
     if ("method" %in% names(cmsy)) {
-      if (!is.null(cmsy$method)) {
+      if (!is.null(cmsy$method)) if(!is.null(cmsy$method$managementChart)) {
         Sys.sleep(1)
         w1 <- session$clientData$output_renderCmsyManagementChart_width
         h1 <- (w1*3)/4
@@ -430,7 +463,7 @@ cmsyModule <- function(input, output, session) {
   })
   output$renderCmsyAnalysisChart <- renderImage({
     if ("method" %in% names(cmsy)) {
-      if (!is.null(cmsy$method)) {
+      if (!is.null(cmsy$method)) if(!is.null(cmsy$method$analisysChart)) {
         Sys.sleep(1)
         w2 <- session$clientData$output_renderCmsyAnalysisChart_width
         h2 <- (w2*3)/4

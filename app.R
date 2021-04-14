@@ -28,6 +28,8 @@ library(futile.logger)
 library(R.utils)
 library(knitr)
 library(shinyWidgets)
+library(XML)
+library(d4storagehub4R)
 
 ##### Dependencies
 source("ui/menu.R")
@@ -67,7 +69,6 @@ source("assets/support/vonBertalannfly.R")
 source("assets/support/seasonalVonBertalannfly.R")
 source("assets/support/naturalMortality.R")
 source("assets/commons/commons.R")
-source("assets/commons/storageHub.R")
 source("assets/commons/labels.R")
 
 fileLog <- Sys.getenv("SMT_LOG")
@@ -84,8 +85,6 @@ set.seed(1)
 d <- data(package = "TropFishR")
 parallel <- FALSE
 fishingMortality <- "NA"
-username <- NULL
-token <- NULL
 
 sidebar <- dashboardSidebar(uiOutput("sidebar"))
 
@@ -234,8 +233,6 @@ server <- function(input, output, session) {
     if (!is.null(session$userData$sessionUsername())) {
       flog.info("Session username is: %s", session$userData$sessionUsername())
       session$userData$sessionMode("GCUBE")
-      username <- session$userData$sessionUsername()
-      token <- session$userData$sessionToken()
     } else {
       flog.info("Session username is: %s", "NULL")
     }
@@ -270,7 +267,6 @@ server <- function(input, output, session) {
   callModule(vonBertalannfyModule, "vonBertalannfyModule")
   callModule(seasonalVonBertalannfyModule, "seasonalVonBertalannfyModule")
   callModule(naturalMortalityModule, "naturalMortalityModule")
-
 
   source("server/labels.R", local=TRUE)
 

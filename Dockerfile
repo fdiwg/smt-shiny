@@ -71,6 +71,8 @@ RUN R -e "devtools::install_github('AnalytixWare/ShinySky')"
 #RUN R -e "install.packages(c('DT'), repos='https://cloud.r-project.org/')"
 #RUN R -e "install.packages('futile.logger', repos='https://cloud.r-project.org/')"
 
+RUN R -e "remotes::install_github('eblondel/d4storagehub4R')"
+
 #Development
 RUN git -C /root/ clone https://github.com/abennici/StockMonitoringTool.git && echo "OK!"
 #Deployment
