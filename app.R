@@ -14,11 +14,12 @@
 library(shiny)
 library(shinyBS)
 library(shinyjs)
-library(shinysky)
+#library(shinysky)
 library(shinythemes)
 library(shinydashboard)
 library(RCurl)
-library(fishmethods)
+library(httr)
+#library(fishmethods)
 library(TropFishR)
 library(ggplot2)
 library(rfishbase)
@@ -216,31 +217,25 @@ server <- function(input, output, session) {
     if (!is.null(query[[gcubeTokenQueryParam]])) {
       session$userData$sessionToken(query[[gcubeTokenQueryParam]])
     }
-  #})
 
-  #observe({
     if (!is.null(session$userData$sessionToken())) {
       flog.info("Session token is: %s", session$userData$sessionToken())
       session$userData$sessionUsername(getVREUsername(apiUrl, session$userData$sessionToken()))
     } else {
       flog.info("Session token is: %s", "NULL")
     }
-  #})
 
-  #observe({
     if (!is.null(session$userData$sessionMode())) {
       flog.info("Session mode is: %s", session$userData$sessionMode())
     } else {
       flog.info("Session mode is: %s", "NULL")
     }
- # })
 
-  #observe({
     if (!is.null(session$userData$sessionUsername())) {
       flog.info("Session username is: %s", session$userData$sessionUsername())
       session$userData$sessionMode("GCUBE")
-      username <<- session$userData$sessionUsername()
-      token <<- session$userData$sessionToken()
+      username <- session$userData$sessionUsername()
+      token <- session$userData$sessionToken()
     } else {
       flog.info("Session username is: %s", "NULL")
     }
