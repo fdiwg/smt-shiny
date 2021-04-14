@@ -206,7 +206,7 @@ runCmsy <- function (region,subregion,stock,group,name,englishName,scientificNam
     file.remove(dffile)
     file.remove(sentfile)
     outstring<-content(out1, "text", encoding = "UTF-8")
-    write(outstring, file = paste0(filetime, "_out.xml"),append = FALSE, sep = "")
+    #write(outstring, file = paste0(filetime, "_out.xml"),append = FALSE, sep = "")
     print(cmsyParseXml(out1))
     return (cmsyParseXml(out1))
   }
