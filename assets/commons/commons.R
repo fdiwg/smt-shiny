@@ -171,3 +171,18 @@ clearResults <- function(id) {
   localJs <- paste0("document.getElementById('", id, "').parentElement.style.visibility = 'hidden'" )
   shinyjs::runjs(localJs)
 }
+
+uploadToIMarineFolder <- function(manager, reportFileName, basePath, folderName){
+  folderID <- manager$searchWSFolderID(folderPath = folderName)
+  if (is.null(folderID)) {
+    flog.info("Creating folder [%s] in i-Marine workspace", folderName)
+    manager$createFolder(name = folderName)
+  }
+  flog.info("Trying to upload %s to i-Marine workspace folder %s", reportFileName, file.path(basePath, folderName))
+  manager$uploadFile(
+    folderPath = file.path(basePath, folderName),
+    file = reportFileName,
+    description = "CMSY report"
+  )
+  flog.info("File %s successfully uploaded to the i-Marine folder %s", reportFileName, file.path(basePath, uploadFolderName))
+}

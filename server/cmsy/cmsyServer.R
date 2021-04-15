@@ -1,6 +1,5 @@
 cmsyModule <- function(input, output, session) {
   
-  
   ns <- session$ns
   
   cmsy <- reactiveValues()
@@ -371,22 +370,10 @@ cmsyModule <- function(input, output, session) {
           flog.info(paste0("Username for upload: ", session$userData$sessionUsername()))
           flog.info(paste0("Token for upload: ", session$userData$sessionToken()))
           
-          #instantiate storagehub manager
-          SH_MANAGER <- d4storagehub4R::StoragehubManager$new(token = session$userData$sessionToken(), logger = "INFO")
+          SH_MANAGER <- session$userData$storagehubManager()
           
           tryCatch({
-            folderID <- SH_MANAGER$searchWSFolderID(folderPath = uploadFolderName)
-            if (is.null(folderID)) {
-              flog.info("Creating folder [%s] in i-Marine workspace", uploadFolderName)
-              SH_MANAGER$createFolder(name = uploadFolderName)
-            }
-            flog.info("Trying to upload %s to i-Marine workspace folder %s", reportFileName, file.path(basePath, uploadFolderName))
-            SH_MANAGER$uploadFile(
-              folderPath = file.path(basePath, uploadFolderName),
-              file = reportFileName,
-              description = "CMSY report"
-            )
-            flog.info("File %s successfully uploaded to the i-Marine folder %s", reportFileName, file.path(basePath, uploadFolderName))
+            uploadToIMarineFolder(SH_MANAGER, reportFileName, basePath, uploadFolderName)
             cmsyUploadVreResult$res <- TRUE
           }, error = function(err) {
             flog.error("Error uploading CMSY report to the i-Marine Workspace: %s", err)

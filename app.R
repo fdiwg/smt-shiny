@@ -139,6 +139,7 @@ ui <- tagList(
 
 
 server <- function(input, output, session) {
+  
   flog.threshold(DEBUG)
 
   flog.appender(appender.file(fileLog))
@@ -200,63 +201,77 @@ server <- function(input, output, session) {
       isolate({updateTabItems(session, "smt-tabs", "homeTab")})
     }
   })
-
+  
+  app_ctrl <- reactiveValues(
+    withtoken = FALSE
+  )
   session$userData$sessionToken <- reactiveVal(NULL)
   session$userData$sessionUsername <- reactiveVal(NULL)
   session$userData$sessionMode <- reactiveVal(NULL)
-
+  session$userData$storagehubManager <- reactiveVal(NULL)
+  
   ## Hide any overlay when session starts
   observe({
     js$hideComputing()
   })
 
-  ##Guessing run mode
+  #observer on token
   observe({
-    query <- parseQueryString(session$clientData$url_search)
-    if (!is.null(query[[gcubeTokenQueryParam]])) {
-      session$userData$sessionToken(query[[gcubeTokenQueryParam]])
-    }
-
-    if (!is.null(session$userData$sessionToken())) {
-      flog.info("Session token is: %s", session$userData$sessionToken())
-      session$userData$sessionUsername(getVREUsername(apiUrl, session$userData$sessionToken()))
-    } else {
-      flog.info("Session token is: %s", "NULL")
-    }
-
-    if (!is.null(session$userData$sessionMode())) {
-      flog.info("Session mode is: %s", session$userData$sessionMode())
-    } else {
-      flog.info("Session mode is: %s", "NULL")
-    }
-
-    if (!is.null(session$userData$sessionUsername())) {
-      flog.info("Session username is: %s", session$userData$sessionUsername())
-      session$userData$sessionMode("GCUBE")
-    } else {
-      flog.info("Session username is: %s", "NULL")
+    if(!app_ctrl$withtoken){
+      query <- parseQueryString(session$clientData$url_search)
+      if(!is.null(query[[gcubeTokenQueryParam]])){
+        token <- query[[gcubeTokenQueryParam]]
+        session$userData$sessionToken(token)
+        app_ctrl$withtoken <- TRUE
+        
+        #instantiate storagehub manager
+        sh_manager = d4storagehub4R::StoragehubManager$new(token = session$userData$sessionToken(), logger = "INFO")
+        session$userData$sessionUsername(sh_manager$getUserProfile()$username)
+        session$userData$storagehubManager(sh_manager)
+        
+        if (!is.null(session$userData$sessionToken())) {
+          flog.info("Session token is: %s", session$userData$sessionToken())
+        } else {
+          flog.info("Session token is: %s", "NULL")
+        }
+        
+        if (!is.null(session$userData$sessionMode())) {
+          flog.info("Session mode is: %s", session$userData$sessionMode())
+        } else {
+          flog.info("Session mode is: %s", "NULL")
+        }
+        
+        if (!is.null(session$userData$sessionUsername())) {
+          flog.info("Session username is: %s", session$userData$sessionUsername())
+          session$userData$sessionMode("GCUBE")
+        } else {
+          flog.info("Session username is: %s", "NULL")
+        }
+        
+      }
     }
   })
-
+  
   session$userData$cmsy <- reactiveValues()
-
+  
   # session$userData$elefan_sa <- reactiveValues()
   # session$userData$elefan <- reactiveValues()
   session$userData$sbprExec <- reactiveValues()
   session$userData$yprExec <- reactiveValues()
   session$userData$fishingMortality <- reactiveValues()
-
+  
   session$userData$fishingMortality$FcurrGA <- NA
   session$userData$fishingMortality$FcurrSA <- NA
   session$userData$fishingMortality$Fcurr <- NA
-
+  
   session$userData$cmsyUploadVreResult <- reactiveValues()
   session$userData$elefanGaUploadVreResult <- reactiveValues()
   # session$userData$elefanSaUploadVreResult <- reactiveValues()
   # session$userData$elefanUploadVreResult <- reactiveValues()
   session$userData$sbprUploadVreResult <- reactiveValues()
   session$userData$yprUploadVreResult <- reactiveValues()
-
+  
+  
   callModule(cmsyModule, "cmsyModule")
   callModule(elefanGaModule, "elefanGaModule")
   # callModule(elefanSaModule, "elefanSaModule")
