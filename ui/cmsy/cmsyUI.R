@@ -535,4 +535,5 @@ resetCmsyInputValues <- function() {
   removeUI(selector="#stockSelectorContainerInner")
   shinyjs::disable("go_cmsy")
   clearResults("box_cmsy_results")
+  clearResults("box_cmsy_exploPlots")
 }
