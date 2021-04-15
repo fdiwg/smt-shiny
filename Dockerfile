@@ -24,7 +24,8 @@ RUN apt-get update && apt-get install -y \
     texlive-fonts-recommended \
     texlive-formats-extra \
     #libv8-3.14.5 \
-    libv8-dev
+    libv8-dev \
+    libsecret-1-dev
 
 
 RUN apt-get update && apt-get upgrade -y
@@ -71,6 +72,8 @@ RUN R -e "devtools::install_github('AnalytixWare/ShinySky')"
 #RUN R -e "install.packages(c('DT'), repos='https://cloud.r-project.org/')"
 #RUN R -e "install.packages('futile.logger', repos='https://cloud.r-project.org/')"
 
+RUN R -e "install.packages(c('R6'), repos='https://cran.r-project.org/')"
+RUN R -e "install.packages(c('keyring'), repos='https://cran.r-project.org/')"
 RUN R -e "remotes::install_github('eblondel/d4storagehub4R')"
 
 #Development
