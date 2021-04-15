@@ -140,9 +140,8 @@ ui <- tagList(
 
 server <- function(input, output, session) {
   
-  flog.threshold(DEBUG)
-
-  flog.appender(appender.file(fileLog))
+  #flog.threshold(DEBUG)
+  #flog.appender(appender.file(fileLog))
 
   session$allowReconnect("force")
   waiter_hide()
@@ -229,6 +228,9 @@ server <- function(input, output, session) {
         session$userData$sessionUsername(sh_manager$getUserProfile()$username)
         session$userData$storagehubManager(sh_manager)
         
+        #trace logs by user
+        fileLog <- sprintf("session_for_%s.log", sh_manager$getUserProfile()$username)
+        
         if (!is.null(session$userData$sessionToken())) {
           flog.info("Session token is: %s", session$userData$sessionToken())
         } else {
@@ -249,6 +251,8 @@ server <- function(input, output, session) {
         }
         
       }
+      flog.threshold(DEBUG)
+      flog.appender(appender.file(fileLog))
     }
   })
   
