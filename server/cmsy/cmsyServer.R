@@ -300,7 +300,8 @@ cmsyModule <- function(input, output, session) {
                        btype=input$btype,
                        force.cmsy=FALSE,
                        comments=input$comments,
-                       token=vreToken, 
+                       #token=vreToken, 
+                       token=session$userData$sessionToken(),
                        inputCsvFile=filePath$datapath, 
                        templateFile=templateFileDlmTools)
         
