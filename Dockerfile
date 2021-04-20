@@ -17,7 +17,7 @@ RUN apt-get update && apt-get install -y \
     libjpeg-dev \
     default-jre \
     default-jdk \
-    libxml2 \
+    #libxml2 \
     libxml2-dev \
     git \
     texlive-latex-base \
@@ -25,7 +25,9 @@ RUN apt-get update && apt-get install -y \
     texlive-formats-extra \
     #libv8-3.14.5 \
     libv8-dev \
+	libsodium-dev \
     libsecret-1-dev
+	
 
 
 RUN apt-get update && apt-get upgrade -y
@@ -73,6 +75,7 @@ RUN R -e "devtools::install_github('AnalytixWare/ShinySky')"
 #RUN R -e "install.packages('futile.logger', repos='https://cloud.r-project.org/')"
 
 RUN R -e "install.packages(c('R6'), repos='https://cran.r-project.org/')"
+RUN R -e "install.packages(c('sodium'), repos='https://cran.r-project.org/')"
 RUN R -e "install.packages(c('keyring'), repos='https://cran.r-project.org/')"
 RUN R -e "devtools::install_github('eblondel/d4storagehub4R')"
 
