@@ -19,6 +19,7 @@ These dependencies can be installed using the usual *sudo apt install* command
 - texlive-formats-extra 
 - libv8-3.14.5 
 - libv8-dev
+- libsodium-dev
 - libsecret-1-dev
 
 ### R libraries
