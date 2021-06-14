@@ -14,10 +14,11 @@
 library(shiny)
 library(shinyBS)
 library(shinyjs)
-library(shinysky)
+#library(shinysky)
 library(shinythemes)
 library(shinydashboard)
 library(RCurl)
+library(httr)
 library(fishmethods)
 library(TropFishR)
 library(ggplot2)
@@ -27,6 +28,8 @@ library(futile.logger)
 library(R.utils)
 library(knitr)
 library(shinyWidgets)
+library(XML)
+library(d4storagehub4R)
 
 ##### Dependencies
 source("ui/menu.R")
@@ -66,7 +69,6 @@ source("assets/support/vonBertalannfly.R")
 source("assets/support/seasonalVonBertalannfly.R")
 source("assets/support/naturalMortality.R")
 source("assets/commons/commons.R")
-source("assets/commons/storageHub.R")
 source("assets/commons/labels.R")
 
 fileLog <- Sys.getenv("SMT_LOG")
@@ -83,8 +85,6 @@ set.seed(1)
 d <- data(package = "TropFishR")
 parallel <- FALSE
 fishingMortality <- "NA"
-username <- NULL
-token <- NULL
 
 sidebar <- dashboardSidebar(uiOutput("sidebar"))
 
@@ -139,9 +139,9 @@ ui <- tagList(
 
 
 server <- function(input, output, session) {
-  flog.threshold(DEBUG)
-
-  flog.appender(appender.file(fileLog))
+  
+  #flog.threshold(DEBUG)
+  #flog.appender(appender.file(fileLog))
 
   session$allowReconnect("force")
   waiter_hide()
@@ -200,71 +200,82 @@ server <- function(input, output, session) {
       isolate({updateTabItems(session, "smt-tabs", "homeTab")})
     }
   })
-
+  
+  app_ctrl <- reactiveValues(
+    withtoken = FALSE
+  )
   session$userData$sessionToken <- reactiveVal(NULL)
   session$userData$sessionUsername <- reactiveVal(NULL)
   session$userData$sessionMode <- reactiveVal(NULL)
-
+  session$userData$storagehubManager <- reactiveVal(NULL)
+  
   ## Hide any overlay when session starts
   observe({
     js$hideComputing()
   })
 
-  ##Guessing run mode
+  #observer on token
   observe({
-    query <- parseQueryString(session$clientData$url_search)
-    if (!is.null(query[[gcubeTokenQueryParam]])) {
-      session$userData$sessionToken(query[[gcubeTokenQueryParam]])
-    }
-  #})
-
-  #observe({
-    if (!is.null(session$userData$sessionToken())) {
-      flog.info("Session token is: %s", session$userData$sessionToken())
-      session$userData$sessionUsername(getVREUsername(apiUrl, session$userData$sessionToken()))
-    } else {
-      flog.info("Session token is: %s", "NULL")
-    }
-  #})
-
-  #observe({
-    if (!is.null(session$userData$sessionMode())) {
-      flog.info("Session mode is: %s", session$userData$sessionMode())
-    } else {
-      flog.info("Session mode is: %s", "NULL")
-    }
- # })
-
-  #observe({
-    if (!is.null(session$userData$sessionUsername())) {
-      flog.info("Session username is: %s", session$userData$sessionUsername())
-      session$userData$sessionMode("GCUBE")
-      username <<- session$userData$sessionUsername()
-      token <<- session$userData$sessionToken()
-    } else {
-      flog.info("Session username is: %s", "NULL")
+    if(!app_ctrl$withtoken){
+      query <- parseQueryString(session$clientData$url_search)
+      if(!is.null(query[[gcubeTokenQueryParam]])){
+        token <- query[[gcubeTokenQueryParam]]
+        session$userData$sessionToken(token)
+        app_ctrl$withtoken <- TRUE
+        
+        #instantiate storagehub manager
+        sh_manager = d4storagehub4R::StoragehubManager$new(token = session$userData$sessionToken(), logger = "INFO")
+        session$userData$sessionUsername(sh_manager$getUserProfile()$username)
+        session$userData$storagehubManager(sh_manager)
+        
+        #trace logs by user
+        fileLog <- sprintf("session_for_%s.log", sh_manager$getUserProfile()$username)
+        
+        if (!is.null(session$userData$sessionToken())) {
+          flog.info("Session token is: %s", session$userData$sessionToken())
+        } else {
+          flog.info("Session token is: %s", "NULL")
+        }
+        
+        if (!is.null(session$userData$sessionMode())) {
+          flog.info("Session mode is: %s", session$userData$sessionMode())
+        } else {
+          flog.info("Session mode is: %s", "NULL")
+        }
+        
+        if (!is.null(session$userData$sessionUsername())) {
+          flog.info("Session username is: %s", session$userData$sessionUsername())
+          session$userData$sessionMode("GCUBE")
+        } else {
+          flog.info("Session username is: %s", "NULL")
+        }
+        
+      }
+      flog.threshold(DEBUG)
+      flog.appender(appender.file(fileLog))
     }
   })
-
+  
   session$userData$cmsy <- reactiveValues()
-
+  
   # session$userData$elefan_sa <- reactiveValues()
   # session$userData$elefan <- reactiveValues()
   session$userData$sbprExec <- reactiveValues()
   session$userData$yprExec <- reactiveValues()
   session$userData$fishingMortality <- reactiveValues()
-
+  
   session$userData$fishingMortality$FcurrGA <- NA
   session$userData$fishingMortality$FcurrSA <- NA
   session$userData$fishingMortality$Fcurr <- NA
-
+  
   session$userData$cmsyUploadVreResult <- reactiveValues()
   session$userData$elefanGaUploadVreResult <- reactiveValues()
   # session$userData$elefanSaUploadVreResult <- reactiveValues()
   # session$userData$elefanUploadVreResult <- reactiveValues()
   session$userData$sbprUploadVreResult <- reactiveValues()
   session$userData$yprUploadVreResult <- reactiveValues()
-
+  
+  
   callModule(cmsyModule, "cmsyModule")
   callModule(elefanGaModule, "elefanGaModule")
   # callModule(elefanSaModule, "elefanSaModule")
@@ -275,7 +286,6 @@ server <- function(input, output, session) {
   callModule(vonBertalannfyModule, "vonBertalannfyModule")
   callModule(seasonalVonBertalannfyModule, "seasonalVonBertalannfyModule")
   callModule(naturalMortalityModule, "naturalMortalityModule")
-
 
   source("server/labels.R", local=TRUE)
 
