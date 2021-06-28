@@ -60,7 +60,7 @@ This tool was designed to allow users with little to no programming experience t
     text <- paste0(text, "<h4>Instruction to build a Docker image of this application : </h4>")
     text <- paste0(text, "<p>")
     text <- paste0(text, "A Dockerfile is provided that allows this tool to be run offline on any operating system. ")
-    text <- paste0(text, "To build and run the application, open a command window (terminal) on your computer and enter the following commands :")
+    text <- paste0(text, "To build and run the application, open a command window (terminal, bash, command prompt) on your computer and enter the following commands :")
     text <- paste0(text, "<ul>")
     text <- paste0(text, "<li>sudo wget https://raw.githubusercontent.com/pink-sh/StockMonitoringTool/master/Dockerfile</li>")
     text <- paste0(text, "<li>sudo docker build -t stock_monitoring_tool . </li>")
