@@ -117,6 +117,7 @@ output$cmsyIntroOut <- renderText({
     text <- paste0(text, "<ul>")
     text <- paste0(text, "<li>Save your dataset in 'csv' format.</li>")
     text <- paste0(text, "<li>The separator for the .csv file should be a comma ‘,’. The default might differ depending on the language settings of your spreadsheet manipulation program (e.g. Excel).</li>")
+
     text <- paste0(text, "<li>Note that years with missing biomass data should be filled with an 'NA' value.</li>")
     text <- paste0(text, "<li>Note that the column names of your dataset should exactly match those of the sample dataset.</li>")
     text <- paste0(text, "<li><b>Please ensure your time-series data are at least 15 years in length from starting year to ending year.</b></li>")
@@ -145,6 +146,7 @@ output$cmsyIntroOut <- renderText({
     text <- paste0(text, "<li> Adjust the Assessment Settings")
     text <- paste0(text, "<ol type='a'>")
     text <- paste0(text, "<li> Data Selection - select the years of data to include in the analysis,and over which to calculate the catchability. </li>")
+
     text <- paste0(text, "<li> Assessment settings - set the search space of the CMSY algorithm to estimate probable r-K pairs (set resilience and depletion). </li>")
     text <- paste0(text, "<li> Optional information - if you have reference point values from previous assessments, you can choose to enter and compare them to the results of the present analysis.</li>")
     text <- paste0(text, "</ol>")
@@ -328,6 +330,7 @@ output$elefanIntroOut <- renderText({
     text <- paste0(text, "<ul>")
     text <- paste0(text, "<li>With the Elefan sample dataset, run time is <b> 2-3 mins</b></li>")
     text <- paste0(text, "</ul>")
+
     text <- paste0(text, "</p>")
     text <- paste0(text, "<br>")
     
@@ -421,6 +424,7 @@ output$cmsySampleDataset <- renderText({
     text <- paste0(text, "<li><b>bt</b>: the value of the biomass (in tonnes, e.g. 34567), or the value of the CPUE or stock size index (e.g. 0.123), or NA if there is no information. Gaps filled with NA are acceptable for bt, i.e., abundance data can be fewer than catch data.</li>")
     text <- paste0(text, "</ul>")
     text <- paste0(text, "Other columns are identifiers that you may choose to include, but they are not necessary to run the model.<br><br>")
+
     text <- paste0(text, "Use the <a href='https://data.d4science.net/qhX2' target='_blank'> sample dataset </a> as a template to prepare your data.<br><br>")
     text <- paste0(text, "<b>Specific considerations regarding your own dataset:</b>")
     text <- paste0(text, "<ul>")
@@ -428,6 +432,7 @@ output$cmsySampleDataset <- renderText({
     text <- paste0(text, "<li>The separator for the .csv file should be a comma ‘,’. The default might differ depending on the language settings of your spreadsheet manipulation program (e.g. Excel).</li>")
     text <- paste0(text, "<li>Note that years with missing data should be filled with an 'NA' value.</li>")
     text <- paste0(text, "<li>Note that the column names of your dataset should exactly match those of the sample dataset.</li>")
+
     text <- paste0(text, "<li><b>Please ensure your time-series is at least 15 years in length from starting year to ending year.</b></li>")
     text <- paste0(text, "</ul>")
     text <- paste0(text, "</p>")

@@ -191,7 +191,9 @@ tabElefanGa <- function(id) {
                         HTML("<p>The natural mortality rate (M) is required to estimate the fishing mortality (F) from the total mortality (Z) estimated by the catch curve (F = Z - M). The natural mortality is estimated by an empirical formula based on estimated growth parameters. The options are: <br> - Then's growth formula (<a href='https://doi.org/10.1093/icesjms/fsu136' target='_blank'>Then et al. 2015</a>), <br> - Pauly's growth and temperature formula (<a href='https://doi.org/10.1093/icesjms/39.2.175' target='_blank'>Pauly 1980</a>), and <br> - Then's maximum age formula (<a href='https://doi.org/10.1093/icesjms/fsu136' target='_blank'>Then et al. 2015</a>); <br><br> While the first option does not require any additional information, the second requires the average annual sea surface temperature (SST) in degrees Celsius and allows corrections for schooling fish (multiplication by 0.8). The third option requires an estimate of the maximum age of the fish.<br><br>Please see the Natural Mortality estimator page in the Supporting Tools menu for more information. </p>")
                 ),
 
+
                 bsModal("info_assessmentGA", "Check, Assessment, Reset & Report", ns("infoAssessment"),
+
                         size = "large",
                         HTML("<p>It is recommended to run a quick check by pressing <b>'Run Check'</b> before running the main assessment. 
                              While the main assessment can take a few minutes to run, depending on the settings of the ELEFAN optimation routine and the sample size of the dataset, 
