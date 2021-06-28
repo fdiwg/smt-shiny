@@ -1,5 +1,5 @@
 elefanGaModule <- function(input, output, session) {
-
+    
     ns <- session$ns
 
     ## Definition of reactive values
@@ -551,13 +551,16 @@ elefanGaModule <- function(input, output, session) {
                 if (!is.null(session$userData$sessionMode()) && session$userData$sessionMode()=="GCUBE") {
                     flog.info("Uploading Elefan GA report to i-Marine workspace")
                     reportFileName <- paste(tempdir(),"/","ElefanGA_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
-                    createElefanGaPDFReport(reportFileName,elefan_ga,input)
+                    #createElefanGaPDFReport(reportFileName,elefan_ga,input)
+                    createElefanGaPDFReport(reportFileName, elefan_ga, input, output)
                     elefanGaUploadVreResult$res <- FALSE
 
                     basePath <- paste0("/Home/",session$userData$sessionUsername(),"/Workspace/")
 
+                    SH_MANAGER <- session$userData$storagehubManager()
+                    
                     tryCatch({
-                        uploadToIMarineFolder(reportFileName, basePath, uploadFolderName)
+                        uploadToIMarineFolder(SH_MANAGER, reportFileName, basePath, uploadFolderName)
                         elefanGaUploadVreResult$res <- TRUE
                     }, error = function(err) {
                         flog.error("Error uploading Elefan GA report to the i-Marine Workspace: %s", err)
@@ -1046,20 +1049,20 @@ elefanGaModule <- function(input, output, session) {
         text
     })
 
-    output$methodConsiderationsText <- renderText({
+    output$elefanGAmethodConsiderationsText <- renderText({
         text <- gsub("%%ELEFAN%%", "ELEFAN_GA", getMethodConsiderationTextForElefan())
         text
     })
-    output$methodConsiderationsText2 <- renderText({
+    output$elefanGAmethodConsiderationsText2 <- renderText({
         text <- gsub("%%ELEFAN%%", "ELEFAN_GA", getMethodConsiderationTextForElefan())
         text
     })
 
-    output$resultConsiderationsText <- renderText({
+    output$elefanGAresultConsiderationsText <- renderText({
         text <- gsub("%%ELEFAN%%", "ELEFAN_GA", getResultConsiderationTextForElefan())
         text
     })
-    output$resultConsiderationsText2 <- renderText({
+    output$elefanGAresultConsiderationsText2 <- renderText({
         text <- gsub("%%ELEFAN%%", "ELEFAN_GA", getResultConsiderationTextForElefan())
         text
     })
