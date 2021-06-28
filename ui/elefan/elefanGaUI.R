@@ -78,15 +78,15 @@ tabElefanGa <- function(id) {
                 bsModal("info_agg", "Data aggregation", ns("infoAGG"),
                         size = "large",
                         HTML("<p>Define whether the aggregation of the dataset should be kept ('none' is the default), or if the dataset should be aggregated by 'month', 'quarter', and 'year'. <br><br> Note that if 'month' is chosen, the data is assigned to the middle of respective sampling times (i.e. day 15 of each month). <br><br> In theory, the longer the period covered by the data set, the better. However, data sets covering a long period with monthly aggregated data, might lead to a long run time and might make the assumption that the growth parameters did not change over this period. Choosing only the most recent years or changing the aggregation 'quarter' and 'year' can be helpful to decrease computation time. <br><br> Note that a coarser aggregation reduces the information content of the data set. </p>")),
-
+                
                 bsModal("info_binsize", "Bin size", ns("infoBS"),
                         size = "large",
                         HTML("<p>Bin size corresponds to the length interval over which the length frequency data are aggregated, for example 2 cm. <br><br> The combination of bin size and moving average (MA) critically affects the separation of peaks (i.e. potential cohorts) in the dataset and thus the estimation of growth parameters by ELEFAN. The bin size should be defined before defining the MA value. Ideally, the bin size is as small as possible, but large enough so that adjacent bins with high and low counts correspond to potential cohorts rather than noise.</p>")),
-
+                
                 bsModal("info_ma", "Moving average (MA)", ns("infoMA"),
                         size = "large",
                         HTML(paste0("<p>The number indicating over how many adjacent length classes the moving average should be performed  (", withMathJax("\\(MA\\)"), ") (must be a positive odd number, e.g. 5 or 7). <br><br>The combination of bin size and MA critically affects the separation of peaks (i.e. potential cohorts) in the dataset and thus the estimation of growth parameters by ELEFAN. Ideally, the MA value should be defined after defining the bin size and should lead to visually distinct peaks, particularly among small length classes. One option for the MA value is to set it equal to the number of length classes (bins) that potentially correspond to the youngest cohort.</p>"))),
-
+                
                 bsModal("info_pg", "Plus group", ns("infoPG"),
                         size = "large",
                         "Allows to lump together all catches larger than given size (so called 'plus group'). Note: This can greatly affect the estimation of ",withMathJax("\\(L_\\infty\\)")," with ELEFAN. Default '0' implies that no plus group is used."),
@@ -98,19 +98,19 @@ tabElefanGa <- function(id) {
                 bsModal("info_searchspace", "Search space for growth parameters", ns("info_searchSpace"),
                         size = "large",
                         HTML(paste0("<p>ELEFAN uses the genetic algorithm (GA) to find the set of growth parameters which best fits the uploaded data set. In this tab, you can define the search space for each growth parameter. Note that the algorithm only searches within the defined parameter range. Thus, it is recommended to define a wider, rather than narrower, range. <br><br> By default, a reasonable range is defined for all parameters based on the input data uploaded. </p>"))),
-
+                
                 bsModal("info_linf", withMathJax("\\(L_\\infty\\)"), ns("infolinf"),
                         size = "large",
                         p(withMathJax("\\(L_\\infty\\)")," defines the asymptotic length of the von Bertalanffy growth (VBG) function. The default range is dependent upon the uploaded dataset and defined as +/- 20% around the rough estimate of ",withMathJax("\\(L_\\infty = L_\\max/0.95\\)"),". Note that the maximum possible range is limited to +/- 50% of this estimate.")),
-
+                
                 bsModal("info_k", withMathJax("\\(K\\)"), ns("infok"),
                         size = "large",
                         HTML(paste0("<p>The growth coefficient (", withMathJax("\\(K\\)"), ") of the von Bertalanffy growth function determines the slope of the logistic growth curve: a low ",withMathJax("\\(K\\)")," defines a slow-growing species and a high ",withMathJax("\\(K\\)")," defines a fast growing species. <br><br>If no prior knowledge about this life-history parameter is available, it is recommended to define a wide search space from 0.01 to 2-4. If prior information is available, a narrower range can be considered and would reduce the run time of the assessment.</p>"))),
-
+                
                 bsModal("info_tanchor", withMathJax("\\(t_{a}\\)"), ns("infotanchor"),
                         size = "large",
                         p("Time point anchoring the growth curves in the year-length coordinate system, corresponds to the peak spawning month. The fraction of the year where yearly repeating growth curves cross length equal to zero; for example a value of 0.25 refers to April 1st of any year (", withMathJax("\\(t_{a}\\)"), "). Values for this field are between 0 and 1.")),
-
+                
                 bsModal("info_season", "Seasonal model", ns("infoSeason"),
                         size = "large",
                         p("Should the seasonal model be used? The seasonal model (or seasonalised von Bertalanffy growth curve) enables the calculation of the seasonal growth parameters, ",
@@ -120,19 +120,19 @@ tabElefanGa <- function(id) {
                 bsModal("info_C", withMathJax("\\(C\\)"), ns("infoC"),
                         size = "large",
                         p("Amplitude of growth oscillation (", withMathJax("\\(C\\)"), "): The higher the value of C, the more pronounced are the seasonal oscillations. C = 0 implies that there is no seasonality in the growth rate. If C = 1, the growth rate becomes zero at the winter point. Values for this field are between 0 and 1.")),
-
+                
                 bsModal("info_ts", withMathJax("\\(t_\\s\\)"), ns("infots"),
                         size = "large",
                         p("Summer point (", withMathJax("\\(t_{s}\\)"), "). Values for this field are between 0 and 1. The time of the year when growth rate is highest, represented by the fraction of the calendar year, e.g. 0.25 corresponds to April 1st.")),
-
+                
                 bsModal("info_ga", "ELEFAN's genetic algorithm", ns("info_GA"),
                         size = "large",
                         HTML(paste0("<p>Genetic algorithms (GAs) are stochastic search algorithms inspired by the basic principles of biological evolution and natural selection.  GAs simulate the evolution of living organisms, where the fittest individuals dominate over the weaker ones, by mimicking the biological mechanisms of evolution, such as selection, crossover and mutation.<br><br> Changing default parameters can have a substantial effect on the optimization process and, thus, on estimated growth parameters. Therefore, please apply caution when changing these parameters. In fact, values should only be increase from the default, though please note that this will increase the run time of the assessment.</p>"))),
-
+                
                 bsModal("info_popsize", "Population size", ns("infoPopSize"),
                         size = "large",
                         "Size of the inital population for the genetic algorithm. Common values are 50 or 100. Higher values might require a larger number of generations to find a stable optimum."),
-
+                
                 bsModal("info_maxiter", "Maximum number of iterations", ns("infoMaxIter"),
                         size = "large",
                         "Maximum number of iterations to run before the GA search is halted. Note that this parameter might affect the run time significantly."),
@@ -144,15 +144,15 @@ tabElefanGa <- function(id) {
                 bsModal("info_pmut", "Probability of mutation", ns("infoPmut"),
                         size = "large",
                         "Probability of mutation in a parent chromosome. Usually mutation occurs with a small probability and is set to 0.2 by default."),
-
+                
                 bsModal("info_pcross", "Probability of crossover", ns("infoPcross"),
                         size = "large",
                         "Probability of crossover between pairs of chromosomes. Typically this is a large value and is set to 0.8 by default."),
-
+                
                 bsModal("info_elite", "Degree of elitism", ns("infoElite"),
                         size = "large",
                         "Number of individuals of the best fitness to survive at each generation. By default, the top 5% of individuals will survive at each iteration."),
-
+                
 
                 ## bsModal("info_yearselcc", "Selected years", ns("infoYearSelCC"),
                 ##         size = "large",
@@ -161,7 +161,7 @@ tabElefanGa <- function(id) {
                 bsModal("info_pred", "Prediction range", ns("infoPred"),
                         size = "large",
                         HTML("<p>The prediction range determines the fishing mortality rates and length at 50% selectivity (L50) values which are used in the yield per recruit model. The model estimates yield per recruit (YPR) and biomass per recruit (BPR) for each combination of fishing mortality and L50 value. Thus, the prediction ranges (F and L50) affect the axes of Figures 6 and 7. <br> <br> The range for fishing mortality can be defined by the number of 'Steps' between the minimum ('Min') and maximum ('Max') mortality rate. <br> <br> If the selectivity is estimated (default), only the number of 'Steps' can be changed for the L50 range. If the selectivity parameters are provided (e.g. L50 and L75), the minimum ('Min') and maximum ('Max') of the L50 range can be changed.</p>")),
-
+                
                 bsModal("info_lengthweight", "Length-weight relationship", ns("infoLengthWeight"),
                         size = "large",
                         HTML(paste0("<p>The estimation of the yield and biomass per recruit requires information about the average weight per length class, which can be estimated with the length-weight relationship. A common assumption is the allometric relationship ",withMathJax("\\(W = a L^{b}\\)"),", with the constant <i>a</i> in ",
@@ -179,17 +179,17 @@ tabElefanGa <- function(id) {
                 bsModal("info_mat", "Maturity (optional)", ns("infoMat"),
                         size = "large",
                         HTML("<p>If available, maturity information about your species in terms of the length at 50% and 75% maturity can be provided and allows estimation of the current Spawning Potential Ratio (SPR) and SPR-related reference points. The parameterisation with Lm50 and Lm75 assumes a logistic maturity ogive. <br><br> Ideally, maturity information is collected directly from the stock under study e.g. by determining the maturation states of the gonads. Alternatively, you may find maturity information about your species on <a href='http://www.fishbase.org/search.php' target='blank_'> FishBase</a> or <a href='https://www.sealifebase.ca' target='blank_'> SeaLifeBase</a>  for invertebrates.</p>")
-                        ),
+                ),
 
                 bsModal("info_select", "Gear selectivity", ns("infoSelect"),
                         size = "large",
                         HTML("<p>The specifics of how fish are caught by fisheries and thus the probability of capture for fish of various length classes are dependent on the fishing gear, which is referred to as gear selectivity. Find more information about some examples of fishing gear selectivity <a href='http://www.fao.org/3/X7788E/X7788E00.htm' target='blank_'> here </a>. <br><br>TropFishR allows the estimation of gear selectivity by means of the catch curve ('Estimate' is the default).  Alternatively, the gear selectivity can be specified by the selectivity at 50% and 75% selectivity (L50 and L75, respectively) or by the length at 50% selectivity (L50) and the width of selection ogive (L75-L25). <br> <br> Note that estimated and specified selectivity corresponds to a logistic curve (trawl-like selectivity).</p>")
-                        ),
+                ),
 
                 bsModal("info_natm", "Natural mortality", ns("infoNatM"),
                         size = "large",
                         HTML("<p>The natural mortality rate (M) is required to estimate the fishing mortality (F) from the total mortality (Z) estimated by the catch curve (F = Z - M). The natural mortality is estimated by an empirical formula based on estimated growth parameters. The options are: <br> - Then's growth formula (<a href='https://doi.org/10.1093/icesjms/fsu136' target='_blank'>Then et al. 2015</a>), <br> - Pauly's growth and temperature formula (<a href='https://doi.org/10.1093/icesjms/39.2.175' target='_blank'>Pauly 1980</a>), and <br> - Then's maximum age formula (<a href='https://doi.org/10.1093/icesjms/fsu136' target='_blank'>Then et al. 2015</a>); <br><br> While the first option does not require any additional information, the second requires the average annual sea surface temperature (SST) in degrees Celsius and allows corrections for schooling fish (multiplication by 0.8). The third option requires an estimate of the maximum age of the fish.<br><br>Please see the Natural Mortality estimator page in the Supporting Tools menu for more information. </p>")
-                        ),
+                ),
 
                 bsModal("info_assessmentGA", "Check, Assessment, Reset & Report", ns("infoAssessment"),
                         size = "large",
@@ -204,7 +204,7 @@ tabElefanGa <- function(id) {
                              
                              After successful completion of the main assessment, an additional button <b>'Download Report'</b> allows you to download a pdf document with all results. 
                              This report is also automatically uploaded to your private workspace.</p>"
-                             )),
+                        )),
 
 
 

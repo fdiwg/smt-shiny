@@ -1,5 +1,5 @@
 tabCmsyIntro <- tabItem("cmsyIntro",htmlOutput("cmsyIntroOut"))
-#
+
 tabCmsySampleDataset <- tabItem("cmsySampleDataset",htmlOutput("cmsySampleDataset"))
 
 tabCmsy <- function(id) {
@@ -77,10 +77,9 @@ tabCmsy <- function(id) {
             
             bsModal("info_Assessment", "Run assessment", ns("infoAssessment"),
                     size = "large",
-                    HTML("<p><b>'Run CMSY Method'</b> performs the main assessment and should yield figures and tables in the results section upon successful completion. 
-                         A progress notification in the middle of the screen will be present while the method is running. CMSY takes 1-2 minutes with the sample dataset, but run time depends on the length of the catch time series analysed.
-                         <br> <br> <b>'Reset'</b> removes all results, the uploaded dataset, and resets all settings to default values. <br> <br> After successful completion of the main assessment, an additional button <b>'Download Report'</b> allows you to download a pdf document with all results. 
-                         This report is also automatically uploaded to your private workspace.</p>")),
+                    HTML("<p><b>'Run CMSY Method'</b> performs the main assessment and should yield figures and tables in the result section upon successful completion. 
+                         A progress notification in the middle of the screen will be present while the method is running. CMSY takes about 1 minute with the sample dataset, but run time depends on the length of the catch time series analysed.
+                         <br> <br> <b>'Reset'</b> removes all results, the uploaded dataset, and resets all settings to default values. <br> <br> After successful completion of the main assessment, an additional button <b>'Download Report'</b> allows you to download a pdf document with all results.</p>")),
             
             bsModal("info_yearsel", "Selected years", ns("infoYearSel"),
                     size = "large",
@@ -92,8 +91,8 @@ reliable. <br><br> <strong>Time series should be at least 15 years long.</strong
                     size = "large",
                     HTML("<p>Resilience,  prior estimate of resilience, corresponding to intrinsic growth rate ranges:<br><br>
 <table><tr>    <th><strong> Resilience&nbsp;</strong></th>    <th><strong> Prior r range</strong></th> </tr><tr>    <td>High</td>    <td>0.6-1.5</td> </tr><tr>    <td>Medium</td>    <td>0.2-0.8</td> </tr><tr>    <td>Low</td>    <td>0.05-0.5</td> </tr><tr>  <td>Very low</td>
-    <td>0.015-0.1</td> </tr></table> <br><br>Check <a href='https://www.fishbase.ca/search.php' target='_blank'>FishBase.org</a> and <a href='https://www.sealifebase.se/search.php' target='_blank'>SeaLifeBase.org</a> for prior estimates, or by using the <a href='https://github.com/James-Thorson-NOAA/FishLife' target='_blank'>FishLife R package </a> get_r.R function <br><br>
-                        Alternatively, consider that natural mortality (M) of adults can inform the prior r, i.e. r ~ 2*M. Estimates of M can be derived from the Supporting Tools: Natural Mortality Estimator, or can be search for on <a href='https://www.fishbase.ca/search.php' target='_blank'>FishBase.org </a>, <a href='https://www.sealifebase.se/search.php' target='_blank'>SeaLifeBase.org </a>, or by using the <a href='https://github.com/James-Thorson-NOAA/FishLife' target='_blank'>FishLife R package </a>.
+    <td>0.015-0.1</td> </tr></table> <br><br>Check <a href=www.FishBase.ca>FishBase.org </a> and <a href=www.SeaLifeBase.se>SeaLifeBase.org </a> for prior estimates, or by using the <a href=https://github.com/James-Thorson-NOAA/FishLife>FishLife R package </a> get_r.R function <br><br>
+                        Alternatively, consider that natural mortality (M) of adults can inform the prior r, i.e. r ~ 2*M. Estimates of M can be derived from the Supporting Tools: Natural Mortality Estimator, or can be search for on <a href=www.FishBase.ca>FishBase.org </a>, <a href=www.SeaLifeBase.se>SeaLifeBase.org </a>, or by using the <a href=https://github.com/James-Thorson-NOAA/FishLife>FishLife R package </a>.
                          In addition, if Fmsy is known, it could be used to reinforce or change the prior range set for r by considering that r ~ 2*Fmsy.</p>")),
             
             
@@ -102,38 +101,38 @@ reliable. <br><br> <strong>Time series should be at least 15 years long.</strong
                     HTML("<p>The prior biomass range relative to the unexploited biomass (B/k) at the beginning, end and at an intermediate point in the catch time series.<br><br>
 What is the most likely stock status for the beginning of the time series: lightly fished, fully exploited, or overfished?, i.e. the depletion rate. <br><br>
 In general, the range of the B/k prior should not be less than 0.4, unless the stock is known to be very strongly depleted,
-in which case ranges of 0.01-0.3 or 0.01 – 0.2 are appropriate. If the stock was nearly unexploited, 0.75-1.0 is appropriate
+in which case ranges of 0.01-0.3 or 0.01 – 0.2 are appropriate. If the stock was nearly unexploited 0.75-1.0 is appropriate
 for the relative start biomass. Setting a range of 0.01 to 1 is also possible, and would indicate no information at all about
 stock status, which is, however, unlikely. If a stock is fished it must be smaller than 1. If it is delivering decent catches, it
 must be larger than 0.01. <br><br>
 
 <table><tr>    <th><strong> Prior relative biomass (B/k) ranges for CMSY+&nbsp;</strong></th>    <th><strong> </strong></th> </tr><tr>    <td>Nearly unexploited</td>    <td>0.75 – 1.0</td> </tr><tr>    <td>Low depletion </td>    <td>0.4 – 0.8 </td> </tr><tr>    <td>Medium depletion</td>    <td>0.2 – 0.6</td> </tr><tr>  <td>Strong depletion</td>
     <td>0.01 – 0.4</td> </tr><tr>    <td>Very strong depletion </td>    <td>0.01 – 0.2 </td> </tr></table> <br><br>
-<strong>The user should take care when setting the prior estimates for depletion at the beginning and end of the time series. 
+**The user should take care when setting the prior estimates for depletion at the beginning and end of the time series. 
                          Depletion levels are assumptions about the initial and current state of the stock, and they have a 
                          strong influence on the results of CMSY, so careful evaluation of these parameters is recommended. 
-                         These parameters are determined in CMSY using the relationship between current catch and maximum catch.</strong> </p>")),
+                         These parameters are determined in CMSY using the relationship between current catch and maximum catch.** </p>")),
             
             
             bsModal("info_stb", "Starting depletion range", ns("infostb"),
                     size = "large",
                     HTML("<p>The prior biomass range relative to the unexploited biomass (B/k) at the beginning of the catch time series.<br><br>
-                         <b>The user should take care when setting the prior estimates for depletion at the beginning and end of the time series. 
+                         **The user should take care when setting the prior estimates for depletion at the beginning and end of the time series. 
                          Depletion levels are assumptions about the initial and current state of the stock, and they have a strong influence on 
                          the results of CMSY, so careful evaluation of these parameters is recommended. These parameters are determined in CMSY 
-                         using the relationship between current catch and maximum catch.</b></p>")),
+                         using the relationship between current catch and maximum catch.**</p>")),
             
             
             bsModal("info_intb", "Intermediate depletion", ns("infointb"),
                     size = "large",
-                    HTML("<p>Does the catch time series have a year where biomass is particularly high or low? <br><br>If there is a year with particularly high or low biomass in the time series, check this box to specify the year range and the relative biomass range. This could occur when, e.g.,
+                    HTML("<p>Does the catch time series have a year where biomass is particularly high or low? <br><br>If there is a year with particularly high or low biomass in the time series, check this box to specify which year and relative biomass ranges. This could occur when, e.g.,
                       exploitation changed from light to full, or where an extraordinarily large year class entered the fishery.
                       Otherwise, leave unchecked.</p>")),
             
             
             bsModal("info_intyr", "Intermediate year", ns("infointyr"),
                     size = "large",
-                    HTML("<p>A year in the time series for an intermediate biomass level. This setting is automatically calculated if not set, though it must be specified by user if the intermediate biomass range in the field below is specified.<br><br>
+                    HTML("<p>A year in the time series for an intermediate biomass level. This setting is automatically calculated if not set, though it must be specified by user if the intermediate biomass range below is specified.<br><br>
                          Consider setting this value to an intermediate year where biomass is considered to have been particularly high or low,
 e.g. exploitation change from light to full, or where an extraordinarily large year class entered the fishery. When choosing the B/k prior for 
 the intermediate year, it often improves the CMSY+ analysis if the intermediate B/k prior is placed at the end of period of sustained very high 
@@ -161,10 +160,10 @@ prior to the last year with high biomass.</p>")),
             bsModal("info_endb", "Ending depletion range", ns("infoendb"),
                     size = "large",
                     HTML("<p>The prior biomass range relative to the unexploited biomass (B/k) at the end of the catch time series.<br><br> 
-                        <b>The user should take care when setting the prior estimates for depletion at the beginning and end of the time series. 
+                         **The user should take care when setting the prior estimates for depletion at the beginning and end of the time series. 
                         Depletion levels are assumptions about the initial and current state of the stock, and they have a strong influence on the results of CMSY, 
                         so careful evaluation of these parameters is recommended. These parameters are determined in CMSY using the relationship between current catch 
-                        and maximum catch.</b>
+                        and maximum catch.**
                          </p>")),
             
             
@@ -180,7 +179,7 @@ prior to the last year with high biomass.</p>")),
             
             bsModal("info_m", "Natural mortality", ns("infom"),
                     size = "large",
-                    HTML("<p>Natural mortality can be estimated in the Supporting Tools: 'Natural Mortality Estimators', or check <a href='https://www.fishbase.ca/search.php' target='_blank'>FishBase.org</a> and <a href='https://www.sealifebase.se/search.php' target='_blank'>SeaLifeBase.org</a>  for estimates of your species' natural mortality.<br><br>
+                    HTML("<p>Natural mortality can be estimated in the Supporting Tools: 'Natural Mortality Estimators', or check <a href=www.FishBase.ca>FishBase.org </a> and <a href=www.SeaLifeBase.se>SeaLifeBase.org </a>  for estimates of your species' natural mortality.<br><br>
                           Natural mortality can be useful in setting the resilience prior range (lowest and highest resilience estimates) considering that r ~ 2*M.
                          
                          </p>")),

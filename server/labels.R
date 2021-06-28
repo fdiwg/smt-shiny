@@ -123,6 +123,7 @@ output$cmsyIntroOut <- renderText({
     text <- paste0(text, "</ul>")
     text <- paste0(text, "</p>")
     
+    
     text <- paste0(text, "<p>")
     text <- paste0(text, "<br>")
     
@@ -135,7 +136,7 @@ output$cmsyIntroOut <- renderText({
     text <- paste0(text, "<br>")
     
     text <- paste0(text,"<h4> Workflow Considerations </h4>")
-    text <- paste0(text,"<strong> To run the CMSY method in the Stock Monitoring Tool :</strong>")
+    text <- paste0(text,"<strong> To run the CMSY method in the Stock Monitoring Tool :</strong>")    
     text <- paste0(text, "<ol>")
     text <- paste0(text, "<li>Upload a csv file data set of catch time series for one or multiple stocks (see Data Considerations or the <a href='https://data.d4science.net/qhX2'>CMSY Sample dataset</a>).</li>")
     text <- paste0(text, "<ol type='a'>")
@@ -157,7 +158,7 @@ output$cmsyIntroOut <- renderText({
     text <- paste0(text, "<li> The Reset button removes the uploaded data and resets the settings to default/</li>")
     text <- paste0(text, "</ol>")
     text <- paste0(text, "Further information can be found in the popup information buttons at each field, and in the Data, Methods, and Results Considerations tabs. Note that error messages may display in the center of the page and in place of any figures where an error has occurred.")
-    text <- paste0(text, "</p>")    
+    text <- paste0(text, "</p>")        
     text <- paste0(text, "<br>")
     
     text <- paste0(text, "<p>")
@@ -179,7 +180,7 @@ output$elefanIntroOut <- renderText({
                    ", and compiled into the R package ",
                    "<a href='https://cran.r-project.org/web/packages/TropFishR' target='_blank'> TropFishR </a>",
                    " by ", "<a href='https://doi.org/10.1111/2041-210X.12791' target='_blank'> Mildenberger et al. (2017).</a>",
-                   "The assessment rountine consist of 4 consecutive steps and methods:</p>")
+                   " The assessment routine consists of 4 consecutive steps and methods:</p>")
     text <- paste0(text, "<br>")
     text <- paste0(text, "<h4> Method description </h4>")
     text <- paste0(text, "<strong><i>1. ELEFAN</i>: <i>E</i>lectronic <i>LE</i>ngth <i>F</i>requency <i>AN</i>alysis for the estimation of the growth parameters of the von Bertlanffy growth (VBG) function.</strong>")
@@ -207,6 +208,7 @@ output$elefanIntroOut <- renderText({
     text <- paste0(text, "The Thompson and Bell yield per recruit model is used to estimate yield and biomass per recruit as well as the spawning potential ratio (SPR) over a range of fishing mortality rates and selectivity definitions. The stock status is based on current F relative to biological reference points, such as Fmax, F0.1, F35. The estimation of SPR requires information about the maturity parameters.")
     text <- paste0(text, "</p>")
     
+    
     text <- paste0(text, "<p>")
     text <- paste0(text, "<strong>Further information</strong><br>")
     text <- paste0(text, "Please visit the <a href='https://elearning.fao.org/course/view.php?id=502' target='_blank'>SDG Indicator 14.4.1 - Fish stocks sustainability eLearning course</a>, <b>(Lesson 4, Slides 27-34)</b> for further information:")
@@ -219,13 +221,13 @@ output$elefanIntroOut <- renderText({
     text <- paste0(text, "<li>Slide 34 describes the method’s caveats.</li>")
     text <- paste0(text, "</ul>")
     text <- paste0(text, "</p>")
+    
     text <- paste0(text, "<br>")
-     text <- paste0(text, "<h4>Assumptions of TropFishR:</h4>")
-     text <- paste0(text,
-                    "The above mentioned methods make specific assumptions about the data, the stock, or the ",
-                    "fisheries targeting the stock. It is important to be aware of these assumptions and, thus, the ",
-                    "limitations of the results.</p>")
-
+    text <- paste0(text, "<h4>Assumptions of TropFishR:</h4>")
+    text <- paste0(text,
+                   "The above mentioned methods make specific assumptions about the data, the stock, or the ",
+                   "fisheries targeting the stock. It is important to be aware of these assumptions and, thus, the ",
+                   "limitations of the results.</p>")
     text <- paste0(text, "<ul>")
     text <- paste0(text, "<li><b>Representative length measurements:</b> ",
                    "The routine assumes that the dataset is representative of the length distributions of the whole catch. ",
