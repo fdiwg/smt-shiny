@@ -1,3 +1,5 @@
+#test this
+
 getDataConsiderationTextForCmsy <- function() {
   text <- "<strong>Dataset must include:</strong><br/>"
   text <- paste0(text, "<ul>")
@@ -171,7 +173,7 @@ getDataConsiderationTextForElefan <- function() {
   text <- paste0(text, "<p> Further information about differnet formats of length-frequency datasets ",
                  "and how to convert one format to the other are described in a ",
                  "<a href='https://cran.r-project.org/web/packages/TropFishR/vignettes/lfqData.html'  target='blank_'>tutorial by Mildenberger (2020)</a>. </p>")
-  return (text)
+    return (text)
 }
 
 getWorkflowConsiderationTextForElefan <- function() {
@@ -195,8 +197,8 @@ getWorkflowConsiderationTextForElefan <- function() {
   text <- paste0(text, "<li> The Reset button removes the uploaded data and resets the settings to default</li>")
   text <- paste0(text, "</ol>")
   text <- paste0(text, "Further information can be found in the popup information buttons at each field, and in the Data, Methods, and Results Considerations tabs. Note that error messages may display in the center of the page and in place of any figures where an error has occurred.")
-  text <- paste0(text, "</p>")    
-  return (text)
+  text <- paste0(text, "</p>")  
+    return (text)
 }
 
 
@@ -275,7 +277,7 @@ getMethodConsiderationTextForElefan <- function() {
                  "measurements if the population is not closed.",
                  "</li>")
   text <- paste0(text, "</ul>")
-  return (text)
+    return (text)
 }
 
 getResultConsiderationTextForElefan <- function() {
@@ -358,7 +360,7 @@ getResultConsiderationTextForElefan <- function() {
                  "the various combinations of F and L50 values. The black dot indicates the current yield and biomass.",
                  "</li>")
   text <- paste0(text, "</ul>")
-  return (text)
+    return (text)
 }
 
 
@@ -367,42 +369,42 @@ getResultConsiderationTextForElefan <- function() {
 
 
 getErrorMessage <- function(forWhat) {
-  if(forWhat=="CMSY"){
-    return (paste0("Oops! Unfortunately the ",forWhat, " method experienced a problem with the server.<br/>Don't give up and try again in a few minutes or refresh your Stock Monitoring Tool instance.<hr/> <b>%s</b>"))
-  }else{
-    return (paste0("Oops! unfortunately something went wrong running the ",forWhat," method<br/>Don't give up and try again in a few minutes.<hr/> <b>%s</b>"))
-  }
+    if(forWhat=="CMSY"){
+        return (paste0("Oops! Unfortunately the ",forWhat, " method experienced a problem with the server.<br/>Don't give up and try again in a few minutes or refresh your Stock Monitoring Tool instance.<hr/> <b>%s</b>"))
+    }else{
+        return (paste0("Oops! unfortunately something went wrong running the ",forWhat," method<br/>Don't give up and try again in a few minutes.<hr/> <b>%s</b>"))
+    }
 }
 
 
 
 
 fishMethodsDataConsiderationText <- function() {
-  text <- "<div>"
-  text <- paste0(text, "<p>")
-  text <- paste0(text, "<b>Mandatory fields to run YPR/SBPR are:</b>")
-  text <- paste0(text, "<ul>")
-  text <- paste0(text, "<li>age (the age of the fish)</li>")
-  text <- paste0(text, "<li>ssbwgt (the spawning stock weights for each age)</li>")
-  text <- paste0(text, "<li>partial (the recruitment at each age that is used to determine how much fishing mortality (F) each age group receives)</li>")
-  text <- paste0(text, "<li>pmat (the proportion of mature fish at each age (used only for SBPR)</li>")
-  text <- paste0(text, "</ul>")
-  text <- paste0(text, "</p>")
-  
-  text <- paste0(text, "<p>")
-  text <- paste0(text, "If you are creating your own dataset:<br/>")
-  text <- paste0(text, "Ensure that the column names are identical to the sample dataset. Ensure your data are in .csv format. Use a “.” to separate decimals in the data.")
-  text <- paste0(text, "</p>")
-  
-  text <- paste0(text, "<p>")
-  text <- paste0(text, "<strong>Ensure that spawning stock weight-at-age data is representative of the full population, i.e., are all age groups sampled?</strong>")
-  text <- paste0(text, "</p>")
-  
-  text <- paste0(text, "<p>")
-  text <- paste0(text, "<i>**If desired, the life history parameters pulled from FishBase.org in the Supporting Tools: 'Natural Mortality Estimators' tool could be used to provide estimates of M in the Optional Parameters section.</i>")
-  text <- paste0(text, "</p>")
-  
-  text <- paste0(text, "</div>")
-  
-  return (text)
+    text <- "<div>"
+    text <- paste0(text, "<p>")
+    text <- paste0(text, "<b>Mandatory fields to run YPR/SBPR are:</b>")
+    text <- paste0(text, "<ul>")
+    text <- paste0(text, "<li>age (the age of the fish)</li>")
+    text <- paste0(text, "<li>ssbwgt (the spawning stock weights for each age)</li>")
+    text <- paste0(text, "<li>partial (the recruitment at each age that is used to determine how much fishing mortality (F) each age group receives)</li>")
+    text <- paste0(text, "<li>pmat (the proportion of mature fish at each age (used only for SBPR)</li>")
+    text <- paste0(text, "</ul>")
+    text <- paste0(text, "</p>")
+
+    text <- paste0(text, "<p>")
+    text <- paste0(text, "If you are creating your own dataset:<br/>")
+    text <- paste0(text, "Ensure that the column names are identical to the sample dataset. Ensure your data are in .csv format. Use a “.” to separate decimals in the data.")
+    text <- paste0(text, "</p>")
+
+    text <- paste0(text, "<p>")
+    text <- paste0(text, "<strong>Ensure that spawning stock weight-at-age data is representative of the full population, i.e., are all age groups sampled?</strong>")
+    text <- paste0(text, "</p>")
+
+    text <- paste0(text, "<p>")
+    text <- paste0(text, "<i>**If desired, the life history parameters pulled from FishBase.org in the Supporting Tools: 'Natural Mortality Estimators' tool could be used to provide estimates of M in the Optional Parameters section.</i>")
+    text <- paste0(text, "</p>")
+
+    text <- paste0(text, "</div>")
+
+    return (text)
 }
