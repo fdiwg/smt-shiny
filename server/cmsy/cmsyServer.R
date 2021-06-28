@@ -1,6 +1,5 @@
 cmsyModule <- function(input, output, session) {
   
-  
   ns <- session$ns
   
   cmsy <- reactiveValues()
@@ -108,7 +107,7 @@ cmsyModule <- function(input, output, session) {
     print(maxYear)
     #updateTextInput(session, "minOfYear", value=as.integer(minYear))
     #updateTextInput(session, "maxOfYear", value=as.integer(maxYear))
-    updateNumericInput(session,"int.yr", value=maxYear-5, min = minYear, max = maxYear, step=1)
+    
     # updateTextInput(session, "startYear", value=as.integer(minYear))
     # updateTextInput(session, "endYear", value=as.integer(maxYear))
     updateSliderInput(session, "rangeYear", value=c(as.integer(minYear),as.integer(maxYear)))
@@ -151,8 +150,8 @@ cmsyModule <- function(input, output, session) {
       maxY <- 2030
       minY <- 1990
     }else{
-      minY <- try(round(min(contents$yr)),silent=TRUE)
-      maxY <- try(round(max(contents$yr)),silent=TRUE)
+      minY <- try(min(input$CMSY_years_selected),silent=TRUE)
+      maxY <- try(max(input$CMSY_years_selected),silent=TRUE)
       
       if(inherits(maxY,"try-error")){
         maxY <- 2030
@@ -162,6 +161,23 @@ cmsyModule <- function(input, output, session) {
     sliderInput(ns("CMSY_years_q"),"", value=c(minY,maxY), min = minY, max = maxY, step=1,sep='')
     
   } )
+  
+  observe({
+    contents <- cmsyFileData()
+    if(is.null(contents)){
+      maxY <- 2030
+      minY <- 1990
+    }else{
+      minY <- try(min(input$CMSY_years_selected),silent=TRUE)
+      maxY <- try(max(input$CMSY_years_selected),silent=TRUE)
+      
+      if(inherits(maxY,"try-error")){
+        maxY <- 2030
+        minY <- 1990
+      }
+    }
+  updateNumericInput(session,"int.yr", value=maxY-5, min = minY, max = maxY, step=1)
+  })
   
   observe({
     if(!input$cmsy_checkbox_intb){
@@ -252,84 +268,113 @@ cmsyModule <- function(input, output, session) {
                        minOfYear=unique(min(cmsyFileData()$yr)),
                        maxOfYear=unique(max(cmsyFileData()$yr)),
                        startYear=min(input$CMSY_years_selected),
-                       endYear=min(input$CMSY_years_selected),
-                       flim=if(!is.null(input$flim)){input$flim}else{"NA"},
-                       fpa=if(!is.null(input$fpa)){input$fpa}else{"NA"},
-                       blim=if(!is.null(input$blim)){input$blim}else{"NA"},
-                       bpa=if(!is.null(input$bpa)){input$bpa}else{"NA"},
-                       bmsy=if(!is.null(input$bmsy)){input$bmsy}else{"NA"},
-                       fmsy=if(!is.null(input$fmsy)){input$fmsy}else{"NA"},
-                       msy=if(!is.null(input$msy)){input$msy}else{"NA"},
-                       msyBTrigger=if(!is.null(input$msyBTrigger)){input$msyBTrigger}else{"NA"},
-                       b40=if(!is.null(input$b40)){input$b40}else{"NA"},
-                       m=if(!is.null(input$m)){input$m}else{"NA"},
-                       fofl=if(!is.null(input$fofl)){input$fofl}else{"NA"},
-                       last_f=if(!is.null(input$last_f)){input$last_f}else{"NA"},
+                       endYear=max(input$CMSY_years_selected)-1,
+                       flim=if(input$cmsy_checkbox_comparison){input$flim}else{"NA"},
+                       fpa=if(input$cmsy_checkbox_comparison){input$fpa}else{"NA"},
+                       blim=if(input$cmsy_checkbox_comparison){input$blim}else{"NA"},
+                       bpa=if(input$cmsy_checkbox_comparison){input$bpa}else{"NA"},
+                       bmsy=if(input$cmsy_checkbox_comparison){input$bmsy}else{"NA"},
+                       fmsy=if(input$cmsy_checkbox_comparison){input$fmsy}else{"NA"},
+                       msy=if(input$cmsy_checkbox_comparison){input$msy}else{"NA"},
+                       msyBTrigger=if(input$cmsy_checkbox_comparison){input$msyBTrigger}else{"NA"},
+                       b40=if(input$cmsy_checkbox_comparison){input$b40}else{"NA"},
+                       m=if(input$cmsy_checkbox_comparison){input$m}else{"NA"},
+                       fofl=if(input$cmsy_checkbox_comparison){input$fofl}else{"NA"},
+                       last_f=if(input$cmsy_checkbox_comparison){input$last_f}else{"NA"},
                        resiliance="Medium",
+                       #r.low="NA",
+                       #r.hi="NA",
                        r.low=min(input$resiliance),
                        r.hi=max(input$resiliance),
                        stb.low=min(input$stb),
                        stb.hi=max(input$stb),
-                       int.yr=if(!is.null(input$int.yr)){input$int.yr}else{"NA"},
-                       intb.low=if(!is.null(input$intb)){min(input$intb)}else{"NA"},
-                       intb.hi=if(!is.null(input$intb)){max(input$intb)}else{"NA"},
+                       int.yr=if(input$cmsy_checkbox_intb){input$int.yr}else{"NA"},
+                       intb.low=if(input$cmsy_checkbox_intb){min(input$intb)}else{"NA"},
+                       intb.hi=if(input$cmsy_checkbox_intb){max(input$intb)}else{"NA"},
                        endb.low=min(input$endb),
                        endb.hi=max(input$endb),
+                       #q.start="NA",
+                       #q.end="NA",
                        q.start=min(input$CMSY_years_q),
                        q.end=max(input$CMSY_years_q),
                        btype=input$btype,
                        force.cmsy=FALSE,
                        comments=input$comments,
-                       token=vreToken, 
+                       #token=vreToken, 
+                       token=session$userData$sessionToken(),
                        inputCsvFile=filePath$datapath, 
                        templateFile=templateFileDlmTools)
         
         js$enableAllButtons()
         js$hideComputing()
         js$showBox("box_cmsy_results")
-        for(i in 1:nrow(ret)) {
-          row <- ret[i,]
-          if (row$description == "estimates") {
-            contents <- getURL(row$url)
-            print (paste0("Cmsy text url", row$url))
-            contents <- gsub("Results for Management", "Reference points and indicators", contents)
-            cmsy$method$textRaw <- contents
-            contents <- gsub("\n\r", "<br/>", contents)
-            contents <- gsub("\n", "<br/>", contents)
-            contents <- gsub("B/Bmsy in last year", "<b>B/Bmsy in last year</b>", contents)
-            contents <- gsub("----------------------------------------------------------", "", contents)
-            cmsy$method$text <- contents
-          }
-          if (row$description == "analysis_charts") {
-            #fileAnalisysChart <- tempfile(fileext=".jpeg")
-            fileAnalisysChart <- paste(tempdir(),"/","cmsy_fileAnalisysChart",".jpeg",sep="")
-            print(fileAnalisysChart)
-            downloadFile(row$url, fileAnalisysChart)
-            cmsy$method$analisysChart <- fileAnalisysChart
-            cmsy$method$analisysChartUrl <- row$url
-          }
-          if (row$description == "management_charts") {
-            #fileManagementChart <- tempfile(fileext=".jpeg")
-            fileManagementChart <-paste(tempdir(),"/","cmsy_fileManagementChart",".jpeg",sep="")
-            print(fileManagementChart)
-            downloadFile(row$url, fileManagementChart)
-            cmsy$method$managementChart <- fileManagementChart
-            cmsy$method$managementChartUrl <- row$url
-          }
-          if (row$description == "Log of the computation") {
-            cmsy$method$log <- row$url
-          }
-        }
         
-        if (!is.null(session$userData$sessionMode()) && session$userData$sessionMode()=="GCUBE") {
+        print("Create a temp dir for CMSY")
+        cmsy_temp_dir <- tempdir()
+        print(cmsy_temp_dir)
+        print("Analyze ret object")
+        print(sapply(colnames(ret), function(x){class(ret[,x])}))
+        
+        invisible(lapply(1:nrow(ret), function(i){
+          row <- ret[i,]
+          row_out <- switch(row$description,
+            "Log of the computation" = {
+              print("Report computation logs")
+              cmsy$method$log <- row$url
+            },
+            "estimates" = {
+              print("Downloading Estimates")
+              print(row$url)
+              contents <- httr::content(httr::GET(row$url),"text")
+              print (paste0("Cmsy text url", row$url))
+              contents <- gsub("Results for Management", "Reference points and indicators", contents)
+              cmsy$method$textRaw <<- contents
+              contents <- gsub("\n\r", "<br/>", contents)
+              contents <- gsub("\n", "<br/>", contents)
+              contents <- gsub("B/Bmsy in last year", "<b>B/Bmsy in last year</b>", contents)
+              contents <- gsub("----------------------------------------------------------", "", contents)
+              cmsy$method$text <<- contents
+            },
+            "management_charts" = {
+              print("Downloading Management charts")
+              print(row$url)
+              #fileManagementChart <- tempfile(fileext=".jpeg")
+              fileManagementChart <-paste(cmsy_temp_dir,"/","cmsy_fileManagementChart",".jpeg",sep="")
+              fileManagementChart <- if(Sys.info()[["sysname"]] == "Windows") {paste(gsub("\\\\", "/", fileManagementChart)) } else {fileManagementChart}
+              print(fileManagementChart)
+              downloadFile(row$url, fileManagementChart)
+              cmsy$method$managementChart <<- fileManagementChart
+              cmsy$method$managementChartUrl <<- row$url
+            },
+            "analysis_charts" = {
+              print("Downloading Analysis charts")
+              print(row$url)
+              #fileAnalisysChart <- tempfile(fileext=".jpeg")
+              fileAnalisysChart <- paste(cmsy_temp_dir,"/","cmsy_fileAnalisysChart",".jpeg",sep="")
+              fileAnalisysChart <- if(Sys.info()[["sysname"]] == "Windows") {paste(gsub("\\\\", "/", fileAnalisysChart)) } else {fileAnalisysChart}
+              print(fileAnalisysChart)
+              downloadFile(row$url, fileAnalisysChart)
+              cmsy$method$analisysChart <<- fileAnalisysChart
+              cmsy$method$analisysChartUrl <<- row$url
+            }
+          )
+        }))
+
+        if (!is.null(session$userData$sessionMode())) if(session$userData$sessionMode()=="GCUBE") {
           flog.info("Uploading CMSY report to i-Marine workspace")
           reportFileName <- paste(tempdir(),"/","CMSY_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
           createCmsyPDFReport(reportFileName, cmsy, input)
           cmsyUploadVreResult$res <- FALSE
           
-          basePath <- paste0("/Home/",session$userData$sessionUsername(),"/Workspace/")
+          basePath <- paste0("/Home/",session$userData$sessionUsername(),"/Workspace")
+          flog.info(paste0("Base path for upload: ", basePath))
+          flog.info(paste0("Username for upload: ", session$userData$sessionUsername()))
+          flog.info(paste0("Token for upload: ", session$userData$sessionToken()))
+          
+          SH_MANAGER <- session$userData$storagehubManager()
+          
           tryCatch({
-            uploadToIMarineFolder(reportFileName, basePath, uploadFolderName)
+            uploadToIMarineFolder(SH_MANAGER, reportFileName, basePath, uploadFolderName)
             cmsyUploadVreResult$res <- TRUE
           }, error = function(err) {
             flog.error("Error uploading CMSY report to the i-Marine Workspace: %s", err)
@@ -389,7 +434,7 @@ cmsyModule <- function(input, output, session) {
   })
   output$renderCmsyManagementChart <- renderImage({
     if ("method" %in% names(cmsy)) {
-      if (!is.null(cmsy$method)) {
+      if (!is.null(cmsy$method)) if(!is.null(cmsy$method$managementChart)) {
         Sys.sleep(1)
         w1 <- session$clientData$output_renderCmsyManagementChart_width
         h1 <- (w1*3)/4
@@ -406,7 +451,7 @@ cmsyModule <- function(input, output, session) {
   })
   output$renderCmsyAnalysisChart <- renderImage({
     if ("method" %in% names(cmsy)) {
-      if (!is.null(cmsy$method)) {
+      if (!is.null(cmsy$method)) if(!is.null(cmsy$method$analisysChart)) {
         Sys.sleep(1)
         w2 <- session$clientData$output_renderCmsyAnalysisChart_width
         h2 <- (w2*3)/4
@@ -464,11 +509,29 @@ cmsyModule <- function(input, output, session) {
       } else {  "" }
     } else {  "" }
   })
+  output$captionCmsyManagementChart <- renderText({
+    if ("method" %in% names(cmsy)) {
+      if (!is.null(cmsy$method)) {
+  caption <- "The upper left panel shows catches relative to the estimate of MSY, with indication of 95% confidence limits in grey. The upper right panel shows the development of relative total biomass (B/Bmsy), with the grey area indicating uncertainty. The lower left graph shows relative exploitation (F/Fmsy), with Fmsy corrected for reduced recruitment below 0.5 Bmsy. The lower-right panel shows the trajectory of relative stock size (B/Bmsy) over relative exploitation (F/Fmsy)."
+  caption
+      } else {  "" }
+    } else {  "" }
+  })
+  
+  output$captionCmsyAnalisysChart <- renderText({
+    if ("method" %in% names(cmsy)) {
+      if (!is.null(cmsy$method)) {
+        caption <- "Panel A shows in black the time series of catches and in blue the three-years moving average with indication of highest and lowest catch, as used in the estimation of prior biomass by the default rules. Panel B shows the explored r-k log space and in dark grey the r-k pairs which were found by the CMSY model to be compatible with the catches and the prior information. Panel C shows the most probable r-k pair and its approximate 95% confidence limits in blue. Panel D shows in blue the biomass trajectory estimated by CMSY. Dotted lines indicate the 2.5th and 97.5th percentiles. Vertical blue lines indicate the prior biomass ranges. Panel E shows in blue the harvest rate from CMSY. Panel F shows the Schaefer equilibrium curve of catch/MSY relative to B/k, here indented at B/k < 0.25 to account for reduced recruitment at low stock sizes. The blue dots are scaled by CMSY estimates."
+        caption
+      } else {  "" }
+    } else {  "" }
+  })
+  
   output$titleCmsyAnalisysChart <- renderText({
     if ("method" %in% names(cmsy)) {
       if (!is.null(cmsy$method)) {
-        #title <- "<h2> Analysis Charts </h2>"
-        #title
+        title <- "<h2> Summary Analysis </h2>"
+        title
       } else {  "" }
     } else {  "" }
   })

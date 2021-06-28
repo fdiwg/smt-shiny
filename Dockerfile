@@ -17,14 +17,17 @@ RUN apt-get update && apt-get install -y \
     libjpeg-dev \
     default-jre \
     default-jdk \
-    libxml2 \
+    #libxml2 \
     libxml2-dev \
     git \
     texlive-latex-base \
     texlive-fonts-recommended \
     texlive-formats-extra \
     #libv8-3.14.5 \
-    libv8-dev
+    libv8-dev \
+	libsodium-dev \
+    libsecret-1-dev
+	
 
 
 RUN apt-get update && apt-get upgrade -y
@@ -41,10 +44,11 @@ RUN apt-get update && apt-get upgrade -y
 RUN R -e "install.packages(c('devtools'), repos='https://cran.r-project.org/')"
 RUN R -e "devtools::install_version('XML', version='3.99-0.3', repos = 'http://cran.r-project.org')"
 RUN R -e "devtools::install_version('shiny', version='1.5.0', repos = 'http://cran.r-project.org')"
-RUN R -e "devtools::install_version('rmarkdown', version='2.3', repos = 'http://cran.r-project.org')"
+RUN R -e "devtools::install_version('rmarkdown', version='2.7', repos = 'http://cran.r-project.org')"
 RUN R -e "devtools::install_version('shinyjs', version='1.1', repos = 'http://cran.r-project.org')"
 RUN R -e "devtools::install_version('shinythemes', version='1.1.2', repos = 'http://cran.r-project.org')"
 RUN R -e "devtools::install_version('shinydashboard', version='0.7.1', repos = 'http://cran.r-project.org')"
+RUN R -e "devtools::install_version('shinyWidgets', version='0.5.3', repos = 'http://cran.r-project.org')"
 RUN R -e "devtools::install_version('RCurl', version='1.98.1.2', repos = 'http://cran.r-project.org')"
 RUN R -e "devtools::install_version('ggplot2', version='3.3.2', repos = 'http://cran.r-project.org')"
 RUN R -e "devtools::install_version('rfishbase', version='3.0.4', repos = 'http://cran.r-project.org')"
@@ -69,6 +73,11 @@ RUN R -e "devtools::install_github('AnalytixWare/ShinySky')"
 #RUN R -e "install.packages(c('V8'), repos='https://cloud.r-project.org/')"
 #RUN R -e "install.packages(c('DT'), repos='https://cloud.r-project.org/')"
 #RUN R -e "install.packages('futile.logger', repos='https://cloud.r-project.org/')"
+
+RUN R -e "install.packages(c('R6'), repos='https://cran.r-project.org/')"
+RUN R -e "install.packages(c('sodium'), repos='https://cran.r-project.org/')"
+RUN R -e "install.packages(c('keyring'), repos='https://cran.r-project.org/')"
+RUN R -e "devtools::install_github('eblondel/d4storagehub4R')"
 
 #Development
 RUN git -C /root/ clone https://github.com/abennici/StockMonitoringTool.git && echo "OK!"

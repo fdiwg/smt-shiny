@@ -119,8 +119,11 @@ elefanModule <- function(input, output, session) {
           createElefanPDFReport(reportFileName,elefan,input)
           
           basePath <- paste0("/Home/",session$userData$sessionUsername(),"/Workspace/")
+          
+          SH_MANAGER <- session$userData$storagehubManager()
+          
           tryCatch({
-            uploadToIMarineFolder(reportFileName, basePath, uploadFolderName)
+            uploadToIMarineFolder(SH_MANAGER, reportFileName, basePath, uploadFolderName)
             elefanUploadVreResult$res <- TRUE
           }, error = function(err) {
             flog.error("Error uploading Elefan report to the i-Marine Workspace: %s", err)

@@ -108,8 +108,10 @@ elefanSaModule <- function(input, output, session) {
           
           basePath <- paste0("/Home/",session$userData$sessionUsername(),"/Workspace/")
          
+          SH_MANAGER <- session$userData$storagehubManager()
+          
           tryCatch({
-            uploadToIMarineFolder(reportFileName, basePath, uploadFolderName)
+            uploadToIMarineFolder(SH_MANAGER, reportFileName, basePath, uploadFolderName)
             elefanSaUploadVreResult$res <- TRUE
           }, error = function(err) {
             flog.error("Error uploading Elefan SA report to the i-Marine Workspace: %s", err)

@@ -121,13 +121,21 @@ createCmsyPDFReport <- function(file, cmsy, input) {
   rmarkdown::render(tempReport, output_file = file, params = params)
 }
 
+# createElefanGaPDFReport <- function(file, elefan_ga, input, output) {
+#   print(paste0("Input file", input$fileGa))
+#   tempReport <- file.path(tempdir(), "elefan_ga.Rmd")
+#   file.copy("assets/tropFishR/markdown/elefan_ga.Rmd", tempReport, overwrite = TRUE)
+#   params <- list(elefan = elefan_ga, inputParams = input, outputParams = output)
+#   return (rmarkdown::render(tempReport, output_file = file, params = params))
+# }
+
 createElefanGaPDFReport <- function(file, elefan_ga, input, output) {
   print(paste0("Input file", input$fileGa))
   tempReport <- file.path(tempdir(), "elefan_ga.Rmd")
   file.copy("assets/tropFishR/markdown/elefan_ga.Rmd", tempReport, overwrite = TRUE)
-  params <- list(elefan = elefan_ga, inputParams = input, outputParams = output)
-  return (rmarkdown::render(tempReport, output_file = file, params = params))
+  return (rmarkdown::render(tempReport, output_file = file))
 }
+
 
 createElefanSaPDFReport <- function(file, elefan_sa, input) {
   tempReport <- file.path(tempdir(), "elefan_sa.Rmd")
@@ -159,46 +167,22 @@ createYprPDFReport <- function(file, yprExec, input) {
   rmarkdown::render(tempReport, output_file = file, params = params)
 }
 
-fileFolderExistsInPath <- function(path, entity) {
-  folders <- listWS(path)
-
-  if (!endsWith(path,"/")) {
-    path<-paste0(path,"/")
-  }
-
-  hasEntity <- FALSE
-  fullPath <- paste0(path,entity)
-  for (e in folders) {
-    if (strcmp(e,fullPath)) {
-      hasEntity <- TRUE
-    }
-  }
-  return (hasEntity)
-}
-
-uploadToIMarineFolder <- function(file, baseFolder, folderName) {
-  tryCatch({
-    if (fileFolderExistsInPath(baseFolder, folderName) == FALSE) {
-      flog.info("Creating folder [%s] in i-Marine workspace path: %s", folderName, baseFolder)
-      createFolderWs(
-        baseFolder,
-        folderName,
-        uploadFolderDescription)
-    }
-    flog.info("Trying to upload %s to i-Marine workspace folder %s", file, paste0(baseFolder, uploadFolderName, "/"))
-    uploadWS(
-      path = paste0(baseFolder, folderName, "/"),
-      file = file,
-      overwrite = TRUE
-    )
-    flog.info("File %s successfully uploaded to the i-Marine folder %s", file, paste0(baseFolder, folderName))
-  }, error = function(err) {
-    flog.error("Error uploading report to the i-Marine workspace: %s", err)
-    stop(err)
-  }, finally = {})
-}
-
 clearResults <- function(id) {
   localJs <- paste0("document.getElementById('", id, "').parentElement.style.visibility = 'hidden'" )
   shinyjs::runjs(localJs)
+}
+
+uploadToIMarineFolder <- function(manager, reportFileName, basePath, folderName){
+  folderID <- manager$searchWSFolderID(folderPath = folderName)
+  if (is.null(folderID)) {
+    flog.info("Creating folder [%s] in i-Marine workspace", folderName)
+    manager$createFolder(name = folderName)
+  }
+  flog.info("Trying to upload %s to i-Marine workspace folder %s", reportFileName, file.path(basePath, folderName))
+  manager$uploadFile(
+    folderPath = file.path(basePath, folderName),
+    file = reportFileName,
+    description = "CMSY report"
+  )
+  flog.info("File %s successfully uploaded to the i-Marine folder %s", reportFileName, file.path(basePath, uploadFolderName))
 }

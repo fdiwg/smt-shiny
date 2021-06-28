@@ -68,8 +68,11 @@ yprModule <- function(input, output, session) {
           yprUploadVreResult$res <- FALSE
         
           basePath <- paste0("/Home/",session$userData$sessionUsername(),"/Workspace/")
+          
+          SH_MANAGER <- session$userData$storagehubManager()
+          
           tryCatch({
-            uploadToIMarineFolder(reportFileName, basePath, uploadFolderName)
+            uploadToIMarineFolder(SH_MANAGER, reportFileName, basePath, uploadFolderName)
             yprUploadVreResult$res <- TRUE
           }, error = function(err) {
             flog.error("Error uploading YPR report to the i-Marine Workspace: %s", err)
