@@ -23,7 +23,6 @@ cmsyModule <- function(input, output, session) {
   cmsyFileData <- reactive({
     inFileCmsy <- input$fileCmsy
     if (is.null(inFileCmsy)) {
-      removeUI(selector="#stockSelectorContainerInner")
       return (NULL)
     }
     contents <- read.csv(inFileCmsy$datapath)
@@ -42,7 +41,6 @@ cmsyModule <- function(input, output, session) {
     contents <- cmsyFileData()
     if (!is.data.frame(contents)) {
       shinyjs::disable("go_cmsy")
-      removeUI(selector="#stockSelectorContainerInner")
       showModal(modalDialog(
         title = "Error",
         if(is.null(contents)){"Input file seems invalid"
@@ -65,14 +63,18 @@ cmsyModule <- function(input, output, session) {
       fileContents$data <- NULL
       flog.error("Input file for CMSY %s seems invalid", filePath$datapath)
     } else {
-      insertUI(
-        ui=tags$div(
-          selectInput(session$ns("stock"), "Select a stock", sort(unique(contents$Stock))), 
-          id="stockSelectorContainerInner"), 
-        selector="#stockSelectorContainer")
       shinyjs::enable("go_cmsy")
       fileContents$data <- contents
       flog.info("Input file for CMSY %s seems valid", filePath$datapath)
+    }
+  })
+  
+  output$stockSelector <- renderUI({
+    contents <- cmsyFileData()
+    if (!is.null(contents)) {
+    tags$div(
+           selectInput(session$ns("stock"), "Select a stock", sort(unique(contents$Stock)))
+    )
     }
   })
   

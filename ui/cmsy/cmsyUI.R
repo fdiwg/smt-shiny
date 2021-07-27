@@ -215,7 +215,8 @@ prior to the last year with high biomass.</p>")),
                   )
                 ),
                 box(
-                  tags$div(id="stockSelectorContainer")
+                  #tags$div(id="stockSelectorContainer")
+                  uiOutput(ns("stockSelector"))
                 )
             ),
             #################
@@ -533,7 +534,7 @@ resetCmsyInputValues <- function() {
   shinyjs::reset("msyBTrigger")
   shinyjs::reset("m")
   #careful removeUI conflict with event
-  removeUI(selector="#stockSelectorContainerInner")
+  #removeUI(selector="#stockSelectorContainerInner")
   shinyjs::disable("go_cmsy")
   clearResults("box_cmsy_results")
   clearResults("box_cmsy_exploPlots")
