@@ -84,16 +84,16 @@ tabCmsy <- function(id) {
             
             bsModal("info_yearsel", "Selected years", ns("infoYearSel"),
                     size = "large",
-                    HTML("<p>Select all (default) or a range of years in the uploaded data set to be included in the analysis. <br><br> The start year should correspond to the first year from when on the data are thought to be
+                    HTML("<p>Select all (default) or a range of years in the uploaded data set to be included in the analysis. <br><br> The start year should correspond to the first year from when the data are thought to be
 reliable. <br><br> <strong>Time series should be at least 15 years long.</strong> In theory, the longer the period covered by the data set, the better.</p>")),
             
             
             bsModal("info_r", "Resilience, or intrinsic growth rate, r", ns("infor"),
                     size = "large",
-                    HTML("<p>Resilience,  prior estimate of resilience, corresponding to intrinsic growth rate ranges:<br><br>
+                    HTML("<p>Resilience,  and the prior estimate of resilience, correspond to intrinsic growth rate, which ranges from:<br><br>
 <table><tr>    <th><strong> Resilience&nbsp;</strong></th>    <th><strong> Prior r range</strong></th> </tr><tr>    <td>High</td>    <td>0.6-1.5</td> </tr><tr>    <td>Medium</td>    <td>0.2-0.8</td> </tr><tr>    <td>Low</td>    <td>0.05-0.5</td> </tr><tr>  <td>Very low</td>
     <td>0.015-0.1</td> </tr></table> <br><br>Check <a href='https://www.fishbase.ca/search.php' target='_blank'>FishBase.org</a> and <a href='https://www.sealifebase.se/search.php' target='_blank'>SeaLifeBase.org</a> for prior estimates, or by using the <a href='https://github.com/James-Thorson-NOAA/FishLife' target='_blank'>FishLife R package </a> get_r.R function <br><br>
-                        Alternatively, consider that natural mortality (M) of adults can inform the prior r, i.e. r ~ 2*M. Estimates of M can be derived from the Supporting Tools: Natural Mortality Estimator, or can be search for on <a href='https://www.fishbase.ca/search.php' target='_blank'>FishBase.org </a>, <a href='https://www.sealifebase.se/search.php' target='_blank'>SeaLifeBase.org </a>, or by using the <a href='https://github.com/James-Thorson-NOAA/FishLife' target='_blank'>FishLife R package </a>.
+                        Alternatively, consider that natural mortality (M) of adults can inform the prior r, i.e. r ~ 2*M. Estimates of M can be derived from the Supporting Tools: Natural Mortality Estimator, or can be searched for on <a href='https://www.fishbase.ca/search.php' target='_blank'>FishBase.org </a>, <a href='https://www.sealifebase.se/search.php' target='_blank'>SeaLifeBase.org </a>, or by using the <a href='https://github.com/James-Thorson-NOAA/FishLife' target='_blank'>FishLife R package </a>.
                          In addition, if Fmsy is known, it could be used to reinforce or change the prior range set for r by considering that r ~ 2*Fmsy.</p>")),
             
             
@@ -136,7 +136,7 @@ must be larger than 0.01. <br><br>
                     HTML("<p>A year in the time series for an intermediate biomass level. This setting is automatically calculated if not set, though it must be specified by user if the intermediate biomass range in the field below is specified.<br><br>
                          Consider setting this value to an intermediate year where biomass is considered to have been particularly high or low,
 e.g. exploitation change from light to full, or where an extraordinarily large year class entered the fishery. When choosing the B/k prior for 
-the intermediate year, it often improves the CMSY+ analysis if the intermediate B/k prior is placed at the end of period of sustained very high 
+the intermediate year, it often improves the CMSY+ analysis if the intermediate B/k prior is placed at the end of a period of sustained very high 
 catches that are suspected to have led to low biomass. Similarly, a longer period of low catches from the start to some intermediate may indicate 
 a period of large biomass if followed by a substantial increase in catches thereafter. In this case, it is advisable to set the intermediate B/k 
 prior to the last year with high biomass.</p>")),
@@ -149,7 +149,7 @@ prior to the last year with high biomass.</p>")),
                           fully exploited, or overfished?, i.e. the depletion rate <br><br>
                          
                          When choosing the B/k prior for the intermediate year, it often improves the CMSY+ analysis if the intermediate 
-                          B/k prior is placed at the end of period of sustained very high catches that are suspected to have led to low biomass by specifying a respective
+                          B/k prior is placed at the end of a period of sustained very high catches that are suspected to have led to low biomass by specifying a respective
                           relative range, e.g. as 0.01 – 0.3. Similarly, a longer period of low catches from the start to some intermediate may indicate a period of 
                           large biomass if followed by a substantial increase in catches thereafter. In this case, it is advisable to set the intermediate B/k prior to 
                           the last year with high biomass and indicate a respective range, e.g. as 0.4 – 0.8. <br><br>

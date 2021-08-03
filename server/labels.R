@@ -54,7 +54,7 @@ This tool was designed to allow users with little to no programming experience t
     
     text <- paste0(text, "<p>")
     text <- paste0(text,"<h5><b>Run time</b></h5>")
-    text <- paste0(text, "Run time with sample dataset for both methods is <b>between 1-3 mins</b>. Run time for CMSY depends on the length of the catch time series analysed. Run time for the length-based workflow depends on the size of the length frequency dataset, the time aggregation, and the search space of input parameters as specified by the user. The information buttons note this effect for each relevant field.<br><br>")
+    text <- paste0(text, "Run time with the sample dataset for both methods is <b>between 1-3 mins</b>. Run time for CMSY depends on the length of the catch time series analysed. Run time for the length-based workflow depends on the size of the length frequency dataset, the time aggregation, and the search space of input parameters as specified by the user. The information buttons note this effect for each relevant field.<br><br>")
     text <- paste0(text, "</p>")
     
    # text <- paste0(text, "<h4>Instruction to build a Docker image of this application : </h4>")
@@ -77,7 +77,7 @@ output$cmsyIntroOut <- renderText({
     text <- "<h3><b>CMSY - Catch-Maximum Sustainable Yield</b></h3>"
     text <- paste0(text, "<p>")
     # text <- paste0(text, "The <b>CMSY</b> method for data-limited stock assessment. Described in <a target='_blank' href='https://www.researchgate.net/publication/309283306_Estimating_fisheries_reference_points_from_catch_and_resilience'>Froese et al 2017</a>")
-    text <- paste0(text, "The <b>CMSY</b> method for data-limited stock assessment as described in <a target='_blank' href='https://www.researchgate.net/publication/309283306_Estimating_fisheries_reference_points_from_catch_and_resilience'>Froese et al. 2017</a>")
+    text <- paste0(text, "The <b>CMSY</b> method for data-limited stock assessment is as described in <a target='_blank' href='https://www.researchgate.net/publication/309283306_Estimating_fisheries_reference_points_from_catch_and_resilience'>Froese et al. 2017</a>")
     text <- paste0(text, "<br/>")
     text <- paste0(text, "The algorithm can be found <a href='https://github.com/SISTA16/cmsy' target='_blank'>here</a> and the user's guide of best practices can be found <a href='https://github.com/SISTA16/cmsy/blob/master/CMSY_2019_9f_UserGuide.pdf' target='_blank'>here</a> on Github.")
     text <- paste0(text, "</p>")
@@ -108,7 +108,7 @@ output$cmsyIntroOut <- renderText({
     text <- paste0(text, "<ul>")
     text <- paste0(text, "<li><b>Stock</b>: a unique fish stock name or identifier (e.g. “cod-2532”), repeated for each year.</li>")
     text <- paste0(text, "<li><b>yr</b>: the reporting year of the catch (e.g. 2004). One row for each year. Years have to be consecutive from the first to the last year without any missing years.</li>")
-    text <- paste0(text, "<li><b>ct</b>: catch value, in tonnes (e.g. 12345). One row for each year. Gaps with no entries are not accepted and must be filled by interpolating missing or incorrect values, e.g., do not accept zero as entry if data are missing, instead use mean of adjacent values to replace zero or fill any gaps.</li>")
+    text <- paste0(text, "<li><b>ct</b>: catch value, in tonnes (e.g. 12345). One row for each year. Gaps with no entries are not accepted and must be filled by interpolating missing or incorrect values, e.g., do not use zero as an entry if data are missing, instead use the mean of adjacent values to replace zero or to fill any gaps.</li>")
     text <- paste0(text, "<li><b>bt</b>: the value of the biomass (in tonnes, e.g. 34567), or the value of the CPUE or stock size index (e.g. 0.123), or NA if there is no information. Gaps filled with NA are acceptable for bt, i.e., abundance data can be fewer than catch data.</li>")
     text <- paste0(text, "</ul>")
     text <- paste0(text, "Other columns are identifiers that you may choose to include, but they are not necessary to run the model.<br><br>")
@@ -147,7 +147,7 @@ output$cmsyIntroOut <- renderText({
     text <- paste0(text, "<ol type='a'>")
     text <- paste0(text, "<li> Data Selection - select the years of data to include in the analysis,and over which to calculate the catchability. </li>")
 
-    text <- paste0(text, "<li> Assessment settings - set the search space of the CMSY algorithm to estimate probable r-K pairs (set resilience and depletion). </li>")
+    text <- paste0(text, "<li> Assessment settings - set the search space of the CMSY algorithm to estimate probable r-K pairs (i.e., set the resilience and depletion). </li>")
     text <- paste0(text, "<li> Optional information - if you have reference point values from previous assessments, you can choose to enter and compare them to the results of the present analysis.</li>")
     text <- paste0(text, "</ol>")
     text <- paste0(text, "</li>")
@@ -187,19 +187,19 @@ output$elefanIntroOut <- renderText({
     text <- paste0(text, "<h4> Method description </h4>")
     text <- paste0(text, "<strong><i>1. ELEFAN</i>: <i>E</i>lectronic <i>LE</i>ngth <i>F</i>requency <i>AN</i>alysis for the estimation of the growth parameters of the von Bertlanffy growth (VBG) function.</strong>")
     text <- paste0(text, "<p>")
-    text <- paste0(text, "The study of fish growth involves a determination of body size as a function of age. Most stock assessment methods work essentially with age composition data. In temperate waters it is easier to acquire data to estimate age by counting of year rings on hard parts such as scales and otoliths (ear bones). These rings are formed due to strong fluctuations in environmental conditions from summer to winter and vice versa. In tropical areas such drastic changes do not occur and it is therefore very difficult, if not impossible to use this kind of seasonal rings for age determination. ELEFAN is one of a number of numerical methods that have been developed, which allow the conversion of length-frequency data into age composition. Although these methods do not require the reading of rings on hard parts, the final interpretation of the results becomes much more reliable if at least some direct age readings are available.")
+    text <- paste0(text, "The study of fish growth involves a determination of body size as a function of age. Most stock assessment methods work essentially with age composition data. In temperate waters it is easier to acquire data to estimate age by counting year rings on hard parts of organisms such as scales and otoliths (ear bones). These rings are formed due to strong seasonal fluctuations in environmental conditions. In tropical areas such drastic changes do not occur and it is therefore very difficult, if not impossible to use these kind of seasonal rings for age determination. ELEFAN is one of a number of numerical methods that have been developed, which allow the conversion of length-frequency data into age composition. Although these methods do not require the reading of rings on hard parts, the final interpretation of the results becomes much more reliable if at least some direct age readings are available.")
     text <- paste0(text, "<br>")
     text <- paste0(text, "ELEFAN fits a seasonal version of the von Bertalanffy Growth Function (VBGF) (see Supporting Tools) by:")
     text <- paste0(text, "<ol>")
     text <- paste0(text, "<li> restructuring the length-frequency data using a procedure that scores the length bins based on their deviation from a moving average (MA) across neighboring bins.</li>")
     text <- paste0(text, "<li> calculating a score value as the cumulative score for a given set of VBGF parameters based on the sum of the individual bin scores that are intersected by resulting growth curves.</li>")
-    text <- paste0(text, "<li> optimising over VBGF parameters maximising the score value by a genetic algorithm (GA). Imitating the natural process of survival of the fittest, the GA simulates a population of random combinations of growth parameters in which only the individuals (or combinations) with the highest fitness value (score value; Rn) can pass on their parameters to the next generations. The combination of growth parameters with the highest score value after a set number of generations are defined as the best estimates. For more information about the  genetic algorithm please refer to <a href='https://pdfs.semanticscholar.org/8b54/b4c7f3c63efcfadac455a32f2c6d775c7184.pdf?_ga=2.102660097.1034706415.1573191124-1938330296.1570694384' target='_blank'>Scrucca (2013)</a>. </li>")
+    text <- paste0(text, "<li> optimising over VBGF parameters maximising the score value by a genetic algorithm (GA). Imitating the natural process of survival of the fittest, the GA simulates a population of random combinations of growth parameters in which only the individuals (or combinations) with the highest fitness value (score value; Rn) can pass on their parameters to the next generations. The combination of growth parameters with the highest score value after a set number of generations is defined as the best estimate. For more information about the  genetic algorithm please refer to <a href='https://pdfs.semanticscholar.org/8b54/b4c7f3c63efcfadac455a32f2c6d775c7184.pdf?_ga=2.102660097.1034706415.1573191124-1938330296.1570694384' target='_blank'>Scrucca (2013)</a>. </li>")
     text <- paste0(text, "</ol>")
     text <- paste0(text, "</p>")
     
     text <- paste0(text, "<strong> <i>2. Empirical formula</i> for the estimation of the natural mortality rate.</strong>")
     text <- paste0(text, "<p>")
-    text <- paste0(text, "The natural mortality rate (M) is estimated by an empirical formula based on estimated growth parameters. The options are: <br> - Then's growth formula (Then et al. 2015), <br> - Pauly's growth and temperature formula (Pauly 1980), and <br> - Then's maximum age formula (Then et al. 2015); <br> While the first option does not require any additional information, the second requires the average annual sea surface temperature (SST) in grad Celsius and allows to correct for schooling fish (multiplication with 0.8) and third option requires an estimate of the maximum age of the fish.")
+    text <- paste0(text, "The natural mortality rate (M) is estimated by an empirical formula based on estimated growth parameters. The options are: <br> - Then's growth formula (Then et al. 2015), <br> - Pauly's growth and temperature formula (Pauly 1980), and <br> - Then's maximum age formula (Then et al. 2015); <br> While the first option does not require any additional information, the second requires the average annual sea surface temperature (SST) in degrees Celsius and allows for a correction for schooling fish (multiplication with 0.8). The third option requires an estimate of the maximum age of the fish.")
     text <- paste0(text, "</p>")
     text <- paste0(text, "<strong> <i>3. Catch curve</i> for the estimation of the total mortality rate.</strong>")
     text <- paste0(text, "<p>")
@@ -273,8 +273,7 @@ output$elefanIntroOut <- renderText({
     text <- paste0(text, "<br>")
     text <- paste0(text, "<li><b>Closed population:</b> ",
                    "The routine assumes that the stock (population) under study ",
-                   "is closed, meaning that there is no immigration or emmigration taking place. Immi- and emi-",
-                   "gration can both bias estimated mortality rates and stock status. Furthermore, fish migrations ",
+                   "is closed, meaning that there is no immigration or emigration taking place. Immigration and emigration can both bias estimated mortality rates and stock status. Furthermore, fish migrations ",
                    "often vary for various life stages and might thus affect the representativeness of the length ",
                    "measurements if the population is not closed.",
                    "</li>")
@@ -420,7 +419,7 @@ output$cmsySampleDataset <- renderText({
     text <- paste0(text, "<ul>")
     text <- paste0(text, "<li><b>Stock</b>: a unique fish stock name or identifier (e.g. “cod-2532”), repeated for each year.</li>")
     text <- paste0(text, "<li><b>yr</b>: the reporting year of the catch (e.g. 2004). One row for each year. Years have to be consecutive from the first to the last year without any missing years.</li>")
-    text <- paste0(text, "<li><b>ct</b>: catch value, in tonnes (e.g. 12345). One row for each year. Gaps with no entries are not accepted and must be filled by interpolating missing or incorrect values, e.g., do not accept zero as entry if data are missing, instead use mean of adjacent values to replace zero or fill any gaps.</li>")
+    text <- paste0(text, "<li><b>ct</b>: catch value, in tonnes (e.g. 12345). One row for each year. Gaps with no entries are not accepted and must be filled by interpolating missing or incorrect values, e.g., do not use zero as an entry if data are missing, instead use the mean of adjacent values to replace zero or to fill any gaps.</li>")
     text <- paste0(text, "<li><b>bt</b>: the value of the biomass (in tonnes, e.g. 34567), or the value of the CPUE or stock size index (e.g. 0.123), or NA if there is no information. Gaps filled with NA are acceptable for bt, i.e., abundance data can be fewer than catch data.</li>")
     text <- paste0(text, "</ul>")
     text <- paste0(text, "Other columns are identifiers that you may choose to include, but they are not necessary to run the model.<br><br>")
@@ -467,7 +466,7 @@ output$elefanSampleDataset <- renderText({
     ## text <- paste0(text, "<li>", "Ensure that the 'midLength' column name is identical to the sample dataset.", "</li>")
     text <- paste0(text, "</ul>")
     text <- paste0(text, "<br>")
-    text <- paste0(text, "<p> Further information about differnet formats of length-frequency datasets ",
+    text <- paste0(text, "<p> Further information about different formats of length-frequency datasets ",
                    "and how to convert one format to the other are described in a ",
                    "<a href='https://cran.r-project.org/web/packages/TropFishR/vignettes/lfqData.html'  target='blank_'>tutorial by Mildenberger (2020)</a>. </p>")
     return(text)

@@ -220,7 +220,7 @@ getMethodConsiderationTextForElefan <- function() {
                  ", and compiled into the R package ",
                  "<a href='https://cran.r-project.org/web/packages/TropFishR'  target='blank_'> TropFishR </a>",
                  " by ", "<a href='https://doi.org/10.1111/2041-210X.12791'  target='blank_'> Mildenberger et al. (2017)</a>",
-                 ". Above mentioned methods make specific assumptions about the data, the stock, or the ",
+                 ". The above mentioned methods make specific assumptions about the data, the stock, or the ",
                  "fisheries targeting the stock. It is important to be aware of these assumptions and, thus, the ",
                  "limitations of the results.</p>")
   text <- paste0(text, "<br>")
@@ -271,8 +271,8 @@ getMethodConsiderationTextForElefan <- function() {
   text <- paste0(text, "<br>")
   text <- paste0(text, "<li><b>Closed population:</b> ",
                  "The routine assumes that the stock (population) under study ",
-                 "is closed, meaning that there is no immigration or emmigration taking place. Immi- and emi-",
-                 "gration can both bias estimated mortality rates and stock status. Furthermore, fish migrations ",
+                 "is closed, meaning that there is no immigration or emigration taking place. Immigration and emigration",
+                 " can both bias estimated mortality rates and stock status. Furthermore, fish migrations ",
                  "often vary for various life stages and might thus affect the representativeness of the length ",
                  "measurements if the population is not closed.",
                  "</li>")
