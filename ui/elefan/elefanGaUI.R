@@ -115,7 +115,6 @@ tabElefanGa <- function(id) {
                         size = "large",
                         p("Should the seasonal model be used? The seasonal model (or seasonalised von Bertalanffy growth curve) enables the calculation of the seasonal growth parameters, ",
                           withMathJax("\\(C\\)"), " and ",
-                          withMathJax("\\(t_{s}\\)"),". Please see the Seasonal Von Bertalanffy page in the Supporting Tools menu for more information.")),
 
                 bsModal("info_C", withMathJax("\\(C\\)"), ns("infoC"),
                         size = "large",
@@ -127,7 +126,7 @@ tabElefanGa <- function(id) {
                 
                 bsModal("info_ga", "ELEFAN's genetic algorithm", ns("info_GA"),
                         size = "large",
-                        HTML(paste0("<p>Genetic algorithms (GAs) are stochastic search algorithms inspired by the basic principles of biological evolution and natural selection.  GAs simulate the evolution of living organisms, where the fittest individuals dominate over the weaker ones, by mimicking the biological mechanisms of evolution, such as selection, crossover and mutation.<br><br> Changing default parameters can have a substantial effect on the optimization process and, thus, on estimated growth parameters. Therefore, please apply caution when changing these parameters. In fact, values should only be increase from the default, though please note that this will increase the run time of the assessment.</p>"))),
+                        HTML(paste0("<p>Genetic algorithms (GAs) are stochastic search algorithms inspired by the basic principles of biological evolution and natural selection.  GAs simulate the evolution of living organisms, where the fittest individuals dominate over the weaker ones, by mimicking the biological mechanisms of evolution, such as selection, crossover and mutation.<br><br> Changing default parameters can have a substantial effect on the optimization process and, thus, on estimated growth parameters. Therefore, please apply caution when changing these parameters. In fact, values should only be increased from the default, though please note that this will increase the run time of the assessment.</p>"))),
                 
                 bsModal("info_popsize", "Population size", ns("infoPopSize"),
                         size = "large",
@@ -202,7 +201,7 @@ tabElefanGa <- function(id) {
                              
                              <b>'Run Assessment'</b> performs the main assessment and should yield plenty of figures and tables in the result section upon successful completion. 
                              The run may take several minutes and depends on the size of the dataset, aggregation, bin size, and parameter search space. Run time with the sample 
-                             dataset and default settings is 2-3 minutes. <br> <br> <b>'Reset'</b> removes all results, the uploaded dataset, and resets all settings to default values. <br> <br> 
+                             dataset and default settings is 2-4 minutes. <br> <br> <b>'Reset'</b> removes all results, the uploaded dataset, and resets all settings to default values. <br> <br> 
                              
                              After successful completion of the main assessment, an additional button <b>'Download Report'</b> allows you to download a pdf document with all results. 
                              This report is also automatically uploaded to your private workspace.</p>"
