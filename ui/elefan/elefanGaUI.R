@@ -114,7 +114,7 @@ tabElefanGa <- function(id) {
                 bsModal("info_season", "Seasonal model", ns("infoSeason"),
                         size = "large",
                         p("Should the seasonal model be used? The seasonal model (or seasonalised von Bertalanffy growth curve) enables the calculation of the seasonal growth parameters, ",
-                          withMathJax("\\(C\\)"), " and ",
+                          withMathJax("\\(C\\)"))),
 
                 bsModal("info_C", withMathJax("\\(C\\)"), ns("infoC"),
                         size = "large",
