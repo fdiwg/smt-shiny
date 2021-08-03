@@ -54,7 +54,7 @@ This tool was designed to allow users with little to no programming experience t
     
     text <- paste0(text, "<p>")
     text <- paste0(text,"<h5><b>Run time</b></h5>")
-    text <- paste0(text, "Run time with sample dataset for both methods is <b>between 1-3 mins</b>. Run time for CMSY depends on the length of the catch time series analysed. Run time for the length-based workflow depends on the size of the length frequency dataset, the time aggregation, and the search space of input parameters as specified by the user. The information buttons note this effect for each relevant field.<br><br>")
+    text <- paste0(text, "Run time with the sample dataset for both methods is <b>between 1-3 mins</b>. Run time for CMSY depends on the length of the catch time series analysed. Run time for the length-based workflow depends on the size of the length frequency dataset, the time aggregation, and the search space of input parameters as specified by the user. The information buttons note this effect for each relevant field.<br><br>")
     text <- paste0(text, "</p>")
     
    # text <- paste0(text, "<h4>Instruction to build a Docker image of this application : </h4>")
