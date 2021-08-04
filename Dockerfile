@@ -43,6 +43,7 @@ RUN apt-get update && apt-get upgrade -y
 
 RUN R -e "install.packages(c('devtools'), repos='https://cran.r-project.org/')"
 RUN R -e "devtools::install_version('XML', version='3.99-0.3', repos = 'http://cran.r-project.org')"
+RUN R -e "devtools::install_version('xml2', version='1.3.2', repos = 'http://cran.r-project.org')"
 RUN R -e "devtools::install_version('shiny', version='1.5.0', repos = 'http://cran.r-project.org')"
 RUN R -e "devtools::install_version('rmarkdown', version='2.7', repos = 'http://cran.r-project.org')"
 RUN R -e "devtools::install_version('shinyjs', version='1.1', repos = 'http://cran.r-project.org')"

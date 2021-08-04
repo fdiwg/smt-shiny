@@ -30,6 +30,7 @@ library(knitr)
 library(shinyWidgets)
 library(XML)
 library(d4storagehub4R)
+library(xml2)
 
 ##### Dependencies
 source("ui/menu.R")

@@ -9,7 +9,7 @@ uploadFolderDescription <- "SDG 14.4.1 VRE Stock Monitoring Tool results"
 VREUploadText <- "The report has been uploaded to your VRE workspace"
 gcubeTokenQueryParam <- "gcube-token"
 apiUrl <- "https://api.d4science.org/rest/2/people/profile?gcube-token="
-vreToken <- "96d4f92a-ef32-42ab-a47a-425ee5618644-843339462"
+#vreToken <- "96d4f92a-ef32-42ab-a47a-425ee5618644-843339462"
 
 
 ######## END CONSTANTS ########

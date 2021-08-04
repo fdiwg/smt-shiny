@@ -510,7 +510,7 @@ elefanGaModule <- function(input, output, session) {
                             HTML("Elitism cannot be larger than population size. Please adjust and run again.<hr/>")
                         }else if(length(grep("cannot be negative!",res$error)) != 0) {
                             par_assoc <- NULL
-                            browser()
+                            #browser()
                             if(length(grep("binSize|MA",res$error)) != 0){
                                 par_assoc <- c(par_assoc,"restructuring of the data")
                             }
