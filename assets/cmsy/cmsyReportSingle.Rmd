@@ -24,7 +24,7 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 
 **Starting depletion range (B/k)** : `r min(input$stb)` to `r max(input$stb)`
 
-**Ending deplation range (B/k)** : `r min(input$endb)` to `r max(input$endb)`
+**Ending depletion range (B/k)** : `r min(input$endb)` to `r max(input$endb)`
 
 **Does the catch time series have an intermediate year where biomass is particularly high or low?** : `r if(!is.null(input$cmsy_checkbox_intb)){if(input$cmsy_checkbox_intb){"Yes"}else{"No"}}else{"No"}`
 
