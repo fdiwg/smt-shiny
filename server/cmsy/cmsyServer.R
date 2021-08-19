@@ -3,6 +3,7 @@ cmsyModule <- function(input, output, session) {
   ns <- session$ns
   
   cmsy <- reactiveValues()
+  cmsy$exploPlot <- FALSE
   cmsyUploadVreResult <- reactiveValues()
   
   fileContents <- reactiveValues()
@@ -65,6 +66,7 @@ cmsyModule <- function(input, output, session) {
     } else {
       shinyjs::enable("go_cmsy")
       fileContents$data <- contents
+      cmsy$exploPlot <- TRUE
       flog.info("Input file for CMSY %s seems valid", filePath$datapath)
     }
   })
@@ -403,7 +405,9 @@ cmsyModule <- function(input, output, session) {
   observeEvent(input$reset_cmsy, {
     resetCmsyInputValues()
     cmsy$method <- NULL
+    cmsy$exploPlot <- FALSE
   })
+  
   ####### END OBSERVERS #######
   
   ####### CMSY OUTPUT FUNCTION #######
@@ -556,8 +560,8 @@ cmsyModule <- function(input, output, session) {
   
   
   output$plot_cmsy_explo1 <- renderPlot({
-    contents <- cmsyFileData()
-    if(!is.null(contents)){
+    if(cmsy$exploPlot){
+      contents <- cmsyFileData()
     data_exp<-subset(contents,Stock==input$stock & yr %in% seq(input$CMSY_years_selected[1],input$CMSY_years_selected[2],by=1))
     par(mar = c(1,4,0,1), oma = c(3,1,1,0))
     plot(data_exp$yr,data_exp$ct,type='l',xlab='Years',ylab='Catch in tonnes') ## PLOT ONLY THE STOCK SELECTED, RESOLVE ERROR 
@@ -565,10 +569,9 @@ cmsyModule <- function(input, output, session) {
   })
   
   output$title_cmsy_explo1 <- renderText({
-    contents <- cmsyFileData()
-    if(!is.null(contents)){
-    txt <- "<p class=\"pheader_elefan\">Figure 1:  The catch time series of the selected stock.</p>"
-    txt
+    if(cmsy$exploPlot){
+      txt <- "<p class=\"pheader_elefan\">Figure 1:  The catch time series of the selected stock.</p>"
+      txt
     }else{NULL}
   })
   
