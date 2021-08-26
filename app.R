@@ -225,7 +225,7 @@ server <- function(input, output, session) {
         app_ctrl$withtoken <- TRUE
         
         #instantiate storagehub manager
-        sh_manager = d4storagehub4R::StoragehubManager$new(token = session$userData$sessionToken(), logger = "INFO")
+        sh_manager = d4storagehub4R::StoragehubManager$new(token = session$userData$sessionToken(), keyring = FALSE, logger = "INFO")
         session$userData$sessionUsername(sh_manager$getUserProfile()$username)
         session$userData$storagehubManager(sh_manager)
         
