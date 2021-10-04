@@ -286,8 +286,6 @@ cmsyModule <- function(input, output, session) {
                        fofl=if(input$cmsy_checkbox_comparison){input$fofl}else{"NA"},
                        last_f=if(input$cmsy_checkbox_comparison){input$last_f}else{"NA"},
                        resiliance="Medium",
-                       #r.low="NA",
-                       #r.hi="NA",
                        r.low=min(input$resiliance),
                        r.hi=max(input$resiliance),
                        stb.low=min(input$stb),
@@ -297,17 +295,14 @@ cmsyModule <- function(input, output, session) {
                        intb.hi=if(input$cmsy_checkbox_intb){max(input$intb)}else{"NA"},
                        endb.low=min(input$endb),
                        endb.hi=max(input$endb),
-                       #q.start="NA",
-                       #q.end="NA",
                        q.start=min(input$CMSY_years_q),
                        q.end=max(input$CMSY_years_q),
                        btype=input$btype,
                        force.cmsy=FALSE,
                        comments=input$comments,
-                       #token=vreToken, 
-                       token=session$userData$sessionToken(),
-                       inputCsvFile=filePath$datapath, 
-                       templateFile=templateFileDlmTools)
+                       inputCsvFile=filePath$datapath,
+                       wps=session$userData$sessionWps())
+                    
         
         js$enableAllButtons()
         js$hideComputing()
@@ -316,21 +311,17 @@ cmsyModule <- function(input, output, session) {
         print("Create a temp dir for CMSY")
         cmsy_temp_dir <- tempdir()
         print(cmsy_temp_dir)
-        print("Analyze ret object")
-        print(sapply(colnames(ret), function(x){class(ret[,x])}))
         
         invisible(lapply(1:nrow(ret), function(i){
           row <- ret[i,]
-          row_out <- switch(row$description,
+          row_out <- switch(row$Description,
             "Log of the computation" = {
-              print("Report computation logs")
-              cmsy$method$log <- row$url
+              print(sprintf("Report computation logs : %s",row$Data))
+              cmsy$method$log <- row$Data
             },
             "estimates" = {
-              print("Downloading Estimates")
-              print(row$url)
-              contents <- httr::content(httr::GET(row$url),"text")
-              print (paste0("Cmsy text url", row$url))
+              print(sprintf("Downloading Estimates : %s",row$Data))
+              contents <- httr::content(httr::GET(row$Data),"text")
               contents <- gsub("Results for Management", "Reference points and indicators", contents)
               cmsy$method$textRaw <<- contents
               contents <- gsub("\n\r", "<br/>", contents)
@@ -340,26 +331,22 @@ cmsyModule <- function(input, output, session) {
               cmsy$method$text <<- contents
             },
             "management_charts" = {
-              print("Downloading Management charts")
-              print(row$url)
-              #fileManagementChart <- tempfile(fileext=".jpeg")
+              print(sprintf("Downloading Management charts : %s",row$Data))
               fileManagementChart <-paste(cmsy_temp_dir,"/","cmsy_fileManagementChart",".jpeg",sep="")
               fileManagementChart <- if(Sys.info()[["sysname"]] == "Windows") {paste(gsub("\\\\", "/", fileManagementChart)) } else {fileManagementChart}
               print(fileManagementChart)
-              downloadFile(row$url, fileManagementChart)
+              downloadFile(row$Data, fileManagementChart)
               cmsy$method$managementChart <<- fileManagementChart
-              cmsy$method$managementChartUrl <<- row$url
+              cmsy$method$managementChartUrl <<- row$Data
             },
             "analysis_charts" = {
-              print("Downloading Analysis charts")
-              print(row$url)
-              #fileAnalisysChart <- tempfile(fileext=".jpeg")
+              print(sprintf("Downloading Analysis charts : %s",row$Data))
               fileAnalisysChart <- paste(cmsy_temp_dir,"/","cmsy_fileAnalisysChart",".jpeg",sep="")
               fileAnalisysChart <- if(Sys.info()[["sysname"]] == "Windows") {paste(gsub("\\\\", "/", fileAnalisysChart)) } else {fileAnalisysChart}
               print(fileAnalisysChart)
-              downloadFile(row$url, fileAnalisysChart)
+              downloadFile(row$Data, fileAnalisysChart)
               cmsy$method$analisysChart <<- fileAnalisysChart
-              cmsy$method$analisysChartUrl <<- row$url
+              cmsy$method$analisysChartUrl <<- row$Data
             }
           )
         }))
