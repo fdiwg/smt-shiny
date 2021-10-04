@@ -1243,3 +1243,1001 @@ INFO [2021-04-15 01:32:34] Token for upload: 256d3370-59a1-4c80-a139-6aa71b116d3
 INFO [2021-04-15 01:32:36] Trying to upload C:\Users\manub\AppData\Local\Temp\Rtmp6TCUVN/CMSY_report_20210415_0132_1618443151.pdf to i-Marine workspace folder /Home/emmanuel.blondel/Workspace/StockMonitoringTool
 INFO [2021-04-15 01:32:41] File C:\Users\manub\AppData\Local\Temp\Rtmp6TCUVN/CMSY_report_20210415_0132_1618443151.pdf successfully uploaded to the i-Marine folder /Home/emmanuel.blondel/Workspace/StockMonitoringTool
 
+INFO [2021-07-27 16:01:42] Current Page: home
+INFO [2021-07-27 16:01:52] Current Page: cmsy
+INFO [2021-07-27 16:02:01] Current Page: cmsy-sample
+INFO [2021-07-27 16:02:16] Input file for CMSY C:\Users\alexa\AppData\Local\Temp\RtmpAZNHub/87b6f2680ea1baa6d7517e64/0.csv seems valid
+INFO [2021-07-27 16:02:39] Input file for CMSY C:\Users\alexa\AppData\Local\Temp\RtmpAZNHub/1521e6c3db33b578b230b7ef/0.csv seems valid
+WARN [2021-07-27 16:02:58] Lost connection to R server
+INFO [2021-07-27 16:43:34] Current Page: NA
+INFO [2021-07-27 16:43:34] Current Page: home
+INFO [2021-07-27 16:43:37] Current Page: cmsy
+INFO [2021-07-27 16:43:42] Input file for CMSY C:\Users\alexa\AppData\Local\Temp\RtmpAZNHub/f1eb4cf77ff8010f4635ea3f/0.csv seems valid
+INFO [2021-07-27 16:43:52] Input file for CMSY C:\Users\alexa\AppData\Local\Temp\RtmpAZNHub/11582744f55fb6e0f6dd22c0/0.csv seems valid
+WARN [2021-07-27 16:46:39] Lost connection to R server
+INFO [2021-07-28 12:34:30] Current Page: NA
+INFO [2021-07-28 12:34:30] Current Page: home
+INFO [2021-07-28 12:34:33] Current Page: NA
+INFO [2021-07-28 12:34:33] Current Page: cmsy
+INFO [2021-07-28 12:34:39] Current Page: elefan-sample
+INFO [2021-07-28 12:34:42] Current Page: elefan-ga
+INFO [2021-07-28 12:34:55] Current Page: cmsy-sample
+INFO [2021-07-28 12:37:15] Current Page: NA
+INFO [2021-07-28 12:37:15] Current Page: home
+INFO [2021-07-28 12:37:20] Current Page: elefan-sample
+WARN [2021-07-28 12:38:12] Lost connection to R server
+WARN [2021-07-28 12:38:12] Lost connection to R server
+WARN [2021-07-28 12:38:12] Lost connection to R server
+INFO [2021-07-28 12:38:18] Current Page: NA
+INFO [2021-07-28 12:38:18] Current Page: cmsy
+INFO [2021-07-28 12:38:19] Current Page: NA
+INFO [2021-07-28 12:38:19] Current Page: cmsy-sample
+INFO [2021-07-28 12:38:19] Current Page: NA
+INFO [2021-07-28 12:38:19] Current Page: elefan-sample
+INFO [2021-07-28 12:38:20] Current Page: NA
+INFO [2021-07-28 12:38:20] Current Page: home
+INFO [2021-07-28 12:38:23] Current Page: elefan-sample
+WARN [2021-07-28 12:38:44] Lost connection to R server
+WARN [2021-07-28 12:41:03] Lost connection to R server
+WARN [2021-07-28 12:41:03] Lost connection to R server
+WARN [2021-07-28 12:41:03] Lost connection to R server
+INFO [2021-07-28 12:42:03] Current Page: NA
+INFO [2021-07-28 12:42:03] Current Page: home
+INFO [2021-07-28 12:42:06] Current Page: NA
+INFO [2021-07-28 12:42:06] Current Page: elefan-sample
+INFO [2021-07-28 12:42:06] Current Page: elefan-sample
+INFO [2021-07-28 12:42:08] Current Page: NA
+INFO [2021-07-28 12:42:08] Current Page: cmsy-sample
+INFO [2021-07-28 12:42:10] Current Page: NA
+INFO [2021-07-28 12:42:10] Current Page: cmsy
+INFO [2021-07-28 12:42:18] Current Page: cmsy-sample
+INFO [2021-07-28 12:59:34] Current Page: NA
+INFO [2021-07-28 12:59:34] Current Page: home
+INFO [2021-07-28 12:59:40] Current Page: elefan-ga
+INFO [2021-07-28 12:59:44] Current Page: elefan-sample
+WARN [2021-07-28 13:00:19] Lost connection to R server
+WARN [2021-07-28 13:00:19] Lost connection to R server
+WARN [2021-07-28 13:00:19] Lost connection to R server
+WARN [2021-07-28 13:00:19] Lost connection to R server
+WARN [2021-07-28 13:00:19] Lost connection to R server
+INFO [2021-08-03 11:30:53] Current Page: home
+WARN [2021-08-03 11:31:20] Lost connection to R server
+INFO [2021-08-03 11:31:21] Current Page: NA
+INFO [2021-08-03 11:31:23] Session token is: 84437e60-805e-4f93-8dd1-c0f406c005b1-843339462
+INFO [2021-08-03 11:31:23] Session mode is: NULL
+INFO [2021-08-03 11:31:23] Session username is: alexandre-ben
+INFO [2021-08-03 11:33:08] Current Page: NA
+INFO [2021-08-03 11:33:10] Session token is: 84437e60-805e-4f93-8dd1-c0f406c005b1-843339462
+INFO [2021-08-03 11:33:10] Session mode is: NULL
+INFO [2021-08-03 11:33:10] Session username is: alexandre-ben
+INFO [2021-08-04 12:23:37] Current Page: home
+INFO [2021-08-04 12:23:43] Current Page: NA
+INFO [2021-08-04 12:23:45] Session token is: 84437e60-805e-4f93-8dd1-c0f406c005b1-843339462
+INFO [2021-08-04 12:23:45] Session mode is: NULL
+INFO [2021-08-04 12:23:45] Session username is: alexandre-ben
+INFO [2021-08-04 12:26:46] Current Page: home
+INFO [2021-08-04 12:26:50] Current Page: NA
+INFO [2021-08-04 12:26:51] Session token is: 84437e60-805e-4f93-8dd1-c0f406c005b1-843339462
+INFO [2021-08-04 12:26:51] Session mode is: NULL
+INFO [2021-08-04 12:26:51] Session username is: alexandre-ben
+INFO [2021-08-04 12:26:52] Current Page: home
+WARN [2021-08-04 12:29:09] Lost connection to R server
+WARN [2021-08-04 12:29:09] Lost connection to R server
+WARN [2021-08-04 12:29:09] Lost connection to R server
+INFO [2021-08-04 16:01:47] Current Page: NA
+INFO [2021-08-04 16:01:47] Current Page: home
+INFO [2021-08-04 16:01:47] Current Page: NA
+INFO [2021-08-04 16:01:47] Current Page: home
+WARN [2021-08-04 16:01:50] Lost connection to R server
+INFO [2021-08-04 16:01:51] Current Page: NA
+INFO [2021-08-04 16:01:52] Session token is: 84437e60-805e-4f93-8dd1-c0f406c005b1-843339462
+INFO [2021-08-04 16:01:52] Session mode is: NULL
+INFO [2021-08-04 16:01:52] Session username is: alexandre-ben
+INFO [2021-08-04 16:01:55] Current Page: home
+WARN [2021-08-04 16:03:12] Lost connection to R server
+WARN [2021-08-04 16:03:21] Lost connection to R server
+INFO [2021-08-04 16:06:36] Current Page: NA
+INFO [2021-08-04 16:06:36] Current Page: home
+INFO [2021-08-04 16:07:14] Current Page: NA
+INFO [2021-08-04 16:07:14] Current Page: home
+WARN [2021-08-04 16:08:28] Lost connection to R server
+WARN [2021-08-04 16:08:28] Lost connection to R server
+WARN [2021-08-04 16:08:28] Lost connection to R server
+WARN [2021-08-04 16:08:28] Lost connection to R server
+INFO [2021-08-04 16:11:25] Current Page: NA
+INFO [2021-08-04 16:11:25] Current Page: home
+INFO [2021-08-04 16:11:26] Current Page: NA
+INFO [2021-08-04 16:11:26] Current Page: home
+INFO [2021-08-04 16:11:26] Current Page: NA
+INFO [2021-08-04 16:11:28] Session token is: 84437e60-805e-4f93-8dd1-c0f406c005b1-843339462
+INFO [2021-08-04 16:11:28] Session mode is: NULL
+INFO [2021-08-04 16:11:28] Session username is: alexandre-ben
+INFO [2021-08-04 16:11:28] Current Page: NA
+INFO [2021-08-04 16:11:30] Session token is: 84437e60-805e-4f93-8dd1-c0f406c005b1-843339462
+INFO [2021-08-04 16:11:30] Session mode is: NULL
+INFO [2021-08-04 16:11:30] Session username is: alexandre-ben
+WARN [2021-08-04 16:23:52] Lost connection to R server
+INFO [2021-08-04 16:23:53] Current Page: NA
+INFO [2021-08-04 16:23:54] Session token is: 84437e60-805e-4f93-8dd1-c0f406c005b1-843339462
+INFO [2021-08-04 16:23:54] Session mode is: NULL
+INFO [2021-08-04 16:23:54] Session username is: alexandre-ben
+INFO [2021-08-04 16:23:55] Current Page: home
+INFO [2021-08-04 16:23:55] Current Page: NA
+INFO [2021-08-04 16:23:55] Current Page: home
+INFO [2021-08-04 16:23:56] Current Page: NA
+INFO [2021-08-04 16:23:56] Current Page: home
+INFO [2021-08-04 16:23:59] Current Page: cmsy
+INFO [2021-08-04 16:24:05] Input file for CMSY C:\Users\alexa\AppData\Local\Temp\RtmpCIYY88/05182866db6dde9c9ae1a77a/0.csv seems valid
+INFO [2021-08-04 16:24:09] Starting CMSY computation
+INFO [2021-08-04 16:24:10] WPS url select : https://dataminer-prototypes-1804.d4science.org/wps/WebProcessingService
+INFO [2021-08-04 16:24:10] CMSY running with inputfile C:\Users\alexa\AppData\Local\Temp\RtmpCIYY88/05182866db6dde9c9ae1a77a/0.csv
+INFO [2021-08-04 16:24:10] Avant ecriture: C:\Users\alexa\AppData\Local\Temp\RtmpCIYY88/cmsy_data_20210804_1624_1628087050.csv
+INFO [2021-08-04 16:24:10] Apres ecriture
+INFO [2021-08-04 16:24:10] XML ready to send : <Execute service="WPS" version="1.0.0" xmlns="http://www.opengis.net/wps/1.0.0" xmlns:ns="http://www.opengis.net/ows/1.1" xmlns:xlin="http://www.w3.org/1999/xlink">
+  <ns:Identifier>org.gcube.dataanalysis.wps.statisticalmanager.synchserver.mappedclasses.transducerers.CMSY_2</ns:Identifier>
+    <DataInputs>
+      <Input>
+        <ns:Identifier>catch_file</ns:Identifier>
+        <Data>
+          <ComplexData mimeType="application/d4science">stock,yr,ct,bt
+Athe_boy_AD,1998,1084,NA
+Athe_boy_AD,1999,850,NA
+Athe_boy_AD,2000,647,NA
+Athe_boy_AD,2001,497,NA
+Athe_boy_AD,2002,507,NA
+Athe_boy_AD,2003,705,NA
+Athe_boy_AD,2004,668,NA
+Athe_boy_AD,2005,1048,NA
+Athe_boy_AD,2006,1239,NA
+Athe_boy_AD,2007,900,NA
+Athe_boy_AD,2008,930,NA
+Athe_boy_AD,2009,1183,NA
+Athe_boy_AD,2010,687,NA
+Athe_boy_AD,2011,692,NA
+Athe_boy_AD,2012,553,NA
+Athe_boy_AD,2013,375,NA
+Athe_boy_AD,2014,348,NA
+Athe_boy_AD,2015,NA,NA
+Belo_bel_AD,1998,95,NA
+Belo_bel_AD,1999,67,NA
+Belo_bel_AD,2000,50,NA
+Belo_bel_AD,2001,38,NA
+Belo_bel_AD,2002,21,NA
+Belo_bel_AD,2003,25,NA
+Belo_bel_AD,2004,22,NA
+Belo_bel_AD,2005,82,NA
+Belo_bel_AD,2006,58,NA
+Belo_bel_AD,2007,65,NA
+Belo_bel_AD,2008,16,NA
+Belo_bel_AD,2009,28,NA
+Belo_bel_AD,2010,12,NA
+Belo_bel_AD,2011,6,NA
+Belo_bel_AD,2012,4,NA
+Belo_bel_AD,2013,5,NA
+Belo_bel_AD,2014,4,NA
+Belo_bel_AD,2015,NA,NA</ComplexData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>Region</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string"></LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>Subregion</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string"></LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>Stock</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">Athe_boy_AD</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>Group</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string"></LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>Name</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string"></LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>EnglishName</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string"></LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>ScientificName</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string"></LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>Source</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">-</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>MinOfYear</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:int">1998</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>MaxOfYear</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:int">2015</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>StartYear</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:int">1998</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>EndYear</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:int">2014</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>Flim</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">NA</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>Fpa</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">NA</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>Blim</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">NA</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>Bpa</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">NA</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>Bmsy</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">NA</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>FMSY</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">NA</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>MSY</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">NA</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>MSYBtrigger</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">NA</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>B40</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">NA</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>M</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">NA</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>Fofl</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">NA</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>last_F</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">NA</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>Resilience</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">Medium</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>r.low</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">0.2</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>r.hi</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">0.8</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>stb.low</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:double">0.2</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>stb.hi</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:double">0.6</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>int.yr</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">NA</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>intb.low</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">NA</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>intb.hi</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">NA</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>endb.low</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:double">0.01</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>endb.hi</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:double">0.4</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>q.start</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">1998</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>q.end</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">2015</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>btype</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">None</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>force.cmsy</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:boolean">false</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>Comment</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">comments</LiteralData>
+        </Data>
+      </Input>
+    </DataInputs>
+    <ResponseForm>
+      <ResponseDocument storeExecuteResponse="true" lineage="true" status="true">
+        <Output>
+          <ows:Identifier xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">non_deterministic_output</ows:Identifier>
+        </Output>
+      </ResponseDocument>
+    </ResponseForm>
+</Execute>
+INFO [2021-08-04 16:24:10] Sending CMSY/POST request to: https://dataminer-prototypes-1804.d4science.org/wps/WebProcessingService
+ERROR [2021-08-04 16:24:10] Error in CMSY: is.character(password) is not TRUE 
+WARN [2021-08-04 16:32:12] Lost connection to R server
+WARN [2021-08-04 16:32:12] Lost connection to R server
+WARN [2021-08-04 16:32:12] Lost connection to R server
+WARN [2021-08-04 16:32:12] Lost connection to R server
+WARN [2021-08-04 16:32:12] Lost connection to R server
+WARN [2021-08-04 16:32:12] Lost connection to R server
+INFO [2021-08-04 16:32:16] Current Page: NA
+INFO [2021-08-04 16:32:16] Current Page: home
+INFO [2021-08-04 16:32:17] Current Page: NA
+INFO [2021-08-04 16:32:18] Session token is: 84437e60-805e-4f93-8dd1-c0f406c005b1-843339462
+INFO [2021-08-04 16:32:18] Session mode is: NULL
+INFO [2021-08-04 16:32:18] Session username is: alexandre-ben
+INFO [2021-08-04 16:32:19] Current Page: home
+INFO [2021-08-04 16:32:19] Current Page: NA
+INFO [2021-08-04 16:32:19] Current Page: cmsy
+INFO [2021-08-04 16:32:20] Current Page: NA
+INFO [2021-08-04 16:32:21] Session token is: 84437e60-805e-4f93-8dd1-c0f406c005b1-843339462
+INFO [2021-08-04 16:32:21] Session mode is: NULL
+INFO [2021-08-04 16:32:21] Session username is: alexandre-ben
+INFO [2021-08-04 16:32:23] Current Page: home
+WARN [2021-08-04 16:32:39] Lost connection to R server
+INFO [2021-08-04 16:32:40] Current Page: NA
+INFO [2021-08-04 16:32:41] Session token is: 84437e60-805e-4f93-8dd1-c0f406c005b1-843339462
+INFO [2021-08-04 16:32:41] Session mode is: NULL
+INFO [2021-08-04 16:32:41] Session username is: alexandre-ben
+INFO [2021-08-05 17:19:45] Current Page: home
+WARN [2021-08-05 17:20:03] Lost connection to R server
+INFO [2021-08-19 11:26:37] Current Page: home
+INFO [2021-08-19 11:26:43] Current Page: cmsy
+INFO [2021-08-19 11:26:50] Input file for CMSY C:\Users\alexa\AppData\Local\Temp\RtmpEl5pPH/657c59dcb628a7c817898e12/0.csv seems valid
+INFO [2021-08-19 11:27:42] Starting CMSY computation
+INFO [2021-08-19 11:27:43] WPS url select : https://dataminer-prototypes-1804.d4science.org/wps/WebProcessingService
+INFO [2021-08-19 11:27:44] CMSY running with inputfile C:\Users\alexa\AppData\Local\Temp\RtmpEl5pPH/657c59dcb628a7c817898e12/0.csv
+INFO [2021-08-19 11:27:44] Avant ecriture: C:\Users\alexa\AppData\Local\Temp\RtmpEl5pPH/cmsy_data_20210819_1127_1629365264.csv
+INFO [2021-08-19 11:27:44] Apres ecriture
+INFO [2021-08-19 11:27:44] XML ready to send : <Execute service="WPS" version="1.0.0" xmlns="http://www.opengis.net/wps/1.0.0" xmlns:ns="http://www.opengis.net/ows/1.1" xmlns:xlin="http://www.w3.org/1999/xlink">
+  <ns:Identifier>org.gcube.dataanalysis.wps.statisticalmanager.synchserver.mappedclasses.transducerers.CMSY_2</ns:Identifier>
+    <DataInputs>
+      <Input>
+        <ns:Identifier>catch_file</ns:Identifier>
+        <Data>
+          <ComplexData mimeType="application/d4science">stock,yr,ct,bt
+Athe_boy_AD,1970,3535,NA
+Athe_boy_AD,1971,3835,NA
+Athe_boy_AD,1972,3226,NA
+Athe_boy_AD,1973,3691,NA
+Athe_boy_AD,1974,3332,NA
+Athe_boy_AD,1975,2860,NA
+Athe_boy_AD,1976,2708,NA
+Athe_boy_AD,1977,2372,NA
+Athe_boy_AD,1978,2329,NA
+Athe_boy_AD,1979,2523,NA
+Athe_boy_AD,1980,2585,NA
+Athe_boy_AD,1981,1845,NA
+Athe_boy_AD,1982,1861,NA
+Athe_boy_AD,1983,2137,NA
+Athe_boy_AD,1984,1955,NA
+Athe_boy_AD,1985,2310,NA
+Athe_boy_AD,1986,2008,NA
+Athe_boy_AD,1987,2473,NA
+Athe_boy_AD,1988,2574,NA
+Athe_boy_AD,1989,2051,NA
+Athe_boy_AD,1990,1791,NA
+Athe_boy_AD,1991,1677,NA
+Athe_boy_AD,1992,1488,NA
+Athe_boy_AD,1993,1670,NA
+Athe_boy_AD,1994,1486,NA
+Athe_boy_AD,1995,1022,NA
+Athe_boy_AD,1996,982,NA
+Athe_boy_AD,1997,1071,NA
+Athe_boy_AD,1998,1084,NA
+Athe_boy_AD,1999,850,NA
+Athe_boy_AD,2000,647,NA
+Athe_boy_AD,2001,497,NA
+Athe_boy_AD,2002,507,NA
+Athe_boy_AD,2003,705,NA
+Athe_boy_AD,2004,668,NA
+Athe_boy_AD,2005,1048,NA
+Athe_boy_AD,2006,1239,NA
+Athe_boy_AD,2007,900,NA
+Athe_boy_AD,2008,930,NA
+Athe_boy_AD,2009,1183,NA
+Athe_boy_AD,2010,687,NA
+Athe_boy_AD,2011,692,NA
+Athe_boy_AD,2012,553,NA
+Athe_boy_AD,2013,375,NA
+Athe_boy_AD,2014,348,NA
+Athe_boy_AD,2015,NA,NA</ComplexData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>Region</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">Mediterranean</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>Subregion</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">Adriatic sea</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>Stock</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">Athe_boy_AD</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>Group</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">Plankton feeders</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>Name</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">Sand smelt in Adriatic Sea</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>EnglishName</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">Big scale sand smelt</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>ScientificName</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">Atherina boyeri</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>Source</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">-</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>MinOfYear</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:int">1970</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>MaxOfYear</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:int">2015</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>StartYear</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:int">1970</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>EndYear</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:int">2014</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>Flim</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">NA</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>Fpa</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">NA</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>Blim</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">NA</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>Bpa</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">NA</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>Bmsy</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">NA</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>FMSY</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">NA</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>MSY</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">NA</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>MSYBtrigger</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">NA</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>B40</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">NA</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>M</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">NA</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>Fofl</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">NA</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>last_F</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">NA</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>Resilience</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">Medium</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>r.low</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">0.2</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>r.hi</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">0.8</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>stb.low</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:double">0.2</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>stb.hi</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:double">0.6</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>int.yr</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">NA</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>intb.low</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">NA</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>intb.hi</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">NA</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>endb.low</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:double">0.01</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>endb.hi</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:double">0.4</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>q.start</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">1970</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>q.end</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">2015</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>btype</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">None</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>force.cmsy</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:boolean">false</LiteralData>
+        </Data>
+      </Input>
+      <Input>
+        <ns:Identifier>Comment</ns:Identifier>
+        <Data>
+          <LiteralData dataType="xs:string">comments</LiteralData>
+        </Data>
+      </Input>
+    </DataInputs>
+    <ResponseForm>
+      <ResponseDocument storeExecuteResponse="true" lineage="true" status="true">
+        <Output>
+          <ows:Identifier xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">non_deterministic_output</ows:Identifier>
+        </Output>
+      </ResponseDocument>
+    </ResponseForm>
+</Execute>
+INFO [2021-08-19 11:27:44] Sending CMSY/POST request to: https://dataminer-prototypes-1804.d4science.org/wps/WebProcessingService
+ERROR [2021-08-19 11:27:44] Error in CMSY: is.character(password) is not TRUE 
+WARN [2021-08-19 11:28:21] Lost connection to R server
+INFO [2021-08-19 11:28:22] Current Page: NA
+INFO [2021-08-19 11:28:24] Session token is: 84437e60-805e-4f93-8dd1-c0f406c005b1-843339462
+INFO [2021-08-19 11:28:24] Session mode is: NULL
+INFO [2021-08-19 11:28:24] Session username is: alexandre-ben
+INFO [2021-08-19 11:51:16] Current Page: home
+WARN [2021-08-19 11:51:19] Lost connection to R server
+INFO [2021-08-19 11:51:22] Current Page: NA
+INFO [2021-08-19 11:51:25] Session token is: 84437e60-805e-4f93-8dd1-c0f406c005b1-843339462
+INFO [2021-08-19 11:51:25] Session mode is: NULL
+INFO [2021-08-19 11:51:25] Session username is: alexandre-ben
+INFO [2021-08-19 12:02:22] Current Page: home
+INFO [2021-08-19 12:02:25] Current Page: NA
+INFO [2021-08-19 12:02:26] Session token is: 84437e60-805e-4f93-8dd1-c0f406c005b1-843339462
+INFO [2021-08-19 12:02:26] Session mode is: NULL
+INFO [2021-08-19 12:02:26] Session username is: alexandre-ben
+INFO [2021-08-19 12:05:24] Current Page: NA
+INFO [2021-08-19 12:05:26] Session token is: 84437e60-805e-4f93-8dd1-c0f406c005b1-843339462
+INFO [2021-08-19 12:05:26] Session mode is: NULL
+INFO [2021-08-19 12:05:26] Session username is: alexandre-ben
+INFO [2021-08-19 12:05:32] Current Page: cmsy
+INFO [2021-08-19 12:05:32] Current Page: home
+INFO [2021-08-19 12:05:33] Current Page: cmsy
+INFO [2021-08-19 12:05:39] Input file for CMSY C:\Users\alexa\AppData\Local\Temp\RtmpEl5pPH/321b05041b29e72064f542c5/0.csv seems valid
+INFO [2021-08-19 12:06:27] Input file for CMSY C:\Users\alexa\AppData\Local\Temp\RtmpEl5pPH/7a9783132c3c5761bd14e9f9/0.csv seems valid
+WARN [2021-08-19 12:06:56] Lost connection to R server
+WARN [2021-08-19 12:06:56] Lost connection to R server
+WARN [2021-08-19 12:06:56] Lost connection to R server
+INFO [2021-08-19 12:07:52] Current Page: NA
+INFO [2021-08-19 12:07:52] Current Page: cmsy
+WARN [2021-08-19 12:07:57] Lost connection to R server
+INFO [2021-08-19 12:07:58] Current Page: NA
+INFO [2021-08-19 12:08:00] Session token is: 84437e60-805e-4f93-8dd1-c0f406c005b1-843339462
+INFO [2021-08-19 12:08:00] Session mode is: NULL
+INFO [2021-08-19 12:08:00] Session username is: alexandre-ben
+WARN [2021-08-19 12:24:20] Lost connection to R server
+INFO [2021-08-19 12:24:22] Current Page: NA
+INFO [2021-08-19 12:24:24] Session token is: 84437e60-805e-4f93-8dd1-c0f406c005b1-843339462
+INFO [2021-08-19 12:24:24] Session mode is: NULL
+INFO [2021-08-19 12:24:24] Session username is: alexandre-ben
+INFO [2021-08-19 12:27:23] Current Page: home
+INFO [2021-08-19 12:27:26] Current Page: cmsy
+INFO [2021-08-19 12:27:30] Current Page: NA
+INFO [2021-08-19 12:27:32] Session token is: 84437e60-805e-4f93-8dd1-c0f406c005b1-843339462
+INFO [2021-08-19 12:27:33] Session mode is: NULL
+INFO [2021-08-19 12:27:33] Session username is: alexandre-ben
+WARN [2021-08-19 12:30:53] Lost connection to R server
+INFO [2021-08-19 12:30:53] Current Page: home
+INFO [2021-08-19 12:30:55] Current Page: NA
+INFO [2021-08-19 12:30:56] Session token is: 84437e60-805e-4f93-8dd1-c0f406c005b1-843339462
+INFO [2021-08-19 12:30:56] Session mode is: NULL
+INFO [2021-08-19 12:30:56] Session username is: alexandre-ben
+INFO [2021-08-19 12:30:58] Current Page: cmsy
+INFO [2021-08-19 12:30:58] Current Page: home
+INFO [2021-08-19 12:30:59] Current Page: cmsy
+INFO [2021-08-19 12:31:05] Input file for CMSY C:\Users\alexa\AppData\Local\Temp\RtmpEl5pPH/0929554e00af834f96401587/0.csv seems valid
+WARN [2021-08-19 12:32:20] Lost connection to R server
+WARN [2021-08-19 12:32:20] Lost connection to R server
+WARN [2021-08-19 12:32:20] Lost connection to R server
+INFO [2021-08-19 12:33:07] Current Page: NA
+INFO [2021-08-19 12:33:08] Current Page: home
+INFO [2021-08-19 12:33:15] Current Page: NA
+INFO [2021-08-19 12:33:16] Session token is: 84437e60-805e-4f93-8dd1-c0f406c005b1-843339462
+INFO [2021-08-19 12:33:16] Session mode is: NULL
+INFO [2021-08-19 12:33:16] Session username is: alexandre-ben
+INFO [2021-08-19 12:36:42] Current Page: home
+INFO [2021-08-19 12:36:43] Current Page: NA
+INFO [2021-08-19 12:36:44] Session token is: 84437e60-805e-4f93-8dd1-c0f406c005b1-843339462
+INFO [2021-08-19 12:36:44] Session mode is: NULL
+INFO [2021-08-19 12:36:44] Session username is: alexandre-ben
+INFO [2021-08-19 12:36:46] Current Page: home
+INFO [2021-08-19 12:36:46] Current Page: home
+INFO [2021-08-19 12:36:48] Current Page: cmsy
+INFO [2021-08-19 12:36:53] Input file for CMSY C:\Users\alexa\AppData\Local\Temp\RtmpEl5pPH/369a4527556120b3be43a49d/0.csv seems valid
+WARN [2021-08-19 12:37:38] Lost connection to R server
+WARN [2021-08-19 12:37:38] Lost connection to R server
+WARN [2021-08-19 12:37:38] Lost connection to R server
+INFO [2021-08-19 12:43:22] Current Page: NA
+INFO [2021-08-19 12:43:22] Current Page: home
+INFO [2021-08-19 12:43:24] Current Page: NA
+INFO [2021-08-19 12:43:24] Current Page: home
+INFO [2021-08-19 12:43:29] Current Page: NA
+INFO [2021-08-19 12:43:31] Session token is: 84437e60-805e-4f93-8dd1-c0f406c005b1-843339462
+INFO [2021-08-19 12:43:31] Session mode is: NULL
+INFO [2021-08-19 12:43:31] Session username is: alexandre-ben
+INFO [2021-08-19 12:43:32] Current Page: home
+INFO [2021-08-19 12:43:32] Current Page: home
+INFO [2021-08-19 12:43:35] Current Page: cmsy
+INFO [2021-08-19 12:44:09] Input file for CMSY C:\Users\alexa\AppData\Local\Temp\RtmpEl5pPH/adfcb463c89ac46d19fdf357/0.csv seems valid
+WARN [2021-08-19 12:44:24] Lost connection to R server
+WARN [2021-08-19 12:44:24] Lost connection to R server
+WARN [2021-08-19 12:44:24] Lost connection to R server
+WARN [2021-08-19 12:44:24] Lost connection to R server
+INFO [2021-08-19 12:45:47] Current Page: NA
+INFO [2021-08-19 12:45:47] Current Page: home
+INFO [2021-08-19 12:45:48] Current Page: NA
+INFO [2021-08-19 12:45:48] Current Page: NA
+INFO [2021-08-19 12:45:49] Current Page: home
+INFO [2021-08-19 12:45:49] Current Page: home
+INFO [2021-08-19 12:45:49] Current Page: NA
+INFO [2021-08-19 12:45:51] Session token is: 84437e60-805e-4f93-8dd1-c0f406c005b1-843339462
+INFO [2021-08-19 12:45:51] Session mode is: NULL
+INFO [2021-08-19 12:45:51] Session username is: alexandre-ben
+INFO [2021-08-19 12:45:53] Current Page: home
+WARN [2021-08-19 12:45:53] Lost connection to R server
+INFO [2021-08-19 12:45:54] Current Page: NA
+INFO [2021-08-19 12:45:55] Session token is: 84437e60-805e-4f93-8dd1-c0f406c005b1-843339462
+INFO [2021-08-19 12:45:55] Session mode is: NULL
+INFO [2021-08-19 12:45:55] Session username is: alexandre-ben
+INFO [2021-08-19 12:49:15] Current Page: NA
+INFO [2021-08-19 12:49:16] Session token is: 84437e60-805e-4f93-8dd1-c0f406c005b1-843339462
+INFO [2021-08-19 12:49:16] Session mode is: NULL
+INFO [2021-08-19 12:49:16] Session username is: alexandre-ben
+INFO [2021-08-19 12:49:19] Current Page: home
+WARN [2021-08-19 12:49:19] Lost connection to R server
+INFO [2021-08-19 12:49:20] Current Page: NA
+INFO [2021-08-19 12:49:20] Current Page: home
+INFO [2021-08-19 12:49:21] Current Page: NA
+INFO [2021-08-19 12:49:22] Current Page: home
+INFO [2021-08-19 12:49:23] Current Page: NA
+INFO [2021-08-19 12:49:24] Session token is: 84437e60-805e-4f93-8dd1-c0f406c005b1-843339462
+INFO [2021-08-19 12:49:24] Session mode is: NULL
+INFO [2021-08-19 12:49:24] Session username is: alexandre-ben
+INFO [2021-08-19 12:49:26] Current Page: home
+INFO [2021-08-19 12:49:26] Current Page: home
+INFO [2021-08-19 12:49:28] Current Page: cmsy
+INFO [2021-08-19 12:49:45] Input file for CMSY C:\Users\alexa\AppData\Local\Temp\RtmpEl5pPH/8f1c5c624dadcaf3f3850133/0.csv seems valid
+WARN [2021-08-19 12:50:03] Lost connection to R server
+WARN [2021-08-19 12:50:03] Lost connection to R server
+WARN [2021-08-19 12:50:03] Lost connection to R server
+WARN [2021-08-19 12:50:03] Lost connection to R server
+WARN [2021-08-19 12:50:03] Lost connection to R server
+WARN [2021-08-19 12:50:03] Lost connection to R server
+INFO [2021-08-19 12:52:01] Current Page: NA
+INFO [2021-08-19 12:52:01] Current Page: home
+INFO [2021-08-19 12:52:02] Current Page: NA
+INFO [2021-08-19 12:52:03] Current Page: home
+INFO [2021-08-19 12:52:04] Current Page: NA
+INFO [2021-08-19 12:52:04] Current Page: home
+INFO [2021-08-19 12:52:05] Current Page: NA
+INFO [2021-08-19 12:52:06] Current Page: NA
+INFO [2021-08-19 12:52:08] Session token is: 84437e60-805e-4f93-8dd1-c0f406c005b1-843339462
+INFO [2021-08-19 12:52:08] Session mode is: NULL
+INFO [2021-08-19 12:52:08] Session username is: alexandre-ben
+INFO [2021-08-19 12:52:09] Current Page: home
+INFO [2021-08-19 12:52:11] Current Page: NA
+INFO [2021-08-19 12:52:11] Current Page: home
+INFO [2021-08-19 12:52:11] Current Page: cmsy
+INFO [2021-08-19 12:52:47] Input file for CMSY C:\Users\alexa\AppData\Local\Temp\RtmpEl5pPH/cb710a35c281ba578aa713d0/0.csv seems valid
+WARN [2021-08-19 12:53:01] Lost connection to R server
+WARN [2021-08-19 12:53:02] Lost connection to R server
+WARN [2021-08-19 12:53:02] Lost connection to R server
+WARN [2021-08-19 12:53:02] Lost connection to R server
+WARN [2021-08-19 12:53:02] Lost connection to R server
+WARN [2021-08-19 12:53:02] Lost connection to R server
+WARN [2021-08-19 12:53:02] Lost connection to R server
+INFO [2021-08-19 12:54:01] Current Page: NA
+INFO [2021-08-19 12:54:01] Current Page: home
+INFO [2021-08-19 12:54:02] Current Page: NA
+INFO [2021-08-19 12:54:03] Session token is: 84437e60-805e-4f93-8dd1-c0f406c005b1-843339462
+INFO [2021-08-19 12:54:03] Session mode is: NULL
+INFO [2021-08-19 12:54:03] Session username is: alexandre-ben
+INFO [2021-08-19 12:54:05] Current Page: home
+WARN [2021-08-19 12:54:05] Lost connection to R server
+INFO [2021-08-19 12:54:06] Current Page: NA
+INFO [2021-08-19 12:54:07] Current Page: home
+INFO [2021-08-19 12:54:08] Current Page: NA
+INFO [2021-08-19 12:54:08] Current Page: home
+INFO [2021-08-19 12:54:09] Current Page: NA
+INFO [2021-08-19 12:54:11] Current Page: NA
+INFO [2021-08-19 12:54:11] Current Page: home
+INFO [2021-08-19 12:54:11] Current Page: home
+INFO [2021-08-19 12:54:12] Current Page: NA
+INFO [2021-08-19 12:54:14] Session token is: 84437e60-805e-4f93-8dd1-c0f406c005b1-843339462
+INFO [2021-08-19 12:54:14] Session mode is: NULL
+INFO [2021-08-19 12:54:14] Session username is: alexandre-ben
+INFO [2021-08-19 12:54:15] Current Page: home
+INFO [2021-08-19 12:54:15] Current Page: home
+INFO [2021-08-19 12:54:17] Current Page: cmsy
+INFO [2021-08-19 12:54:24] Input file for CMSY C:\Users\alexa\AppData\Local\Temp\RtmpEl5pPH/1b2dcf7e13a07bd483af5a2d/0.csv seems valid
+INFO [2021-08-19 12:54:36] Input file for CMSY C:\Users\alexa\AppData\Local\Temp\RtmpEl5pPH/e62433acc0039f043d586fa2/0.csv seems valid
+WARN [2021-08-19 13:02:57] Lost connection to R server
+WARN [2021-08-19 13:02:57] Lost connection to R server
+WARN [2021-08-19 13:02:57] Lost connection to R server
+WARN [2021-08-19 13:02:57] Lost connection to R server
+WARN [2021-08-19 13:02:57] Lost connection to R server
+WARN [2021-08-19 13:02:57] Lost connection to R server
+WARN [2021-08-19 13:02:57] Lost connection to R server
+WARN [2021-08-19 13:02:57] Lost connection to R server
+INFO [2021-08-19 13:03:14] Current Page: NA
+INFO [2021-08-19 13:03:14] Current Page: home
+INFO [2021-08-19 13:03:15] Current Page: NA
+INFO [2021-08-19 13:03:15] Current Page: home
+INFO [2021-08-19 13:03:16] Current Page: NA
+INFO [2021-08-19 13:03:17] Session token is: 84437e60-805e-4f93-8dd1-c0f406c005b1-843339462
+INFO [2021-08-19 13:03:17] Session mode is: NULL
+INFO [2021-08-19 13:03:17] Session username is: alexandre-ben
+INFO [2021-08-19 13:03:19] Current Page: home
+INFO [2021-08-19 13:03:21] Current Page: NA
+INFO [2021-08-19 13:03:21] Current Page: home
+WARN [2021-08-19 13:03:21] Lost connection to R server
+INFO [2021-08-19 13:03:22] Current Page: NA
+INFO [2021-08-19 13:03:22] Current Page: home
+INFO [2021-08-19 13:03:23] Current Page: NA
+INFO [2021-08-19 13:03:23] Current Page: home
+INFO [2021-08-19 13:03:25] Current Page: NA
+INFO [2021-08-19 13:03:25] Current Page: home
+INFO [2021-08-19 13:03:26] Current Page: NA
+INFO [2021-08-19 13:03:28] Current Page: NA
+INFO [2021-08-19 13:03:29] Session token is: 84437e60-805e-4f93-8dd1-c0f406c005b1-843339462
+INFO [2021-08-19 13:03:29] Session mode is: NULL
+INFO [2021-08-19 13:03:29] Session username is: alexandre-ben
+INFO [2021-08-19 13:49:19] Current Page: home
+INFO [2021-08-19 13:49:20] Current Page: NA
+INFO [2021-08-19 13:49:20] Current Page: home
+INFO [2021-08-19 13:49:21] Current Page: NA
+INFO [2021-08-19 13:49:23] Session token is: 84437e60-805e-4f93-8dd1-c0f406c005b1-843339462
+INFO [2021-08-19 13:49:23] Session mode is: NULL
+INFO [2021-08-19 13:49:23] Session username is: alexandre-ben
+INFO [2021-08-19 13:49:25] Current Page: home
+INFO [2021-08-19 13:49:27] Current Page: NA
+WARN [2021-08-19 13:49:27] Lost connection to R server
+INFO [2021-08-19 13:49:28] Current Page: NA
+INFO [2021-08-19 13:49:29] Current Page: home
+INFO [2021-08-19 13:49:29] Current Page: home
+INFO [2021-08-19 13:49:30] Current Page: NA
+INFO [2021-08-19 13:49:30] Current Page: home
+INFO [2021-08-19 13:49:32] Current Page: NA
+INFO [2021-08-19 13:49:32] Current Page: home
+INFO [2021-08-19 13:49:34] Current Page: NA
+INFO [2021-08-19 13:49:34] Current Page: home
+INFO [2021-08-19 13:49:35] Current Page: NA
+INFO [2021-08-19 13:49:35] Current Page: home
+INFO [2021-08-19 13:49:36] Current Page: NA
+INFO [2021-08-19 13:49:38] Session token is: 84437e60-805e-4f93-8dd1-c0f406c005b1-843339462
+INFO [2021-08-19 13:49:38] Session mode is: NULL
+INFO [2021-08-19 13:49:38] Session username is: alexandre-ben
+INFO [2021-09-03 14:25:12] Current Page: home
+WARN [2021-09-03 14:25:14] Lost connection to R server
+INFO [2021-09-03 14:25:15] Current Page: NA
+INFO [2021-09-03 14:25:19] Session token is: 84437e60-805e-4f93-8dd1-c0f406c005b1-843339462
+INFO [2021-09-03 14:25:19] Session mode is: NULL
+INFO [2021-09-03 14:25:19] Session username is: alexandre-ben

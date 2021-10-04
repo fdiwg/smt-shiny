@@ -31,6 +31,7 @@ library(shinyWidgets)
 library(XML)
 library(d4storagehub4R)
 library(xml2)
+library(ows4R)
 
 ##### Dependencies
 source("ui/menu.R")
@@ -209,6 +210,7 @@ server <- function(input, output, session) {
   session$userData$sessionUsername <- reactiveVal(NULL)
   session$userData$sessionMode <- reactiveVal(NULL)
   session$userData$storagehubManager <- reactiveVal(NULL)
+  session$userData$sessionWps <- reactiveVal(NULL)
   
   ## Hide any overlay when session starts
   observe({
@@ -256,6 +258,22 @@ server <- function(input, output, session) {
       flog.appender(appender.file(fileLog))
     }
   })
+  
+   observeEvent(req(!is.null(session$userData$sessionToken())),{
+  icproxy = XML::xmlParse(content(GET("https://registry.d4science.org/icproxy/gcube/service//ServiceEndpoint/DataAnalysis/DataMiner?gcube-scope=/d4science.research-infrastructures.eu/D4Research/SDG-Indicator14.4.1"), "text"))
+  wps_uri = xpathSApply(icproxy, "//AccessPoint/Interface/Endpoint", xmlValue)[1]
+  
+  flog.info("WPS url select : %s",wps_uri)
+  print(sprintf("WPS url select : %s",wps_uri))
+  WPS<-WPSClient$new(
+       url = wps_uri,
+       serviceVersion = "1.0.0", logger ="DEBUG",
+       headers = c("gcube-token"= session$userData$sessionToken())
+     )
+  
+  session$userData$sessionWps(WPS)
+  
+   },once=T)
   
   session$userData$cmsy <- reactiveValues()
   
