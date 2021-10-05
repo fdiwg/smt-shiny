@@ -46,7 +46,7 @@ runCmsy <- function (region,subregion,stock,group,name,englishName,scientificNam
       M = WPSLiteralData$new(value = as.character(m)),
       Fofl = WPSLiteralData$new(value = as.character(fofl)),
       last_F = WPSLiteralData$new(value = as.character(last_f)), 
-      Resilience = WPSLiteralData$new(value = resilience),
+      Resilience = WPSLiteralData$new(value = resiliance),
       r.low = WPSLiteralData$new(value = as.character(r.low)),
       r.hi = WPSLiteralData$new(value = as.character(r.hi)),
       stb.low = WPSLiteralData$new(value = as.double(stb.low)),
