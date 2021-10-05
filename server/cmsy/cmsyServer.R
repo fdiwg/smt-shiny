@@ -301,7 +301,7 @@ cmsyModule <- function(input, output, session) {
                        force.cmsy=FALSE,
                        comments=input$comments,
                        inputCsvFile=filePath$datapath,
-                       wps=session$userData$sessionWps())
+                       WPS=session$userData$sessionWps())
                     
         
         js$enableAllButtons()

@@ -1,4 +1,4 @@
-runCmsy <- function (region,subregion,stock,group,name,englishName,scientificName,source,minOfYear,maxOfYear,startYear,endYear,flim,fpa,blim,bpa,bmsy,fmsy,msy,msyBTrigger,b40,m,fofl,last_f,resiliance,r.low,r.hi,stb.low,stb.hi,int.yr,intb.low,intb.hi,endb.low,endb.hi,q.start,q.end,btype,force.cmsy,comments, inputCsvFile, wps)  {
+runCmsy <- function (region,subregion,stock,group,name,englishName,scientificName,source,minOfYear,maxOfYear,startYear,endYear,flim,fpa,blim,bpa,bmsy,fmsy,msy,msyBTrigger,b40,m,fofl,last_f,resiliance,r.low,r.hi,stb.low,stb.hi,int.yr,intb.low,intb.hi,endb.low,endb.hi,q.start,q.end,btype,force.cmsy,comments, inputCsvFile, WPS)  {
 
   data<-read.csv(inputCsvFile, header =T, sep=",")
   
@@ -18,7 +18,7 @@ runCmsy <- function (region,subregion,stock,group,name,englishName,scientificNam
   print(body)
   #SEND THE REQUEST#  
 
-  exec = wps$execute(
+  exec = WPS$execute(
     identifier ="org.gcube.dataanalysis.wps.statisticalmanager.synchserver.mappedclasses.transducerers.CMSY_2",status=T,
     dataInputs = list(
       catch_file = WPSComplexData$new(value = body ,mimeType = "application/d4science"),
