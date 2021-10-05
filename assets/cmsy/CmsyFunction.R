@@ -19,7 +19,7 @@ runCmsy <- function (region,subregion,stock,group,name,englishName,scientificNam
   #SEND THE REQUEST#  
 
   exec = wps$execute(
-    identifier ="org.gcube.dataanalysis.wps.statisticalmanager.synchserver.mappedclasses.transducerers.CMSY_2",
+    identifier ="org.gcube.dataanalysis.wps.statisticalmanager.synchserver.mappedclasses.transducerers.CMSY_2",status=T,
     dataInputs = list(
       catch_file = WPSComplexData$new(value = body ,mimeType = "application/d4science"),
       Region = WPSLiteralData$new(value = ifelse(is.null(region),"",region)),
@@ -64,6 +64,7 @@ runCmsy <- function (region,subregion,stock,group,name,englishName,scientificNam
     )
   )
   
+  Status<-exec$getStatus()$getValue()
   out<- exec$getProcessOutputs()[[1]]$getData()$getFeatures()
   
   flog.info("Got from CMSY: %s", out)
@@ -72,7 +73,8 @@ runCmsy <- function (region,subregion,stock,group,name,englishName,scientificNam
   file.remove(dffile)
   options(warn=0)
   
-  if(all(out$fid%in%sprintf("F%s",0:3))){
+  #if(all(out$fid%in%sprintf("F%s",0:3))){
+  if(Status=="ProcessSucceeded"){
     flog.warn("CMSY SUCCESS")
     print("CMSY SUCCESS")
     out <- data.frame(lapply(out, as.character), stringsAsFactors=FALSE)
