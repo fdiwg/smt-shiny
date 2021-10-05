@@ -96,8 +96,8 @@ buildUrl <- function(session, path) {
 
 ########### Save reports to file #############
 createCmsyPDFReport <- function(file, cmsy, input) {
-  tempReport <- file.path(tempdir(), "cmsyReportSingle.Rmd")
-  file.copy("assets/cmsy/cmsyReportSingle.Rmd", tempReport, overwrite = TRUE)
+  tempReport <- file.path(tempdir(), "cmsyReport.Rmd")
+  file.copy("assets/cmsy/cmsyReport.Rmd", tempReport, overwrite = TRUE)
 
 
   if (!is.null(cmsy$method$analisysChartUrl)) {
