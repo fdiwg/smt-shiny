@@ -35,8 +35,7 @@ cmsyParseXml <- function (xml) {
   return (df)
 }
 
-#runCmsy <- function (region,subregion,stock,group,name,englishName,scientificName,source,minOfYear,maxOfYear,startYear,endYear,flim,fpa,blim,bpa,bmsy,fmsy,msy,msyBTrigger,b40,m,fofl,last_f,resiliance,r.low,r.hi,stb.low,stb.hi,int.yr,intb.low,intb.hi,endb.low,endb.hi,q.start,q.end,btype,force.cmsy,comments, username, token, inputCsvFile, templateFile)  {
-runCmsy <- function (region,subregion,stock,group,name,englishName,scientificName,source,minOfYear,maxOfYear,startYear,endYear,flim,fpa,blim,bpa,bmsy,fmsy,msy,msyBTrigger,b40,m,fofl,last_f,resiliance,r.low,r.hi,stb.low,stb.hi,int.yr,intb.low,intb.hi,endb.low,endb.hi,q.start,q.end,btype,force.cmsy,comments, token, inputCsvFile, templateFile)  {
+runCmsy <- function (region,subregion,stock,group,name,englishName,scientificName,source,minOfYear,maxOfYear,startYear,endYear,flim,fpa,blim,bpa,bmsy,fmsy,msy,msyBTrigger,b40,m,fofl,last_f,resiliance,r.low,r.hi,stb.low,stb.hi,int.yr,intb.low,intb.hi,endb.low,endb.hi,q.start,q.end,btype,force.cmsy,comments, username, token, inputCsvFile, templateFile)  {
   #wps_uri = "http://dataminer.garr.d4science.org/wps/WebProcessingService" #http://dataminer-cloud1.d4science.org:80/wps/WebProcessingService" #"http://dataminer-bigdata.d4science.org:80/wps/WebProcessingService"
   icproxy = XML::xmlParse(content(GET("https://registry.d4science.org/icproxy/gcube/service//ServiceEndpoint/DataAnalysis/DataMiner?gcube-scope=/d4science.research-infrastructures.eu/D4Research/SDG-Indicator14.4.1"), "text"))
   wps_uri = xpathSApply(icproxy, "//AccessPoint/Interface/Endpoint", xmlValue)[1]
@@ -61,6 +60,18 @@ runCmsy <- function (region,subregion,stock,group,name,englishName,scientificNam
   if (is.null(englishName)) { englishName = "" }
   if (is.null(scientificName)) { scientificName = "" }
   
+  if (is.null(flim)) { flim = "" }
+  if (is.null(fpa)) { fpa = "" }
+  if (is.null(blim)) { blim = "" }
+  if (is.null(bpa)) { bpa = "" }
+  if (is.null(bmsy)) { bmsy = "" }
+  if (is.null(fmsy)) { fmsy = "" }
+  if (is.null(msy)) { msy = "" }
+  if (is.null(msyBTrigger)) { msyBTrigger = "" }
+  if (is.null(b40)) { b40 = "" }
+  if (is.null(m)) { m = "" }
+  if (is.null(fofl)) { fofl = "" }
+  if (is.null(last_f)) { last_f = "" }
   
   data<-read.csv(inputCsvFile, header =T, sep=",")
   
@@ -116,6 +127,18 @@ runCmsy <- function (region,subregion,stock,group,name,englishName,scientificNam
   filexml<-gsub("#M#", m, filexml)
   filexml<-gsub("#FOFL#", fofl, filexml)
   filexml<-gsub("#LAST_F#", last_f, filexml)
+  # filexml<-gsub("#FLIM#", NA, filexml)
+  # filexml<-gsub("#FPA#", NA, filexml)
+  # filexml<-gsub("#BLIM#", NA, filexml)
+  # filexml<-gsub("#BPA#", NA, filexml)
+  # filexml<-gsub("#BMSY#", NA, filexml)
+  # filexml<-gsub("#FMSY#", NA, filexml)
+  # filexml<-gsub("#MSY#", NA, filexml)
+  # filexml<-gsub("#MSYBTRIGGER#", NA, filexml)
+  # filexml<-gsub("#B40#", NA, filexml)
+  # filexml<-gsub("#M#", NA, filexml)
+  # filexml<-gsub("#FOFL#", NA, filexml)
+  # filexml<-gsub("#LAST_F#", NA, filexml)
   filexml<-gsub("#RESILIANCE#", resiliance, filexml)
   filexml<-gsub("#R.LOW#", r.low, filexml)
   filexml<-gsub("#R.HI#", r.hi, filexml)
