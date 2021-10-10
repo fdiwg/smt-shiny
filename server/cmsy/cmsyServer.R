@@ -3,6 +3,7 @@ cmsyModule <- function(input, output, session) {
   ns <- session$ns
   
   cmsy <- reactiveValues()
+  cmsy$exploPlot <- FALSE
   cmsyUploadVreResult <- reactiveValues()
   
   fileContents <- reactiveValues()
@@ -23,7 +24,6 @@ cmsyModule <- function(input, output, session) {
   cmsyFileData <- reactive({
     inFileCmsy <- input$fileCmsy
     if (is.null(inFileCmsy)) {
-      removeUI(selector="#stockSelectorContainerInner")
       return (NULL)
     }
     contents <- read.csv(inFileCmsy$datapath)
@@ -42,7 +42,6 @@ cmsyModule <- function(input, output, session) {
     contents <- cmsyFileData()
     if (!is.data.frame(contents)) {
       shinyjs::disable("go_cmsy")
-      removeUI(selector="#stockSelectorContainerInner")
       showModal(modalDialog(
         title = "Error",
         if(is.null(contents)){"Input file seems invalid"
@@ -65,14 +64,19 @@ cmsyModule <- function(input, output, session) {
       fileContents$data <- NULL
       flog.error("Input file for CMSY %s seems invalid", filePath$datapath)
     } else {
-      insertUI(
-        ui=tags$div(
-          selectInput(session$ns("stock"), "Select a stock", sort(unique(contents$Stock))), 
-          id="stockSelectorContainerInner"), 
-        selector="#stockSelectorContainer")
       shinyjs::enable("go_cmsy")
       fileContents$data <- contents
+      cmsy$exploPlot <- TRUE
       flog.info("Input file for CMSY %s seems valid", filePath$datapath)
+    }
+  })
+  
+  output$stockSelector <- renderUI({
+    contents <- cmsyFileData()
+    if (!is.null(contents)) {
+    tags$div(
+           selectInput(session$ns("stock"), "Select a stock", sort(unique(contents$Stock)))
+    )
     }
   })
   
@@ -187,15 +191,18 @@ cmsyModule <- function(input, output, session) {
     }
   })
   
-  observe({
-    if(!input$cmsy_checkbox_comparison){
-      js$removeBox2("fish_mort_ref_pts")
-      js$removeBox2("biomass_ref_points")
-    }else{
-      js$showBox2("fish_mort_ref_pts")
-      js$showBox2("biomass_ref_points")
-    }
-  })
+  # observeEvent(input$cmsy_checkbox_comparison, shinyjs::disable("cmsy_checkbox_comparison"))
+  
+  # observe({
+  #   if(!input$cmsy_checkbox_comparison){
+  #     js$removeBox2("fish_mort_ref_pts")
+  #     js$removeBox2("biomass_ref_points")
+  #   }else{
+  #     js$showBox2("fish_mort_ref_pts")
+  #     js$showBox2("biomass_ref_points")
+  #     
+  #   }
+  # })
   
   
   observeEvent(input$go_cmsy, {
@@ -269,18 +276,30 @@ cmsyModule <- function(input, output, session) {
                        maxOfYear=unique(max(cmsyFileData()$yr)),
                        startYear=min(input$CMSY_years_selected),
                        endYear=max(input$CMSY_years_selected)-1,
-                       flim=if(input$cmsy_checkbox_comparison){input$flim}else{"NA"},
-                       fpa=if(input$cmsy_checkbox_comparison){input$fpa}else{"NA"},
-                       blim=if(input$cmsy_checkbox_comparison){input$blim}else{"NA"},
-                       bpa=if(input$cmsy_checkbox_comparison){input$bpa}else{"NA"},
-                       bmsy=if(input$cmsy_checkbox_comparison){input$bmsy}else{"NA"},
-                       fmsy=if(input$cmsy_checkbox_comparison){input$fmsy}else{"NA"},
-                       msy=if(input$cmsy_checkbox_comparison){input$msy}else{"NA"},
-                       msyBTrigger=if(input$cmsy_checkbox_comparison){input$msyBTrigger}else{"NA"},
-                       b40=if(input$cmsy_checkbox_comparison){input$b40}else{"NA"},
-                       m=if(input$cmsy_checkbox_comparison){input$m}else{"NA"},
-                       fofl=if(input$cmsy_checkbox_comparison){input$fofl}else{"NA"},
-                       last_f=if(input$cmsy_checkbox_comparison){input$last_f}else{"NA"},
+                       flim=input$flim,
+                       fpa=input$fpa,
+                       blim=input$blim,
+                       bpa=input$bpa,
+                       bmsy=input$bmsy,
+                       fmsy=input$fmsy,
+                       msy=input$msy,
+                       msyBTrigger=input$msyBTrigger,
+                       b40=input$b40,
+                       m=input$m,
+                       fofl=input$fofl,
+                       last_f=input$last_f,
+                       # flim=if(input$cmsy_checkbox_comparison){input$flim}else{"NA"},
+                       # fpa=if(input$cmsy_checkbox_comparison){input$fpa}else{"NA"},
+                       # blim=if(input$cmsy_checkbox_comparison){input$blim}else{"NA"},
+                       # bpa=if(input$cmsy_checkbox_comparison){input$bpa}else{"NA"},
+                       # bmsy=if(input$cmsy_checkbox_comparison){input$bmsy}else{"NA"},
+                       # fmsy=if(input$cmsy_checkbox_comparison){input$fmsy}else{"NA"},
+                       # msy=if(input$cmsy_checkbox_comparison){input$msy}else{"NA"},
+                       # msyBTrigger=if(input$cmsy_checkbox_comparison){input$msyBTrigger}else{"NA"},
+                       # b40=if(input$cmsy_checkbox_comparison){input$b40}else{"NA"},
+                       # m=if(input$cmsy_checkbox_comparison){input$m}else{"NA"},
+                       # fofl=if(input$cmsy_checkbox_comparison){input$fofl}else{"NA"},
+                       # last_f=if(input$cmsy_checkbox_comparison){input$last_f}else{"NA"},
                        resiliance="Medium",
                        #r.low="NA",
                        #r.hi="NA",
@@ -401,7 +420,9 @@ cmsyModule <- function(input, output, session) {
   observeEvent(input$reset_cmsy, {
     resetCmsyInputValues()
     cmsy$method <- NULL
+    cmsy$exploPlot <- FALSE
   })
+  
   ####### END OBSERVERS #######
   
   ####### CMSY OUTPUT FUNCTION #######
@@ -535,6 +556,27 @@ cmsyModule <- function(input, output, session) {
       } else {  "" }
     } else {  "" }
   })
+  output$tableCmsyUnits <- renderText({
+    if ("method" %in% names(cmsy)) {
+      if (!is.null(cmsy$method)) {
+        caption <- "<br>Recalling the following acronyms/symbols, their description and the unit associated <br>
+        <b>Acronym/Symbol &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Description  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Unit <br></b>
+        B  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Biomass, total weight of exploited fish in water   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  tonnes <br>
+        Bmsy &nbsp;&nbsp;&nbsp; Biomass capable of producing MSY &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  tonnes <br>
+        CPUE &nbsp;&nbsp;&nbsp; Catch per unit effort &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <i>n</i> h<sup>-1</sup> or kg h<sup>-1</sup><br>
+        Fmsy &nbsp;&nbsp;&nbsp;&nbsp; Rate of fishing mortality compatible with MSY: Fmsy=0.5 r  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; year<sup>-1</sup><br>
+        k  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Parameter of the Schaefer model indicating unexploited stock size  &nbsp;&nbsp;&nbsp; tonnes<br>
+        K  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Parameter of the von Bertalanffy somatic growth equation  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;year<sup>-1</sup><br>
+        MSY &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Maximum sustainable yield: MSY=rk/4 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tonnes year<sup>-1</sup><br>
+        P<sub>t</sub> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Relative biomass: P<sub>t</sub>=B<sub>t</sub>/k <br>
+        q &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Catchability coefficient: CPUE<sub>t</sub>=q B<sub>t</sub><br>
+        r &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Maximum intrinsic rate of population increase &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; year<sup>-1</sup> <br> 
+        t &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Instant of time; subscript indicating annual values: C<sub>t</sub>,B<sub>t</sub> or CPUE<sub>t</sub> &nbsp;&nbsp;&nbsp; years <br>
+        <br><br><br>"
+        caption
+      } else {  "" }
+    } else {  "" }
+  })
   
   output$cmsyWorkflowConsiderationsText <- renderText(getWorkflowConsiderationTextForCMSY()) 
   
@@ -554,8 +596,8 @@ cmsyModule <- function(input, output, session) {
   
   
   output$plot_cmsy_explo1 <- renderPlot({
-    contents <- cmsyFileData()
-    if(!is.null(contents)){
+    if(cmsy$exploPlot){
+      contents <- cmsyFileData()
     data_exp<-subset(contents,Stock==input$stock & yr %in% seq(input$CMSY_years_selected[1],input$CMSY_years_selected[2],by=1))
     par(mar = c(1,4,0,1), oma = c(3,1,1,0))
     plot(data_exp$yr,data_exp$ct,type='l',xlab='Years',ylab='Catch in tonnes') ## PLOT ONLY THE STOCK SELECTED, RESOLVE ERROR 
@@ -563,10 +605,9 @@ cmsyModule <- function(input, output, session) {
   })
   
   output$title_cmsy_explo1 <- renderText({
-    contents <- cmsyFileData()
-    if(!is.null(contents)){
-    txt <- "<p class=\"pheader_elefan\">Figure 1:  The catch time series of the selected stock.</p>"
-    txt
+    if(cmsy$exploPlot){
+      txt <- "<p class=\"pheader_elefan\">Figure 1:  The catch time series of the selected stock.</p>"
+      txt
     }else{NULL}
   })
   
