@@ -12,7 +12,7 @@ getDataConsiderationTextForCmsy <- function() {
   text <- paste0(text, "<p>Other columns are identifiers that you may choose to include, but they are not necessary to run the model.</p>")
   text <- paste0(text, "<br/>")
   text <- paste0(text, "<p>Use the ",
-                 "<a href='https://data.d4science.net/qhX2'> sample dataset </a>",
+                 "<a href='https://data.d4science.org/shub/E_WWI3clpMdGVONG84eVNvblBxOWVPQ2FPUVArYkptQ1JsM2c1K2hkYWpjSlhmeUw1eXI2RGFLZUdMZW5aSis4aQ=='> sample dataset </a>",
                  " as a template to prepare your data.</p>")
   text <- paste0(text, "<br/>")
   text <- paste0(text, "<strong>Specific considerations regarding your own dataset:</strong><br/>")
@@ -27,7 +27,7 @@ getDataConsiderationTextForCmsy <- function() {
 getWorkflowConsiderationTextForCMSY <- function() {
   text <- "<h4> To run the CMSY method in the Stock Monitoring Tool :</h4>"
   text <- paste0(text, "<ol>")
-  text <- paste0(text, "<li>Upload a csv file data set of catch time series for one or multiple stocks (see Data Considerations or the <a href='https://data.d4science.net/qhX2'>CMSY Sample dataset</a>).</li>")
+  text <- paste0(text, "<li>Upload a csv file data set of catch time series for one or multiple stocks (see Data Considerations or the <a href='https://data.d4science.org/shub/E_WWI3clpMdGVONG84eVNvblBxOWVPQ2FPUVArYkptQ1JsM2c1K2hkYWpjSlhmeUw1eXI2RGFLZUdMZW5aSis4aQ=='>CMSY Sample dataset</a>).</li>")
   text <- paste0(text, "<ol type='a'>")
   text <- paste0(text, "<li> Select the stock upon which to perform the analysis </li>")
   text <- paste0(text, "</ol>")
@@ -153,7 +153,7 @@ getDataConsiderationTextForElefan <- function() {
                  "<li>The number of individuals caught per length class (rows) and per sampling date (columns).</li>")
   text <- paste0(text, "</ul>")
   text <- paste0(text, "<br>")
-  text <- paste0(text, "<p> An example dataset in this format can be downloaded <a href='https://goo.gl/tsqt64'> here </a>. </p>")
+  text <- paste0(text, "<p> An example dataset in this format can be downloaded <a href='https://data.d4science.org/shub/E_Yzc0aHFhWE50WWdpaEhkMjl5TExHekdQU2NFR2FtNTM2NkRydTQ5clhMTzhVd3Y4bDJzcU16UXNSUWJzZ1NpTg=='> here </a>. </p>")
   text <- paste0(text, "<br>")
   text <- paste0(text, "<b>Specific considerations regarding your own dataset:</b>")
   text <- paste0(text, "<ul>")
@@ -179,7 +179,7 @@ getDataConsiderationTextForElefan <- function() {
 getWorkflowConsiderationTextForElefan <- function() {
   text <- "<h4> To run this length-based workflow in the Stock Monitoring Tool :</h4>"
   text <- paste0(text, "<ol>")
-  text <- paste0(text, "<li> Upload a size frequency data set (see Data Considerations or the <a href='https://goo.gl/tsqt64'> Elefan Sample dataset </a>)</li>")
+  text <- paste0(text, "<li> Upload a size frequency data set (see Data Considerations or the <a href='https://data.d4science.org/shub/E_Yzc0aHFhWE50WWdpaEhkMjl5TExHekdQU2NFR2FtNTM2NkRydTQ5clhMTzhVd3Y4bDJzcU16UXNSUWJzZ1NpTg=='> Elefan Sample dataset </a>)</li>")
   text <- paste0(text, "<li> Adjust the Assessment Settings")
   text <- paste0(text, "<ol type='a'>")
   text <- paste0(text, "<li> Data Settings - select the years of data to include in the analysis, adjust the aggregation, bin size and moving average (MA) of the dataset to optimise cohort recognition by the Elefan algorithm </li>")
