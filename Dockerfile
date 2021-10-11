@@ -38,7 +38,6 @@ RUN R -e "devtools::install_github('eblondel/d4storagehub4R')"
 RUN R -e "devtools::install_github('eblondel/ows4R')"
 RUN R -e "devtools::install_github('AnalytixWare/ShinySky')"
 
-
 #Development
 RUN git -C /root/ clone https://github.com/abennici/StockMonitoringTool.git && echo "OK!"
 #Deployment
