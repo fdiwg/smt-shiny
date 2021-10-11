@@ -1,5 +1,5 @@
 elefanGaModule <- function(input, output, session) {
-    
+
     ns <- session$ns
 
     ## Definition of reactive values
@@ -185,14 +185,17 @@ elefanGaModule <- function(input, output, session) {
             maxL <- 10
         }else{
             binSize <- try(min(diff(inputElefanGaData$data$midLengths)),silent=TRUE)
-            maxL <- try(round(max(inputElefanGaData$data$midLengths)/4),silent=TRUE)
+            maxL <- try(max(inputElefanGaData$data$midLengths),silent=TRUE)
             if(inherits(binSize,"try-error")){
                 binSize <- 2
                 maxL <- 10
+            }else{
+                binSize <- round(0.23 * maxL^0.6, 1)
+                if(binSize == 0) binSize <- 0.1
             }
         }
         numericInput(ns("ELEFAN_GA_binSize"), "",
-                     binSize, min = binSize, max = maxL, step=0.5,
+                     binSize, min = 0.1, max = maxL, step=0.1,
                      width ='100%')
     })
 
@@ -558,7 +561,7 @@ elefanGaModule <- function(input, output, session) {
                     basePath <- paste0("/Home/",session$userData$sessionUsername(),"/Workspace/")
 
                     SH_MANAGER <- session$userData$storagehubManager()
-                    
+
                     tryCatch({
                         uploadToIMarineFolder(SH_MANAGER, reportFileName, basePath, uploadFolderName)
                         elefanGaUploadVreResult$res <- TRUE
@@ -1038,8 +1041,8 @@ elefanGaModule <- function(input, output, session) {
     output$elefanGAWorkflowConsiderationsText <- renderText({
         text <- getWorkflowConsiderationTextForElefan()
         text
-    }) 
-    
+    })
+
     output$elefanGADataConsiderationsText <- renderText({
         text <- gsub("%%ELEFAN%%", "ELEFAN_GA", getDataConsiderationTextForElefan())
         text

@@ -81,7 +81,7 @@ tabElefanGa <- function(id) {
 
                 bsModal("info_binsize", "Bin size", ns("infoBS"),
                         size = "large",
-                        HTML(paste0("<p>The bin size corresponds to the length interval over which the length frequency data are aggregated, for example 2 cm. <br><br> The combination of bin size and moving average (MA) critically affects the separation of peaks (i.e. potential cohorts) in the dataset and thus the estimation of growth parameters by ELEFAN. The bin size should be defined before defining the MA value. Ideally, the bin size is as small as possible, but large enough so that adjacent bins with high and low counts correspond to potential cohorts rather than noise. </p>"))),
+                        HTML(paste0("<p>The bin size corresponds to the length interval over which the length frequency data are aggregated, for example 2 cm. <br><br> The combination of bin size and moving average (MA) critically affects the separation of peaks (i.e. potential cohorts) in the dataset and thus the estimation of growth parameters by ELEFAN. The bin size should be defined before defining the MA value. Ideally, the bin size is as small as possible, but large enough so that adjacent bins with high and low counts correspond to potential cohorts rather than noise. Wang et al. (2020) recommended defining the bin size dependent on the maximum length by ",withMathJax("\\(0.23 L_{max}^{0.6}\\)")," (default).</p>"))),
 
                 bsModal("info_ma", "Moving average (MA)", ns("infoMA"),
                         size = "large",
