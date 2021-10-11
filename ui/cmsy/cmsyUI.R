@@ -388,58 +388,57 @@ prior to the last year with high biomass.</p>")),
             ),
             
             
-            
-            box(width=12,
-                checkboxInput(ns("cmsy_checkbox_comparison"),
-                              p("Optional : Check this box if you have fisheries reference points from previous assessments to use for comparison to the results from this analysis.",
-                                actionButton(ns("infocomp"),
-                                             tags$i(class = "fas fa-info",
-                                                    style="font-size: 8px"),
-                                             class="infoBubbleButton")),
-                              FALSE),
-                
-                br(),
-                
-                
-                box(id='biomass_ref_points',
-                    width=6,
-                    title='Biomass reference points and MSY',
-                    
-                    textInput(ns("msy"), p("Maximum Sustainable Yield (", withMathJax("\\(MSY\\)"), ")"), "NA"),
-                    textInput(ns("blim"), p("Biomass biological limit (", withMathJax("\\(B_{lim}\\)"), ")"), "NA"),
-                    textInput(ns("bpa"), p("Biomass precautionary value (",withMathJax("\\(B_{pa}\\)") , ")"), "NA"),
-                    textInput(ns("bmsy"), p("Biomass maximum sustainable yield (", withMathJax("\\(B_{MSY}\\)"), ")"), "NA"),
-                    textInput(ns("b40"), p("Biomass at 40% over the unfished level (", withMathJax("\\(B_{40\\%}\\)"), ")"), "NA"),
-                    textInput(ns("msyBTrigger"), p("Spawning Stock Biomass at MSY (", withMathJax("\\(SSB_{MSY}\\)"), ")"), "NA")
-                ),
-                
-                
-                box(id='fish_mort_ref_pts',
-                    width=6,
-                    title='Fishing mortality values',
-                    textInput(ns("fmsy"),
-                              p(HTML(paste0('Fishing mortality at Maximum Sustainable Yield (',withMathJax('\\(F_{MSY}\\)'),')',
-                                            actionButton(ns("infofmsy"),
-                                                         tags$i(class = "fas fa-info",
-                                                                style="font-size: 8px"),
-                                                         class="infoBubbleButton")))),"NA"),
-                    textInput(ns("flim"), p("Fishing mortality biological limit (", withMathJax("\\(F_{lim}\\)"), ")"), "NA"),
-                    textInput(ns("fpa"), p("Fishing mortality precautionary value (", withMathJax("\\(F_{pa}\\)"), ")"), "NA"),
-                    textInput(ns("fofl"), p("Fishing mortality at overfishing level (", withMathJax("\\(F_{ofl}\\)"),")"), "NA"),
-                    textInput(ns("last_f"), "Last known exploitation rate", "NA"),
-                    textInput(ns("m"),
-                              p(HTML(paste0("Natural mortality",
-                                            actionButton(ns("infom"),
-                                                         tags$i(class = "fas fa-info",
-                                                                style="font-size: 8px"),
-                                                         class="infoBubbleButton")))),"NA")
-                    
-                    #textInput("btype", "btype indicates if the catch file contains biomass, CPUE or no information associated with the catch time series", "None"),
-                    #textInput("comments", "Comments on data and computation", "landings"),
-                    #checkboxInput(ns("force.cmsy"), "Check this if CMSY results are to be preferred over the Bayesian State Model results (only when biomass or CPUE is available)", FALSE)
-                )
-                
-            )
+          #   box(width=12,
+          #       checkboxInput(ns("cmsy_checkbox_comparison"),
+          #                     p("Optional : Check this box if you have fisheries reference points from previous assessments to use for comparison to the results from this analysis.",
+          #                       actionButton(ns("infocomp"),
+          #                                    tags$i(class = "fas fa-info",
+          #                                           style="font-size: 8px"),
+          #                                    class="infoBubbleButton")),
+          #                     FALSE),
+          #       
+          #       br(),
+          #       
+          #       
+          #       box(id='biomass_ref_points',
+          #           width=6,
+          #           title='Biomass reference points and MSY',
+          #           
+          #           textInput(ns("msy"), p("Maximum Sustainable Yield (", withMathJax("\\(MSY\\)"), ")"), "NA"),
+          #           textInput(ns("blim"), p("Biomass biological limit (", withMathJax("\\(B_{lim}\\)"), ")"), "NA"),
+          #           textInput(ns("bpa"), p("Biomass precautionary value (",withMathJax("\\(B_{pa}\\)") , ")"), "NA"),
+          #           textInput(ns("bmsy"), p("Biomass maximum sustainable yield (", withMathJax("\\(B_{MSY}\\)"), ")"), "NA"),
+          #           textInput(ns("b40"), p("Biomass at 40% over the unfished level (", withMathJax("\\(B_{40\\%}\\)"), ")"), "NA"),
+          #           textInput(ns("msyBTrigger"), p("Spawning Stock Biomass at MSY (", withMathJax("\\(SSB_{MSY}\\)"), ")"), "NA")
+          #       ),
+          #       
+          #       
+          #       box(id='fish_mort_ref_pts',
+          #           width=6,
+          #           title='Fishing mortality values',
+          #           textInput(ns("fmsy"),
+          #                     p(HTML(paste0('Fishing mortality at Maximum Sustainable Yield (',withMathJax('\\(F_{MSY}\\)'),')',
+          #                                   actionButton(ns("infofmsy"),
+          #                                                tags$i(class = "fas fa-info",
+          #                                                       style="font-size: 8px"),
+          #                                                class="infoBubbleButton")))),"NA"),
+          #           textInput(ns("flim"), p("Fishing mortality biological limit (", withMathJax("\\(F_{lim}\\)"), ")"), "NA"),
+          #           textInput(ns("fpa"), p("Fishing mortality precautionary value (", withMathJax("\\(F_{pa}\\)"), ")"), "NA"),
+          #           textInput(ns("fofl"), p("Fishing mortality at overfishing level (", withMathJax("\\(F_{ofl}\\)"),")"), "NA"),
+          #           textInput(ns("last_f"), "Last known exploitation rate", "NA"),
+          #           textInput(ns("m"),
+          #                     p(HTML(paste0("Natural mortality",
+          #                                   actionButton(ns("infom"),
+          #                                                tags$i(class = "fas fa-info",
+          #                                                       style="font-size: 8px"),
+          #                                                class="infoBubbleButton")))),"NA")
+          #           
+          #           #textInput("btype", "btype indicates if the catch file contains biomass, CPUE or no information associated with the catch time series", "None"),
+          #           #textInput("comments", "Comments on data and computation", "landings"),
+          #           #checkboxInput(ns("force.cmsy"), "Check this if CMSY results are to be preferred over the Bayesian State Model results (only when biomass or CPUE is available)", FALSE)
+          #       )
+          #       
+          #   )
           ),
           
           ## Action buttons
@@ -493,6 +492,7 @@ prior to the last year with high biomass.</p>")),
                  box(
                    
                    htmlOutput(ns("titleCmsyAnalisysChart")),
+                   htmlOutput(ns("tableCmsyUnits")),
                    htmlOutput(ns("renderCmsyLog")),
                    htmlOutput(ns("renderCmsyInfo"))
                  ),
@@ -521,18 +521,18 @@ resetCmsyInputValues <- function() {
   shinyjs::reset("endb")
   shinyjs::reset("CMSY_years_q")
   shinyjs::reset("CMSY_years_selected")
-  shinyjs::reset("blim")
-  shinyjs::reset("bpa")
-  shinyjs::reset("bmsy")
-  shinyjs::reset("b40")
-  shinyjs::reset("fmsy")
-  shinyjs::reset("flim")
-  shinyjs::reset("fpa")
-  shinyjs::reset("fofl")
-  shinyjs::reset("last_f")
-  shinyjs::reset("msy")
-  shinyjs::reset("msyBTrigger")
-  shinyjs::reset("m")
+  # shinyjs::reset("blim")
+  # shinyjs::reset("bpa")
+  # shinyjs::reset("bmsy")
+  # shinyjs::reset("b40")
+  # shinyjs::reset("fmsy")
+  # shinyjs::reset("flim")
+  # shinyjs::reset("fpa")
+  # shinyjs::reset("fofl")
+  # shinyjs::reset("last_f")
+  # shinyjs::reset("msy")
+  # shinyjs::reset("msyBTrigger")
+  # shinyjs::reset("m")
   #careful removeUI conflict with event
   #removeUI(selector="#stockSelectorContainerInner")
   shinyjs::disable("go_cmsy")
