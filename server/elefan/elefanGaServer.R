@@ -138,12 +138,22 @@ elefanGaModule <- function(input, output, session) {
         shinyjs::reset("schooling")
         shinyjs::reset("tmax")
         shinyjs::reset("ELEFAN_years_selected_cc")
-        shinyjs::reset("Lm50")
-        shinyjs::reset("Lm75")
+        shinyjs::reset("selectMat")
+        shinyjs::reset("lm50_user")
+        shinyjs::reset("lm75_user")
+        shinyjs::reset("wqsm_user")
+        shinyjs::reset("per_lm1_user")
+        shinyjs::reset("lm1_user")
+        shinyjs::reset("per_lm2_user")
+        shinyjs::reset("lm2_user")
         shinyjs::reset("select")
         shinyjs::reset("l50_user")
         shinyjs::reset("l75_user")
         shinyjs::reset("wqs_user")
+        shinyjs::reset("per_l1_user")
+        shinyjs::reset("l1_user")
+        shinyjs::reset("per_l2_user")
+        shinyjs::reset("l2_user")
         shinyjs::reset("fRangeSteps")
         shinyjs::reset("fRangeMin")
         shinyjs::reset("fRangeMax")
@@ -254,24 +264,82 @@ elefanGaModule <- function(input, output, session) {
     })
 
     observe({
+        if(input$selectMat == "No maturity"){
+            shinyjs::hide("ui_lm50", asis = TRUE)
+            shinyjs::hide("ui_lm75", asis = TRUE)
+            shinyjs::hide("ui_wqsm", asis = TRUE)
+            shinyjs::hide("ui_per_lm1", asis = TRUE)
+            shinyjs::hide("ui_lm1", asis = TRUE)
+            shinyjs::hide("ui_per_lm2", asis = TRUE)
+            shinyjs::hide("ui_lm2", asis = TRUE)
+        }else if(input$selectMat == "Define Lm50 & Lm75"){
+            shinyjs::show("ui_lm50", asis = TRUE)
+            shinyjs::show("ui_lm75", asis = TRUE)
+            shinyjs::hide("ui_wqsm", asis = TRUE)
+            shinyjs::hide("ui_per_lm1", asis = TRUE)
+            shinyjs::hide("ui_lm1", asis = TRUE)
+            shinyjs::hide("ui_per_lm2", asis = TRUE)
+            shinyjs::hide("ui_lm2", asis = TRUE)
+        }else if(input$selectMat == "Define Lm50 & (Lm75-Lm25)"){
+            shinyjs::show("ui_lm50", asis = TRUE)
+            shinyjs::hide("ui_lm75", asis = TRUE)
+            shinyjs::show("ui_wqsm", asis = TRUE)
+            shinyjs::hide("ui_per_lm1", asis = TRUE)
+            shinyjs::hide("ui_lm1", asis = TRUE)
+            shinyjs::hide("ui_per_lm2", asis = TRUE)
+            shinyjs::hide("ui_lm2", asis = TRUE)
+        }else if(input$selectMat == "Other"){
+            shinyjs::hide("ui_lm50", asis = TRUE)
+            shinyjs::hide("ui_lm75", asis = TRUE)
+            shinyjs::hide("ui_wqsm", asis = TRUE)
+            shinyjs::show("ui_per_lm1", asis = TRUE)
+            shinyjs::show("ui_lm1", asis = TRUE)
+            shinyjs::show("ui_per_lm2", asis = TRUE)
+            shinyjs::show("ui_lm2", asis = TRUE)
+        }
+    })
+
+    observe({
         if(input$select == "Estimate"){
             shinyjs::hide("ui_l50", asis = TRUE)
             shinyjs::hide("ui_l75", asis = TRUE)
             shinyjs::hide("ui_wqs", asis = TRUE)
             shinyjs::hide("ui_lcMin", asis=TRUE)
             shinyjs::hide("ui_lcMax", asis=TRUE)
+            shinyjs::hide("ui_per_l1", asis = TRUE)
+            shinyjs::hide("ui_l1", asis = TRUE)
+            shinyjs::hide("ui_per_l2", asis = TRUE)
+            shinyjs::hide("ui_l2", asis = TRUE)
         }else if(input$select == "Define L50 & L75"){
             shinyjs::show("ui_l50", asis = TRUE)
             shinyjs::hide("ui_wqs", asis = TRUE)
             shinyjs::show("ui_l75", asis = TRUE)
             shinyjs::show("ui_lcMin", asis=TRUE)
             shinyjs::show("ui_lcMax", asis=TRUE)
+            shinyjs::hide("ui_per_l1", asis = TRUE)
+            shinyjs::hide("ui_l1", asis = TRUE)
+            shinyjs::hide("ui_per_l2", asis = TRUE)
+            shinyjs::hide("ui_l2", asis = TRUE)
         }else if(input$select == "Define L50 & (L75-L25)"){
             shinyjs::show("ui_l50", asis = TRUE)
             shinyjs::hide("ui_l75", asis = TRUE)
             shinyjs::show("ui_wqs", asis = TRUE)
             shinyjs::show("ui_lcMin", asis=TRUE)
             shinyjs::show("ui_lcMax", asis=TRUE)
+            shinyjs::hide("ui_per_l1", asis = TRUE)
+            shinyjs::hide("ui_l1", asis = TRUE)
+            shinyjs::hide("ui_per_l2", asis = TRUE)
+            shinyjs::hide("ui_l2", asis = TRUE)
+        }else if(input$select == "Other"){
+            shinyjs::hide("ui_l50", asis = TRUE)
+            shinyjs::hide("ui_l75", asis = TRUE)
+            shinyjs::hide("ui_wqs", asis = TRUE)
+            shinyjs::show("ui_lcMin", asis=TRUE)
+            shinyjs::show("ui_lcMax", asis=TRUE)
+            shinyjs::show("ui_per_l1", asis = TRUE)
+            shinyjs::show("ui_l1", asis = TRUE)
+            shinyjs::show("ui_per_l2", asis = TRUE)
+            shinyjs::show("ui_l2", asis = TRUE)
         }
     })
 
@@ -343,12 +411,22 @@ elefanGaModule <- function(input, output, session) {
                                  l50_user = input$l50_user,
                                  l75_user = input$l75_user,
                                  wqs_user = input$wqs_user,
+                                 per_l1 = input$per_l1_user,
+                                 l1 = input$l1_user,
+                                 per_l2 = input$per_l2_user,
+                                 l2 = input$l2_user,
                                  fRangeMin = input$fRangeMin,
                                  fRangeMax = input$fRangeMax,
                                  lcRangeMin = input$lcRangeMin,
                                  lcRangeMax = input$lcRangeMax,
-                                 Lm50 = input$Lm50,
-                                 Lm75 = input$Lm75,
+                                 mat_method = input$selectMat,
+                                 Lm50 = input$lm50_user,
+                                 Lm75 = input$lm75_user,
+                                 wqsm = input$wqsm_user,
+                                 per_lm1 = input$per_lm1_user,
+                                 lm1 = input$lm1_user,
+                                 per_lm2 = input$per_lm2_user,
+                                 lm2 = input$lm2_user,
                                  ## speed up for checking:
                                  popSize = 10,
                                  maxiter = 5,
@@ -402,6 +480,10 @@ elefanGaModule <- function(input, output, session) {
                             HTML(paste0("Parameters defining the ",
                                         paste(par_assoc, collapse=" & "),
                                         " are negative. This is not possible, please revise your assessment settings.<hr/>"))
+                        }else if(length(grep("'l50_user' not found|'l75_user' not found|'wqs_user' not found|'per_l1_user' not found|'l1_user' not found|'per_l2_user' not found|'l2_user' not found|L50 has to be provided|L75 has to be provided|(L75-L25) has to be provided|X1 not found|LX1 not found|X2 not found|LX2 not found",res$error)) != 0) {
+                            HTML("Some required gear selectivity information is missing! Please provide missing parameters (e.g. check that there are no empty input fields) or choose to estimate gear selectivity ('Estimate').<hr/>")
+                        }else if(length(grep("'lm50_user' not found|'lm75_user' not found|'wqsm_user' not found|'per_lm1_user' not found|'lm1_user' not found|'per_lm2_user' not found|'lm2_user' not found|Lm50 has to be provided|Lm75 has to be provided|(Lm75-Lm25) has to be provided|mX1 not found|LmX1 not found|mX2 not found|LmX2 not found|",res$error)) != 0) {
+                            HTML("Some required maturity information is missing! Please provide missing parameters (e.g. check that there are no empty input fields) or choose to disregard maturity ('No maturity').<hr/>")
                         }else{
                             res$error
                         }},
@@ -500,14 +582,24 @@ elefanGaModule <- function(input, output, session) {
                                  l50_user = input$l50_user,
                                  l75_user = input$l75_user,
                                  wqs_user = input$wqs_user,
+                                 per_l1 = input$per_l1_user,
+                                 l1 = input$l1_user,
+                                 per_l2 = input$per_l2_user,
+                                 l2 = input$l2_user,
                                  fRangeSteps = input$fRangeSteps,
                                  fRangeMin = input$fRangeMin,
                                  fRangeMax = input$fRangeMax,
                                  lcRangeSteps = input$lcRangeSteps,
                                  lcRangeMin = input$lcRangeMin,
                                  lcRangeMax = input$lcRangeMax,
-                                 Lm50 = input$Lm50,
-                                 Lm75 = input$Lm75
+                                 mat_method = input$selectMat,
+                                 Lm50 = input$lm50_user,
+                                 Lm75 = input$lm75_user,
+                                 wqsm = input$wqsm_user,
+                                 per_lm1 = input$per_lm1_user,
+                                 lm1 = input$lm1_user,
+                                 per_lm2 = input$per_lm2_user,
+                                 lm2 = input$lm2_user
                                  )
 
             js$hideComputing()
@@ -555,6 +647,10 @@ elefanGaModule <- function(input, output, session) {
                             HTML(paste0("Parameters defining the ",
                                         paste(par_assoc, collapse=" & "),
                                         " are negative. This is not possible, please revise your assessment settings.<hr/>"))
+                        }else if(length(grep("'l50_user' not found|'l75_user' not found|'wqs_user' not found|'per_l1_user' not found|'l1_user' not found|'per_l2_user' not found|'l2_user' not found|L50 has to be provided|L75 has to be provided|(L75-L25) has to be provided|X1 not found|LX1 not found|X2 not found|LX2 not found",res$error)) != 0) {
+                            HTML("Some required gear selectivity information is missing! Please provide missing parameters (e.g. check that there are no empty input fields) or choose to estimate gear selectivity ('Estimate').<hr/>")
+                        }else if(length(grep("'lm50_user' not found|'lm75_user' not found|'wqsm_user' not found|'per_lm1_user' not found|'lm1_user' not found|'per_lm2_user' not found|'lm2_user' not found|Lm50 has to be provided|Lm75 has to be provided|(Lm75-Lm25) has to be provided|mX1 not found|LmX1 not found|mX2 not found|LmX2 not found|",res$error)) != 0) {
+                            HTML("Some required maturity information is missing! Please provide missing parameters (e.g. check that there are no empty input fields) or choose to disregard maturity ('No maturity').<hr/>")
                         }else{
                             res$error
                         }},
@@ -736,21 +832,41 @@ elefanGaModule <- function(input, output, session) {
         par(mar=c(5,5,2,1))
         plot(lt, sest, ty='n', lwd=2,
              xlab = "Length", ylab = "Probability of capture")
-        tmp <- TropFishR::select_ogive(slist, Lt = L50)
-        segments(L50, -1, L50, tmp, lty = 2, lwd=1.5, col="grey60")
-        segments(-10, tmp, L50, tmp, lty = 2, lwd=1.5, col="grey60")
-        tmp <- TropFishR::select_ogive(slist, Lt = L75)
-        segments(L75, -1, L75, tmp, lty = 3, lwd=1.5, col="grey60")
-        segments(-10, tmp, L75, tmp, lty = 3, lwd=1.5, col="grey60")
+        if(input$select == "Other"){
+            tmp <- TropFishR::select_ogive(slist, Lt = input$l1_user)
+            segments(input$l1_user, -1, input$l1_user, tmp, lty = 2, lwd=1.5, col="grey60")
+            segments(-10, tmp, input$l1_user, tmp, lty = 2, lwd=1.5, col="grey60")
+        }else{
+            tmp <- TropFishR::select_ogive(slist, Lt = L50)
+            segments(L50, -1, L50, tmp, lty = 2, lwd=1.5, col="grey60")
+            segments(-10, tmp, L50, tmp, lty = 2, lwd=1.5, col="grey60")
+        }
+        if(input$select == "Other"){
+            tmp <- TropFishR::select_ogive(slist, Lt = input$l2_user)
+            segments(input$l2_user, -1, input$l2_user, tmp, lty = 2, lwd=1.5, col="grey60")
+            segments(-10, tmp, input$l2_user, tmp, lty = 2, lwd=1.5, col="grey60")
+        }else{
+            tmp <- TropFishR::select_ogive(slist, Lt = L75)
+            segments(L75, -1, L75, tmp, lty = 3, lwd=1.5, col="grey60")
+            segments(-10, tmp, L75, tmp, lty = 3, lwd=1.5, col="grey60")
+        }
         lines(lt, sest, lwd=2.5, col="dodgerblue2")
-        legend("bottomright", legend = c("Selection ogive","L50","L75"),
-               lty = c(1,2,3), col=c("dodgerblue2","grey60","grey60"),
-               lwd=c(2,1.5,1.5))
+        if(input$select == "Other"){
+            legend("bottomright", legend = c("Selection ogive",
+                                             paste0("L",input$l1_user),
+                                             paste0("L",input$l2_user)),
+                   lty = c(1,2,3), col=c("dodgerblue2","grey60","grey60"),
+                   lwd=c(2,1.5,1.5))
+        }else{
+            legend("bottomright", legend = c("Selection ogive","L50","L75"),
+                   lty = c(1,2,3), col=c("dodgerblue2","grey60","grey60"),
+                   lwd=c(2,1.5,1.5))
+        }
         box()
     })
     output$title_select <- renderText({
         req(elefan_ga$results)
-        if(input$select == "Estimate" || (input$l50_user == 0 && input$l75_user == 0) || (input$l50_user == 0 && input$wqs_user == 0)){
+        if(input$select == "Estimate" || (is.null(input$l50_user) && is.null(input$l75_user)) || (is.null(input$l50_user) && is.null(input$wqs_user)) ||  (is.null(input$l1_user) && is.null(input$l2_user))){
             txt <- "<p class=\"pheader_elefan\">Figure 5: Estimated logistic gear selectivity as the probability of capture (y axis) at length (x axis). Displayed selection ogive is used for the yield per recruit analysis (YPR).</p>"
         }else{
             txt <- "<p class=\"pheader_elefan\">Figure 5: Provided logistic gear selectivity as the probability of capture (y axis) at length (x axis). Displayed selection ogive is used for the yield per recruit analysis (YPR).</p>"
@@ -953,15 +1069,31 @@ elefanGaModule <- function(input, output, session) {
         M <- elefan_ga$results$resM
         FM <- Z - M
         E <- FM / Z
-        tmp <- as.data.frame(t(as.matrix(c(Z, M, FM, E,
-                                           elefan_ga$results$L50,
-                                           elefan_ga$results$L75))))
-        names(tmp) <- c("Z","M","F","E","L50","L75")
+        if(input$select == "Other"){
+            tmp <- TropFishR::select_ogive(list(selecType = "trawl_ogive",
+                                                L50 = elefan_ga$results$L50, L75 = elefan_ga$results$L75),
+                                           Lt = c(input$l1_user,input$l2_user))
+            tmp <- as.data.frame(t(as.matrix(c(Z, M, FM, E,
+                                               tmp[1],
+                                               tmp[2]))))
+            names(tmp) <- c("Z","M","F","E",paste0("L",input$l1_user),
+                            paste0("L",input$l2_user))
+        }else{
+            tmp <- as.data.frame(t(as.matrix(c(Z, M, FM, E,
+                                               elefan_ga$results$L50,
+                                               elefan_ga$results$L75))))
+            names(tmp) <- c("Z","M","F","E","L50","L75")
+        }
         tmp
     })
     output$title_table_mort <- renderText({
         req(elefan_ga$results)
-        if(input$select == "Estimate" || (input$l50_user == 0 && input$l75_user == 0) || (input$l50_user == 0 && input$wqs_user == 0)){
+
+        if(input$select == "Other"){
+            txt <- paste0("<p class=\"pheader_elefan\">Table 2: Estimated mortality rates (Z, F, M), exploitation rate (E), and estimated selectivity parameters (",
+                          paste0("L",input$l1_user),", ",
+                          paste0("L",input$l2_user),") </p>")
+        }else if(input$select == "Estimate" || (is.null(input$l50_user) && is.null(input$l75_user)) || (is.null(input$l50_user) && is.null(input$wqs_user)) ||  (is.null(input$l1_user) && is.null(input$l2_user))){
             txt <- "<p class=\"pheader_elefan\">Table 2: Estimated mortality rates (Z, F, M), exploitation rate (E), and estimated selectivity parameters (L50, L75).</p>"
         }else{
             txt <- "<p class=\"pheader_elefan\">Table 2: Estimated mortality rates (Z, F, M), exploitation rate (E), and provided selectivity parameters (L50, L75).</p>"

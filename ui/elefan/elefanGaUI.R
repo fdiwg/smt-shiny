@@ -178,12 +178,12 @@ tabElefanGa <- function(id) {
 
                 bsModal("info_mat", "Maturity (optional)", ns("infoMat"),
                         size = "large",
-                        HTML("<p>If available, maturity information about your species in terms of the length at 50% and 75% maturity can be provided and allows estimation of the current Spawning Potential Ratio (SPR) and SPR-related reference points. The parameterisation with Lm50 and Lm75 assumes a logistic maturity ogive. <br><br> Ideally, maturity information is collected directly from the stock under study e.g. by determining the maturation states of the gonads. Alternatively, you may find maturity information about your species on <a href='http://www.fishbase.org/search.php' target='blank_'> FishBase</a> or <a href='https://www.sealifebase.ca' target='blank_'> SeaLifeBase</a>  for invertebrates.</p>")
+                        HTML("<p>If available, maturity information about your species can be provided and allows estimation of the current Spawning Potential Ratio (SPR) and SPR-related reference points. The model assumes a logistic maturity ogive. <br><br>Maturity information can be provided (i) in terms of the length at 50% and 75% maturity ('Define Lm50 & Lm75'), (ii) in terms of the length at 50% maturity and the maturation width, which is the difference between the length at 75% maturity and 25% maturity ('Define Lm50 & (Lm75-Lm25)'), or (iii) in terms of two specified lengths (LmX1 and LmX2) at specified probabilities of maturity (mX1 and mX2) ('Other'). <br><br>Ideally, maturity information is collected directly from the stock under study e.g. by determining the maturation states of the gonads. Alternatively, you may find maturity information about your species on <a href='http://www.fishbase.org/search.php' target='blank_'> FishBase</a> or <a href='https://www.sealifebase.ca' target='blank_'> SeaLifeBase</a>  for invertebrates.</p>")
                         ),
 
                 bsModal("info_select", "Gear selectivity", ns("infoSelect"),
                         size = "large",
-                        HTML("<p>The specifics of how fish are caught by fisheries and thus the probability of capture for fish of various length classes are dependent on the fishing gear, which is referred to as gear selectivity. Find more information about some examples of fishing gear selectivity <a href='http://www.fao.org/3/X7788E/X7788E00.htm' target='blank_'> here </a>. <br><br>TropFishR allows the estimation of gear selectivity by means of the catch curve ('Estimate' is the default).  Alternatively, the gear selectivity can be specified by the selectivity at 50% and 75% selectivity (L50 and L75, respectively) or by the length at 50% selectivity (L50) and the width of selection ogive (L75-L25). <br> <br> Note that estimated and specified selectivity corresponds to a logistic curve (trawl-like selectivity).</p>")
+                        HTML("<p>The specifics of how fish are caught by fisheries and thus the probability of capture for fish of various length classes are dependent on the fishing gear, which is referred to as gear selectivity. Find more information about some examples of fishing gear selectivity <a href='http://www.fao.org/3/X7788E/X7788E00.htm' target='blank_'> here </a>. <br><br>TropFishR assumes a logistic gear selection ogive and allows the estimation of gear selectivity by means of the catch curve ('Estimate' is the default).  Alternatively, the gear selectivity can be defined (i) in terms of the length at 50% and 75% selection ('Define L50 & L75'), (ii) in terms of the length at 50% selection and the selection width, which is the difference between the length at 75% selection and 25% selection ('Define L50 & (L75-L25)'), or (iii) in terms of two specified lengths (LX1 and LX2) at specified probabilities of selection (X1 and X2) ('Other').  <br> <br> Note that estimated and specified selectivity corresponds to a logistic curve (trawl-like selectivity).</p>")
                         ),
 
                 bsModal("info_natm", "Natural mortality", ns("infoNatM"),
@@ -508,12 +508,43 @@ tabElefanGa <- function(id) {
 
                                  fluidRow(
 
+                                     box(
+                                         title = p(HTML(paste0("Length-weight relationship (",
+                                                               withMathJax("\\(W = a \ L^{b}\\)"),")")),
+                                                   actionButton(ns("infoLengthWeight"),
+                                                                tags$i(class = "fas fa-info",
+                                                                       style="font-size: 8px"),
+                                                                class="infoBubbleButton")),
+
+                                         br(),
+                                         width = 4,
+                                         height = "200px",
+                                         fluidRow(
+                                             column(6,
+                                                    numericInput(ns("LWa"),
+                                                                 label=" Constant  (a) ",
+                                                                 min = 0.0001,
+                                                                 max = 10,
+                                                                 value = 0.01,
+                                                                 step = 0.01,
+                                                                 width = "60%")),
+                                             column(6,
+                                                    numericInput(ns("LWb"),
+                                                                 label="Exponent (b) ",
+                                                                 min = 0.0001,
+                                                                 max = 10,
+                                                                 value = 3,
+                                                                 step = 0.1,
+                                                                 width = "60%"))
+                                         )
+                                     ),
+
                                      box(title = p("Natural mortality",
                                                    actionButton(ns("infoNatM"),
                                                                 tags$i(class = "fas fa-info",
                                                                        style="font-size: 8px"),
                                                                 class="infoBubbleButton")),
-                                         width = 12,
+                                         width = 8,
                                          height = "200px",
                                          br(),
                                          fluidRow(
@@ -560,69 +591,105 @@ tabElefanGa <- function(id) {
                                          )
                                          )
 
-                                 ),
+                                     ),
 
                                  fluidRow(
-
-                                     box(
-                                         title = p(HTML(paste0("Length-weight relationship (",
-                                                               withMathJax("\\(W = a \ L^{b}\\)"),")")),
-                                                   actionButton(ns("infoLengthWeight"),
-                                                                tags$i(class = "fas fa-info",
-                                                                       style="font-size: 8px"),
-                                                                class="infoBubbleButton")),
-
-                                         br(),
-                                         width = 6,
-                                         height = "200px",
-                                         fluidRow(
-                                             column(6,
-                                                    numericInput(ns("LWa"),
-                                                                 label=" Constant  (a) ",
-                                                                 min = 0.0001,
-                                                                 max = 10,
-                                                                 value = 0.01,
-                                                                 step = 0.01,
-                                                                 width = "60%")),
-                                             column(6,
-                                                    numericInput(ns("LWb"),
-                                                                 label="Exponent (b) ",
-                                                                 min = 0.0001,
-                                                                 max = 10,
-                                                                 value = 3,
-                                                                 step = 0.1,
-                                                                 width = "60%"))
-                                         )
-                                     ),
 
                                      box(title = p("Maturity (optional)",
                                                    actionButton(ns("infoMat"),
                                                                 tags$i(class = "fas fa-info",
                                                                        style="font-size: 8px"),
                                                                 class="infoBubbleButton")),
-                                         width = 6,
+                                         width=12,
                                          height = "200px",
                                          br(),
                                          fluidRow(
-                                             column(6,
-                                                    numericInput(ns("Lm50"),
+                                             column(3,
+                                                    selectInput(ns("selectMat"),
+                                                                p("Maturity"),
+                                                                choices = c("No maturity",
+                                                                            "Define Lm50 & Lm75",
+                                                                            "Define Lm50 & (Lm75-Lm25)",
+                                                                            "Other"),
+                                                                selected = "No maturity",
+                                                                width = "100%")
+                                                    ),
+                                             column(1),
+                                             column(4,
+                                                    div(
+                                                        id ="ui_lm50",
+                                                        numericInput(ns("lm50_user"),
                                                                  label=p(withMathJax("\\(L_{m50}\\)")),
-                                                                 value = 0,
+                                                                 value = NULL,
                                                                  min = 0,
                                                                  step = 1,
-                                                                 width = "60%")),
-                                             column(6,
-                                                    numericInput(ns("Lm75"),
+                                                                 width = "60%")
+                                                    ),
+                                                    column(6,
+                                                    div(
+                                                        id ="ui_per_lm1",
+                                                        numericInput(ns("per_lm1_user"),
+                                                                     p("Prob. of maturation (", withMathJax("\\(mX_{1}\\)"),")"),
+                                                                     value = NULL,
+                                                                     min = 0, step = 1, max = 100,
+                                                                     width = "90%")
+                                                    )),
+                                                    column(6,
+                                                    div(
+                                                        id ="ui_lm1",
+                                                        numericInput(ns("lm1_user"),
+                                                                     p("Length at ",
+                                                                       withMathJax("\\(mX_{1}\\)"),
+                                                                       " (",withMathJax("\\(L_{mX_1}\\)"),")"),
+                                                                     value = NULL,
+                                                                     min = 0, step = 1,
+                                                                     width = "90%")
+                                                    ))
+                                                    ),
+                                             column(4,
+                                                    div(
+                                                        id ="ui_lm75",
+                                                        numericInput(ns("lm75_user"),
                                                                  label=p(withMathJax("\\(L_{m75}\\)")),
-                                                                 value = 0,
+                                                                 value = NULL,
                                                                  min = 0,
                                                                  step = 1,
-                                                                 width = "60%"))
-                                         )
+                                                                 width = "60%")
+                                                    ),
+                                                    div(
+                                                        id ="ui_wqsm",
+                                                        numericInput(ns("wqsm_user"),
+                                                                     p("Width (",withMathJax("\\(L_{m75}-L_{m25}\\)")),
+
+                                                                     value = NULL, min = 0, step = 1,
+                                                                     width = "60%")
+                                                    ),
+                                             column(6,
+                                                    div(
+                                                        id ="ui_per_lm2",
+                                                        numericInput(ns("per_lm2_user"),
+                                                                     p("Prob. of maturation (",withMathJax("\\(mX_{2}\\)"),")"),
+                                                                     value = NULL,
+                                                                     min = 0, step = 1, max = 100,
+                                                                     width = "90%")
+                                                    )),
+                                             column(6,
+                                                    div(
+                                                        id ="ui_lm2",
+                                                        numericInput(ns("lm2_user"),
+                                                                     p("Length at ",
+                                                                       withMathJax("\\(mX_{2}\\)"),
+                                                                       " (",withMathJax("\\(L_{mX_2}\\)"),")"),
+                                                                     value = NULL,
+                                                                     min = 0, step = 1,
+                                                                     width = "90%")
+                                                    ))
+                                                    )
+                                         ),
+                                         br(), br()
                                          )
                                  )
                                  ),
-
 
 
                         tabPanel("4. Other settings",
@@ -634,7 +701,7 @@ tabElefanGa <- function(id) {
                                                                 tags$i(class = "fas fa-info",
                                                                        style="font-size: 8px"),
                                                                 class="infoBubbleButton")),
-                                         width = 4,
+                                         width = 2,
                                          height = "200px",
                                          br(),
                                          fluidRow(
@@ -657,26 +724,51 @@ tabElefanGa <- function(id) {
                                                                 tags$i(class = "fas fa-info",
                                                                        style="font-size: 8px"),
                                                                 class="infoBubbleButton")),
-                                         width=8,
+                                         width=10,
                                          height = "200px",
                                          br(),
                                          fluidRow(
-                                             column(4,
+                                             column(3,
                                                     selectInput(ns("select"),
                                                                 p("Selectivity"),
                                                                 choices = c("Estimate",
                                                                             "Define L50 & L75",
-                                                                            "Define L50 & (L75-L25)"),
+                                                                            "Define L50 & (L75-L25)",
+                                                                            "Other"),
                                                                 selected = "Estimate",
-                                                                width = "80%")
+                                                                width = "100%")
                                                     ),
+                                             column(1),
                                              column(4,
                                                     div(
                                                         id ="ui_l50",
                                                         numericInput(ns("l50_user"),
                                                                      p(withMathJax("\\(L_{50}\\)")," (user defined)"),
-                                                                     value = 0, min = 0, step = 1,
+                                                                     value = NULL, min = 0, step = 1,
                                                                      width = "80%")
+                                                    ),
+
+                                                    column(6,
+                                                    div(
+                                                        id ="ui_per_l1",
+                                                        numericInput(ns("per_l1_user"),
+                                                                     p("Prob. of selection (",
+                                                                       withMathJax("\\(X_{1}\\)"),")"),
+                                                                     value = NULL,
+                                                                     min = 0, step = 1, max = 100,
+                                                                     width = "100%")
+                                                    )
+                                                    ),
+                                             column(6,
+                                                    div(
+                                                        id ="ui_l1",
+                                                        numericInput(ns("l1_user"),
+                                                                     p("Length at ",
+                                                                       withMathJax("\\(X_{1}\\)"),
+                                                                       " (",withMathJax("\\(L_{X1}\\)"),")"),
+                                                                     value = NULL, min = 0, step = 1,
+                                                                     width = "100%")
+                                                    )
                                                     )
                                                     ),
                                              column(4,
@@ -684,15 +776,37 @@ tabElefanGa <- function(id) {
                                                         id ="ui_l75",
                                                         numericInput(ns("l75_user"),
                                                                      p(withMathJax("\\(L_{75}\\)")," (user defined)"),
-                                                                     value = 0, min = 0, step = 1,
+                                                                     value = NULL, min = 0, step = 1,
                                                                      width = "80%")
                                                     ),
                                                     div(
                                                         id ="ui_wqs",
                                                         numericInput(ns("wqs_user"),
                                                                      p("Width (",withMathJax("\\(L_{75}-L_{25}\\)"),"; user defined)"),
-                                                                     value = 0, min = 0, step = 1,
+                                                                     value = NULL, min = 0, step = 1,
                                                                      width = "80%")
+                                                    ),
+                                                    column(6,
+                                                    div(
+                                                        id ="ui_per_l2",
+                                                        numericInput(ns("per_l2_user"),
+                                                                     p("Prob. of selection (",
+                                                                       withMathJax("\\(X_{2}\\)"),")"),
+                                                                     value = NULL,
+                                                                     min = 0, step = 1, max = 100,
+                                                                     width = "100%")
+                                                    )
+                                                    ),
+                                             column(6,
+                                                    div(
+                                                        id ="ui_l2",
+                                                        numericInput(ns("l2_user"),
+                                                                     p("Length at ",
+                                                                       withMathJax("\\(X_{2}\\)"),
+                                                                       " (",withMathJax("\\(L_{X2}\\)"),")"),
+                                                                     value = NULL, min = 0, step = 1,
+                                                                     width = "100%")
+                                                    )
                                                     )
                                                     )
                                          ),
