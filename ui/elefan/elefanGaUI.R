@@ -612,7 +612,7 @@ tabElefanGa <- function(id) {
                                                                             "Define Lm50 & (Lm75-Lm25)",
                                                                             "Other"),
                                                                 selected = "No maturity",
-                                                                width = "100%")
+                                                                width = "90%")
                                                     ),
                                              column(1),
                                              column(4,

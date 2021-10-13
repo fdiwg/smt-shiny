@@ -439,7 +439,6 @@ elefanGaModule <- function(input, output, session) {
             js$hideComputing()
             js$enableAllButtons()
 
-
             if ('error' %in% names(res)) {
                 showModal(modalDialog(
                     title = "Error",
@@ -481,9 +480,13 @@ elefanGaModule <- function(input, output, session) {
                                         paste(par_assoc, collapse=" & "),
                                         " are negative. This is not possible, please revise your assessment settings.<hr/>"))
                         }else if(length(grep("'l50_user' not found|'l75_user' not found|'wqs_user' not found|'per_l1_user' not found|'l1_user' not found|'per_l2_user' not found|'l2_user' not found|L50 has to be provided|L75 has to be provided|(L75-L25) has to be provided|X1 not found|LX1 not found|X2 not found|LX2 not found",res$error)) != 0) {
-                            HTML("Some required gear selectivity information is missing! Please provide missing parameters (e.g. check that there are no empty input fields) or choose to estimate gear selectivity ('Estimate').<hr/>")
-                        }else if(length(grep("'lm50_user' not found|'lm75_user' not found|'wqsm_user' not found|'per_lm1_user' not found|'lm1_user' not found|'per_lm2_user' not found|'lm2_user' not found|Lm50 has to be provided|Lm75 has to be provided|(Lm75-Lm25) has to be provided|mX1 not found|LmX1 not found|mX2 not found|LmX2 not found|",res$error)) != 0) {
-                            HTML("Some required maturity information is missing! Please provide missing parameters (e.g. check that there are no empty input fields) or choose to disregard maturity ('No maturity').<hr/>")
+                            HTML("Some required gear selectivity information is missing or not in the correct format (i.e. numeric). Please provide required parameters (e.g. check that there are no empty input fields and that values are positive numbers) or choose to estimate gear selectivity ('Estimate').<hr/>")
+                        }else if(length(grep("'lm50_user' not found|'lm75_user' not found|'wqsm_user' not found|'per_lm1_user' not found|'lm1_user' not found|'per_lm2_user' not found|'lm2_user' not found|Lm50 has to be provided|Lm75 has to be provided|(Lm75-Lm25) has to be provided|mX1 not found|LmX1 not found|mX2 not found|LmX2 not found",res$error)) != 0) {
+                            HTML("Some required maturity information is missing or not in the correct format (i.e. numeric). Please provide required parameters (e.g. check that there are no empty input fields and that values are positive numbers) or choose to disregard maturity ('No maturity').<hr/>")
+                        }else if(length(grep("Lm50 has to be smaller",res$error)) != 0) {
+                            HTML("Lm50 has to be smaller than Lm75. Please revise the maturity parameters or choose to disregard maturity ('No maturity').<hr/>")
+                        }else if(length(grep("L50 has to be smaller",res$error)) != 0) {
+                            HTML("L50 has to be smaller than L75. Please revise the gear selectivity parameters or choose to estimate gear selectivity ('Estimate').<hr/>")
                         }else{
                             res$error
                         }},
@@ -648,9 +651,13 @@ elefanGaModule <- function(input, output, session) {
                                         paste(par_assoc, collapse=" & "),
                                         " are negative. This is not possible, please revise your assessment settings.<hr/>"))
                         }else if(length(grep("'l50_user' not found|'l75_user' not found|'wqs_user' not found|'per_l1_user' not found|'l1_user' not found|'per_l2_user' not found|'l2_user' not found|L50 has to be provided|L75 has to be provided|(L75-L25) has to be provided|X1 not found|LX1 not found|X2 not found|LX2 not found",res$error)) != 0) {
-                            HTML("Some required gear selectivity information is missing! Please provide missing parameters (e.g. check that there are no empty input fields) or choose to estimate gear selectivity ('Estimate').<hr/>")
-                        }else if(length(grep("'lm50_user' not found|'lm75_user' not found|'wqsm_user' not found|'per_lm1_user' not found|'lm1_user' not found|'per_lm2_user' not found|'lm2_user' not found|Lm50 has to be provided|Lm75 has to be provided|(Lm75-Lm25) has to be provided|mX1 not found|LmX1 not found|mX2 not found|LmX2 not found|",res$error)) != 0) {
-                            HTML("Some required maturity information is missing! Please provide missing parameters (e.g. check that there are no empty input fields) or choose to disregard maturity ('No maturity').<hr/>")
+                            HTML("Some required gear selectivity information is missing or not in the correct format (i.e. numeric). Please provide required parameters (e.g. check that there are no empty input fields and that values are positive numbers) or choose to estimate gear selectivity ('Estimate').<hr/>")
+                        }else if(length(grep("'lm50_user' not found|'lm75_user' not found|'wqsm_user' not found|'per_lm1_user' not found|'lm1_user' not found|'per_lm2_user' not found|'lm2_user' not found|Lm50 has to be provided|Lm75 has to be provided|(Lm75-Lm25) has to be provided|mX1 not found|LmX1 not found|mX2 not found|LmX2 not found",res$error)) != 0) {
+                            HTML("Some required maturity information is missing or not in the correct format (i.e. numeric). Please provide required parameters (e.g. check that there are no empty input fields and that values are positive numbers) or choose to disregard maturity ('No maturity').<hr/>")
+                        }else if(length(grep("Lm50 has to be smaller",res$error)) != 0) {
+                            HTML("Lm50 has to be smaller than Lm75. Please revise the maturity parameters or choose to disregard maturity ('No maturity').<hr/>")
+                        }else if(length(grep("L50 has to be smaller",res$error)) != 0) {
+                            HTML("L50 has to be smaller than L75. Please revise the gear selectivity parameters or choose to estimate gear selectivity ('Estimate').<hr/>")
                         }else{
                             res$error
                         }},
