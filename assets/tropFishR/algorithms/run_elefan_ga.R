@@ -16,7 +16,7 @@ check.neg <- function(pars){
     res <- rep(FALSE, length(pars))
     for(i in 1:length(pars)){
         tmp <- try(get(pars[i], envir = parent.frame()), silent=TRUE)
-        res[i] <- ifelse(!is.null(tmp) && tmp < 0, TRUE, FALSE)
+        res[i] <- ifelse(!is.na(tmp) &&!is.null(tmp) && tmp < 0, TRUE, FALSE)
     }
     return(res)
 }
@@ -53,22 +53,34 @@ run_elefan_ga <- function(
                           cor_schooling = FALSE,
                           tmax = 10,
                           select_method = "est",
-                          l50_user = NA,
-                          l75_user = NA,
-                          wqs_user = NA,
+                          l50_user = NULL,
+                          l75_user = NULL,
+                          wqs_user = NULL,
+                          per_l1 = NULL,
+                          l1 = NULL,
+                          per_l2 = NULL,
+                          l2 = NULL,
                           fRangeSteps = 100,
                           fRangeMin = 0,
                           fRangeMax = 3,
                           lcRangeSteps = 100,
                           lcRangeMin = NA,
                           lcRangeMax = NA,
-                          Lm50 = NA,
-                          Lm75 = NA,
+                          mat_method = "lm50_lm75",
+                          Lm50 = NULL,
+                          Lm75 = NULL,
+                          wqsm = NULL,
+                          per_lm1 = NULL,
+                          lm1 = NULL,
+                          per_lm2 = NULL,
+                          lm2 = NULL,
                           progressMessages = c("Running ELEFAN","Running YPR"),
                           ...
                           ) {
     set.seed(1)
     pdf(NULL)
+
+
 
     returnResults <- list()
     out <- tryCatch( {
@@ -79,13 +91,40 @@ run_elefan_ga <- function(
         ##--------------------
         ##  Checks
         ##--------------------
-        if(length(progressMessages) != 2){
-            stop("2 progressMessages have to be provided")
+        if(select_method == "Define L50 & L75"){
+            if(is.null(l50_user) || is.na(l50_user)) stop("L50 has to be provided!")
+            if(is.null(l75_user) || is.na(l75_user)) stop("L75 has to be provided!")
+        }else if(select_method == "Define L50 & (L75-L25)"){
+            if(is.null(l50_user) || is.na(l50_user)) stop("L50 has to be provided!")
+            if(is.null(wqs_user) || is.na(wqs_user)) stop("The width (L75-L50) has to be provided!")
+        }else if(select_method == "Other"){
+            if(is.null(per_l1) || is.na(per_l1)) stop("X1 not found! Two probabilities of selection for two lengths have to be provided!")
+            if(is.null(l1) || is.na(l1)) stop("LX1 not found! Two probabilities of selection for two lengths have to be provided!")
+            if(is.null(per_l2) || is.na(per_l2)) stop("X2 not found! Two probabilities of selection for two lengths have to be provided!")
+            if(is.null(l2) || is.na(l2)) stop("LX2 not found! Two probabilities of selection for two lengths have to be provided!")
         }
-        if(is.numeric(Lm50) && is.numeric(Lm75) && Lm75 < Lm50){
+
+        if(mat_method == "Define Lm50 & Lm75"){
+            if(is.null(Lm50) || is.na(Lm50)) stop("Lm50 has to be provided!")
+            if(is.null(Lm75) || is.na(Lm75)) stop("Lm75 has to be provided!")
+        }else if(mat_method == "Define Lm50 & (Lm75-Lm25)"){
+            if(is.null(Lm50) || is.na(Lm50)) stop("Lm50 has to be provided!")
+            if(is.null(wqsm) || is.na(wqsm)) stop("The width (Lm75-Lm50) has to be provided!")
+        }else if(mat_method == "Other"){
+            if(is.null(per_lm1) || is.na(per_lm1)) stop("mX1 not found! Two probabilities of maturity for two lengths have to be provided!")
+            if(is.null(lm1) || is.na(lm1)) stop("LmX1 not found! Two probabilities of maturity for two lengths have to be provided!")
+            if(is.null(per_lm2) || is.na(per_lm2)) stop("mX2 not found! Two probabilities of maturity for two lengths have to be provided!")
+            if(is.null(lm2) || is.na(lm2)) stop("LmX2 not found! Two probabilities of maturity for two lengths have to be provided!")
+        }
+
+        if(length(progressMessages) != 2){
+            stop("2 progressMessages have to be provided!")
+        }
+        if(is.numeric(Lm50) && is.numeric(Lm75) && mat_method == "Define Lm50 & Lm75" && Lm75 < Lm50){
             stop("Lm50 has to be smaller than Lm75!")
         }
-        if(is.numeric(l50_user) && is.numeric(l75_user) && l75_user < l50_user){
+        if(is.numeric(l50_user) && is.numeric(l75_user) && select_method == "Define L50 & L75" &&
+           l75_user < l50_user){
             stop("L50 has to be smaller than L75!")
         }
         if(lcRangeSteps == 0){
@@ -104,7 +143,7 @@ run_elefan_ga <- function(
         ## Don't allow negative input parameters
         check_pars <- c("binSize", "MA", "popSize", "maxiter", "run", "pmutation",
                     "pcrossover", "elitism",
-                    "LWa", "LWb", "tmax", "temp", "Lm50", "Lm75",
+                    "LWa", "LWb", "tmax", "temp", "Lm50", "Lm75", "wqsm",
                     "l50_user", "l75_user", "wqs_user",
                     "fRangeSteps", "fRangeMin", "fRangeMax",
                     "lcRangeSteps", "lcRangeMin", "lcRangeMax")
@@ -217,6 +256,19 @@ run_elefan_ga <- function(
         }else if(select_method == "Define L50 & (L75-L25)"){
             L50 <- l50_user
             L75 <- l50_user + wqs_user/2
+        }else if(select_method == "Other"){
+            fn <- function(par, x1, x2){
+                a <- par[1]
+                b <- par[2]
+                sel <- select_ogive(list(selecType = "trawl_ogive",
+                                         L50 = a, L75 = b),
+                                    Lt=c(l1,l2))
+                return(sqrt(mean(c(x1/100 - sel[1],x2/100 - sel[2])^2)))
+            }
+            opt <- nlminb(c(a=Linf/2, b=Linf/2+4), fn, x1 = per_l1, x2 = per_l2,
+                          lower = c(0.001,0.001), upper = c(2*Linf, 2*Linf))
+            L50 <- opt$par[1]
+            L75 <- opt$par[2]
         }
         slist <- list(selecType = "trawl_ogive",
                       L50 = L50, L75 = L75)
@@ -239,8 +291,31 @@ run_elefan_ga <- function(
         }
 
         ## for SPR
-        if(Lm50 == 0) Lm50 <- NULL
-        if(Lm75 == 0) Lm75 <- NULL
+        if(mat_method == "Define L50 & L75" && is.numeric(Lm50) && is.numeric(Lm75)){
+            Lm50 <- Lm50
+            Lm75 <- Lm75
+        }else if(mat_method == "Define L50 & (L75-L25)" && is.numeric(Lm50) && is.numeric(wqsm)){
+            Lm50 <- Lm50
+            Lm75 <- Lm50 + wqsm/2
+        }else if(mat_method == "Other" && is.numeric(per_lm1) && is.numeric(lm1) && is.numeric(per_lm2) && is.numeric(lm2)){
+            fn <- function(par, x1, x2){
+                a <- par[1]
+                b <- par[2]
+                mat <- select_ogive(list(selecType = "trawl_ogive",
+                                         L50 = a, L75 = b),
+                                    Lt=c(lm1,lm2))
+                return(sqrt(mean(c(x1/100 - mat[1],x2/100 - mat[2])^2)))
+            }
+            opt <- nlminb(c(a=Linf/2, b=Linf/2+4), fn, x1 = per_lm1, x2 = per_lm2,
+                          lower = c(0.001,0.001), upper = c(2*Linf, 2*Linf))
+            Lm50 <- opt$par[1]
+            Lm75 <- opt$par[2]
+        }else{
+            Lm50 <- NULL
+            Lm75 <- NULL
+        }
+        ## if(Lm50 == 0) Lm50 <- NULL
+        ## if(Lm75 == 0) Lm75 <- NULL
         returnResults[['Lm50']] <- lfq2$Lm50 <- Lm50
         returnResults[['Lm75']] <- lfq2$Lm75 <- Lm75
 

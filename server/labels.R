@@ -2,61 +2,61 @@
 output$homeInfo <- renderText({
     session$userData$page("home")
     text <- "<h3>Stock Monitoring Tool for limited data</h3>"
-    
+
     text <- paste0(text,"<p>")
     text <- paste0(text,"The Stock Monitoring Tool (SMT), developed by FAO, is an R-Shiny application, available to the global community and hosted via remote computational facilities with considerable processing resources.
 This tool was designed to allow users with little to no programming experience to run methods developed for data-limited situations to evaluate and monitor the sustainability of fish stocks.  ")
     text <- paste0(text,'</p>')
-    
+
     text <- paste0(text,"<h4>Navigating the Stock Monitoring Tool</h4>")
-    
+
     text <- paste0(text,"<p>")
-    
+
     text <- paste0(text,"<h5><b>Workflow</b></h5>")
-    text <- paste0(text,"Each method is accessible in the menu to the left of the SMT, and by clicking on the desired method, further information is exposed in a dropdown 
-                   menu. Each method includes an <b>Introduction</b> page that gives background information on the method, including where the user can find details about the method 
+    text <- paste0(text,"Each method is accessible in the menu to the left of the SMT, and by clicking on the desired method, further information is exposed in a dropdown
+                   menu. Each method includes an <b>Introduction</b> page that gives background information on the method, including where the user can find details about the method
                    in the <a href='https://elearning.fao.org/course/view.php?id=502' target='blank_'>FAO SDG 14.4.1 eLearning module</a>. Details on the workflow specific to each method are available in the <b>Workflow</b> information tab at the top of each method's page. In general, data are uploaded, parameters are set, the method is run, and the results can be downloaded. ")
     text <- paste0(text,"</p>")
-    
+
     text <- paste0(text,"<p>")
     text <- paste0(text,"<h5><b>Data</b></h5>")
-    text <- paste0(text,"Advice is given on the formatting requirements and data considerations for each method on the introduction page, but also in the <b>Data</b> information tab on the top of 
-                   each method's page. If you would like to run the method(s) on your own dataset, we encourage you to review these considerations and align you data to the 
-                   required format. Each method has a sample dataset that the user can download from the <b>Sample Dataset</b> page. This can be used as a template to 
+    text <- paste0(text,"Advice is given on the formatting requirements and data considerations for each method on the introduction page, but also in the <b>Data</b> information tab on the top of
+                   each method's page. If you would like to run the method(s) on your own dataset, we encourage you to review these considerations and align you data to the
+                   required format. Each method has a sample dataset that the user can download from the <b>Sample Dataset</b> page. This can be used as a template to
                    format your own dataset. ")
     text <- paste0(text,"</p>")
-    
+
     text <- paste0(text,"<p>")
     text <- paste0(text,"<h5><b>Method</b></h5>")
-    text <- paste0(text,"Finally, you must navigate to the <b>method</b> page to upload either the sample dataset or your customised dataset. On the left hand side you can choose between the catch-based method, <b>CMSY</b>, or a <b>length-based workflow</b> including ELEFAN and YPR/SBPR methods. The <b>Supporting Tools</b> gives additional information on the underlying theory behind the stock monitoring methods. Additional information about the method, including key assumptions is available in the method information button at the top of each page. 
-                   Information and advice on <b>parameter settings</b> are available in the grey information buttons to the right of each field. 
+    text <- paste0(text,"Finally, you must navigate to the <b>method</b> page to upload either the sample dataset or your customised dataset. On the left hand side you can choose between the catch-based method, <b>CMSY</b>, or a <b>length-based workflow</b> including ELEFAN and YPR/SBPR methods. The <b>Supporting Tools</b> gives additional information on the underlying theory behind the stock monitoring methods. Additional information about the method, including key assumptions is available in the method information button at the top of each page.
+                   Information and advice on <b>parameter settings</b> are available in the grey information buttons to the right of each field.
                    Once the optional parameters or priors are set for the method, <b>run</b> the method. ")
     text <- paste0(text,'</p>')
-    
+
     text <- paste0(text, "<p>")
     text <- paste0(text, "The <b>CMSY</b> method is based on the 2019 9f version available on <a href='https://github.com/SISTA16/cmsy' target='_blank'> github </a> and provided by the <a href='https://i-marine.d4science.org/' target='_blank'> iMarine Infrastructure</a>. It requires internet connection to run.")
     text <- paste0(text, "</p>")
-    
+
     text <- paste0(text, "<p>")
-    text <- paste0(text, "The length-based workflow is based on the expert-recommended genetic algorithm of <b>ELEFAN</b> (ELEFAN_GA), and yield per recruit (YPR)/spawning biomass per recruit (SBPR) of the 
+    text <- paste0(text, "The length-based workflow is based on the expert-recommended genetic algorithm of <b>ELEFAN</b> (ELEFAN_GA), and yield per recruit (YPR)/spawning biomass per recruit (SBPR) of the
                    <a href='https://cran.r-project.org/web/packages/TropFishR/index.html' target='_blank'> TropFishR </a> R package version ", packageVersion("TropFishR"))
     text <- paste0(text, "</p>")
-    
+
     text <- paste0(text,"<p>")
     text <- paste0(text,"<h5><b>Results</b></h5>")
     text <- paste0(text,"The <b>results</b> will display as table and figures at the bottom of the method's page. <b>Download</b> the report to save these reports locally. They are also automatically saved to your private workspace. ")
     text <- paste0(text,'</p>')
-    
+
     # text <- paste0(text, "<p>")
     # text <- paste0(text, "On the left hand side you can choose between the catch-based method, <b>CMSY</b>, or a <b>length-based workflow</b> including ELEFAN and YPR/SBPR methods. The Supporting Tools gives additional information on the underlying theory behind the stock monitoring methods.")
     # text <- paste0(text, "</p>")
-    
-    
+
+
     text <- paste0(text, "<p>")
     text <- paste0(text,"<h5><b>Run time</b></h5>")
     text <- paste0(text, "Run time with the sample dataset for both methods is <b>between 1-3 mins</b>. Run time for CMSY depends on the length of the catch time series analysed. Run time for the length-based workflow depends on the size of the length frequency dataset, the time aggregation, and the search space of input parameters as specified by the user. The information buttons note this effect for each relevant field.<br><br>")
     text <- paste0(text, "</p>")
-    
+
    # text <- paste0(text, "<h4>Instruction to build a Docker image of this application : </h4>")
    # text <- paste0(text, "<p>")
    # text <- paste0(text, "A Dockerfile is provided that allows this tool to be run offline on any operating system. ")
@@ -68,7 +68,7 @@ This tool was designed to allow users with little to no programming experience t
    # text <- paste0(text, "</ul>")
    # text <- paste0(text, "And then set your browser to http://localhost:3839")
    # text <- paste0(text, "</p>")
-    
+
     text
 })
 
@@ -83,12 +83,12 @@ output$cmsyIntroOut <- renderText({
     text <- paste0(text, "</p>")
     text <- paste0(text, "<p>")
     text <- paste0(text, "<br>")
-    
+
     text <- paste0(text, "<h4>Method description</h4>")
     text <- paste0(text, "The Schaefer production model parameters are r and k. Different combinations of these parameters will produce different time series of biomass. In CMSY, the Schaefer model is run many times to calculate annual biomasses for r-k pairs randomly drawn from the prior distributions. The model determines which r-k pairs are valid: e.g., those pairs that result in a biomass time series that do not (1) result in a stock collapse or (2) allow the stock to exceed carrying capacity. Also, those r-k pairs that result in a final relative biomass estimate between the values specified in the inputs (the final depletion range), are accepted and used to calculate MSY (rk/4) and biomass over time. The geometric means of the resulting density distributions of r, k and MSY are taken as the most probable values.")
     text <- paste0(text, "</p>")
     text <- paste0(text, "<p>")
-    
+
     text <- paste0(text, "<strong>Further information</strong> <br>")
     text <- paste0(text, "Please visit the <a href='https://elearning.fao.org/course/view.php?id=502' target='_blank'>SDG Indicator 14.4.1 - Fish stocks sustainability eLearning course</a>, <b>Lesson 4, Slides 13-26.</b>")
     text <- paste0(text, "<ul>")
@@ -102,7 +102,7 @@ output$cmsyIntroOut <- renderText({
     text <- paste0(text, "</p>")
     text <- paste0(text, "<p>")
     text <- paste0(text, "<br>")
-    
+
     text <- paste0(text, "<h4>Data considerations</h4>")
     text <- paste0(text, "<strong>Mandatory fields to run CMSY: </strong>")
     text <- paste0(text, "<ul>")
@@ -123,11 +123,11 @@ output$cmsyIntroOut <- renderText({
     text <- paste0(text, "<li><b>Please ensure your time-series data are at least 15 years in length from starting year to ending year.</b></li>")
     text <- paste0(text, "</ul>")
     text <- paste0(text, "</p>")
-    
-    
+
+
     text <- paste0(text, "<p>")
     text <- paste0(text, "<br>")
-    
+
     text <- paste0(text, "<h4>Run time </h4>")
     text <- paste0(text,'Run time varies with the length of the catch time series.')
     text <- paste0(text, "<ul>")
@@ -135,9 +135,9 @@ output$cmsyIntroOut <- renderText({
     text <- paste0(text, "</ul>")
     text <- paste0(text, "</p>")
     text <- paste0(text, "<br>")
-    
+
     text <- paste0(text,"<h4> Workflow Considerations </h4>")
-    text <- paste0(text,"<strong> To run the CMSY method in the Stock Monitoring Tool :</strong>")    
+    text <- paste0(text,"<strong> To run the CMSY method in the Stock Monitoring Tool :</strong>")
     text <- paste0(text, "<ol>")
     text <- paste0(text, "<li>Upload a csv file data set of catch time series for one or multiple stocks (see Data Considerations or the <a href='https://data.d4science.org/shub/E_WWI3clpMdGVONG84eVNvblBxOWVPQ2FPUVArYkptQ1JsM2c1K2hkYWpjSlhmeUw1eXI2RGFLZUdMZW5aSis4aQ=='>CMSY Sample dataset</a>).</li>")
     text <- paste0(text, "<ol type='a'>")
@@ -160,9 +160,9 @@ output$cmsyIntroOut <- renderText({
     text <- paste0(text, "<li> The Reset button removes the uploaded data and resets the settings to default/</li>")
     text <- paste0(text, "</ol>")
     text <- paste0(text, "Further information can be found in the popup information buttons at each field, and in the Data, Methods, and Results Considerations tabs. Note that error messages may display in the center of the page and in place of any figures where an error has occurred.")
-    text <- paste0(text, "</p>")        
+    text <- paste0(text, "</p>")
     text <- paste0(text, "<br>")
-    
+
     text <- paste0(text, "<p>")
     text <- paste0(text, "<h4> References<br/></h4>")
     text <- paste0(text,"Froese, Rainer & Demirel, Nazli & Coro, Gianpaolo & Kleisner, Kristin & Winker, Henning. (2017). Estimating fisheries reference points from catch and resilience. Fish and Fisheries. 18. 506-526. 10.1111/faf.12190.")
@@ -196,7 +196,7 @@ output$elefanIntroOut <- renderText({
     text <- paste0(text, "<li> optimising over VBGF parameters maximising the score value by a genetic algorithm (GA). Imitating the natural process of survival of the fittest, the GA simulates a population of random combinations of growth parameters in which only the individuals (or combinations) with the highest fitness value (score value; Rn) can pass on their parameters to the next generations. The combination of growth parameters with the highest score value after a set number of generations is defined as the best estimate. For more information about the  genetic algorithm please refer to <a href='https://pdfs.semanticscholar.org/8b54/b4c7f3c63efcfadac455a32f2c6d775c7184.pdf?_ga=2.102660097.1034706415.1573191124-1938330296.1570694384' target='_blank'>Scrucca (2013)</a>. </li>")
     text <- paste0(text, "</ol>")
     text <- paste0(text, "</p>")
-    
+
     text <- paste0(text, "<strong> <i>2. Empirical formula</i> for the estimation of the natural mortality rate.</strong>")
     text <- paste0(text, "<p>")
     text <- paste0(text, "The natural mortality rate (M) is estimated by an empirical formula based on estimated growth parameters. The options are: <br> - Then's growth formula (Then et al. 2015), <br> - Pauly's growth and temperature formula (Pauly 1980), and <br> - Then's maximum age formula (Then et al. 2015); <br> While the first option does not require any additional information, the second requires the average annual sea surface temperature (SST) in degrees Celsius and allows for a correction for schooling fish (multiplication with 0.8). The third option requires an estimate of the maximum age of the fish.")
@@ -209,8 +209,8 @@ output$elefanIntroOut <- renderText({
     text <- paste0(text, "<p>")
     text <- paste0(text, "The Thompson and Bell yield per recruit model is used to estimate yield and biomass per recruit as well as the spawning potential ratio (SPR) over a range of fishing mortality rates and selectivity definitions. The stock status is based on current F relative to biological reference points, such as Fmax, F0.1, F35. The estimation of SPR requires information about the maturity parameters.")
     text <- paste0(text, "</p>")
-    
-    
+
+
     text <- paste0(text, "<p>")
     text <- paste0(text, "<strong>Further information</strong><br>")
     text <- paste0(text, "Please visit the <a href='https://elearning.fao.org/course/view.php?id=502' target='_blank'>SDG Indicator 14.4.1 - Fish stocks sustainability eLearning course</a>, <b>(Lesson 4, Slides 27-34)</b> for further information:")
@@ -223,7 +223,7 @@ output$elefanIntroOut <- renderText({
     text <- paste0(text, "<li>Slide 34 describes the method’s caveats.</li>")
     text <- paste0(text, "</ul>")
     text <- paste0(text, "</p>")
-    
+
     text <- paste0(text, "<br>")
     text <- paste0(text, "<h4>Assumptions of TropFishR:</h4>")
     text <- paste0(text,
@@ -280,7 +280,7 @@ output$elefanIntroOut <- renderText({
     text <- paste0(text, "</ul>")
     text <- paste0(text, "<br>")
     text <- paste0(text, "<h4>Data considerations</h4>")
-    
+
     text <- paste0(text, "<strong>Mandatory fields to run TropFishR:</strong>")
     text <- paste0(text, "<ul>")
     text <- paste0(text,
@@ -319,11 +319,11 @@ output$elefanIntroOut <- renderText({
     text <- paste0(text, "<li> The Reset button removes the uploaded data and resets the settings to default</li>")
     text <- paste0(text, "</ol>")
     text <- paste0(text, "Further information can be found in the popup information buttons at each field, and in the Workflow, Data, Methods, and Results Considerations tabs. Note that error messages may display in the center of the page and in place of any figures where an error has occurred.")
-    text <- paste0(text, "</p>")  
+    text <- paste0(text, "</p>")
     text <- paste0(text, "<br>")
     text <- paste0(text, "<p>")
     text <- paste0(text, "<br>")
-    
+
     text <- paste0(text, "<h4>Run time </h4>")
     text <- paste0(text,'Run time varies with the size of the length frequency dataset, number of time steps, time aggregation, and parameter search space. This is noted in the information button of these fields.')
     text <- paste0(text, "<ul>")
@@ -332,18 +332,31 @@ output$elefanIntroOut <- renderText({
 
     text <- paste0(text, "</p>")
     text <- paste0(text, "<br>")
-    
+
     text <- paste0(text, "<h4>References</h4><br/>")
     text <- paste0(text, "<ul>")
+    text <- paste0(text, "<li>Brey, T., Soriano, M., and Pauly, D. 1988. Electronic length frequency analysis: a revised and expanded user's guide to ELEFAN 0, 1 and 2. <a href='https://oceanrep.geomar.de/25801/1/IFM-BER_177.pdf' target='_blank'>https://oceanrep.geomar.de/25801/1/IFM-BER_177.pdf</a></li>")
+
+    text <- paste0(text, "<li>Mildenberger, T. K., Taylor, M. H., Wolff, M. (2017). TropFishR: an R package for fisheries analysis with length-frequency data. Methods in Ecology and Evolution, 8(11), 1520-1527.<a href='https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.12791' target='_blank'>https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.12791</a></li>")
+
     text <- paste0(text, "<li>Pauly D.(1980) On the interrelationships between natural mortality, growth parameters, and mean environmental temperature in 175 fish stocks, Journal du Conseil International pour l’Exploration de la Mer, 1980, vol. 39 (pg. 175-192), <a href='https://doi.org/10.1093/icesjms/39.2.175' target='_blank'>https://doi.org/10.1093/icesjms/39.2.175</a></li>")
+
     text <- paste0(text, "<li>Scrucca L. (2013). GA: A Package for Genetic Algorithms in R. Journal of Statistical Software, 53(4), 1-37. <a href='http://www.jstatsoft.org/v53/i04/' target='_blank'>http://www.jstatsoft.org/v53/i04/</a></li>")
-    text <- paste0(text, "<li>Taylor, M. (2016): fishdynr. figshare. Software. <a href='https://doi.org/10.6084/m9.figshare.4212726.v2' target='_blank'>https://doi.org/10.6084/m9.figshare.4212726.v2</a></li>")
-    text <- paste0(text, "<li>Then, A.Y., Hoenig,J.M., Hall, N.G., Hewitt, D.A. (2015) Evaluating the predictive performance of empirical estimators of natural mortality rate using information on over 200 fish species, ICES Journal of Marine Science, Volume 72, Issue 1, Pages 82–92, <a href='https://doi.org/10.1093/icesjms/fsu136' target='_blank'>https://doi.org/10.1093/icesjms/fsu136</a></li>")
+
+    text <- paste0(text, "<li>Taylor, M. H., Mildenberger, T. K. (2017). Extending electronic length frequency analysis in R. Fisheries Management and Ecology, 24(4), 330-338.<a href='https://doi.org/10.1111/fme.12232' target='_blank'>https://doi.org/10.1111/fme.12232</a></li>")
+
+    text <- paste0(text, "<li>Mildenberger, T. K., Taylor, M. H., & Wolff, M. (2017). TropFishR: an R package for fisheries analysis with length-frequency data. Methods in Ecology and Evolution, 8(11), 1520-1527.<a href='https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.12791' target='_blank'>https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.12791</a></li>")
+
+    text <- paste0(text, "<li>Then, A.Y., Hoenig, J.M., Hall, N.G., Hewitt, D.A. (2015) Evaluating the predictive performance of empirical estimators of natural mortality rate using information on over 200 fish species, ICES Journal of Marine Science, Volume 72, Issue 1, Pages 82–92, <a href='https://doi.org/10.1093/icesjms/fsu136' target='_blank'>https://doi.org/10.1093/icesjms/fsu136</a></li>")
+
+    text <- paste0(text, "<li>Wang, K., Zhang, C., Xu, B., Xue, Y., Ren, Y. (2020). Selecting optimal bin size to account for growth variability in Electronic LEngth Frequency ANalysis (ELEFAN). Fisheries Research, 225, 105474. <a href='https://doi.org/10.1016/j.fishres.2019.105474' target='_blank'>https://doi.org/10.1016/j.fishres.2019.105474</a></li>")
+
     text <- paste0(text, "<li>Xiang, Y., Gubian, S., Suomela, B., Hoeng, J. (2013). Generalized Simulated Annealing for Efficient Global Optimization: the GenSA Package for R. The R Journal, Volume 5/1, June 2013. <a href='https://journal.r-project.org/archive/2013/RJ-2013-002/index.html' target='_blank'>https://journal.r-project.org/archive/2013/RJ-2013-002/index.html</a></li>")
+
     text <- paste0(text, "</ul>")
     text <- paste0(text, "<br>")
     text <- paste0(text, "<br>")
-    
+
     text <- paste0(text, "<p>")
     text
 })
@@ -393,7 +406,7 @@ output$fishMethodsIntroOut <- renderText({
     text <- paste0(text, "<li><b>incrF: </b> Fishing mortality (F) increment for YPR calculation</li>")
     text <- paste0(text, "</ul>")
     text <- paste0(text, "</p>")
-    
+
     text <- paste0(text, "<p>")
     text <- paste0(text, "<h4>Running time with sample dataset</h4>")
     text <- paste0(text, "<ul>")
@@ -401,7 +414,7 @@ output$fishMethodsIntroOut <- renderText({
     text <- paste0(text, "<li><b>YPR:</b>&nbsp;< 10 sec</li>")
     text <- paste0(text, "</ul>")
     text <- paste0(text, "</p>")
-    
+
     text <- paste0(text, "<p>")
     text <- paste0(text, "W. L. Gabriel, M. P. Sissenwine & W. J. Overholtz (1989) Analysis of Spawning Stock Biomass per Recruit: An Example for Georges Bank Haddock, North American Journal of Fisheries Management, 9:4, 383-391, DOI: <a href='https://doi.org/10.1577/1548-8675(1989)009%3C0383:AOSSBP%3E2.3.CO;2' target='_blank'>10.1577/1548-8675(1989)009<0383:AOSSBP>2.3.CO;2</a>")
     text <- paste0(text, "</p>")
@@ -460,8 +473,8 @@ output$elefanSampleDataset <- renderText({
     text <- paste0(text, "<li>The data format of your data file should be automatically detected, or select the date format used in your data file under <b>'Choose CSV date format'</b>, e.g. DD/MM/YYYY format to select 'Day Month Year'.</li>")
     text <- paste0(text, "<li>The date must include a specification of the day. If the data are aggregated or no information about the day is available, you could consider to set the day to the midpoint of the month, e.g. 15/01/2021.</li>")
     text <- paste0(text, "<li>Your data set should at least be representative of a whole year. This is particularly important if seasonally varying growth is estimated.</li>")
-    
-    
+
+
     ## text <- paste0(text, "<li>Ensure that your dates are given in chronological order.</li>")
     ## text <- paste0(text, "<li>", "Ensure that the 'midLength' column name is identical to the sample dataset.", "</li>")
     text <- paste0(text, "</ul>")
