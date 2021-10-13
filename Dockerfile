@@ -13,17 +13,18 @@ RUN apt-get update && apt-get install -y \
     libxt-dev \
     libssl-dev \
     libssh2-1-dev \
-    #libssl1.0.0 \
     libjpeg-dev \
     default-jre \
     default-jdk \
-    #libxml2 \
     libxml2-dev \
+    libudunits2-dev \
+    libproj-dev \
+    libgeos-dev \
+    libgdal-dev \
     git \
     texlive-latex-base \
     texlive-fonts-recommended \
     texlive-formats-extra \
-    #libv8-3.14.5 \
     libv8-dev \
 	libsodium-dev \
     libsecret-1-dev
