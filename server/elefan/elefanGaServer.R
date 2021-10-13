@@ -208,8 +208,8 @@ elefanGaModule <- function(input, output, session) {
                 maxL <- 100
             }
         }
-        min <- 0.5 * maxL
-        max <- 1.5 * maxL
+        min <- 0.25 * maxL
+        max <- 1.75 * maxL
         sel <- c(0.8,1.2) * maxL
         sliderInput(ns("ELEFAN_GA_Linf"),"",
                     value=sel, min = min, max = max, step=1)
@@ -454,6 +454,21 @@ elefanGaModule <- function(input, output, session) {
             }
 
 
+            ## Double-check that lower bounds are met
+            popSize <- input$ELEFAN_GA_popSize
+            if(popSize < 50) popSize <- 50
+            maxiter <- input$ELEFAN_GA_maxiter
+            if(maxiter < 20) maxiter <- 20
+            pmutation <- input$ELEFAN_GA_pmutation
+            if(pmutation < 0.1) pmutation <- 0.1
+            run <- input$ELEFAN_GA_run
+            if(run < 10) run <- 10
+            pcrossover <- input$ELEFAN_GA_pcrossover
+            if(pcrossover < 0.1) pcrossover <- 0.1
+            elitism <- input$ELEFAN_GA_elitism
+            if(elitism < 1) elitism <- 1
+
+
             flog.info("Starting Elegan GA computation")
             res <- run_elefan_ga(x = inputElefanGaData$data,
                                  binSize =  input$ELEFAN_GA_binSize,
@@ -464,10 +479,10 @@ elefanGaModule <- function(input, output, session) {
                                  up_par = list(Linf = linf[2], K = max(input$ELEFAN_GA_K),
                                                t_anchor = max(input$ELEFAN_GA_t_anchor), C = max(input$ELEFAN_GA_C),
                                                ts = max(input$ELEFAN_GA_ts)),
-                                 popSize = input$ELEFAN_GA_popSize, maxiter = input$ELEFAN_GA_maxiter,
-                                 run = input$ELEFAN_GA_run, pmutation = input$ELEFAN_GA_pmutation,
-                                 pcrossover = input$ELEFAN_GA_pcrossover,
-                                 elitism = input$ELEFAN_GA_elitism,
+                                 popSize = popSize, maxiter = maxiter,
+                                 run = run, pmutation = pmutation,
+                                 pcrossover = pcrossover,
+                                 elitism = elitism,
                                  MA = input$ELEFAN_GA_MA,
                                  addl.sqrt = input$ELEFAN_GA_addlsqrt,
                                  ##                                 plus_group = input$ELEFAN_GA_PLUS_GROUP,

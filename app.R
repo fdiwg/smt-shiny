@@ -141,7 +141,7 @@ ui <- tagList(
 
 
 server <- function(input, output, session) {
-  
+
   #flog.threshold(DEBUG)
   #flog.appender(appender.file(fileLog))
 
@@ -202,7 +202,7 @@ server <- function(input, output, session) {
       isolate({updateTabItems(session, "smt-tabs", "homeTab")})
     }
   })
-  
+
   app_ctrl <- reactiveValues(
     withtoken = FALSE
   )
@@ -211,7 +211,7 @@ server <- function(input, output, session) {
   session$userData$sessionMode <- reactiveVal(NULL)
   session$userData$storagehubManager <- reactiveVal(NULL)
   session$userData$sessionWps <- reactiveVal(NULL)
-  
+
   ## Hide any overlay when session starts
   observe({
     js$hideComputing()
@@ -225,44 +225,44 @@ server <- function(input, output, session) {
         token <- query[[gcubeTokenQueryParam]]
         session$userData$sessionToken(token)
         app_ctrl$withtoken <- TRUE
-        
+
         #instantiate storagehub manager (uses a keyring 'env' backend by default)
         sh_manager = d4storagehub4R::StoragehubManager$new(token = session$userData$sessionToken(), logger = "INFO")
         session$userData$sessionUsername(sh_manager$getUserProfile()$username)
         session$userData$storagehubManager(sh_manager)
-        
+
         #trace logs by user
         fileLog <- sprintf("session_for_%s.log", sh_manager$getUserProfile()$username)
-        
+
         if (!is.null(session$userData$sessionToken())) {
           flog.info("Session token is: %s", session$userData$sessionToken())
         } else {
           flog.info("Session token is: %s", "NULL")
         }
-        
+
         if (!is.null(session$userData$sessionMode())) {
           flog.info("Session mode is: %s", session$userData$sessionMode())
         } else {
           flog.info("Session mode is: %s", "NULL")
         }
-        
+
         if (!is.null(session$userData$sessionUsername())) {
           flog.info("Session username is: %s", session$userData$sessionUsername())
           session$userData$sessionMode("GCUBE")
         } else {
           flog.info("Session username is: %s", "NULL")
         }
-        
+
       }
       flog.threshold(DEBUG)
       flog.appender(appender.file(fileLog))
     }
   })
-  
+
    observeEvent(req(!is.null(session$userData$sessionToken())),{
   icproxy = XML::xmlParse(content(GET("https://registry.d4science.org/icproxy/gcube/service//ServiceEndpoint/DataAnalysis/DataMiner?gcube-scope=/d4science.research-infrastructures.eu/D4Research/SDG-Indicator14.4.1"), "text"))
   wps_uri = xpathSApply(icproxy, "//AccessPoint/Interface/Endpoint", xmlValue)[1]
-  
+
   flog.info("WPS url select : %s",wps_uri)
   print(sprintf("WPS url select : %s",wps_uri))
   WPS<-WPSClient$new(
@@ -270,31 +270,31 @@ server <- function(input, output, session) {
        serviceVersion = "1.0.0", logger ="DEBUG",
        headers = c("gcube-token"= session$userData$sessionToken())
      )
-  
+
   session$userData$sessionWps(WPS)
-  
+
    },once=T)
-  
+
   session$userData$cmsy <- reactiveValues()
-  
+
   # session$userData$elefan_sa <- reactiveValues()
   # session$userData$elefan <- reactiveValues()
   session$userData$sbprExec <- reactiveValues()
   session$userData$yprExec <- reactiveValues()
   session$userData$fishingMortality <- reactiveValues()
-  
+
   session$userData$fishingMortality$FcurrGA <- NA
   session$userData$fishingMortality$FcurrSA <- NA
   session$userData$fishingMortality$Fcurr <- NA
-  
+
   session$userData$cmsyUploadVreResult <- reactiveValues()
   session$userData$elefanGaUploadVreResult <- reactiveValues()
   # session$userData$elefanSaUploadVreResult <- reactiveValues()
   # session$userData$elefanUploadVreResult <- reactiveValues()
   session$userData$sbprUploadVreResult <- reactiveValues()
   session$userData$yprUploadVreResult <- reactiveValues()
-  
-  
+
+
   callModule(cmsyModule, "cmsyModule")
   callModule(elefanGaModule, "elefanGaModule")
   # callModule(elefanSaModule, "elefanSaModule")

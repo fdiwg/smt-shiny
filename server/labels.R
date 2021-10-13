@@ -335,12 +335,24 @@ output$elefanIntroOut <- renderText({
 
     text <- paste0(text, "<h4>References</h4><br/>")
     text <- paste0(text, "<ul>")
+    text <- paste0(text, "<li>Brey, T., Soriano, M., and Pauly, D. 1988. Electronic length frequency analysis: a revised and expanded user's guide to ELEFAN 0, 1 and 2. <a href='https://oceanrep.geomar.de/25801/1/IFM-BER_177.pdf' target='_blank'>https://oceanrep.geomar.de/25801/1/IFM-BER_177.pdf</a></li>")
+
+    text <- paste0(text, "<li>Mildenberger, T. K., Taylor, M. H., Wolff, M. (2017). TropFishR: an R package for fisheries analysis with length-frequency data. Methods in Ecology and Evolution, 8(11), 1520-1527.<a href='https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.12791' target='_blank'>https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.12791</a></li>")
+
     text <- paste0(text, "<li>Pauly D.(1980) On the interrelationships between natural mortality, growth parameters, and mean environmental temperature in 175 fish stocks, Journal du Conseil International pour l’Exploration de la Mer, 1980, vol. 39 (pg. 175-192), <a href='https://doi.org/10.1093/icesjms/39.2.175' target='_blank'>https://doi.org/10.1093/icesjms/39.2.175</a></li>")
+
     text <- paste0(text, "<li>Scrucca L. (2013). GA: A Package for Genetic Algorithms in R. Journal of Statistical Software, 53(4), 1-37. <a href='http://www.jstatsoft.org/v53/i04/' target='_blank'>http://www.jstatsoft.org/v53/i04/</a></li>")
-    text <- paste0(text, "<li>Taylor, M. (2016): fishdynr. figshare. Software. <a href='https://doi.org/10.6084/m9.figshare.4212726.v2' target='_blank'>https://doi.org/10.6084/m9.figshare.4212726.v2</a></li>")
+
+    text <- paste0(text, "<li>Taylor, M. H., Mildenberger, T. K. (2017). Extending electronic length frequency analysis in R. Fisheries Management and Ecology, 24(4), 330-338.<a href='https://doi.org/10.1111/fme.12232' target='_blank'>https://doi.org/10.1111/fme.12232</a></li>")
+
+    text <- paste0(text, "<li>Mildenberger, T. K., Taylor, M. H., & Wolff, M. (2017). TropFishR: an R package for fisheries analysis with length-frequency data. Methods in Ecology and Evolution, 8(11), 1520-1527.<a href='https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.12791' target='_blank'>https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/2041-210X.12791</a></li>")
+
     text <- paste0(text, "<li>Then, A.Y., Hoenig, J.M., Hall, N.G., Hewitt, D.A. (2015) Evaluating the predictive performance of empirical estimators of natural mortality rate using information on over 200 fish species, ICES Journal of Marine Science, Volume 72, Issue 1, Pages 82–92, <a href='https://doi.org/10.1093/icesjms/fsu136' target='_blank'>https://doi.org/10.1093/icesjms/fsu136</a></li>")
+
     text <- paste0(text, "<li>Wang, K., Zhang, C., Xu, B., Xue, Y., Ren, Y. (2020). Selecting optimal bin size to account for growth variability in Electronic LEngth Frequency ANalysis (ELEFAN). Fisheries Research, 225, 105474. <a href='https://doi.org/10.1016/j.fishres.2019.105474' target='_blank'>https://doi.org/10.1016/j.fishres.2019.105474</a></li>")
+
     text <- paste0(text, "<li>Xiang, Y., Gubian, S., Suomela, B., Hoeng, J. (2013). Generalized Simulated Annealing for Efficient Global Optimization: the GenSA Package for R. The R Journal, Volume 5/1, June 2013. <a href='https://journal.r-project.org/archive/2013/RJ-2013-002/index.html' target='_blank'>https://journal.r-project.org/archive/2013/RJ-2013-002/index.html</a></li>")
+
     text <- paste0(text, "</ul>")
     text <- paste0(text, "<br>")
     text <- paste0(text, "<br>")
