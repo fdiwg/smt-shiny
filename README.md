@@ -39,6 +39,29 @@ install.packages(c('shiny', 'rmarkdown', 'shinythemes', 'shinydashboard', 'RCurl
 ```
 
 ### Docker
+
+#### Pull / Run the image from DockerHub
+
+The SMT application nows come with an automated build & publication to [DockerHub](https://hub.docker.com/r/abennici/stock_monitoring_tool)
+
+This procedure intends to facilitate the installation of the application, through a simple "pull & run":
+
+```
+docker pull abennici/stock_monitoring_tool:latest
+docker run --name stock_monitoring_tool -p 3839:3838 abennici/stock_monitoring_tool
+```
+
+And then point your browser to http://localhost:3839
+
+Note: In case of having an existing SMT app running on docker, and in order to update the docker app, it will be required to stop and remove the container prior to run the above commands to pull & run the app:
+
+```
+docker container stop stock_monitoring_tool
+docker container rm stock_monitoring_tool
+```
+
+#### Build / Run the image locally
+
 A Dockerfile is provided and can be used to build up containers with the application.
 
 To build and run the application issue the following commands
