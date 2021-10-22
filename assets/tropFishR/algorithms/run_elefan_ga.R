@@ -291,10 +291,10 @@ run_elefan_ga <- function(
         }
 
         ## for SPR
-        if(mat_method == "Define L50 & L75" && is.numeric(Lm50) && is.numeric(Lm75)){
+        if(mat_method == "Define Lm50 & Lm75" && is.numeric(Lm50) && is.numeric(Lm75)){
             Lm50 <- Lm50
             Lm75 <- Lm75
-        }else if(mat_method == "Define L50 & (L75-L25)" && is.numeric(Lm50) && is.numeric(wqsm)){
+        }else if(mat_method == "Define Lm50 & (Lm75-Lm25)" && is.numeric(Lm50) && is.numeric(wqsm)){
             Lm50 <- Lm50
             Lm75 <- Lm50 + wqsm/2
         }else if(mat_method == "Other" && is.numeric(per_lm1) && is.numeric(lm1) && is.numeric(per_lm2) && is.numeric(lm2)){
