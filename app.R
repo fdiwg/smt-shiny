@@ -5,6 +5,9 @@
 #
 # Author: Enrico Anello <enrico.anello@fao.org> <enrico.anello@gmail.com>
 #
+#version/date to show on app
+SMT_VERSION = "0.5.1"
+SMT_DATE = "2021-10-23"
 
 ## Note that rfishbase v3.0.1 has to be installed for R<4.0.0:
 ## remotes::install_github("ropensci/rfishbase", ref = "3.0.1")
@@ -136,7 +139,7 @@ ui <- tagList(
       tabNaturalMortality("naturalMortalityModule")
     )
   )
-), tags$footer(footer, align = "center")
+), tags$footer(footer(SMT_VERSION, SMT_DATE), align = "center")
 )
 
 
