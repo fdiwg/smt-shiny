@@ -1,6 +1,6 @@
 FROM rocker/r-ver:4
 
-MAINTAINER Enrico Anello "enrico.anello@fao.org"
+MAINTAINER Alexandre Bennici "alexandre.bennici@fao.org"
 
 
 # system libraries of general use
