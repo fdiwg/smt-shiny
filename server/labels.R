@@ -164,11 +164,185 @@ output$cmsyIntroOut <- renderText({
     text <- paste0(text, "<br>")
 
     text <- paste0(text, "<p>")
-    text <- paste0(text, "<h4> References<br/></h4>")
+    text <- paste0(text, "<h4> References</h4>")
     text <- paste0(text,"Froese, Rainer & Demirel, Nazli & Coro, Gianpaolo & Kleisner, Kristin & Winker, Henning. (2017). Estimating fisheries reference points from catch and resilience. Fish and Fisheries. 18. 506-526. 10.1111/faf.12190.")
     text <- paste0(text, "</p>")
     text
 })
+
+
+
+## Length-based Methods General Introduction
+## ---------------------------------
+output$lbmIntroOut <- renderText({
+    session$userData$page('lbm-intro')
+    text <- "<h3><b> Length-based stock assessment methods </b></h3>"
+    text <- paste0(text, "<br>")
+
+    text <- paste0(text, "<p>")
+    text <- paste0(text, "Length-based stock assessment methods comprise an important suit of data-limited stock assessment methods that allow to infer the stock status based on information of length measurements. There is a variety of length-based methods available. Three methods are currently implemented in the SMT: (1) length-based stock assessment with TropFishR, (2) length-based indicators, and (3) length-based spawning potential ratio. While the first method estimates all parameters from the length masurements directly, such as growth parameters or natural mortality, the other two methods require this information as input. Thus, estimated growth and mortality parameters from the first method could also be used for the other two methods.")
+    text <- paste0(text, "</p>")
+    text <- paste0(text, "<br>")
+
+    text <- paste0(text, "<h4> 1. Length-based stock assessment with <b>TropFishR</b> </h4>")
+    text <- paste0(text, "<p>")
+    text <- paste0(text, "TropFishR is a collection of length-based methods that allow the estimation ",
+                   "of life history parameters describing the growth or mortality rates of a stock as ",
+                   "well as the stock status. The method requires monthly length-frequency data.")
+    text <- paste0(text, " Find more information about this method in the TropFishR tab in the sidebar ",
+                   "menu on the left.")
+    text <- paste0(text, "</p>")
+    text <- paste0(text, "<br>")
+
+    text <- paste0(text, "<h4> 2. Length-based indicators (<b>LBIs</b>) </h4>")
+    text <- paste0(text, "<p>")
+    text <- paste0(text, "Length-based indicators allow to infer the stock status of a stock. ",
+                   "The calculation of the indicators requires yearly length frequency data ",
+                   "and information about life history parameters. These required parameters ",
+                   "can be estimated with TropFishR or extracted from literature (e.g. ",
+                   "<a href='http://www.fishbase.org/search.php' ",
+                   "target='blank_'> FishBase</a> or <a href='https://www.sealifebase.ca' ",
+                   "target='blank_'> SeaLifeBase</a> for invertebrates",
+                   ").")
+    text <- paste0(text, " Find more information about this method in the LBI tab in the sidebar ",
+                   "menu on the left.")
+    text <- paste0(text, "</p>")
+    text <- paste0(text, "<br>")
+
+    text <- paste0(text, "<h4> 3. Length-based spawning potential ratio (<b>LBSPR</b>) </h4>")
+    text <- paste0(text, "<p>")
+    text <- paste0(text, "The length-based spawning potential ratio (LBSPR) allows to infer the stock status of a stock. ",
+                   "The calculation of the indicators requires yearly length frequency data ",
+                   "and information about life history parameters. These required parameters ",
+                   "can be estimated with TropFishR or extracted from literature (e.g. ",
+                   "<a href='http://www.fishbase.org/search.php' ",
+                   "target='blank_'> FishBase</a> or <a href='https://www.sealifebase.ca' ",
+                   "target='blank_'> SeaLifeBase</a> for invertebrates",
+                   ").")
+    text <- paste0(text, " Find more information about this method in the LBSPR tab in the sidebar ",
+                   "menu on the left.")
+    text <- paste0(text, "</p>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<br>")
+
+    text <- paste0(text, "<h4><b> Data for length-based stock assessment methods </b></h4>")
+    text <- paste0(text, "<br>")
+
+    text <- paste0(text, "<p> SMT accepts two different data formats for the length measurements:</p>")
+    text <- paste0(text, "<ol>")
+    text <- paste0(text, "<li> <b>Raw length measurements</b>: This format contains two columns, where one specifies the dates when a length measurement was performed and the other specifies the measured length. A third column specifying the frequency of the measured lengths at a given date is optional. Note, that when the column with dates is not provided the program assigns the current date to all length measurements. </li>")
+    text <- paste0(text, "<li> <b>Length-frequency table</b>: This format has to include a column indicating the mid lengths of the length classess of measured individuals (first column of the data set), a row indicating the dates when the individuals were measured (first row of the the data set excluding the first column), and the number of individuals observed per length class (rows) and per sampling date (columns). </li>")
+    text <- paste0(text, "</ol>")
+
+    text <- paste0(text, "<p> Further information about the two data formats ",
+                   "and how to convert one format to the other are described in a tutorial by Mildenberger (2020; ",
+                   "<a href='https://cran.r-project.org/web/packages/TropFishR/vignettes/lfqData.html'  target='blank_'>click to open</a>). </p>")
+
+    linkEA <- "<a href='https://data.d4science.org/shub/E_Snp1NzhlUHlFOWg0M3lUL3lZWU0yMVVTVFY5NDhaYkI1ODY4blFtSi9NYlFiMVAyamxMNGc2QXh0TlpRNmdNdQ==' target='_blank'>click to download</a>"
+    linkSE <- "<a href='https://data.d4science.org/shub/E_ZEhvM2ZpSVFZd0ZOSXl5MjlGZC90eC9vOUI1NG1hQ0NEMERtRGVHR2hqbThBZGxBYS9QWG5kc1BaWTluVHNvQw==' target='_blank'>click to download</a>"
+    linkOSG <- "<a href='https://data.d4science.org/shub/E_SHJJRUJ5S1lxOGhLOW1zVWpKbUJFQzE1c2wzbnltRlVBUmYrUEphbDRkN1BxQzlYOUtwQWRzZ0JMdnJrSmRhZA==' target='_blank'>click to download</a>"
+
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<b> Example data sets </b>")
+    text <- paste0(text, "<p> Three example data sets are available that demonstrate the two different data formats and represent three species with different life-history parameters:</p>")
+    text <- paste0(text, "<ul>")
+    text <- paste0(text, "<li> A short-lived species with raw length measurements: European anchovy (", linkEA, ")</li>")  ## &nbsp;
+    text <- paste0(text, "<li> A medium-lived species with a length-frequency table: Spangled Emperor (", linkSE, ")</li>")
+    text <- paste0(text, "<li> A long-lived species with a length-frequency table: Orange-spotted grouper(", linkOSG, ")</li>")
+    text <- paste0(text, "</ul>")
+    text <- paste0(text, "<p>Note, that the date can be provided in various formats (compare the date column or header row in the example data sets). The example data was generated using an age-and length-structured population model with following life-history parameters (losely informed by the parameters provided at FishBase):</p>")
+
+    text <- paste0(text, "<style> table, th, td { border: 1px solid black; border-collapse: collapse; }
+th, td { padding-top: 3px; padding-bottom: 3px; padding-left: 8px; padding-right: 8px; } </style>")
+    text <- paste0(text, "<table>")
+    text <- paste0(text, "<tr>")
+    text <- paste0(text, "<th> Species </th>")
+    text <- paste0(text, "<th> Latin </th>")
+    text <- paste0(text, "<th> L<sub>&#8734;</sub> </th>")
+    text <- paste0(text, "<th> K </th>")
+    text <- paste0(text, "<th> t<sub>0</sub> </th>")
+    text <- paste0(text, "<th> Max. age </th>")
+    text <- paste0(text, "<th> M </th>")
+    text <- paste0(text, "<th> L<sub>m50</sub> </th>")
+    text <- paste0(text, "<th> L<sub>m95</sub> </th>")
+    text <- paste0(text, "<th> L<sub>s50</sub> </th>")
+    text <- paste0(text, "<th> L<sub>s95</sub> </th>")
+    text <- paste0(text, "<th> a </th>")
+    text <- paste0(text, "<th> b </th>")
+    text <- paste0(text, "<th> Spawning </th>")
+    text <- paste0(text, "</tr>")
+    text <- paste0(text, "<tr>")
+    text <- paste0(text, "<td> European anchovy </td>")
+    text <- paste0(text, "<td> Engraulis encrasicolus </td>")
+    text <- paste0(text, "<td> 18.28 </td>")
+    text <- paste0(text, "<td> 0.6 </td>")
+    text <- paste0(text, "<td> -1 </td>")
+    text <- paste0(text, "<td> 6 </td>")
+    text <- paste0(text, "<td> 1.08 </td>")
+    text <- paste0(text, "<td> 10.33 </td>")
+    text <- paste0(text, "<td> 12.396 </td>")
+    text <- paste0(text, "<td> 8.264 </td>")
+    text <- paste0(text, "<td> 9.9168 </td>")
+    text <- paste0(text, "<td> 0.0055 </td>")
+    text <- paste0(text, "<td> 3.06 </td>")
+    text <- paste0(text, "<td> April-August </td>")
+    text <- paste0(text, "</tr>")
+    text <- paste0(text, "<tr>")
+    text <- paste0(text, "<td> Spangled Emperor </td>")
+    text <- paste0(text, "<td> Lethrinus nebulosus </td>")
+    text <- paste0(text, "<td> 64.46 </td>")
+    text <- paste0(text, "<td> 0.26 </td>")
+    text <- paste0(text, "<td> -1 </td>")
+    text <- paste0(text, "<td> 12 </td>")
+    text <- paste0(text, "<td> 0.6 </td>")
+    text <- paste0(text, "<td> 28.10 </td>")
+    text <- paste0(text, "<td> 33.72 </td>")
+    text <- paste0(text, "<td> 25.29 </td>")
+    text <- paste0(text, "<td> 32.034 </td>")
+    text <- paste0(text, "<td> 0.0339 </td>")
+    text <- paste0(text, "<td> 2.82 </td>")
+    text <- paste0(text, "<td> February-April & August-October </td>")
+    text <- paste0(text, "</tr>")
+    text <- paste0(text, "<tr>")
+    text <- paste0(text, "<td> Orange-spotted grouper </td>")
+    text <- paste0(text, "<td> Epinephelus coioides </td>")
+    text <- paste0(text, "<td> 95.45 </td>")
+    text <- paste0(text, "<td> 0.15 </td>")
+    text <- paste0(text, "<td> -1 </td>")
+    text <- paste0(text, "<td> 18 </td>")
+    text <- paste0(text, "<td> 0.27 </td>")
+    text <- paste0(text, "<td> 54 </td>")
+    text <- paste0(text, "<td> 64.8 </td>")
+    text <- paste0(text, "<td> 48.6 </td>")
+    text <- paste0(text, "<td> 61.56 </td>")
+    text <- paste0(text, "<td> 0.0138 </td>")
+    text <- paste0(text, "<td> 3.04 </td>")
+    text <- paste0(text, "<td> March-May </td>")
+    text <- paste0(text, "</tr>")
+    text <- paste0(text, "</table>")
+
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<b> Further data format considerations </b>")
+    text <- paste0(text, "<ul>")
+    text <- paste0(text, "<li>", "Save your dataset in 'csv' format.", "</li>")
+    text <- paste0(text, "<li>", "The separator for the .csv file should be a comma ‘,’ semicolon ';' or tab. The default might differ depending on the language settings of your spreadsheet manipulation program (e.g. Excel).", "</li>")
+    text <- paste0(text, "<li>", "Use a '.' to separate decimals in the data. The default might differ depending on the language settings of your spreadsheet manipulation program (e.g. Excel).", "</li>")
+    text <- paste0(text, "<li>", "The first column of the data set should include the mid lengths of the length classes.", "</li>")
+    text <- paste0(text, "<li>The data format of your data file should be automatically detected, or select the date format used in your data file under <b>'Choose CSV date format'</b>, e.g. DD/MM/YYYY format to select 'Day Month Year'.</li>")
+    text <- paste0(text, "<li>The date must include a specification of the day. If the data are aggregated or no information about the day is available, you could consider to set the day to the midpoint of the month, e.g. 15/01/2021.</li>")
+    text <- paste0(text, "<li>Your data set should at least be representative of a whole year. This is particularly important if seasonally varying growth is estimated.</li>")
+
+
+    ## text <- paste0(text, "<li>Ensure that your dates are given in chronological order.</li>")
+    ## text <- paste0(text, "<li>", "Ensure that the 'midLength' column name is identical to the sample dataset.", "</li>")
+    text <- paste0(text, "</ul>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<br>")
+
+    text
+})
+
 
 
 ## TropFishR
@@ -177,19 +351,21 @@ output$elefanIntroOut <- renderText({
     session$userData$page('elefan-intro')
     text <- "<h3><b>Length-based stock assessment with TropFishR</b></h3>"
     text <- paste0(text, "<br>")
-    text <- paste0(text, "<p>The length-based stock assessment with TropFishR is based on the routine outlined in the Technical report ",
+    text <- paste0(text, "<p>")
+    text <- paste0(text, "The length-based stock assessment with TropFishR is based on the routine outlined in the Technical report ",
                    "<a href='http://www.fao.org/documents/card/en/c/9bb12a06-2f05-5dcb-a6ca-2d6dd3080f65/' target='_blank'> Introduction to Tropical Fish Stock Assessment (FAO, 1998)</a>",
                    ", and compiled into the R package ",
                    "<a href='https://cran.r-project.org/web/packages/TropFishR' target='_blank'> TropFishR </a>",
                    " by ", "<a href='https://doi.org/10.1111/2041-210X.12791' target='_blank'> Mildenberger et al. (2017).</a>",
-                   " The assessment routine consists of 4 consecutive steps and methods:</p>")
+                   " The assessment routine consists of 4 consecutive steps and methods:")
+    text <- paste0(text, "</p>")
     text <- paste0(text, "<br>")
     text <- paste0(text, "<h4> Method description </h4>")
-    text <- paste0(text, "<strong><i>1. ELEFAN</i>: <i>E</i>lectronic <i>LE</i>ngth <i>F</i>requency <i>AN</i>alysis for the estimation of the growth parameters of the von Bertlanffy growth (VBG) function.</strong>")
-    text <- paste0(text, "<p>")
+    text <- paste0(text, "<strong>1. ELEFAN: Electronic LEngth Frequency ANalysis for the estimation of the growth parameters of the von Bertlanffy growth (VBG) function.</strong>")
+    text <- paste0(text, "<p style='margin-left: 20px'>")
     text <- paste0(text, "The study of fish growth involves a determination of body size as a function of age. Most stock assessment methods work essentially with age composition data. In temperate waters it is easier to acquire data to estimate age by counting year rings on hard parts of organisms such as scales and otoliths (ear bones). These rings are formed due to strong seasonal fluctuations in environmental conditions. In tropical areas such drastic changes do not occur and it is therefore very difficult, if not impossible to use these kind of seasonal rings for age determination. ELEFAN is one of a number of numerical methods that have been developed, which allow the conversion of length-frequency data into age composition. Although these methods do not require the reading of rings on hard parts, the final interpretation of the results becomes much more reliable if at least some direct age readings are available.")
     text <- paste0(text, "<br>")
-    text <- paste0(text, "ELEFAN fits a seasonal version of the von Bertalanffy Growth Function (VBGF) (see Supporting Tools) by:")
+    text <- paste0(text, "ELEFAN fits a seasonal version of the von Bertalanffy Growth Function (VBGF; see Supporting Tools in the sidebar menu) by:")
     text <- paste0(text, "<ol>")
     text <- paste0(text, "<li> restructuring the length-frequency data using a procedure that scores the length bins based on their deviation from a moving average (MA) across neighboring bins.</li>")
     text <- paste0(text, "<li> calculating a score value as the cumulative score for a given set of VBGF parameters based on the sum of the individual bin scores that are intersected by resulting growth curves.</li>")
@@ -198,18 +374,24 @@ output$elefanIntroOut <- renderText({
     text <- paste0(text, "</p>")
 
     text <- paste0(text, "<strong> <i>2. Empirical formula</i> for the estimation of the natural mortality rate.</strong>")
-    text <- paste0(text, "<p>")
+    text <- paste0(text, "<p style='margin-left: 20px'>")
     text <- paste0(text, "The natural mortality rate (M) is estimated by an empirical formula based on estimated growth parameters. The options are: <br> - Then's growth formula (Then et al. 2015), <br> - Pauly's growth and temperature formula (Pauly 1980), and <br> - Then's maximum age formula (Then et al. 2015); <br> While the first option does not require any additional information, the second requires the average annual sea surface temperature (SST) in degrees Celsius and allows for a correction for schooling fish (multiplication with 0.8). The third option requires an estimate of the maximum age of the fish.")
     text <- paste0(text, "</p>")
     text <- paste0(text, "<strong> <i>3. Catch curve</i> for the estimation of the total mortality rate.</strong>")
-    text <- paste0(text, "<p>")
+    text <- paste0(text, "<p style='margin-left: 20px'>")
     text <- paste0(text, "The length-converted catch curve is used to estimate the total mortality rate (Z) and the fishing mortality rate (F) based on M: F = Z - M.")
     text <- paste0(text, "</p>")
     text <- paste0(text, "<strong> <i>4. Yield per recruit analysis (YPR)</i> for the estimation of the stock status.</strong>")
-    text <- paste0(text, "<p>")
-    text <- paste0(text, "The Thompson and Bell yield per recruit model is used to estimate yield and biomass per recruit as well as the spawning potential ratio (SPR) over a range of fishing mortality rates and selectivity definitions. The stock status is based on current F relative to biological reference points, such as Fmax, F0.1, F35. The estimation of SPR requires information about the maturity parameters.")
+    text <- paste0(text, "<p style='margin-left: 20px'>")
+    text <- paste0(text, "The Thompson and Bell yield per recruit model is used to estimate yield and biomass per recruit as well as the spawning potential ratio (SPR) over a range of fishing mortality rates and selectivity definitions. The stock status is based on current F relative to biological reference points, such as ",withMathJax("\\(F_{max}\\)"),", ",withMathJax("\\(F_{0.1}\\)"),", ",withMathJax("\\(F_{35\\%SPR}\\)"),". The estimation of SPR requires information about the maturity parameters.")
     text <- paste0(text, "</p>")
 
+
+    text <- paste0(text, "<p style='margin-left: 20px'>")
+    text <- paste0(text,
+                   "This workflow requires at least one year of length composition data, and information about the length-weight ",
+                   " relationship and ideally the maturity of the species.")
+    text <- paste0(text, "</p>")
 
     text <- paste0(text, "<p>")
     text <- paste0(text, "<strong>Further information</strong><br>")
@@ -259,11 +441,6 @@ output$elefanIntroOut <- renderText({
                    "reliable predictors of the natural mortality.",
                    "</li>")
     text <- paste0(text, "<br>")
-    text <- paste0(text, "<li><b>Length-independent natural mortality:</b> ",
-                   "The current implementation of SMT assumes that the natural mortality is equal for all length ",
-                   "classes. (Note this assumption will be relaxed in the future.)",
-                   "</li>")
-    text <- paste0(text, "<br>")
     text <- paste0(text, "<li><b>Somatic growth follows VBG:</b> ",
                    "The estimation of growth parameters with ELEFAN assumes that the growth of individuals in length ",
                    "follows the logistic von Bertlanffy growth (VBG) function. This is an often made assumption for the ",
@@ -279,29 +456,12 @@ output$elefanIntroOut <- renderText({
                    "</li>")
     text <- paste0(text, "</ul>")
     text <- paste0(text, "<br>")
-    text <- paste0(text, "<h4>Data considerations</h4>")
 
-    text <- paste0(text, "<strong>Mandatory fields to run TropFishR:</strong>")
-    text <- paste0(text, "<ul>")
-    text <- paste0(text,
-                   "<li>A column indicating the length classes of measured individuals (first column of dataset).</li>")
-    text <- paste0(text, "<li>A row indicating the dates when individuals were measured (first row of dataset).</li>")
-    text <- paste0(text,
-                   "<li>The number of individuals caught per length class (rows) and per sampling date (columns).</li>")
-    text <- paste0(text, "</ul>")
-    text <- paste0(text, "<p> An example dataset in this format can be downloaded <a href='https://data.d4science.org/shub/E_Yzc0aHFhWE50WWdpaEhkMjl5TExHekdQU2NFR2FtNTM2NkRydTQ5clhMTzhVd3Y4bDJzcU16UXNSUWJzZ1NpTg==' target='_blank'> here </a>. The example data were generated by the function lfqGen from the fishdynr package (<a href='https://figshare.com/articles/fishdynr/4212726/2' target='_blank'>Taylor 2016</a>) based on following VBGF parameters:</p>")
-    text <- paste0(text, "<ul style=\"margin-top: 10px;\">")
-    text <- paste0(text, "<li>Growth rate: k = 0.2 +/- 0.1 (CV)</li>")
-    text <- paste0(text, "<li>Asymptotic length: ", withMathJax("\\(L_\\infty\\)")," = 123 +/- 0.05 (CV)</li>")
-    text <- paste0(text, "<li>Amplitude of growth oscillation: C = 0.3</li>")
-    text <- paste0(text, "<li>Summer point of oscillation: ", withMathJax("\\(t_s\\)")," = 0</li>")
-    text <- paste0(text, "<li>Time point anchoring growth curves in year-length coordinate system, corresponds to peak spawning month: t_a between 0.16 and 0.34 (Time when yearly recruitment pulse occurs; e.g. 0 = Jan 1, 0.25 = Apr 1, 0.5 = Jul 1, 0.75 = Oct 1; repro_wt = c(0, 0, 0.2, 1, 0.6, 0, 0, 0, 0, 0, 0, 0))</li>")
-    text <- paste0(text, "</ul>")
-    text <- paste0(text, "<br/>")
     text <- paste0(text,"<h4> Workflow considerations</h4>")
     text <- paste0(text,"<strong> To run this length-based workflow in the Stock Monitoring Tool :</strong>")
     text <- paste0(text, "<ol>")
-    text <- paste0(text, "<li> Upload a size frequency data set (see Data Considerations or the <a href='https://data.d4science.org/shub/E_Yzc0aHFhWE50WWdpaEhkMjl5TExHekdQU2NFR2FtNTM2NkRydTQ5clhMTzhVd3Y4bDJzcU16UXNSUWJzZ1NpTg==' target='_blank'> Elefan Sample dataset </a>)</li>")
+    text <- paste0(text, "<li> Navigate to the 'tool' tab under TropFishR in the sidebar menu.</li>")
+    text <- paste0(text, "<li> Upload a size frequency data set (for more information check the 'Data Considerations' tab in the tool or the 'Length-based methods' tab in the sidebar menu).</li>")
     text <- paste0(text, "<li> Adjust the Assessment Settings")
     text <- paste0(text, "<ol type='a'>")
     text <- paste0(text, "<li> Data Settings - select the years of data to include in the analysis, adjust the aggregation, bin size and moving average (MA) of the dataset to optimise cohort recognition by the Elefan algorithm </li>")
@@ -311,29 +471,28 @@ output$elefanIntroOut <- renderText({
     text <- paste0(text, "</li>")
     text <- paste0(text, "<li> Check and Run the Assessment:")
     text <- paste0(text, "<ol type='a'>")
-    text <- paste0(text, "<li> Run a check on the parameterisations prior to running the full assessment (Run Check button)</li>")
-    text <- paste0(text, "<li> Run the assessment (Run Assessment button). Watch for the progress bar in the center of the screen</li>")
+    text <- paste0(text, "<li> Run a check on the parameterisations prior to running the full assessment ('Run Check' button)</li>")
+    text <- paste0(text, "<li> Run the assessment ('Run Assessment' button). Watch for the progress bar in the center of the screen</li>")
     text <- paste0(text, "</ol>")
     text <- paste0(text, "</li>")
-    text <- paste0(text, "<li> Download the report as a pdf (Download Report button)</li>")
-    text <- paste0(text, "<li> The Reset button removes the uploaded data and resets the settings to default</li>")
+    text <- paste0(text, "<li> Download the report as a pdf ('Download Report' button). The report will also be automatically uploaded to your private workspace. </li>")
+    text <- paste0(text, "<li> Download the results as a zip archive ('Download Results (zip)' button).</li>")
+    text <- paste0(text, "<li> The 'Reset' button removes the uploaded data and resets the settings to default values.</li>")
     text <- paste0(text, "</ol>")
     text <- paste0(text, "Further information can be found in the popup information buttons at each field, and in the Workflow, Data, Methods, and Results Considerations tabs. Note that error messages may display in the center of the page and in place of any figures where an error has occurred.")
     text <- paste0(text, "</p>")
     text <- paste0(text, "<br>")
-    text <- paste0(text, "<p>")
-    text <- paste0(text, "<br>")
 
     text <- paste0(text, "<h4>Run time </h4>")
-    text <- paste0(text,'Run time varies with the size of the length frequency dataset, number of time steps, time aggregation, and parameter search space. This is noted in the information button of these fields.')
-    text <- paste0(text, "<ul>")
-    text <- paste0(text, "<li>With the Elefan sample dataset, run time is <b> 2-3 mins</b></li>")
-    text <- paste0(text, "</ul>")
-
+    text <- paste0(text, "<p>")
+    text <- paste0(text, "The run time varies with the size and resolution (bin size) of the length frequency dataset, ",
+                   "number of time steps, time aggregation, and parameter search space. ",
+                   "This is noted in the information button of these fields.",
+                   "With the exsample datasets, the run time is between <b> 2-3 mins</b>.")
     text <- paste0(text, "</p>")
     text <- paste0(text, "<br>")
 
-    text <- paste0(text, "<h4>References</h4><br/>")
+    text <- paste0(text, "<h4>References</h4>")
     text <- paste0(text, "<ul>")
     text <- paste0(text, "<li>Brey, T., Soriano, M., and Pauly, D. 1988. Electronic length frequency analysis: a revised and expanded user's guide to ELEFAN 0, 1 and 2. <a href='https://oceanrep.geomar.de/25801/1/IFM-BER_177.pdf' target='_blank'>https://oceanrep.geomar.de/25801/1/IFM-BER_177.pdf</a></li>")
 
@@ -361,6 +520,233 @@ output$elefanIntroOut <- renderText({
     text
 })
 
+
+## LBIs
+## ---------------------------------
+output$lbiIntroOut <- renderText({
+    session$userData$page('lbi-intro')
+    text <- "<h3><b>Length-based indicators (LBIs)</b></h3>"
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<p>Length-based indicators allow to estimate the stock status from annual length frequency samples from catches and life history parameters.</p>")
+
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<h4> Method description </h4>")
+    text <- paste0(text, "<p>")
+    text <- paste0(text,
+                   "LBIs rely on the relationships between life history theory and ",
+                   "length frequency data from catches and are based on ",
+                   "three simple ideas: (1) the length frequency data reflects the conservation of large, mature ",
+                   "individuals with arguably a high fecundity (also referred to as 'mega spawners'); (2) ",
+                   "the data demonstrates the conservation of small immature individuals; (3) the length ",
+                   "frequency data consists mainly of fish of the size at which the highest yield from a cohort ",
+                   "or the maximum sustainable yield (MSY) is to be expected. In theory, these metrics ",
+                   "are, thus, indicating how a stock is performing in terms of yield optimisation and ",
+                   "conservation goals (i.e. avoiding growth and recruitment overfishing).",
+                   "LBIs require at least one year of length composition data, information about the asymptotic length of ",
+                   "the von Bertalanffy growth equation (",withMathJax("\\(L_\\infty\\)"),"), the ratio of natural mortality ",
+                   "and the von Bertalanffy growth coefficient (",withMathJax("\\(K\\)"),"), and information about the maturity ",
+                   " and ideally length-weight relationship of the species."
+                   )
+    text <- paste0(text, "</p>")
+
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<h4>Assumptions of LBIs:</h4>")
+    text <- paste0(text,
+                   "LBIs make specific assumptions about the data, the stock, or the ",
+                   "fisheries targeting the stock. It is important to be aware of these assumptions and, thus, the ",
+                   "limitations of the results.</p>")
+    text <- paste0(text, "<ul>")
+    text <- paste0(text, "<li><b>Representative length measurements:</b> ",
+                   "The routine assumes that the dataset is representative of the length distributions of the whole catch. ",
+                   "This means that either the length of all individuals in the catch were measured or ",
+                   "a randomised subsample of the catch was measured.", "</li>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<li><b>Equilibrium conditions:</b> ",
+                   "The routine assumes constant recruitment, fishing and natural mortality as well as somatic growth and maturation over time, i.e. within the year and over all years covered by the dataset.",
+                   "</li>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<li><b>Density dependence:</b> ",
+                   "The routine assumes density independent maturity and somatic growth. All reference points ",
+                   "are based on the 'per recruit' model, thus no assumptions are made about the stock recruitment ",
+                   "relationship.",
+                   "</li>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<li><b>Length-independent natural mortality:</b> ",
+                   "The current implementation of SMT assumes that the natural mortality is equal for all length ",
+                   "classes. (Note this assumption will be relaxed in the future.)",
+                   "</li>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<li><b>Somatic growth follows VBG:</b> ",
+                   "The estimation of growth parameters with ELEFAN assumes that the growth of individuals in length ",
+                   "follows the logistic von Bertlanffy growth (VBG) function. This is an often made assumption for the ",
+                   "growth of fish, but might not reflect well the growth of species with an exoskeleton, ",
+                   "such as crustaceans, nor the growth of early life stages of fish.",
+                   "</li>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<li><b>Closed population:</b> ",
+                   "The routine assumes that the stock (population) under study ",
+                   "is closed, meaning that there is no immigration or emigration taking place. Immigration and emigration can both bias estimated mortality rates and stock status. Furthermore, fish migrations ",
+                   "often vary for various life stages and might thus affect the representativeness of the length ",
+                   "measurements if the population is not closed.",
+                   "</li>")
+    text <- paste0(text, "</ul>")
+    text <- paste0(text, "<br>")
+
+    text <- paste0(text,"<h4> Workflow considerations</h4>")
+    text <- paste0(text,"<strong> To run this length-based workflow in the Stock Monitoring Tool :</strong>")
+    text <- paste0(text, "<ol>")
+    text <- paste0(text, "<li> Navigate to the 'tool' tab under LBI in the sidebar menu.</li>")
+    text <- paste0(text, "<li> Upload a size frequency data set (for more information check the 'Data Considerations' tab in the tool or the 'Length-based methods' tab in the sidebar menu).</li>")
+    text <- paste0(text, "<li> Specify life history parameters such as the ",withMathJax("\\(M/K\\)"),", ",withMathJax("\\(L_\\infty\\)"),", as well as ",withMathJax("\\(L_{m50}\\)")," and if available the parameters of the length-weight relationship. </li>")
+    text <- paste0(text, "<li> Run the assessment ('Run Assessment' button). </li>")
+    text <- paste0(text, "<li> Download an automated assessment report as a pdf document ('Download Report' button). The report will also be automatically uploaded to your private workspace. </li>")
+    text <- paste0(text, "<li> Download the results as a zip archive ('Download Results (zip)' button).</li>")
+    text <- paste0(text, "<li> The 'Reset' button removes the uploaded data and resets the settings to default values.</li>")
+    text <- paste0(text, "</ol>")
+    text <- paste0(text, "Further information can be found in the popup information buttons at each field, and in the Workflow, Data, Methods, and Results Considerations tabs. Note that error messages may display in the center of the page and in place of any figures where an error has occurred.")
+    text <- paste0(text, "</p>")
+    text <- paste0(text, "<br>")
+
+    text <- paste0(text, "<h4>Run time </h4>")
+    text <- paste0(text, "<p>")
+    text <- paste0(text, "The run time varies with the size and resolution (bin size) of the length frequency dataset. ",
+                   "With the exsample datasets, the run time is <b> <1 min</b>.")
+    text <- paste0(text, "</p>")
+    text <- paste0(text, "<br>")
+
+    text <- paste0(text, "<h4>References</h4>")
+    text <- paste0(text, "<ul>")
+    text <- paste0(text, "<li>Cope, J. M., & Punt, A. E. (2009). Length-based reference points for data-limited situations: applications and restrictions. Marine and Coastal Fisheries: Dynamics, Management, and Ecosystem Science, 1(1), 169-186.<a href='https://doi.org/10.1577/C08-025.1' target='_blank'>https://doi.org/10.1577/C08-025.1</a></li>")
+
+    text <- paste0(text, "<li>Froese, R. (2004). Keep it simple: three indicators to deal with overfishing. Fish and fisheries, 5(1), 86-91. <a href='https://doi.org/10.1111/j.1467-2979.2004.00144.x' target='_blank'>https://doi.org/10.1111/j.1467-2979.2004.00144.x</a></li>")
+
+    text <- paste0(text, "<li>Froese, R., Winker, H., Coro, G., Demirel, N., Tsikliras, A.C., Dimarchopoulou, D., Scarcella, G., Probst, W.N., Dureuil, M. and Pauly, D., (2018). A new approach for estimating stock status from length frequency data. ICES Journal of Marine Science, 75(6), pp.2004-2015. <a href='https://doi.org/10.1093/icesjms/fsy078' target='_blank'>https://doi.org/10.1093/icesjms/fsy078</a></li>")
+
+    text <- paste0(text, "<li>Hordyk, A. R., Prince, J. D., Carruthers, T. R., & Walters, C. J. (2019). Comment on “A new approach for estimating stock status from length frequency data” by Froese et al.(2018). ICES Journal of Marine Science, 76(2), 457-460. <a href='https://doi.org/10.1093/icesjms/fsy168' target='_blank'>https://doi.org/10.1093/icesjms/fsy168</a></li>")
+
+text <- paste0(text, "<li>ICES (2018). ICES Technical guidance for providing reference points for stocks in categories
+    3 and 4. ICES Technical Guidelines. <a href='https://doi.org/10.17895/ices.pub.4128' target='_blank'>https://doi.org/10.17895/ices.pub.4128</a></li>")
+
+    text <- paste0(text, "<li>Kell, L. T., Minto, C., & Gerritsen, H. D. (2022). Evaluation of the skill of length-based indicators to identify stock status and trends. ICES Journal of Marine Science. <a href='https://doi.org/10.1093/icesjms/fsac043' target='_blank'>https://doi.org/10.1093/icesjms/fsac043</a></li>")
+    text <- paste0(text, "</ul>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<br>")
+
+    text
+})
+
+
+
+
+## LBSPR
+## ---------------------------------
+output$lbsprIntroOut <- renderText({
+    session$userData$page('lbspr-intro')
+    text <- "<h3><b>Length-based spawning potential ratio (LBSPR)</b></h3>"
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<p>This method allows to estimate the stock status from annual length frequency samples from catches and life history parameters.</p>")
+
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<h4> Method description </h4>")
+    text <- paste0(text, "<p>")
+    text <- paste0(text,
+                   "LBSPR estimates the stock status based on the spawning potential ratio (SPR), ",
+                   "that is the proportion of the unfished reproductive potential left at any given level of fishing pressure.",
+                   "A SPR value of 100% indicates full spawning potential, while a value of 0 indicates a stock without any ",
+                   " mature female individuals left. ",
+                   "LBSPR requires at least one year of length composition data, information about the asymptotic length of ",
+                   "the von Bertalanffy growth equation (",withMathJax("\\(L_\\infty\\)"),"), the ratio of natural mortality ",
+                   "and the von Bertalanffy growth coefficient (",withMathJax("\\(K\\)"),"), and information about the maturity ",
+                   " and length-weight relationship of the species."
+                   )
+    text <- paste0(text, "</p>")
+
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<h4>Assumptions of LBSPRs:</h4>")
+    text <- paste0(text,
+                   "LBSPRs make specific assumptions about the data, the stock, or the ",
+                   "fisheries targeting the stock. It is important to be aware of these assumptions and, thus, the ",
+                   "limitations of the results.</p>")
+    text <- paste0(text, "<ul>")
+    text <- paste0(text, "<li><b>Representative length measurements:</b> ",
+                   "The routine assumes that the dataset is representative of the length distributions of the whole catch. ",
+                   "This means that either the length of all individuals in the catch were measured or ",
+                   "a randomised subsample of the catch was measured.", "</li>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<li><b>Equilibrium conditions:</b> ",
+                   "The routine assumes constant recruitment, fishing and natural mortality as well as somatic growth and maturation over time, i.e. within the year and over all years covered by the dataset.",
+                   "</li>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<li><b>Density dependence:</b> ",
+                   "The routine assumes density independent maturity and somatic growth. All reference points ",
+                   "are based on the 'per recruit' model, thus no assumptions are made about the stock recruitment ",
+                   "relationship.",
+                   "</li>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<li><b>Length-independent natural mortality:</b> ",
+                   "The current implementation of SMT assumes that the natural mortality is equal for all length ",
+                   "classes. (Note this assumption will be relaxed in the future.)",
+                   "</li>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<li><b>Somatic growth follows VBG:</b> ",
+                   "The estimation of growth parameters with ELEFAN assumes that the growth of individuals in length ",
+                   "follows the logistic von Bertlanffy growth (VBG) function. This is an often made assumption for the ",
+                   "growth of fish, but might not reflect well the growth of species with an exoskeleton, ",
+                   "such as crustaceans, nor the growth of early life stages of fish.",
+                   "</li>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<li><b>Closed population:</b> ",
+                   "The routine assumes that the stock (population) under study ",
+                   "is closed, meaning that there is no immigration or emigration taking place. Immigration and emigration can both bias estimated mortality rates and stock status. Furthermore, fish migrations ",
+                   "often vary for various life stages and might thus affect the representativeness of the length ",
+                   "measurements if the population is not closed.",
+                   "</li>")
+    text <- paste0(text, "</ul>")
+    text <- paste0(text, "<br>")
+
+
+    text <- paste0(text,"<h4> Workflow considerations</h4>")
+    text <- paste0(text,"<strong> To run this length-based workflow in the Stock Monitoring Tool :</strong>")
+    text <- paste0(text, "<ol>")
+    text <- paste0(text, "<li> Navigate to the 'tool' tab under LBSPR in the sidebar menu.</li>")
+    text <- paste0(text, "<li> Upload a size frequency data set (for more information check the 'Data Considerations' tab in the tool or the 'Length-based methods' tab in the sidebar menu).</li>")
+  text <- paste0(text, "<li> Specify life history parameters such as the ",withMathJax("\\(M/K\\)"),", ",withMathJax("\\(L_\\infty\\)"),", as well as maturity parameters and parameters of the length-weight relationship. </li>")
+  text <- paste0(text, "<li> Run the assessment ('Run Assessment' button). </li>")
+  text <- paste0(text, "<li> Download an automated assessment report as a pdf document ('Download Report' button). The report will also be automatically uploaded to your private workspace. </li>")
+text <- paste0(text, "<li> Download the results as a zip archive ('Download Results (zip)' button).</li>")
+  text <- paste0(text, "<li> The 'Reset' button removes the uploaded data and resets the settings to default values.</li>")
+    text <- paste0(text, "</ol>")
+    text <- paste0(text, "Further information can be found in the popup information buttons at each field, and in the Workflow, Data, Methods, and Results Considerations tabs. Note that error messages may display in the center of the page and in place of any figures where an error has occurred.")
+    text <- paste0(text, "</p>")
+    text <- paste0(text, "<br>")
+
+    text <- paste0(text, "<h4>Run time </h4>")
+    text <- paste0(text, "<p>")
+    text <- paste0(text, "The run time varies with the size and resolution (bin size) of the length frequency dataset. ",
+                   "With the exsample datasets, the run time is <b> <1 min</b>.")
+    text <- paste0(text, "</p>")
+    text <- paste0(text, "<br>")
+
+    text <- paste0(text, "<p>")
+    text <- paste0(text, "<h4>References</h4>")
+    text <- paste0(text, "<ul>")
+
+    text <- paste0(text, "<li>Hordyk, A., Ono, K., Sainsbury, K., Loneragan, N. and Prince, J., 2015a. Some explorations of the life history ratios to describe length composition, spawning-per-recruit, and the spawning potential ratio. ICES Journal of Marine Science, 72(1), pp.204-216. <a href='https://doi.org/10.1093/icesjms/fst235' target='_blank'>https://doi.org/10.1093/icesjms/fst235</a></li>")
+
+    text <- paste0(text, "<li>Hordyk, A., Ono, K., Valencia, S., Loneragan, N. and Prince, J., 2015b. A novel length-based empirical estimation method of spawning potential ratio (SPR), and tests of its performance, for small-scale, data-poor fisheries. ICES Journal of Marine Science, 72(1), pp.217-231. <a href='https://doi.org/10.1093/icesjms/fsu004' target='_blank'>https://doi.org/10.1093/icesjms/fsu004</a></li>")
+
+    text <- paste0(text, "<li>Prince, J., Hordyk, A., Valencia, S.R., Loneragan, N. and Sainsbury, K., 2015. Revisiting the concept of Beverton–Holt life-history invariants with the aim of informing data-poor fisheries assessment. ICES Journal of Marine Science, 72(1), pp.194-203. <a href='https://doi.org/10.1093/icesjms/fsu011' target='_blank'>https://doi.org/10.1093/icesjms/fsu011</a></li>")
+
+    text <- paste0(text, "</ul>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<br>")
+
+    text
+})
+
+
+
+## Fish methods
 output$fishMethodsIntroOut <- renderText({
     session$userData$page('fishmethods-intro')
     text <- "<h3><b>FishMethods</b></h3>"
@@ -452,6 +838,74 @@ output$cmsySampleDataset <- renderText({
 })
 output$elefanSampleDataset <- renderText({
     session$userData$page('elefan-sample')
+    link <- "<a href='https://data.d4science.org/shub/E_Yzc0aHFhWE50WWdpaEhkMjl5TExHekdQU2NFR2FtNTM2NkRydTQ5clhMTzhVd3Y4bDJzcU16UXNSUWJzZ1NpTg==' target='_blank'>Click Here</a>"
+    text <- "<b>Dataset must include:</b>"
+    text <- paste0(text, "<ul>")
+    text <- paste0(text,
+                   "<li>A column indicating the length classes of measured individuals (first column of dataset).</li>")
+    text <- paste0(text, "<li>A row indicating the dates when individuals were measured (first row of dataset excluding the first column).</li>")
+    text <- paste0(text,
+                   "<li>The number of individuals caught per length class (rows) and per sampling date (columns).</li>")
+    text <- paste0(text, "</ul>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<p> An example dataset in this format can be downloaded <a href='https://data.d4science.org/shub/E_Yzc0aHFhWE50WWdpaEhkMjl5TExHekdQU2NFR2FtNTM2NkRydTQ5clhMTzhVd3Y4bDJzcU16UXNSUWJzZ1NpTg==' target='_blank'> here </a>. </p>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<b>Specific considerations regarding your own dataset:</b>")
+    text <- paste0(text, "<ul>")
+    text <- paste0(text, "<li>", "Save your dataset in 'csv' format.", "</li>")
+    text <- paste0(text, "<li>", "The separator for the .csv file should be a comma ‘,’ semicolon ';' or tab. The default might differ depending on the language settings of your spreadsheet manipulation program (e.g. Excel).", "</li>")
+    text <- paste0(text, "<li>", "Use a '.' to separate decimals in the data. The default might differ depending on the language settings of your spreadsheet manipulation program (e.g. Excel).", "</li>")
+    text <- paste0(text, "<li>", "The first column of the data set should include the mid lengths of the length classes.", "</li>")
+    text <- paste0(text, "<li>The data format of your data file should be automatically detected, or select the date format used in your data file under <b>'Choose CSV date format'</b>, e.g. DD/MM/YYYY format to select 'Day Month Year'.</li>")
+    text <- paste0(text, "<li>The date must include a specification of the day. If the data are aggregated or no information about the day is available, you could consider to set the day to the midpoint of the month, e.g. 15/01/2021.</li>")
+    text <- paste0(text, "<li>Your data set should at least be representative of a whole year. This is particularly important if seasonally varying growth is estimated.</li>")
+
+
+    ## text <- paste0(text, "<li>Ensure that your dates are given in chronological order.</li>")
+    ## text <- paste0(text, "<li>", "Ensure that the 'midLength' column name is identical to the sample dataset.", "</li>")
+    text <- paste0(text, "</ul>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<p> Further information about different formats of length-frequency datasets ",
+                   "and how to convert one format to the other are described in a ",
+                   "<a href='https://cran.r-project.org/web/packages/TropFishR/vignettes/lfqData.html'  target='blank_'>tutorial by Mildenberger (2020)</a>. </p>")
+    return(text)
+})
+output$lbiSampleDataset <- renderText({
+    session$userData$page('lbi-sample')
+    link <- "<a href='https://data.d4science.org/shub/E_Yzc0aHFhWE50WWdpaEhkMjl5TExHekdQU2NFR2FtNTM2NkRydTQ5clhMTzhVd3Y4bDJzcU16UXNSUWJzZ1NpTg==' target='_blank'>Click Here</a>"
+    text <- "<b>Dataset must include:</b>"
+    text <- paste0(text, "<ul>")
+    text <- paste0(text,
+                   "<li>A column indicating the length classes of measured individuals (first column of dataset).</li>")
+    text <- paste0(text, "<li>A row indicating the dates when individuals were measured (first row of dataset excluding the first column).</li>")
+    text <- paste0(text,
+                   "<li>The number of individuals caught per length class (rows) and per sampling date (columns).</li>")
+    text <- paste0(text, "</ul>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<p> An example dataset in this format can be downloaded <a href='https://data.d4science.org/shub/E_Yzc0aHFhWE50WWdpaEhkMjl5TExHekdQU2NFR2FtNTM2NkRydTQ5clhMTzhVd3Y4bDJzcU16UXNSUWJzZ1NpTg==' target='_blank'> here </a>. </p>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<b>Specific considerations regarding your own dataset:</b>")
+    text <- paste0(text, "<ul>")
+    text <- paste0(text, "<li>", "Save your dataset in 'csv' format.", "</li>")
+    text <- paste0(text, "<li>", "The separator for the .csv file should be a comma ‘,’ semicolon ';' or tab. The default might differ depending on the language settings of your spreadsheet manipulation program (e.g. Excel).", "</li>")
+    text <- paste0(text, "<li>", "Use a '.' to separate decimals in the data. The default might differ depending on the language settings of your spreadsheet manipulation program (e.g. Excel).", "</li>")
+    text <- paste0(text, "<li>", "The first column of the data set should include the mid lengths of the length classes.", "</li>")
+    text <- paste0(text, "<li>The data format of your data file should be automatically detected, or select the date format used in your data file under <b>'Choose CSV date format'</b>, e.g. DD/MM/YYYY format to select 'Day Month Year'.</li>")
+    text <- paste0(text, "<li>The date must include a specification of the day. If the data are aggregated or no information about the day is available, you could consider to set the day to the midpoint of the month, e.g. 15/01/2021.</li>")
+    text <- paste0(text, "<li>Your data set should at least be representative of a whole year. This is particularly important if seasonally varying growth is estimated.</li>")
+
+
+    ## text <- paste0(text, "<li>Ensure that your dates are given in chronological order.</li>")
+    ## text <- paste0(text, "<li>", "Ensure that the 'midLength' column name is identical to the sample dataset.", "</li>")
+    text <- paste0(text, "</ul>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<p> Further information about different formats of length-frequency datasets ",
+                   "and how to convert one format to the other are described in a ",
+                   "<a href='https://cran.r-project.org/web/packages/TropFishR/vignettes/lfqData.html'  target='blank_'>tutorial by Mildenberger (2020)</a>. </p>")
+    return(text)
+})
+output$lbsprSampleDataset <- renderText({
+    session$userData$page('lbspr-sample')
     link <- "<a href='https://data.d4science.org/shub/E_Yzc0aHFhWE50WWdpaEhkMjl5TExHekdQU2NFR2FtNTM2NkRydTQ5clhMTzhVd3Y4bDJzcU16UXNSUWJzZ1NpTg==' target='_blank'>Click Here</a>"
     text <- "<b>Dataset must include:</b>"
     text <- paste0(text, "<ul>")

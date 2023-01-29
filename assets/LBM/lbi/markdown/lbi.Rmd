@@ -1,0 +1,214 @@
+---
+title: "Length-based indicators (LBIs)"
+output:
+  pdf_document:
+    extra_dependencies:
+      tabularx: null
+      booktabs: null
+      colortbl: null
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+header-includes:
+  - \usepackage{float}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message=FALSE, warning = FALSE, fig.align = "center", dpi=300,  fig.pos = "H")
+```
+
+
+# Method description
+
+LBIs rely on the relationships between life history theory and length frequency
+data from catches and are based on three simple ideas: (1) the length frequency
+data reflects the conservation of large, mature individuals with arguably a high
+fecundity (also referred to as 'mega spawners'); (2) the data demonstrates the
+conservation of small immature individuals; (3) the length frequency data
+consists mainly of fish of the size at which the highest yield from a cohort or
+the maximum sustainable yield (MSY) is to be expected. In theory, these metrics
+are, thus, indicating how a stock is performing in terms of yield optimisation
+and conservation goals (i.e. avoiding growth and recruitment overfishing). The
+seven LBIs used for this stock assessment are described in Table 1. The table
+also lists the reference point, indicator ratio, expected value and property for
+each indicator. Note that the indicator L~mean~ is listed twice as it can be
+compared to two different reference points: L~opt~ and L~F=M~. These indicator
+ratios and expected values for each indicator are used for the stock status
+classification in Table 3 and Figure 2. The indicators have different properties
+(last column in Table 1), indicating either whether the stock is likely to show
+signs of depletion regarding larger or immature individuals, or whether the
+stock is likely to be harvested optimally (optimal yield and MSY).
+
+&nbsp;
+&nbsp;
+&nbsp;
+
+```{r echo=FALSE}
+tableLBI.intro(lbi_dat, input, format = "kable")
+```
+
+&nbsp;
+&nbsp;
+&nbsp;
+
+The indicators make a number of assumptions:
+
+- Representative length measurements: The method assumes that the dataset is
+  representative of the length distributions of the whole catch. This means that
+  either the length of all individuals in the catch were measured or a
+  randomised subsample of the catch was measured.
+
+- Equilibrium conditions: The routine assumes constant recruitment and natural
+  mortality as well as somatic growth and maturation over time, i.e. within the
+  year and over all years covered by the data set.
+
+- Density dependence: The routine assumes density independent maturity and
+  somatic growth.
+
+- Length-independent natural mortality: The method assumes that the natural
+  mortality is equal for all length classes.
+
+- Somatic growth follows VBG: The method assumes that the growth of individuals
+  in length follows the logistic von Bertlanffy growth (VBG) function. This is
+  an often made assumption for the growth of fish, but might not reflect well
+  the growth of species with an exoskeleton, such as crustaceans, nor the growth
+  of early life stages of fish.
+
+- Closed population: The routine assumes that the stock (population) under study
+  is closed, meaning that there is no immigration or emigration taking place.
+  Immigration and emigration can both bias estimated mortality rates and stock
+  status. Furthermore, fish migrations often vary for various life stages and
+  might thus affect the representativeness of the length measurements if the
+  population is not closed.
+
+&nbsp;
+&nbsp;
+&nbsp;
+
+
+# Summary of input data and parameters
+
+The uploaded data (*"*`r paste0("*",input$fileLBI$name,"*")`*"*) spans `r length(lbi_dat$dataExplo[['lfq']]$dates)` year(s). Following years were selected for the analysis: `r paste(input$LBI_years_selected, collapse = ", ")`. Figure 1 shows the length frequency distributions for each year that were binned with a bin size of `r input$LBI_binSize` `r input$LBI_lengthUnit`.
+
+&nbsp;
+&nbsp;
+&nbsp;
+
+```{r echo=FALSE, fig.align="center", dpi=300, fig.width=9, fig.height=7}
+plotLBI.data(lbi_dat, input)
+```
+
+```{r echo=FALSE,results='asis'}
+writeLines(captionLBI.plots(lbi_dat, input, format = "withFigLatex", type = "data"))
+```
+
+&nbsp;
+&nbsp;
+&nbsp;
+
+The life-history parameters required for the estimation of the length-based
+indicators (LBIs) were set to following values (Table 2).
+
+
+```{r echo=FALSE}
+tableLBI.inputPars(lbi_dat, input, format = "kable")
+```
+
+
+&nbsp;
+&nbsp;
+&nbsp;
+
+
+# Results
+
+The estimated LBIs are provided in Table 2. If the uploaded data spans several
+years, the table contains multiple rows and each row contains the estimates for
+the specific year. Note, that the length at maximum biomass (L~maxy~) is only
+estimated if the parameters of the length-weight relationship are provided.
+These parameters provide the basis for the indicator ratios in Figure 2 and
+Table 3 that indicate the stock status.
+
+&nbsp;
+&nbsp;
+&nbsp;
+
+```{r echo=FALSE}
+tableLBI.indicators(lbi_dat, input, format = "kable")
+```
+
+
+&nbsp;
+&nbsp;
+&nbsp;
+
+Table 3 contains all estimated LBI ratios indicating the stock status for each
+year. The color background of each cell indicates whether there is an indication
+for overexploitation (red) or not (green) based on the specific reference points
+for each indicator ratio (see Table 1 for more details). Ideally, all cells are
+green, thus, showing no indication of overfishing. Note, that green and red
+cells in the same year do not mean that the indicators contradict each other,
+but could indicate that the stock performs differently regarding different
+properties (see Table 1 for more details on the properties of each indicator).
+For example, the indicators could indicate that the proportion of older larger
+individuals is smaller than expected (red L~95%~/L~inf~), but at the same time
+the proportion of immature individuals is as expected (green L~25%~/L~mat~).
+Generally, the more indicators are red, the larger the likeliness of
+overexploitation.
+
+&nbsp;
+&nbsp;
+&nbsp;
+
+```{r echo=FALSE}
+tableLBI.ratios(lbi_dat, input, format = "kable")
+```
+
+&nbsp;
+&nbsp;
+&nbsp;
+
+Figure 2 is a graphical representation of the indicator ratios over time (if the
+uploaded data sets spans multiple years). The reference point is represented by
+a horizontal dashed line. Ideally, the indicator ratios are equal or close to
+the expected values, e.g. Lmean/Lopt is equal or close to 1. The further the
+points/lines are from the expected values of the various indicator ratios, the
+more evidence of overfishing. Whenever the graph includes a greenish area the
+horizontal line represents a limit reference point, rather than a target
+reference point and any value above the limit reference point (i.e. in the
+greenish area) is considered desirable.
+
+
+&nbsp;
+&nbsp;
+&nbsp;
+
+```{r echo=FALSE, fig.align="center", dpi=300, fig.width=7, fig.height=7}
+plotLBI.fit(lbi_dat, input)
+```
+
+```{r echo=FALSE,results='asis'}
+writeLines(captionLBI.plots(lbi_dat, input, format = "withFigLatex", type = "fit"))
+```
+
+
+&nbsp;
+&nbsp;
+&nbsp;
+
+# References
+
+Cope, J. M., & Punt, A. E. (2009). Length-based reference points for
+data-limited situations: applications and restrictions. Marine and Coastal
+Fisheries: Dynamics, Management, and Ecosystem Science, 1(1), 169-186.
+https://doi.org/10.1577/C08-025.1
+
+Froese, R. (2004). Keep it simple: three indicators to deal with overfishing.
+Fish and fisheries, 5(1), 86-91.
+https://doi.org/10.1111/j.1467-2979.2004.00144.x
+
+ICES (2018). ICES Technical guidance for providing reference points for stocks
+in categories 3 and 4. ICES Technical Guidelines.
+https://doi.org/10.17895/ices.pub.4128
+
+Kell, L. T., Minto, C., & Gerritsen, H. D. (2022). Evaluation of the skill of
+length-based indicators to identify stock status and trends. ICES Journal of
+Marine Science. https://doi.org/10.1093/icesjms/fsac043

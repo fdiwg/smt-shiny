@@ -1,6 +1,7 @@
 
 stock_sim <- function (param, age_unit = "year", stock_size_1 = NA, plus_group = NA)
 {
+
     res <- param
     meanWeight <- res$meanWeight
     meanValue <- res$meanValue
@@ -116,10 +117,17 @@ stock_sim <- function (param, age_unit = "year", stock_size_1 = NA, plus_group =
 predict_mod_temp <- function (param, type, FM_change = NA, E_change = NA, FM_relative = FALSE,
     Lc_change = NULL, tc_change = NULL, s_list = NA, stock_size_1 = NA,
     age_unit = "year", curr.E = NA, curr.Lc = NA, plus_group = NA,
-    Lmin = NA, Lincr = NA, plot = FALSE, mark = TRUE, hide.progressbar = FALSE,monitor=NA){
+    Lmin = NA, Lincr = NA, plot = FALSE, mark = TRUE, hide.progressbar = FALSE,monitor=NA,
+    m_emp_method = NULL,
+    m_emp_schooling = NULL,
+    m_emp_tmax = NULL,
+    m_emp_temp = NULL
+    ){
 
     res <- param
     res$FM_relative = FM_relative
+
+    if(!is.null(param$meanM)) param$meanM <- mean(param$M)
 
     if (type == "ypr") {
         if (FM_relative)
@@ -299,7 +307,7 @@ predict_mod_temp <- function (param, type, FM_change = NA, E_change = NA, FM_rel
         if (!is.na(curr.E) & !is.na(curr.Lc)) {
             curr.tc <- VBGF(L = curr.Lc, param = list(Linf = Linf,
                 K = K, t0 = t0))
-            curr.F = (M * curr.E)/(1 - curr.E)
+            curr.F = (param$meanM * curr.E)/(1 - curr.E)
             tmpList <- list(Linf = Linf, Winf = Winf, K = K,
                 M = M, t0 = t0, tr = tr, tc = curr.tc)
             if (length(s_list) == 1 | selecType == "knife_edge") {
@@ -379,7 +387,7 @@ predict_mod_temp <- function (param, type, FM_change = NA, E_change = NA, FM_rel
             FM_change <- (E_change * nM)/(1 - E_change)
         }
         if (length(E_change) == 1 & is.na(E_change[1])) {
-            E_change <- FM_change/(FM_change + nM)
+            E_change <- sapply(FM_change, function(x) mean(x/(x + nM)))
         }
         Lt <- classes.num
         if ((is.null(tc_change) & is.null(Lc_change))) {
@@ -434,6 +442,19 @@ predict_mod_temp <- function (param, type, FM_change = NA, E_change = NA, FM_rel
             }
             ## NEW: added for F0.1
             midLengthsYPR <- seq(0.5, Linf, 0.5)
+            ## NEW: accounting for length-based M
+            flag.lb.m <- ifelse(m_emp_method %in% c("Gislason", "Gislason2","Lorenzen_2022"), TRUE, FALSE)
+            Mest <- M_empirical_temp(Linf = Linf, K_l = K,
+                                     Bl = as.numeric(midLengthsYPR),
+                                     method = m_emp_method,
+                                     schooling = m_emp_cor_schooling,
+                                     tmax = m_emp_tmax,
+                                     temp = m_emp_temp)
+            if(flag.lb.m){
+                nMYPR <- Mest$Ml
+            }else{
+                nMYPR <- rep(as.numeric(Mest), length(midLengthsYPR))
+            }
             pSel <- select_ogive(list(selecType="trawl_ogive", L50 = res$L50, L75 = res$L75),
                                  midLengthsYPR)
             Fvec <- seq(0,max(FM_change),0.01)
@@ -441,7 +462,7 @@ predict_mod_temp <- function (param, type, FM_change = NA, E_change = NA, FM_rel
             bprs <- rep(NA,length(Fvec))
             ssbprs <- rep(NA,length(Fvec))
             for(i in 1:length(Fvec)){
-                tmp <- list(midLengths = midLengthsYPR, M = nM,
+                tmp <- list(midLengths = midLengthsYPR, M = nMYPR,
                             FM = as.numeric(Fvec[i] * pSel),
                             Linf = Linf, K = K, a = res$a, b = res$b,
                             Lm50 = res$Lm50, Lm75 = res$Lm75)
@@ -523,7 +544,7 @@ predict_mod_temp <- function (param, type, FM_change = NA, E_change = NA, FM_rel
                 res3 <- stock_sim(param = param.loop, age_unit = age_unit,
                                   stock_size_1 = stock_size_1, plus_group = plus_group)
                 df_currents <- data.frame(curr.Lc = curr.Lc,
-                  curr.tc = curr.tc, curr.E = curr.E, curr.F = curr.F,
+                  curr.tc = curr.tc, curr.E = curr.E, curr.F = (param$meanM * curr.E)/(1 - curr.E),
                   curr.C = mati2$totC, curr.Y = mati2$totY, curr.V = mati2$totV,
                   curr.B = mati2$meanB, curr.SPR = mati2$meanSSB/res3$totals$meanSSB*100)
                 ret$currents <- df_currents
@@ -667,7 +688,7 @@ predict_mod_temp <- function (param, type, FM_change = NA, E_change = NA, FM_rel
                   plus_group = plus_group)
                 mati2 <- res2$totals
                 df_currents <- data.frame(curr.Lc = curr.Lc,
-                  curr.tc = curr.tc, curr.E = curr.E, curr.F = curr.F,
+                  curr.tc = curr.tc, curr.E = curr.E, curr.F = (param$meanM * curr.E)/(1 - curr.E),
                   curr.C = mati2$totC, curr.Y = mati2$totY, curr.V = mati2$totV,
                   curr.B = mati2$meanB)
                 ret$currents <- df_currents
@@ -791,8 +812,7 @@ plot_predict_mod <- function (x, type = "ypr", xaxis1 = "FM", yaxis1 = "Y_R.rel"
             currents <- pes$currents
             if (!is.na(currents$curr.E) & yaxis1 == "Y_R" | yaxis1 ==
                 "Y_R.rel") {
-                px1 <- ifelse(xaxis1 == "FM", currents$curr.F,
-                  currents$curr.E)
+                px1 <- ifelse(xaxis1 == "FM", currents$curr.F, currents$curr.E)
                 py1 <- currents$curr.Y
                 points(px1, py1, pch = 16, col = "grey30")
                 abline(v = px1, col = "grey30", lty = 2)
