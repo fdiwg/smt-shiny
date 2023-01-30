@@ -48,7 +48,14 @@ RUN R -e "devtools::install_github('eblondel/ows4R')"
 RUN R -e "devtools::install_github('AnalytixWare/ShinySky')"
 
 #Development
-RUN git -C /root/ clone --branch lbspr4 https://github.com/tokami/StockMonitoringTool.git && echo "OK!"
+## git repo:
+# RUN git -C /root/ clone --branch lbspr4 https://github.com/tokami/StockMonitoringTool.git && echo "OK!"
+## or local:
+RUN mkdir -p root
+RUN cd root
+WORKDIR /root
+ADD StockMonitoringTool.tar.gz /root/
+
 #Development
 #RUN git -C /root/ clone https://github.com/abennici/StockMonitoringTool.git && echo "OK!"
 #Deployment

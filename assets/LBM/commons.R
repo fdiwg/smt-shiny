@@ -1,5 +1,5 @@
 
-library (lubridate)
+library(lubridate)
 
 
 check.numeric.and.min <- function(pars, can.be.zero = FALSE){
@@ -28,7 +28,7 @@ check.numeric.and.min <- function(pars, can.be.zero = FALSE){
                   lcRangeSteps = "the number of steps of the selectivity range")
 
     for(i in 1:length(pars)){
-        if(!is.numeric(pars[i])){
+        if(!is.numeric(pars[i]) || is.na(pars[i]) || is.null(pars[i])){
             stop(paste0("The ",all.pars[match(names(pars)[i],names(all.pars))],
                         " is not numeric! Please check your input! Did you use a dot as decimal separator?"))
         }
