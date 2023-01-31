@@ -11,7 +11,7 @@ SMT_DATE = "2022-09-03"
 
 ## For Docker-WPS work in progress
 token <- ""
-source("personal_token.R")  ## An R script ignored by git that includes a personal token for WPS debugging (token = "XYZ")
+try(source("personal_token.R"), silent=TRUE)  ## An R script ignored by git that includes a personal token for WPS debugging (token = "XYZ")
 withtoken <- FALSE ## set to TRUE to run with WPS (requires docker)
 
 ## Note that rfishbase v3.0.1 has to be installed for R<4.0.0:
