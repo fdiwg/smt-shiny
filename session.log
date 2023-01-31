@@ -2241,3 +2241,32 @@ INFO [2021-09-03 14:25:15] Current Page: NA
 INFO [2021-09-03 14:25:19] Session token is: 84437e60-805e-4f93-8dd1-c0f406c005b1-843339462
 INFO [2021-09-03 14:25:19] Session mode is: NULL
 INFO [2021-09-03 14:25:19] Session username is: alexandre-ben
+INFO [2023-01-31 14:48:34] Current Page: home
+INFO [2023-01-31 14:48:47] Current Page: lbi
+WARN [2023-01-31 15:04:58] Lost connection to R server
+INFO [2023-01-31 15:05:09] Current Page: NA
+INFO [2023-01-31 15:05:09] Current Page: home
+INFO [2023-01-31 15:05:13] Current Page: lbi
+INFO [2023-01-31 15:05:30] Starting LBI computation
+WARN [2023-01-31 15:08:20] Lost connection to R server
+INFO [2023-01-31 15:08:39] Current Page: NA
+INFO [2023-01-31 15:08:39] Current Page: home
+INFO [2023-01-31 15:08:43] Current Page: lbspr
+INFO [2023-01-31 15:09:01] Starting LBSPR computation
+INFO [2023-01-31 15:12:10] Current Page: elefan-ga
+WARN [2023-01-31 15:12:35] Lost connection to R server
+INFO [2023-01-31 15:12:43] Current Page: NA
+INFO [2023-01-31 15:12:44] Current Page: elefan-ga
+INFO [2023-01-31 15:12:45] Current Page: NA
+INFO [2023-01-31 15:12:46] Current Page: home
+INFO [2023-01-31 15:12:50] Current Page: elefan-ga
+WARN [2023-01-31 15:14:59] Lost connection to R server
+WARN [2023-01-31 15:14:59] Lost connection to R server
+INFO [2023-01-31 15:16:26] Current Page: NA
+INFO [2023-01-31 15:16:27] Current Page: home
+INFO [2023-01-31 15:16:32] Current Page: elefan-ga
+WARN [2023-01-31 15:17:08] Lost connection to R server
+INFO [2023-01-31 15:17:17] Current Page: NA
+INFO [2023-01-31 15:17:17] Current Page: home
+INFO [2023-01-31 15:17:21] Current Page: elefan-ga
+INFO [2023-01-31 15:17:35] Starting Elegan GA computation

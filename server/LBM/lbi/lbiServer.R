@@ -84,21 +84,18 @@ lbiModule <- function(input, output, session) {
             stop("The specified bin size is smaller than the resolution in the uploaded dataset! Please set the bin size equal to ", min(diff(dat$midLengths))," or higher!")
         }
 
-        ## HERE:
-        browser()
-        ## CHECK: force to "year"? what happens if already yearly agg?
-
-        lfq <- lfqModify(dat,
+        suppressWarnings({lfq <- lfqModify(dat,
                          bin_size = binSize,
                          years = years,
-                         aggregate = "year")
+                         aggregate = "year")})
 
+        ## Leave in original unit!
         ## Account for length unit
-        if(input$LBI_lengthUnit == "mm"){
-            lfq$midLengths <- lfq$midLengths * 10
-        }else if(input$LBI_lengthUnit == "in"){
-            lfq$midLengths <- lfq$midLengths * 2.54
-        }
+        ## if(input$LBI_lengthUnit == "mm"){
+        ##     lfq$midLengths <- lfq$midLengths * 10
+        ## }else if(input$LBI_lengthUnit == "in"){
+        ##     lfq$midLengths <- lfq$midLengths * 2.54
+        ## }
 
         return(lfq)
     })

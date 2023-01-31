@@ -2,10 +2,12 @@
 
 plotTropFishR.data <- function(elefan_ga, input){
     par(mfrow = c(2,1), mar = c(1,4,0,1), oma = c(3,1,1,0))
-    plot(elefan_ga$dataExplo$lfq, Fname = "catch", date.axis = "")
+    TropFishR:::plot.lfq(elefan_ga$dataExplo$lfq, Fname = "catch", date.axis = "",
+                         ylab = paste0("Length classes [",input$elefan_lengthUnit,"]"))
     legend("topleft",legend=as.expression(bquote(bold("A"))),
            x.intersp = -0.3, y.intersp = 0.3, cex=1.3, bg = "white")
-    plot(elefan_ga$dataExplo$lfqbin, Fname = "rcounts", date.axis = "modern")
+    TropFishR:::plot.lfq(elefan_ga$dataExplo$lfqbin, Fname = "rcounts", date.axis = "modern",
+                         ylab = paste0("Length classes [",input$elefan_lengthUnit,"]"))
     legend("topleft",legend=as.expression(bquote(bold("B"))),
            x.intersp = -0.3, y.intersp = 0.3, cex=1.3, bg = "white")
     ## graphics::box(lwd = 1.5)
@@ -14,13 +16,15 @@ plotTropFishR.data <- function(elefan_ga, input){
 
 plotTropFishR.growth <- function(elefan_ga, input){
     par(mfrow = c(2,1), mar = c(1,4,0,1), oma = c(3,1,1,0))
-    plot(elefan_ga$dataExplo$lfqbin, Fname = "catch", date.axis = "")
+    TropFishR:::plot.lfq(elefan_ga$dataExplo$lfqbin, Fname = "catch", date.axis = "",
+                         ylab = paste0("Length classes [",input$elefan_lengthUnit,"]"))
     lt <- lfqFitCurves(lfq = elefan_ga$dataExplo$lfqbin,
                        par=as.list(elefan_ga$results$resGA$par),
                        draw = TRUE, lty = 1, col = "dodgerblue2", lwd=2.5)
     legend("topleft",legend=as.expression(bquote(bold("A"))),
            x.intersp = -0.3, y.intersp = 0.3, cex=1.3, bg = "white")
-    plot(elefan_ga$dataExplo$lfqbin, Fname = "rcounts")
+    TropFishR:::plot.lfq(elefan_ga$dataExplo$lfqbin, Fname = "rcounts",
+                         ylab = paste0("Length classes [",input$elefan_lengthUnit,"]"))
     lt <- lfqFitCurves(lfq = elefan_ga$dataExplo$lfqbin,
                        par=as.list(elefan_ga$results$resGA$par),
                        draw = TRUE, lty = 1, col = "dodgerblue2", lwd=2.5)

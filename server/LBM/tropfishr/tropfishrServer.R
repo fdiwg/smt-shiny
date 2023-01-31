@@ -97,12 +97,13 @@ elefanGaModule <- function(input, output, session) {
                              ##                         plus_group = input$ELEFAN_GA_PLUS_GROUP,
                              aggregate = agg)
 
-            ## Account for length unit
-            if(input$elefan_lengthUnit == "mm"){
-                lfq$midLengths <- lfq$midLengths * 10
-            }else if(input$elefan_lengthUnit == "in"){
-                lfq$midLengths <- lfq$midLengths * 2.54
-            }
+            ## Leave in original unit!
+            ## ## Account for length unit
+            ## if(input$elefan_lengthUnit == "mm"){
+            ##     lfq$midLengths <- lfq$midLengths * 10
+            ## }else if(input$elefan_lengthUnit == "in"){
+            ##     lfq$midLengths <- lfq$midLengths * 2.54
+            ## }
 
             return(lfq)
 

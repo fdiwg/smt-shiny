@@ -14,13 +14,13 @@ captionLBI.tables <- function(lbi_dat, input, format = "datatable", type){
            "indicators" = {
                tab.num <- 2
                if(format == "datatable"){
-                   vals <- paste0(withMathJax("\\(L_maxy\\)"))
+                   vals <- paste0(withMathJax("\\(L_{maxy}\\)"))
                }else if(format == "kable"){
-                   vals <- paste0("\\(L_maxy\\)")
+                   vals <- paste0("\\(L_{maxy}\\)")
                }else{
                    vals <- paste0("Lmaxy")
                }
-               txt <- paste0("Estimated length-based indicators. Note, that the indicator ",vals," is only estimated and included in this table if the parameters of the length-weight relationship (a and b) are specified. The indicators in this table relative to the respective reference points are used to derive the stock status in Table 2 and Figure 2.")
+               txt <- paste0("Estimated length-based indicators in ",input$LBI_lengthUnit,". Note, that the indicator ",vals," is only estimated and included in this table if the parameters of the length-weight relationship (a and b) are specified. The indicators in this table relative to the respective reference points are used to derive the stock status in Table 2 and Figure 2.")
            },
            "ratios" = {
                tab.num <- 3
