@@ -76,7 +76,7 @@ plotLBI.fit <- function(lbi_dat, input){
     rnames <- colnames(res)
     ind <- na.omit(match(refs,rnames))
     xlim <- range(res$year) + c(-0.2,0.2)
-    ylim <- c(0,max(1.02,max(res[,ind])))
+    ylim <- c(0,max(1.1,1.05 * max(res[,ind])))
     par(mfrow = c(3,3), mar = c(3,3,2,1), oma = c(3,3,1,1))
     for(i in 1:length(ind)){
         plot(res$year, rep(1, length(res$year)),

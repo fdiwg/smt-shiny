@@ -2272,3 +2272,31 @@ INFO [2023-01-31 15:17:21] Current Page: elefan-ga
 INFO [2023-01-31 15:17:35] Starting Elegan GA computation
 INFO [2023-01-31 15:25:31] Current Page: lbi
 INFO [2023-01-31 15:25:39] Current Page: lbspr
+INFO [2023-01-31 15:49:16] Starting LBI computation
+ERROR [2023-01-31 15:50:32] Error in LBI: The Asymptotic length (Linf) is not numeric! Please check your input! Did you use a dot as decimal separator? 
+ERROR [2023-01-31 15:50:54] Error in LBI: The Asymptotic length (Linf) is not numeric! Please check your input! Did you use a dot as decimal separator? 
+ERROR [2023-01-31 15:52:48] Error in LBSPR: The Asymptotic length (Linf) is not numeric! Please check your input! Did you use a dot as decimal separator? 
+ERROR [2023-01-31 15:52:53] Error in LBSPR: The Asymptotic length (Linf) is not numeric! Please check your input! Did you use a dot as decimal separator? 
+ERROR [2023-01-31 15:53:01] Error in LBSPR: The Length at 50% maturity (Lm50) is not numeric! Please check your input! Did you use a dot as decimal separator? 
+ERROR [2023-01-31 15:53:12] Error in LBSPR: The Length at 50% maturity (Lm50) is not numeric! Please check your input! Did you use a dot as decimal separator? 
+ERROR [2023-01-31 15:53:26] Error in LBSPR: The M/K is not numeric! Please check your input! Did you use a dot as decimal separator? 
+INFO [2023-01-31 15:53:35] Starting LBSPR computation
+INFO [2023-01-31 15:53:43] Starting LBSPR computation
+INFO [2023-01-31 15:57:35] Starting LBI computation
+WARN [2023-01-31 15:59:12] Lost connection to R server
+INFO [2023-01-31 15:59:23] Current Page: NA
+INFO [2023-01-31 15:59:23] Current Page: NA
+ERROR [2023-01-31 15:59:23] Error in TropFishR: $ operator is invalid for atomic vectors 
+INFO [2023-01-31 15:59:24] Current Page: lbi
+INFO [2023-01-31 15:59:24] Current Page: home
+INFO [2023-01-31 15:59:30] Current Page: lbi
+INFO [2023-01-31 15:59:38] Current Page: lbspr
+INFO [2023-01-31 15:59:55] Starting LBSPR computation
+WARN [2023-01-31 16:00:35] Lost connection to R server
+WARN [2023-01-31 16:00:35] Lost connection to R server
+INFO [2023-01-31 16:00:45] Current Page: NA
+INFO [2023-01-31 16:00:45] Current Page: home
+INFO [2023-01-31 16:00:51] Current Page: lbspr
+ERROR [2023-01-31 16:01:06] Error in LBSPR: The specified asymptotic length (Linf; 100) is smaller than the largest length class (51.6). This is not possible for LBSPR! Please consider using another Linf value. 
+ERROR [2023-01-31 16:01:20] Error in LBSPR: The specified asymptotic length (Linf; 100) is smaller than the largest length class (51.6). This is not possible for LBSPR! Please consider using another Linf value. 
+INFO [2023-01-31 16:01:29] Starting LBSPR computation

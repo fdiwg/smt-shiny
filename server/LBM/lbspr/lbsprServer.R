@@ -309,6 +309,11 @@ lbsprModule <- function(input, output, session) {
                                     ),
                                   can.be.zero = FALSE)
 
+            if(input$LBSPR_Linf > max(lbspr_dat$dataExplo[['lfq']]$midLengths)){
+                stop(paste0("The specified asymptotic length (Linf = ",input$LBSPR_Linf,") is smaller than the largest length class (",max(lbspr_dat$dataExplo[['lfq']]$midLengths),"). This is not possible for LBSPR! Please consider using another Linf value."))
+            }
+
+
             flog.info("Starting LBSPR computation")
 
             if(!session$userData$withtoken){
