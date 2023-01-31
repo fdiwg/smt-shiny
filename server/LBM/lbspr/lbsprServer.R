@@ -282,8 +282,12 @@ lbsprModule <- function(input, output, session) {
 
             if(input$LBSPR_split_mk){
                 mk <- input$LBSPR_M / input$LBSPR_K
+                m <- input$LBSPR_M
+                k <- input$LBSPR_K
             }else{
                 mk <- input$LBSPR_MK
+                m <- -999
+                k <- -999
             }
 
             ## Warnings
@@ -306,109 +310,74 @@ lbsprModule <- function(input, output, session) {
                                   can.be.zero = FALSE)
 
             flog.info("Starting LBSPR computation")
-            ## res <- run_lbspr(data = lbspr_dat$dataExplo[['lfq']],
-            ##                bin.size = input$LBSPR_binSize,
-            ##                linf = input$LBSPR_Linf,
-            ##                lm50 = input$LBSPR_Lm50,
-            ##                lm95 = input$LBSPR_Lm95,
-            ##                mk = mk,
-            ##                lwa = input$LBSPR_LWa,
-            ##                lwb = input$LBSPR_LWb,
-            ##                lunit = input$LBSPR_lengthUnit
-            ##                )
 
-            ## NEW:
-            ## Start WPS session
-            WPS <- session$userData$sessionWps()
+            if(!session$userData$withtoken){
 
-            ## Send the request
-            exec <- WPS$execute(
-                           identifier ="org.gcube.dataanalysis.wps.statisticalmanager.synchserver.mappedclasses.transducerers.LBSPR",
-                           status=TRUE,
-                           dataInputs = list(
-                               lbspr_dat = WPSComplexData$new(value = lbspr_dat, mimeType = "application/d4science"),
-                               binSize = WPSLiteralData$new(value = input$LBSPR_binSize),
-                               linf = WPSLiteralData$new(value = input$LBSPR_Linf),
-                               mk = WPSLiteralData$new(value = mk),
-                               m = WPSLiteralData$new(value = m),
-                               k = WPSLiteralData$new(value = k),
-                               lm50 = WPSLiteralData$new(value = input$LBSPR_Lm50),
-                               lm95 = WPSLiteralData$new(value = input$LBSPR_Lm95),
-                               lwa = WPSLiteralData$new(value = input$LBSPR_LWa),
-                               lwb = WPSLiteralData$new(value = input$LBSPR_LWb),
-                               sprLim = WPSLiteralData$new(value = input$LBSPR_sprLim),
-                               sprTarg = WPSLiteralData$new(value = input$LBSPR_sprTarg),
-                               lengthUnit = WPSLiteralData$new(value = input$LBSPR_lengthUnit),
-                               fig_format = WPSLiteralData$new(value = input$fig_format_lbspr),
-                               tab_format = WPSLiteralData$new(value = input$tab_format_lbspr)
-                           )
-                       )
+                res <- run_lbspr(data = lbspr_dat$dataExplo[['lfq']],
+                               bin.size = input$LBSPR_binSize,
+                               linf = input$LBSPR_Linf,
+                               lm50 = input$LBSPR_Lm50,
+                               lm95 = input$LBSPR_Lm95,
+                               mk = mk,
+                               lwa = input$LBSPR_LWa,
+                               lwb = input$LBSPR_LWb,
+                               lunit = input$LBSPR_lengthUnit
+                               )
 
-            Status <- exec$getStatus()$getValue()
-            print(Status)
-            out <- exec$getProcessOutputs()[[1]]$getData()$getFeatures()
-            print(out)
+            }else{
 
-            browser()
+                ## NEW:
+                dffile <- paste(tempdir(),"/","lbspr_data_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".csv",sep="")
+                dffile <- gsub(" ", "_", dffile)
 
-            ## str(res$res)
+                tmp <- lbspr_dat$dataExplo$lfq$catch
+                tmp <- cbind(lbspr_dat$dataExplo$lfq$midLengths, tmp)
+                colnames(tmp) <- c("midLengths", as.character(lbspr_dat$dataExplo$lfq$dates))
 
-## Formal class 'LB_obj' [package "LBSPR"] with 44 slots
-##   ..@ SPR         : num [1:3] 0.309 0.156 0.172
-##   ..@ Yield       : num [1:3] 28059955 13467493 17387486
-##   ..@ YPR         : num [1:3] 3836 3860 4129
-##   ..@ SSB         : logi(0)
-##   ..@ SSB0        : logi(0)
-##   ..@ B0          : logi(0)
-##   ..@ LMids       : num [1:18] 10.8 13.2 15.6 18 20.4 22.8 25.2 27.6 30 32.4 ...
-##   ..@ pLCatch     : num [1:18, 1:3] 0.00344 0.01276 0.04197 0.10041 0.14883 ...
-##   ..@ pLPop       : num[0 (1d)]
-##   ..@ RelRec      : logi(0)
-##   ..@ Ests        : num [1:3, 1:4] 18.1 18.1 18.2 22.9 22.9 ...
-##   .. ..- attr(*, "dimnames")=List of 2
-##   .. .. ..$ : NULL
-##   .. .. ..$ : chr [1:4] "SL50" "SL95" "FM" "SPR"
-##   ..@ Vars        : num [1:3, 1:4] 0.0652 0.0529 0.0961 0.2257 0.1898 ...
-##   .. ..- attr(*, "dimnames")=List of 2
-##   .. .. ..$ : NULL
-##   .. .. ..$ : chr [1:4] "SL50" "SL95" "FM" "SPR"
-##   ..@ NLL         : num [1:3] 105 71.7 64.9
-##   ..@ maxFM       : num 4
-##   ..@ SPRatsize   : logi(0)
-##   ..@ fitLog      : num [1:3] 0 0 0
-##   ..@ Species     : chr ""
-##   ..@ MK          : num 1.5
-##   ..@ M           : num(0)
-##   ..@ Linf        : int 50
-##   ..@ L_units     : chr "cm"
-##   ..@ CVLinf      : num 0.1
-##   ..@ L50         : int 20
-##   ..@ L95         : int 25
-##   ..@ Walpha      : num 1e-04
-##   ..@ Walpha_units: chr(0)
-##   ..@ Wbeta       : int 3
-##   ..@ FecB        : num 3
-##   ..@ Steepness   : num 0.7
-##   ..@ Mpow        : num 0
-##   ..@ R0          : num 10000
-##   ..@ SL50        : num [1:3] 18 16.7 19.8
-##   ..@ SL95        : num [1:3] 23.1 20.8 25.3
-##   ..@ MLL         : num(0)
-##   ..@ sdLegal     : num(0)
-##   ..@ fDisc       : num(0)
-##   ..@ FM          : num [1:3] 1.03 1.88 2.22
-##   ..@ BinMin      : num(0)
-##   ..@ BinMax      : num(0)
-##   ..@ BinWidth    : num 2.4
-##   ..@ LData       : num [1:18, 1:3] 1 21 178 191 411 298 290 407 205 217 ...
-##   .. ..- attr(*, "dimnames")=List of 2
-##   .. .. ..$ : chr [1:18] "V1" "V2" "V3" "V4" ...
-##   .. .. ..$ : chr [1:3] "2018" "2019" "2020"
-##   ..@ Years       : num [1:3] 2018 2019 2020
-##   ..@ NYears      : int 3
-##   ..@ Elog        : num 0
+                write.csv(tmp, file = dffile, quote = FALSE,
+                          eol = "\n", row.names = FALSE,  fileEncoding = "UTF-8")
 
+                ## Convert input file to string
+                body <- readChar(dffile, file.info(dffile)$size)
+                body <- gsub("\r\n", "\n", body)
+                body <- gsub("\n$", "", body)
+                print(body)
 
+                ## write.table(body, file = "../inputFile.txt")
+
+                ## Start WPS session
+                WPS <- session$userData$sessionWps()
+
+                ## Send the request
+                exec <- WPS$execute(
+                                identifier ="org.gcube.dataanalysis.wps.statisticalmanager.synchserver.mappedclasses.transducerers.LBSPR",
+                                status=TRUE,
+                                dataInputs = list(
+                                    binSize = WPSLiteralData$new(value = input$LBSPR_binSize),
+                                    linf = WPSLiteralData$new(value = input$LBSPR_Linf),
+                                    mk = WPSLiteralData$new(value = mk),
+                                    m = WPSLiteralData$new(value = m),
+                                    k = WPSLiteralData$new(value = k),
+                                    lm50 = WPSLiteralData$new(value = input$LBSPR_Lm50),
+                                    lm95 = WPSLiteralData$new(value = input$LBSPR_Lm95),
+                                    lwa = WPSLiteralData$new(value = input$LBSPR_LWa),
+                                    lwb = WPSLiteralData$new(value = input$LBSPR_LWb),
+                                    sprLim = WPSLiteralData$new(value = input$LBSPR_sprLim),
+                                    sprTarg = WPSLiteralData$new(value = input$LBSPR_sprTarg),
+                                    lengthUnit = WPSLiteralData$new(value = input$LBSPR_lengthUnit),
+                                    fig_format = WPSLiteralData$new(value = input$fig_format_lbspr),
+                                    tab_format = WPSLiteralData$new(value = input$tab_format_lbspr),
+                                    inputFile = WPSComplexData$new(value = body, mimeType = "application/d4science")
+                                )
+                            )
+
+                Status <- exec$getStatus()$getValue()
+                print(Status)
+                out <- exec$getProcessOutputs()[[1]]$getData()$getFeatures()
+                print(out)
+
+                browser()
+            }
 
             js$hideComputing()
             js$enableAllButtons()

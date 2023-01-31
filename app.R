@@ -9,6 +9,11 @@
 SMT_VERSION = "0.5.1"  ## TODO: make version update
 SMT_DATE = "2022-09-03"
 
+## For Docker-WPS work in progress
+token <- ""
+source("personal_token.R")  ## An R script ignored by git that includes a personal token for WPS debugging (token = "XYZ")
+withtoken <- FALSE ## set to TRUE to run with WPS (requires docker)
+
 ## Note that rfishbase v3.0.1 has to be installed for R<4.0.0:
 ## remotes::install_github("ropensci/rfishbase", ref = "3.0.1")
 ## Additional packages needed but no dependencies:
@@ -255,8 +260,9 @@ server <- function(input, output, session) {
     }
   })
 
+    session$userData$withtoken <- withtoken
   app_ctrl <- reactiveValues(
-    withtoken = FALSE
+    withtoken = withtoken
   )
   session$userData$sessionToken <- reactiveVal(NULL)
   session$userData$sessionUsername <- reactiveVal(NULL)
@@ -270,8 +276,8 @@ server <- function(input, output, session) {
   })
 
   #observer on token
-  observe({
-    if(!app_ctrl$withtoken){
+    observe({
+      if(!app_ctrl$withtoken){
       query <- parseQueryString(session$clientData$url_search)
       if(!is.null(query[[gcubeTokenQueryParam]])){
         token <- query[[gcubeTokenQueryParam]]
@@ -308,8 +314,45 @@ server <- function(input, output, session) {
       }
       flog.threshold(DEBUG)
       flog.appender(appender.file(fileLog))
-    }
+
+      }else{
+
+          ## set manually
+          session$userData$sessionToken(token)
+
+          #instantiate storagehub manager (uses a keyring 'env' backend by default)
+          sh_manager = d4storagehub4R::StoragehubManager$new(token = session$userData$sessionToken(), logger = "INFO")
+          session$userData$sessionUsername(sh_manager$getUserProfile()$username)
+          session$userData$storagehubManager(sh_manager)
+
+          #trace logs by user
+          fileLog <- sprintf("session_for_%s.log", sh_manager$getUserProfile()$username)
+
+          if (!is.null(session$userData$sessionToken())) {
+              flog.info("Session token is: %s", session$userData$sessionToken())
+          } else {
+              flog.info("Session token is: %s", "NULL")
+          }
+
+          if (!is.null(session$userData$sessionMode())) {
+              flog.info("Session mode is: %s", session$userData$sessionMode())
+          } else {
+              flog.info("Session mode is: %s", "NULL")
+          }
+
+          if (!is.null(session$userData$sessionUsername())) {
+              flog.info("Session username is: %s", session$userData$sessionUsername())
+              session$userData$sessionMode("GCUBE")
+          } else {
+              flog.info("Session username is: %s", "NULL")
+          }
+
+        flog.threshold(DEBUG)
+        flog.appender(appender.file(fileLog))
+
+      }
   })
+
 
    observeEvent(req(!is.null(session$userData$sessionToken())),{
   icproxy = XML::xmlParse(content(GET("https://registry.d4science.org/icproxy/gcube/service//ServiceEndpoint/DataAnalysis/DataMiner?gcube-scope=/d4science.research-infrastructures.eu/D4Research/SDG-Indicator14.4.1"), "text"))
@@ -366,6 +409,7 @@ server <- function(input, output, session) {
 
 
 }
+
 
 # Run the application
 shinyApp(ui = ui, server = server)
