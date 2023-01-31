@@ -430,7 +430,7 @@ tabLBSPR <- function(id) {
                                 column(6,
                                        fluidRow(
                                            div(style = "display: inline-block; vertical-align:center; margin-left: 15px; margin-top: 5px",
-                                               HTML('<b>L<sub style="font-size:12px">m50%<sub></b>')
+                                               HTML('<b>L<sub style="font-size:12px">m50<sub></b>')
                                                ),
                                            ),
                                        div(style = "margin-top:-3px",
@@ -440,7 +440,7 @@ tabLBSPR <- function(id) {
                                 column(6,
                                        fluidRow(
                                            div(style = "display: inline-block; vertical-align:center; margin-left: 15px; margin-top: 5px",
-                                               HTML('<b>L<sub style="font-size:12px">m95%<sub></b>')
+                                               HTML('<b>L<sub style="font-size:12px">m95<sub></b>')
                                                ),
                                            ),
                                        div(style = "margin-top:-3px",

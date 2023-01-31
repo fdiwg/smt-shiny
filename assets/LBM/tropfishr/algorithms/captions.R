@@ -20,17 +20,17 @@ captionTropFishR.tables <- function(elefan_ga, input, format = "datatable", type
            "mort" = {
                tab.num <- 2
                if(format == "datatable"){
-                   vals <- paste0(withMathJax('\\(L_{50}\\)'),", ",
-                                  withMathJax('\\(L_{75}\\)'))
+                   vals <- paste0(withMathJax('\\(L_{s50}\\)'),", ",
+                                  withMathJax('\\(L_{s75}\\)'))
                }else if(format == "kable"){
-                   vals <- paste0("\\(L_{50}\\), \\(L_{75}\\)")
+                   vals <- paste0("\\(L_{s50}\\), \\(L_{s75}\\)")
                }else{
-                   vals <- paste0("L50, L75")
+                   vals <- paste0("Ls50, Ls75")
                }
                if(input$select == "Other"){
                    txt <- paste0("Estimated mortality rates (Z, F, M), exploitation rate (E), and estimated selectivity parameters (",
-                                 paste0("L",input$l1_user),", ",
-                                 paste0("L",input$l2_user),")")
+                                 paste0("Ls",input$l1_user),", ",
+                                 paste0("Ls",input$l2_user),")")
                }else if(input$select == "Estimate" || (is.null(input$l50_user) && is.null(input$l75_user)) || (is.null(input$l50_user) && is.null(input$wqs_user)) ||  (is.null(input$l1_user) && is.null(input$l2_user))){
                    txt <- paste0("Estimated mortality rates (Z, F, M), exploitation rate (E), and estimated selectivity parameters (",vals,").")
                }else{
@@ -142,7 +142,7 @@ captionTropFishR.plots <- function(elefan_ga, input, format = "withFig", type){
                }
            },"iso" = {
                plot.num <- 8
-               txt <- paste0("Yield (A) and biomass (B) per recruit for a range of fishing mortality rates (x axis) and gear selectivity (y axis) combinations. Colors indicate high (red) to low (blue) yield and biomass. Gear selectivity is defined by the length at 50% selectivity (L50). The black dot indicates current yield and biomass per recruit.")
+               txt <- paste0("Yield (A) and biomass (B) per recruit for a range of fishing mortality rates (x axis) and gear selectivity (y axis) combinations. Colors indicate high (red) to low (blue) yield and biomass. Gear selectivity is defined by the length at 50% selectivity (Ls50). The black dot indicates current yield and biomass per recruit.")
            }
            )
 

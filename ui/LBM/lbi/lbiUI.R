@@ -383,7 +383,7 @@ tabLBI <- function(id) {
                         column(6,
                                fluidRow(
                                    div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
-                                       HTML("<b>Linf</b>")
+                                       HTML('<b>L<sub style="font-size:14px">&#8734;</sub></b>')
                                        ),
                                    div(style = "display: inline-block; vertical-align:center; margin-left: 3px;",
                                        actionButton(ns("infoLinf"),
@@ -405,7 +405,7 @@ tabLBI <- function(id) {
                         column(6,
                                fluidRow(
                                    div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
-                                       HTML("<b>Lm50</b>")
+                                       HTML('<b>L<sub style="font-size:12px">m50<sub></b>')
                                        ),
                                    div(style = "display: inline-block; vertical-align:center; margin-left: 3px;",
                                        actionButton(ns("infoLm50"),

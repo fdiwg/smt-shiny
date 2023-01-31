@@ -843,8 +843,8 @@ tabElefanGa <- function(id) {
                                                     selectInput(ns("select"),
                                                                 p("Selectivity"),
                                                                 choices = c("Estimate",
-                                                                            "Define L50 & L75",
-                                                                            "Define L50 & (L75-L25)",
+                                                                            p("Define ",withMathJax("\\(L_{s50}\\)")," & ",withMathJax("\\(L_{s75}\\)")),
+                                                                            p("Define ",withMathJax("\\(L_{s50}\\)")," & (",withMathJax("\\(L_{s75}\\)"),"-",withMathJax("\\(L_{s25}\\)"),")"),
                                                                             "Other"),
                                                                 selected = "Estimate",
                                                                 width = "100%")
@@ -854,7 +854,7 @@ tabElefanGa <- function(id) {
                                                     div(
                                                         id ="ui_l50",
                                                         numericInput(ns("l50_user"),
-                                                                     p(withMathJax("\\(L_{50}\\)")," (user defined)"),
+                                                                     p(withMathJax("\\(L_{s50}\\)")," (user defined)"),
                                                                      value = NULL, min = 0, step = 1,
                                                                      width = "80%")
                                                     ),
@@ -876,7 +876,7 @@ tabElefanGa <- function(id) {
                                                         numericInput(ns("l1_user"),
                                                                      p("Length at ",
                                                                        withMathJax("\\(X_{1}\\)"),
-                                                                       " (",withMathJax("\\(L_{X1}\\)"),")"),
+                                                                       " (",withMathJax("\\(L_{sX1}\\)"),")"),
                                                                      value = NULL, min = 0, step = 1,
                                                                      width = "100%")
                                                     )
@@ -886,14 +886,14 @@ tabElefanGa <- function(id) {
                                                     div(
                                                         id ="ui_l75",
                                                         numericInput(ns("l75_user"),
-                                                                     p(withMathJax("\\(L_{75}\\)")," (user defined)"),
+                                                                     p(withMathJax("\\(L_{s75}\\)")," (user defined)"),
                                                                      value = NULL, min = 0, step = 1,
                                                                      width = "80%")
                                                     ),
                                                     div(
                                                         id ="ui_wqs",
                                                         numericInput(ns("wqs_user"),
-                                                                     p("Width (",withMathJax("\\(L_{75}-L_{25}\\)"),"; user defined)"),
+                                                                     p("Width (",withMathJax("\\(L_{s75}-L_{s25}\\)"),"; user defined)"),
                                                                      value = NULL, min = 0, step = 1,
                                                                      width = "80%")
                                                     ),
@@ -914,7 +914,7 @@ tabElefanGa <- function(id) {
                                                         numericInput(ns("l2_user"),
                                                                      p("Length at ",
                                                                        withMathJax("\\(X_{2}\\)"),
-                                                                       " (",withMathJax("\\(L_{X2}\\)"),")"),
+                                                                       " (",withMathJax("\\(L_{sX2}\\)"),")"),
                                                                      value = NULL, min = 0, step = 1,
                                                                      width = "100%")
                                                     )

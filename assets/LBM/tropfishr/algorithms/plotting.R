@@ -192,12 +192,12 @@ plotTropFishR.sel <- function(elefan_ga, input){
         lines(lt, sest, lwd=2.5, col="dodgerblue2")
         if(input$select == "Other"){
             legend("bottomright", legend = c("Selection ogive",
-                                             paste0("L",input$l1_user),
-                                             paste0("L",input$l2_user)),
+                                             paste0("Ls",input$l1_user),
+                                             paste0("Ls",input$l2_user)),
                    lty = c(1,2,3), col=c("dodgerblue2","grey60","grey60"),
                    lwd=c(2,1.5,1.5))
         }else{
-            legend("bottomright", legend = c("Selection ogive","L50","L75"),
+            legend("bottomright", legend = c("Selection ogive","Ls50","Ls75"),
                    lty = c(1,2,3), col=c("dodgerblue2","grey60","grey60"),
                    lwd=c(2,1.5,1.5))
         }
