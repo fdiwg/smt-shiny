@@ -38,11 +38,11 @@ captionLBSPR.plots <- function(lbspr_dat, input, format = "withFig", type){
            },
            "pie" = {
                plot.num <- 2
-               txt <- paste0("Estimated spawning potential ratio (SPR) value in relation to the SPR reference points. The estimated SPR is indicated by the dashed line with the SPR value next to the dashed line. The colored areas indicate the SPR reference points: The red area/line indicates the proportion of SPR below the limit reference point; the green area/line indicates the proportion above the limit and below the target reference point; and the the yellow area indicates the proportion above the target reference point. Note, that when the assessment is done for multiple years, only the last year of the assessment is shown in this graph.")
+               txt <- paste0("Estimated spawning potential ratio (SPR) value in relation to the SPR reference points. The estimated SPR is indicated by the dashed line with the SPR value next to the dashed line. The coloured areas indicate the SPR reference points: The red area/line indicates the proportion of SPR below the limit reference point; the green area/line indicates the proportion above the limit and below the target reference point; and the the yellow area indicates the proportion above the target reference point. Note, that when the assessment is done for multiple years, only the last year of the assessment is shown in this graph.")
            },
            "sel" = {
                plot.num <- 3
-               txt <- paste0("Provided maturity information (black line), as well as the estimated selectivity information (colored lines). The curves indicate the proportion of the stock that is mature or vulnerable to the gear (y axis) at a given length (x axis).")
+               txt <- paste0("Provided maturity information and estimated selectivity information. The curves indicate the proportion of the stock that is mature or vulnerable to the gear (y axis) at a given length (x axis).")
            },
            "ts" = {
                plot.num <- 4

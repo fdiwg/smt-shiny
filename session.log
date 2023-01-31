@@ -2317,3 +2317,5 @@ INFO [2023-01-31 16:10:04] Starting LBI computation
 INFO [2023-01-31 16:10:55] Current Page: lbspr
 ERROR [2023-01-31 16:11:15] Error in LBSPR: The Length at 50% maturity (Lm50) is not numeric! Please check your input! Did you use a dot as decimal separator? 
 INFO [2023-01-31 16:11:22] Starting LBSPR computation
+INFO [2023-01-31 16:29:51] Current Page: lbspr-intro
+INFO [2023-01-31 16:30:03] Current Page: lbm-intro

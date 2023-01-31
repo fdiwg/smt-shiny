@@ -879,8 +879,8 @@ getResultConsiderationTextForLBSPR <- function() {
                  "graph.",
                  "</li>")
   text <- paste0(text, "<br>")
-  text <- paste0(text, "<li><b>Figure 3 </b> presents the provided maturity information (black line), as well as ",
-                 "the estimated selectivity information (colored lines). The curves indicate the proportion of the ",
+  text <- paste0(text, "<li><b>Figure 3 </b> presents the provided maturity information and",
+                 "estimated selectivity information. The curves indicate the proportion of the ",
                  "stock that is mature or vulnerable to the gear (y axis) at a given length (x axis).",
                  "</li>")
   text <- paste0(text, "<br>")
