@@ -198,7 +198,17 @@ tabLBSPR <- function(id) {
 
                 bsModal("info_refs_lbspr", "SPR reference points", ns("infoRefs"),
                         size = "large",
-                        HTML(paste0("<p> HERE: </p>"))
+                        HTML(paste0("<p> The stock status in terms of the spawning potential ",
+                                    "ratio (SPR) is defined relative to the limit and reference ",
+                                    "target points (SPR limit and SPR target, respectively). ",
+                                    "While an SPR below the limit reference point indicates ",
+                                    "overexploitation, a level above the target reference point ",
+                                    "would suggest underexploitation. ",
+                                    "Various levels have been suggested as reference levels (see ",
+                                    "e.g. Brooks et al. 2010, Clark 2002). ",
+                                    "The default levels are set to 0.2 and 0.4 for the limit ",
+                                    "and target reference points, respectively.",
+                                    " </p>"))
                         ),
 
 

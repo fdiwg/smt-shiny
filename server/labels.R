@@ -731,6 +731,10 @@ text <- paste0(text, "<li> Download the results as a zip archive ('Download Resu
     text <- paste0(text, "<h4>References</h4>")
     text <- paste0(text, "<ul>")
 
+    text <- paste0(text, "<li>Brooks, E.N., Powers, J.E. and Cortés, E., 2010. Analytical reference points for age-structured models: application to data-poor fisheries. ICES Journal of Marine Science, 67(1), pp.165-175. <a href='https://doi.org/10.1093/icesjms/fsp225' target='_blank'>https://doi.org/10.1093/icesjms/fsp225</a></li>")
+
+    text <- paste0(text, "<li>Clark, W.G., 2002. F 35% revisited ten years later. North American Journal of Fisheries Management, 22(1), pp.251-257. <a href='https://doi.org/10.1577/1548-8675(2002)022<0251:FRTYL>2.0.CO;2' target='_blank'>https://doi.org/10.1577/1548-8675(2002)022<0251:FRTYL>2.0.CO;2</a></li>")
+
     text <- paste0(text, "<li>Hordyk, A., Ono, K., Sainsbury, K., Loneragan, N. and Prince, J., 2015a. Some explorations of the life history ratios to describe length composition, spawning-per-recruit, and the spawning potential ratio. ICES Journal of Marine Science, 72(1), pp.204-216. <a href='https://doi.org/10.1093/icesjms/fst235' target='_blank'>https://doi.org/10.1093/icesjms/fst235</a></li>")
 
     text <- paste0(text, "<li>Hordyk, A., Ono, K., Valencia, S., Loneragan, N. and Prince, J., 2015b. A novel length-based empirical estimation method of spawning potential ratio (SPR), and tests of its performance, for small-scale, data-poor fisheries. ICES Journal of Marine Science, 72(1), pp.217-231. <a href='https://doi.org/10.1093/icesjms/fsu004' target='_blank'>https://doi.org/10.1093/icesjms/fsu004</a></li>")
