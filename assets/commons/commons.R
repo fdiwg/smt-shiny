@@ -293,7 +293,7 @@ makeContentElefanGAzip <- function(file, elefan_ga, input, output) {
   ## Table with input parameters
   path <- file.path(tempDir, paste0("TropFishR_input.", input$tab_format_ga))
   allfiles <- c(allfiles, path)
-  save.table(tableTropFishR.inputPars(elefan_ga, input, format = "dataframe"),
+  save.table(tableTropFishR.input(elefan_ga, input, format = "dataframe"),
              path, input$tab_format_ga)
 
   ## Growth table

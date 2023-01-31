@@ -2300,3 +2300,20 @@ INFO [2023-01-31 16:00:51] Current Page: lbspr
 ERROR [2023-01-31 16:01:06] Error in LBSPR: The specified asymptotic length (Linf; 100) is smaller than the largest length class (51.6). This is not possible for LBSPR! Please consider using another Linf value. 
 ERROR [2023-01-31 16:01:20] Error in LBSPR: The specified asymptotic length (Linf; 100) is smaller than the largest length class (51.6). This is not possible for LBSPR! Please consider using another Linf value. 
 INFO [2023-01-31 16:01:29] Starting LBSPR computation
+INFO [2023-01-31 16:02:52] Current Page: elefan-ga
+INFO [2023-01-31 16:03:05] Starting Elegan GA computation (check)
+INFO [2023-01-31 16:03:09] Starting Elegan GA computation
+WARN [2023-01-31 16:06:59] Lost connection to R server
+INFO [2023-01-31 16:07:09] Current Page: NA
+ERROR [2023-01-31 16:07:09] Error in TropFishR: $ operator is invalid for atomic vectors 
+INFO [2023-01-31 16:07:10] Current Page: elefan-ga
+WARN [2023-01-31 16:07:10] Lost connection to R server
+INFO [2023-01-31 16:07:11] Current Page: NA
+INFO [2023-01-31 16:07:11] Current Page: home
+INFO [2023-01-31 16:07:14] Current Page: elefan-ga
+INFO [2023-01-31 16:07:29] Starting Elegan GA computation
+INFO [2023-01-31 16:09:44] Current Page: lbi
+INFO [2023-01-31 16:10:04] Starting LBI computation
+INFO [2023-01-31 16:10:55] Current Page: lbspr
+ERROR [2023-01-31 16:11:15] Error in LBSPR: The Length at 50% maturity (Lm50) is not numeric! Please check your input! Did you use a dot as decimal separator? 
+INFO [2023-01-31 16:11:22] Starting LBSPR computation
