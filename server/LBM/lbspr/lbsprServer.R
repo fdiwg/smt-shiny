@@ -376,12 +376,15 @@ lbsprModule <- function(input, output, session) {
                                 )
                             )
 
+                print("HERE")
+
+                browser()
+
                 Status <- exec$getStatus()$getValue()
                 print(Status)
                 out <- exec$getProcessOutputs()[[1]]$getData()$getFeatures()
                 print(out)
 
-                browser()
             }
 
             js$hideComputing()

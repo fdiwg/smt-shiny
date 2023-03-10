@@ -49,7 +49,7 @@ RUN R -e "devtools::install_github('AnalytixWare/ShinySky')"
 
 #Development
 ## git repo:
-# RUN git -C /root/ clone --branch lbspr4 https://github.com/tokami/StockMonitoringTool.git && echo "OK!"
+RUN git -C /root/ clone --branch lbspr4 https://github.com/tokami/StockMonitoringTool.git && echo "OK!"
 ## or local:
 RUN mkdir -p root
 RUN cd root
@@ -67,6 +67,7 @@ EXPOSE 3838
 
 ENV SMT_LOG=session.log
 
+RUN apt-get -y update
 RUN apt-get install -y curl
 #Development
 CMD ["R", "-e shiny::runApp('/srv/shiny/stockMonitoringTools',port=3838,host='0.0.0.0')"]
