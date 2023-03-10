@@ -14,6 +14,7 @@ token <- ""
 try(source("personal_token.R"), silent=TRUE)  ## An R script ignored by git that includes a personal token for WPS debugging (token = "XYZ")
 withtoken <- TRUE ## set to TRUE to run with WPS (requires docker)
 
+print(paste0("Version: ", SMT_VERSION))
 
 ## Note that rfishbase v3.0.1 has to be installed for R<4.0.0:
 ## remotes::install_github("ropensci/rfishbase", ref = "3.0.1")
