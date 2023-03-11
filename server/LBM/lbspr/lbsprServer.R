@@ -313,7 +313,6 @@ lbsprModule <- function(input, output, session) {
                 stop(paste0("The specified asymptotic length (Linf = ",input$LBSPR_Linf,") is smaller than the largest length class (",max(lbspr_dat$dataExplo[['lfq']]$midLengths),"). This is not possible for LBSPR! Please consider using another Linf value."))
             }
 
-
             flog.info("Starting LBSPR computation")
 
             if(!session$userData$withtoken){
@@ -331,8 +330,10 @@ lbsprModule <- function(input, output, session) {
 
             }else{
 
+                temp.dir <- tempdir()
+
                 ## NEW:
-                dffile <- paste(tempdir(),"/","lbspr_data_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".csv",sep="")
+                dffile <- paste(temp.dir,"/","lbspr_data_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".csv",sep="")
                 dffile <- gsub(" ", "_", dffile)
 
                 tmp <- lbspr_dat$dataExplo$lfq$catch
@@ -346,7 +347,6 @@ lbsprModule <- function(input, output, session) {
                 body <- readChar(dffile, file.info(dffile)$size)
                 body <- gsub("\r\n", "\n", body)
                 body <- gsub("\n$", "", body)
-                print(body)
 
                 ## write.table(body, file = "../inputFile.txt")
 
@@ -358,33 +358,49 @@ lbsprModule <- function(input, output, session) {
                                 identifier ="org.gcube.dataanalysis.wps.statisticalmanager.synchserver.mappedclasses.transducerers.LBSPR",
                                 status=TRUE,
                                 dataInputs = list(
-                                    binSize = WPSLiteralData$new(value = input$LBSPR_binSize),
-                                    linf = WPSLiteralData$new(value = input$LBSPR_Linf),
-                                    mk = WPSLiteralData$new(value = mk),
-                                    m = WPSLiteralData$new(value = m),
-                                    k = WPSLiteralData$new(value = k),
-                                    lm50 = WPSLiteralData$new(value = input$LBSPR_Lm50),
-                                    lm95 = WPSLiteralData$new(value = input$LBSPR_Lm95),
-                                    lwa = WPSLiteralData$new(value = input$LBSPR_LWa),
-                                    lwb = WPSLiteralData$new(value = input$LBSPR_LWb),
-                                    sprLim = WPSLiteralData$new(value = input$LBSPR_sprLim),
-                                    sprTarg = WPSLiteralData$new(value = input$LBSPR_sprTarg),
-                                    lengthUnit = WPSLiteralData$new(value = input$LBSPR_lengthUnit),
-                                    fig_format = WPSLiteralData$new(value = input$fig_format_lbspr),
-                                    tab_format = WPSLiteralData$new(value = input$tab_format_lbspr),
+                                    binSize = WPSLiteralData$new(value = as.double(input$LBSPR_binSize)),
+                                    linf = WPSLiteralData$new(value = as.double(input$LBSPR_Linf)),
+                                    mk = WPSLiteralData$new(value = as.double(mk)),
+                                    m = WPSLiteralData$new(value = as.double(m)),
+                                    k = WPSLiteralData$new(value = as.double(k)),
+                                    lm50 = WPSLiteralData$new(value = as.double(input$LBSPR_Lm50)),
+                                    lm95 = WPSLiteralData$new(value = as.double(input$LBSPR_Lm95)),
+                                    lwa = WPSLiteralData$new(value = as.double(input$LBSPR_LWa)),
+                                    lwb = WPSLiteralData$new(value = as.double(input$LBSPR_LWb)),
+                                    sprLim = WPSLiteralData$new(value = as.double(input$LBSPR_sprLim)),
+                                    sprTarg = WPSLiteralData$new(value = as.double(input$LBSPR_sprTarg)),
+                                    lengthUnit = WPSLiteralData$new(value = as.character(input$LBSPR_lengthUnit)),
+                                    fig_format = WPSLiteralData$new(value = as.character(input$fig_format_lbspr)),
+                                    tab_format = WPSLiteralData$new(value = as.character(input$tab_format_lbspr)),
                                     inputFile = WPSComplexData$new(value = body, mimeType = "application/d4science")
                                 )
                             )
 
-                print("HERE")
-
-                browser()
-
                 Status <- exec$getStatus()$getValue()
                 print(Status)
-                out <- exec$getProcessOutputs()[[1]]$getData()$getFeatures()
-                print(out)
 
+                out <- exec$getProcessOutputs()[[1]]$getData()$getFeatures()
+
+                res.dir <- paste(temp.dir,"/","lbspr_res_",format(Sys.time(), "%Y%m%d_%H%M_%s"),sep="")
+
+                ## log of run: out$Data[1] (txt)
+
+                temp <- tempfile()
+                download.file(out$Data[2], temp)
+                load(unz(temp,"res/LBSPR_res.RData"))
+                unlink(temp)
+
+                file.remove(dffile)
+                options(warn=0)
+
+                if(Status == "ProcessSucceeded"){
+                    flog.warn("LBSPR SUCCESS")
+                    print("LBSPR SUCCESS")
+                }else{
+                    flog.warn("LBSPR FAIL")
+                    print("LBSPR FAIL")
+                    stop("WPS call failed.")
+                }
             }
 
             js$hideComputing()

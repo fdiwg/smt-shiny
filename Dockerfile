@@ -49,7 +49,7 @@ RUN R -e "devtools::install_github('AnalytixWare/ShinySky')"
 
 #Development
 ## git repo:
-RUN git -C /root/ clone --branch lbspr4 https://github.com/tokami/StockMonitoringTool.git && echo "OK!"
+# RUN git -C /root/ clone --branch lbspr4 https://github.com/tokami/StockMonitoringTool.git && echo "OK!"
 ## or local:
 RUN mkdir -p root
 RUN cd root

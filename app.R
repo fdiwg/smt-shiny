@@ -10,11 +10,8 @@ SMT_VERSION = "0.5.1"  ## TODO: make version update
 SMT_DATE = "2022-09-03"
 
 ## For Docker-WPS work in progress
-token <- ""
-try(source("personal_token.R"), silent=TRUE)  ## An R script ignored by git that includes a personal token for WPS debugging (token = "XYZ")
+token <- ''
 withtoken <- TRUE ## set to TRUE to run with WPS (requires docker)
-
-print(paste0("Version: ", SMT_VERSION))
 
 ## Note that rfishbase v3.0.1 has to be installed for R<4.0.0:
 ## remotes::install_github("ropensci/rfishbase", ref = "3.0.1")
@@ -354,7 +351,6 @@ server <- function(input, output, session) {
 
       }
   })
-
 
    observeEvent(req(!is.null(session$userData$sessionToken())),{
   icproxy = XML::xmlParse(content(GET("https://registry.d4science.org/icproxy/gcube/service//ServiceEndpoint/DataAnalysis/DataMiner?gcube-scope=/d4science.research-infrastructures.eu/D4Research/SDG-Indicator14.4.1"), "text"))
