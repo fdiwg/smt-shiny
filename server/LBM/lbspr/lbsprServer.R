@@ -315,6 +315,7 @@ lbsprModule <- function(input, output, session) {
 
             flog.info("Starting LBSPR computation")
 
+            ## COMMENT: this could be removed, but allows to run LBSPR without WPS
             if(!session$userData$withtoken){
 
                 res <- run_lbspr(data = lbspr_dat$dataExplo[['lfq']],
@@ -331,24 +332,17 @@ lbsprModule <- function(input, output, session) {
             }else{
 
                 temp.dir <- tempdir()
-
-                ## NEW:
                 dffile <- paste(temp.dir,"/","lbspr_data_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".csv",sep="")
                 dffile <- gsub(" ", "_", dffile)
-
                 tmp <- lbspr_dat$dataExplo$lfq$catch
                 tmp <- cbind(lbspr_dat$dataExplo$lfq$midLengths, tmp)
                 colnames(tmp) <- c("midLengths", as.character(lbspr_dat$dataExplo$lfq$dates))
-
                 write.csv(tmp, file = dffile, quote = FALSE,
                           eol = "\n", row.names = FALSE,  fileEncoding = "UTF-8")
-
                 ## Convert input file to string
                 body <- readChar(dffile, file.info(dffile)$size)
                 body <- gsub("\r\n", "\n", body)
                 body <- gsub("\n$", "", body)
-
-                ## write.table(body, file = "../inputFile.txt")
 
                 ## Start WPS session
                 WPS <- session$userData$sessionWps()

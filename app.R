@@ -6,10 +6,10 @@
 # Author: Enrico Anello <enrico.anello@fao.org> <enrico.anello@gmail.com>
 #
 #version/date to show on app
-SMT_VERSION = "0.5.1"  ## TODO: make version update
-SMT_DATE = "2022-09-03"
+SMT_VERSION = "0.6.1"
+SMT_DATE = "2023-03-13"
 
-## For Docker-WPS work in progress
+## For local docker dev
 token <- ''
 withtoken <- TRUE ## set to TRUE to run with WPS (requires docker)
 
