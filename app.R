@@ -10,8 +10,10 @@ SMT_VERSION = "0.6.1"
 SMT_DATE = "2023-03-13"
 
 ## For local docker dev
-token <- ''
-withtoken <- TRUE ## set to TRUE to run with WPS (requires docker)
+## set to FALSE for VRE and local processing without WPS;
+## set to TRUE for WPS not in VRE (requires token and docker setup)
+withtoken <- FALSE
+token <- '' ## specify for local docker + WPS
 
 ## Note that rfishbase v3.0.1 has to be installed for R<4.0.0:
 ## remotes::install_github("ropensci/rfishbase", ref = "3.0.1")
