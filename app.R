@@ -6,8 +6,8 @@
 # Author: Enrico Anello <enrico.anello@fao.org> <enrico.anello@gmail.com>
 #
 #version/date to show on app
-SMT_VERSION = "0.6.1"
-SMT_DATE = "2023-03-13"
+SMT_VERSION = "0.6.0"
+SMT_DATE = "2023-03-16"
 
 ## For local docker dev
 ## set to FALSE for VRE and local processing without WPS;
