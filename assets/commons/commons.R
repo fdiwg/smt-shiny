@@ -94,6 +94,33 @@ buildUrl <- function(session, path) {
 }
 
 
+dev.on <- function(path, format, width, height){
+    if(format == "pdf"){
+        pdf(path, width = width, height = height)
+    }else if(format == "png"){
+        png(path, width = width, height = height, units = "in", res = 120)
+    }else if(format == "jpeg"){
+        jpeg(path, width = width, height = height, units = "in", res = 120)
+    }else if(format == "tiff"){
+        tiff(path, width = width, height = height, units = "in", res = 120)
+    }else if(format == "bmp"){
+        bmp(path, width = width, height = height, units = "in", res = 120)
+    }else if(format == "ps"){
+        postscript(path, width = width, height = height)
+    }
+}
+
+save.table <- function(file, path, format){
+    if(format == "csv"){
+        write.csv(file, path, row.names = FALSE)
+    }else if(format == "xls"){
+        openxlsx::write.xlsx(file, path, row.names = FALSE)
+    }else if(format == "xlsx"){
+        openxlsx::write.xlsx(file, path, row.names = FALSE)
+    }
+}
+
+
 ########### Save reports to file #############
 createCmsyPDFReport <- function(file, cmsy, input) {
   tempReport <- file.path(tempdir(), "cmsyReport.Rmd")
@@ -124,31 +151,30 @@ createCmsyPDFReport <- function(file, cmsy, input) {
 # createElefanGaPDFReport <- function(file, elefan_ga, input, output) {
 #   print(paste0("Input file", input$fileGa))
 #   tempReport <- file.path(tempdir(), "elefan_ga.Rmd")
-#   file.copy("assets/tropFishR/markdown/elefan_ga.Rmd", tempReport, overwrite = TRUE)
+#   file.copy("assets/tropfishr/markdown/elefan_ga.Rmd", tempReport, overwrite = TRUE)
 #   params <- list(elefan = elefan_ga, inputParams = input, outputParams = output)
 #   return (rmarkdown::render(tempReport, output_file = file, params = params))
 # }
 
 createElefanGaPDFReport <- function(file, elefan_ga, input, output) {
   print(paste0("Input file", input$fileGa))
-  tempReport <- file.path(tempdir(), "elefan_ga.Rmd")
-  file.copy("assets/tropFishR/markdown/elefan_ga.Rmd", tempReport, overwrite = TRUE)
+  tempReport <- file.path(tempdir(), "tropfishr.Rmd")
+  file.copy("assets/LBM/tropfishr/markdown/tropfishr.Rmd", tempReport, overwrite = TRUE)
   return (rmarkdown::render(tempReport, output_file = file))
 }
 
-
-createElefanSaPDFReport <- function(file, elefan_sa, input) {
-  tempReport <- file.path(tempdir(), "elefan_sa.Rmd")
-  file.copy("assets/tropFishR/markdown/elefan_sa.Rmd", tempReport, overwrite = TRUE)
-  params <- list(elefan = elefan_sa, inputParams = input)
-  return (rmarkdown::render(tempReport, output_file = file, params = params))
+createLBIPDFReport <- function(file, lbi_dat, input, output) {
+  print(paste0("Input file", input$fileLBI))
+  tempReport <- file.path(tempdir(), "lbi.Rmd")
+  file.copy("assets/LBM/lbi/markdown/lbi.Rmd", tempReport, overwrite = TRUE)
+  return (rmarkdown::render(tempReport, output_file = file))
 }
 
-createElefanPDFReport <- function(file, elefan, input) {
-  tempReport <- file.path(tempdir(), "elefan.Rmd")
-  file.copy("assets/tropFishR/markdown/elefan.Rmd", tempReport, overwrite = TRUE)
-  params <- list(elefan = elefan, inputParams = input)
-  return (rmarkdown::render(tempReport, output_file = file, params = params))
+createLBSPRPDFReport <- function(file, lbspr_dat, input, output) {
+  print(paste0("Input file", input$fileLBSPR))
+  tempReport <- file.path(tempdir(), "lbspr.Rmd")
+  file.copy("assets/LBM/lbspr/markdown/lbspr.Rmd", tempReport, overwrite = TRUE)
+  return (rmarkdown::render(tempReport, output_file = file))
 }
 
 createSbprPDFReport <- function(file, sbprExec, input) {
@@ -185,4 +211,229 @@ uploadToIMarineFolder <- function(manager, reportFileName, basePath, folderName)
     description = "CMSY report"
   )
   flog.info("File %s successfully uploaded to the i-Marine folder %s", reportFileName, file.path(basePath, uploadFolderName))
+}
+
+
+
+########### Save zip to file #############
+
+makeContentElefanGAzip <- function(file, elefan_ga, input, output) {
+  print(paste0("Input file", input$fileGa))
+  tempDir <- tempdir()
+  allfiles <- c()
+
+  ## all data
+  path <- file.path(tempDir, paste0("TropFishR_data.RData"))
+  allfiles <- c(allfiles, path)
+  tmp <- shiny::reactiveValuesToList(elefan_ga)
+  save(tmp, file = path, version = 2)
+
+  ## Data plot
+  path <- file.path(tempDir,paste0("TropFishR_data.", input$fig_format_ga))
+  allfiles <- c(allfiles, path)
+  dev.on(path, input$fig_format_ga, width = 11, height = 10)
+  plotTropFishR.data(elefan_ga, input)
+  dev.off()
+
+  ## Growth plot
+  path <- file.path(tempDir,paste0("TropFishR_growth.", input$fig_format_ga))
+  allfiles <- c(allfiles, path)
+  dev.on(path, input$fig_format_ga, width = 11, height = 10)
+  plotTropFishR.growth(elefan_ga, input)
+  dev.off()
+
+  ## GA plot
+  path <- file.path(tempDir,paste0("TropFishR_ga.", input$fig_format_ga))
+  allfiles <- c(allfiles, path)
+  dev.on(path, input$fig_format_ga, width = 11, height = 10)
+  plotTropFishR.ga(elefan_ga, input)
+  dev.off()
+
+  ## Mort plot
+  path <- file.path(tempDir,paste0("TropFishR_mort.", input$fig_format_ga))
+  allfiles <- c(allfiles, path)
+  dev.on(path, input$fig_format_ga, width = 11, height = 10)
+  plotTropFishR.mort(elefan_ga, input)
+  dev.off()
+
+  ## Catch curve plot
+  path <- file.path(tempDir,paste0("TropFishR_catchcurve.", input$fig_format_ga))
+  allfiles <- c(allfiles, path)
+  dev.on(path, input$fig_format_ga, width = 11, height = 10)
+  plotTropFishR.catchcurve(elefan_ga, input)
+  dev.off()
+
+  ## Selectivity plot
+  path <- file.path(tempDir,paste0("TropFishR_sel.", input$fig_format_ga))
+  allfiles <- c(allfiles, path)
+  dev.on(path, input$fig_format_ga, width = 11, height = 10)
+  plotTropFishR.sel(elefan_ga, input)
+  dev.off()
+
+  ## YPR plot
+  path <- file.path(tempDir,paste0("TropFishR_ypr.", input$fig_format_ga))
+  allfiles <- c(allfiles, path)
+  dev.on(path, input$fig_format_ga, width = 11, height = 10)
+  plotTropFishR.ypr(elefan_ga, input)
+  dev.off()
+
+  ## Isopleth plot
+  path <- file.path(tempDir,paste0("TropFishR_iso.", input$fig_format_ga))
+  allfiles <- c(allfiles, path)
+  dev.on(path, input$fig_format_ga, width = 11, height = 10)
+  plotTropFishR.iso(elefan_ga, input)
+  dev.off()
+
+  ## Table with length data
+  path <- file.path(tempDir, paste0("TropFishR_data.", input$tab_format_ga))
+  allfiles <- c(allfiles, path)
+  save.table(tableTropFishR.data(elefan_ga, input, format = "dataframe"),
+             path, input$tab_format_ga)
+
+  ## Table with input parameters
+  path <- file.path(tempDir, paste0("TropFishR_input.", input$tab_format_ga))
+  allfiles <- c(allfiles, path)
+  save.table(tableTropFishR.input(elefan_ga, input, format = "dataframe"),
+             path, input$tab_format_ga)
+
+  ## Growth table
+  path <- file.path(tempDir, paste0("TropFishR_growth.", input$tab_format_ga))
+  allfiles <- c(allfiles, path)
+  save.table(tableTropFishR.growth(elefan_ga, input, format = "dataframe"),
+             path, input$tab_format_ga)
+
+  ## Mort table
+  path <- file.path(tempDir, paste0("TropFishR_mort.", input$tab_format_ga))
+  allfiles <- c(allfiles, path)
+  save.table(tableTropFishR.mort(elefan_ga, input, format = "dataframe"),
+             path, input$tab_format_ga)
+
+  ## Refs table
+  path <- file.path(tempDir, paste0("TropFishR_refs.", input$tab_format_ga))
+  allfiles <- c(allfiles, path)
+  save.table(tableTropFishR.refs(elefan_ga, input, format = "dataframe"),
+             path, input$tab_format_ga)
+
+  ## Stock status table
+  path <- file.path(tempDir, paste0("TropFishR_status.", input$tab_format_ga))
+  allfiles <- c(allfiles, path)
+  save.table(tableTropFishR.status(elefan_ga, input, format = "dataframe"),
+             path, input$tab_format_ga)
+
+  return(zip(zipfile = file, files = allfiles, flags = "-j"))
+}
+
+
+
+makeContentLBIzip <- function(file, lbi_dat, input, output) {
+  print(paste0("Input file", input$fileLBI))
+  tempDir <- tempdir()
+  allfiles <- c()
+
+  ## all data
+  path <- file.path(tempDir, paste0("LBI_data.RData"))
+  allfiles <- c(allfiles, path)
+  tmp <- shiny::reactiveValuesToList(lbi_dat)
+  save(tmp, file = path, version = 2)
+
+  ## Table with length data
+  path <- file.path(tempDir, paste0("LBI_data.", input$tab_format_lbi))
+  allfiles <- c(allfiles, path)
+  save.table(tableLBI.data(lbi_dat, input, format = "dataframe"),
+             path, input$tab_format_lbi)
+
+  ## Table with input parameters
+  path <- file.path(tempDir, paste0("LBI_input.", input$tab_format_lbi))
+  allfiles <- c(allfiles, path)
+  save.table(tableLBI.inputPars(lbi_dat, input, format = "dataframe"),
+             path, input$tab_format_lbi)
+
+  ## Table with indicators
+  path <- file.path(tempDir, paste0("LBI_indicators.", input$tab_format_lbi))
+  allfiles <- c(allfiles, path)
+  save.table(tableLBI.indicators(lbi_dat, input, format = "dataframe"),
+             path, input$tab_format_lbi)
+
+  ## Table with ratios
+  path <- file.path(tempDir, paste0("LBI_ratios.", input$tab_format_lbi))
+  allfiles <- c(allfiles, path)
+  save.table(tableLBI.ratios(lbi_dat, input, format = "dataframe"),
+             path, input$tab_format_lbi)
+
+  ## Data plot
+  path <- file.path(tempDir,paste0("LBI_data.", input$fig_format_lbi))
+  allfiles <- c(allfiles, path)
+  dev.on(path, input$fig_format_lbi, width = 11, height = 10)
+  plotLBI.data(lbi_dat, input)
+  dev.off()
+
+  ## Fit plot
+  path <- file.path(tempDir,paste0("LBI_fit.",input$fig_format_lbi))
+  allfiles <- c(allfiles, path)
+  dev.on(path, input$fig_format_lbi, width = 11, height = 11)
+  plotLBI.fit(lbi_dat, input)
+  dev.off()
+
+  return(zip(zipfile = file, files = allfiles, flags = "-j"))
+}
+
+
+makeContentLBSPRzip <- function(file, lbspr_dat, input, output) {
+  print(paste0("Input file", input$fileLBSPR))
+  tempDir <- tempdir()
+  allfiles <- c()
+
+  ## all data
+  path <- file.path(tempDir, paste0("LBSPR_data.RData"))
+  allfiles <- c(allfiles, path)
+  tmp <- shiny::reactiveValuesToList(lbspr_dat)
+  save(tmp, file = path, version = 2)
+
+  ## Table with length data
+  path <- file.path(tempDir, paste0("LBSPR_data.", input$tab_format_lbspr))
+  allfiles <- c(allfiles, path)
+  save.table(tableLBSPR.data(lbspr_dat, input, format = "dataframe"),
+             path, input$tab_format_lbspr)
+
+  ## Table with input parameters
+  path <- file.path(tempDir, paste0("LBSPR_input.", input$tab_format_lbspr))
+  allfiles <- c(allfiles, path)
+  save.table(tableLBSPR.inputPars(lbspr_dat, input, format = "dataframe"),
+             path, input$tab_format_lbspr)
+
+  ## Table with results
+  path <- file.path(tempDir, paste0("LBSPR_results.", input$tab_format_lbspr))
+  allfiles <- c(allfiles, path)
+  save.table(tableLBSPR.results(lbspr_dat, input, format = "dataframe"),
+             path, input$tab_format_lbspr)
+
+  ## Data plot
+  path <- file.path(tempDir,paste0("LBSPR_data.", input$fig_format_lbspr))
+  allfiles <- c(allfiles, path)
+  dev.on(path, input$fig_format_lbspr, width = 11, height = 10)
+  plotLBSPR.data(lbspr_dat, input)
+  dev.off()
+
+  ## Sel plot
+  path <- file.path(tempDir,paste0("LBSPR_sel.", input$fig_format_lbspr))
+  allfiles <- c(allfiles, path)
+  dev.on(path, input$fig_format_lbspr, width = 9, height = 8)
+  plotLBSPR.sel(lbspr_dat, input)
+  dev.off()
+
+  ## Pie plot
+  path <- file.path(tempDir,paste0("LBSPR_pie.", input$fig_format_lbspr))
+  allfiles <- c(allfiles, path)
+  dev.on(path, input$fig_format_lbspr, width = 9, height = 8)
+  plotLBSPR.pie(lbspr_dat, input)
+  dev.off()
+
+  ## TS plot
+  path <- file.path(tempDir,paste0("LBSPR_timeSeries.", input$fig_format_lbspr))
+  allfiles <- c(allfiles, path)
+  dev.on(path, input$fig_format_lbspr, width = 12, height = 9)
+  plotLBSPR.ts(lbspr_dat, input)
+  dev.off()
+
+  return(zip(zipfile = file, files = allfiles, flags = "-j"))
 }

@@ -4,13 +4,35 @@ menuCmsy <- menuItem("CMSY",
          menuSubItem("CMSY Method", tabName = "cmsyWidget"),
          menuSubItem("CMSY Sample Dataset", tabName = "cmsySampleDataset"), id="cmsy-main"
 )
-menuElefan <- menuItem("Length-based methods",
-         menuSubItem("Information", tabName = "ElefanIntro"),
-         menuSubItem("TropFishR", tabName = "ElefanGaWidget"),
-         # menuSubItem("Elefan SA", tabName = "ElefanSaWidget"),
-         # menuSubItem("Elefan", tabName = "ElefanWidget"),
-         menuSubItem("Sample Datasets", tabName = "ElefanSampleDataset")
-)
+menuLengthMethods <- menuItem("Length-based methods",
+                              menuSubItem("Information", tabName = "lbmIntro"),
+                              menuItem("TropFishR",
+                                       menuSubItem("Information",
+                                                   tabName = "ElefanIntro"),
+                                       menuSubItem("Tool",
+                                                   tabName = "ElefanGaWidget")
+                                       ## menuSubItem("Sample Datasets",
+                                       ##             tabName = "ElefanSampleDataset")
+                                       ),
+                              # menuSubItem("Elefan SA", tabName = "ElefanSaWidget"),
+                              # menuSubItem("Elefan", tabName = "ElefanWidget"),
+                              menuItem("LBI",
+                                       menuSubItem("Information",
+                                                   tabName = "lbiIntro"),
+                                       menuSubItem("Tool",
+                                                   tabName = "lbiWidget")
+                                       ## menuSubItem("Sample Datasets",
+                                       ##             tabName = "lbiSampleDataset")
+                                       ),
+                              menuItem("LBSPR",
+                                       menuSubItem("Information",
+                                                   tabName = "lbsprIntro"),
+                                       menuSubItem("Tool",
+                                                   tabName = "lbsprWidget")
+                                       ## menuSubItem("Sample Datasets",
+                                       ##             tabName = "lbsprSampleDataset")
+                                       )
+                              )
 # menuFishMethods <- menuItem("Fish Methods",
 #          menuSubItem("Introduction", tabName = "FishMethodsIntro"),
 #          menuSubItem("SBPR", tabName = "SBPRWidget"),

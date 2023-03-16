@@ -26,18 +26,35 @@ RUN apt-get update && apt-get install -y \
     texlive-fonts-recommended \
     texlive-formats-extra \
     libv8-dev \
-	libsodium-dev \
-    libsecret-1-dev
-	
+	  libsodium-dev \
+    libsecret-1-dev \
+    libnlopt-dev \
+    libharfbuzz-dev \
+    libfribidi-dev
+
 
 
 RUN apt-get update && apt-get upgrade -y
 
+RUN apt-get update && apt-get -y install cmake
+
 # install dependencies of the Stock monitoring tool app
-RUN R -e "install.packages(c('devtools','XML', 'xml2','shiny','rmarkdown','shinyjs','shinythemes','shinydashboard','shinyWidgets','RCurl','ggplot2','rfishbase','shinyBS','lubridate','waiter','pracma','googleVis','stringr','R.utils','fishmethods','V8','DT','futile.logger','TropFishR','nloptr','R6','sodium','keyring'), repos='https://cran.r-project.org/')"
+RUN R -e "install.packages(c('devtools'), repos='https://cran.r-project.org/', dependencies = TRUE)"
+
+RUN R -e "install.packages(c('XML', 'xml2','shiny','rmarkdown','shinyjs','shinythemes','shinydashboard','shinyWidgets','RCurl','ggplot2','rfishbase','shinyBS','lubridate','waiter','pracma','googleVis','stringr','R.utils','fishmethods','V8','DT','futile.logger','TropFishR','nloptr','R6','sodium','keyring'), repos='https://cran.r-project.org/')"
+RUN R -e "install.packages(c('kableExtra','LBSPR','openxlsx'), repos='https://cran.r-project.org/')"
 RUN R -e "devtools::install_github('eblondel/d4storagehub4R')"
 RUN R -e "devtools::install_github('eblondel/ows4R')"
 RUN R -e "devtools::install_github('AnalytixWare/ShinySky')"
+
+#Development
+## git repo:
+# RUN git -C /root/ clone --branch lbspr4 https://github.com/tokami/StockMonitoringTool.git && echo "OK!"
+## or local:
+# RUN mkdir -p root
+# RUN cd root
+# WORKDIR /root
+# ADD StockMonitoringTool.tar.gz /root/
 
 #Development
 RUN git -C /root/ clone https://github.com/abennici/StockMonitoringTool.git && echo "OK!"
@@ -45,11 +62,12 @@ RUN git -C /root/ clone https://github.com/abennici/StockMonitoringTool.git && e
 #RUN git -C /root/ clone https://github.com/pink-sh/StockMonitoringTool.git && echo "OK!"
 RUN mkdir -p /srv/shiny/
 RUN ln -s /root/StockMonitoringTool /srv/shiny/stockMonitoringTools
- 
+
 EXPOSE 3838
 
 ENV SMT_LOG=session.log
 
+RUN apt-get -y update
 RUN apt-get install -y curl
 #Development
 CMD ["R", "-e shiny::runApp('/srv/shiny/stockMonitoringTools',port=3838,host='0.0.0.0')"]

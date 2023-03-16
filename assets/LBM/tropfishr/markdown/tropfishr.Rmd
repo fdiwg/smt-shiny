@@ -1,0 +1,385 @@
+---
+title: "Length-based stock assessment with TropFishR"
+output:
+  pdf_document:
+    extra_dependencies:
+      tabularx: null
+      booktabs: null
+      colortbl: null
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+header-includes:
+  - \usepackage{float}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message=FALSE, warning = FALSE, fig.align = "center", fig.pos = "H")
+```
+
+
+# Method description
+
+The length-based stock assessment with TropFishR is based on the routine
+outlined in the Technical report Introduction to Tropical Fish Stock Assessment
+(FAO, 1998), and compiled into the R package TropFishR by Mildenberger et al.
+(2017). The assessment routine consists of 4 consecutive steps and methods:
+
+## Estimation of the growth parameters
+
+The study of fish growth involves a determination of body size as a function of
+age. Most stock assessment methods work essentially with age composition data.
+In temperate waters it is easier to acquire data to estimate age by counting
+year rings on hard parts of organisms such as scales and otoliths (ear bones).
+These rings are formed due to strong seasonal fluctuations in environmental
+conditions. In tropical areas such drastic changes do not occur and it is
+therefore very difficult, if not impossible to use these kind of seasonal rings
+for age determination. The Electronic LEngth Frequency ANalysis (ELEFAN) is one
+of a number of numerical methods that have been developed, which allow the
+conversion of length-frequency data into age composition. Although these methods
+do not require the reading of rings on hard parts, the final interpretation of
+the results becomes much more reliable if at least some direct age readings are
+available. ELEFAN fits a seasonal version of the von Bertalanffy Growth Function
+(VBGF) by:
+
+- restructuring the length-frequency data using a procedure that scores the
+  length bins based on their deviation from a moving average (MA) across
+  neighboring bins.
+
+- calculating a score value as the cumulative score for a given set of VBGF
+  parameters based on the sum of the individual bin scores that are intersected
+  by resulting growth curves.
+
+- optimising over VBGF parameters maximising the score value by a genetic
+  algorithm (GA). Imitating the natural process of survival of the fittest, the
+  GA simulates a population of random combinations of growth parameters in which
+  only the individuals (or combinations) with the highest fitness value (score
+  value; Rn) can pass on their parameters to the next generations. The
+  combination of growth parameters with the highest score value after a set
+  number of generations is defined as the best estimate. For more information
+  about the genetic algorithm please refer to Scrucca (2013).
+
+## Estimation of the natural mortality rate
+
+The natural mortality rate (M) is estimated by an empirical formula based on
+estimated growth parameters. The options are:
+
+- Then's growth formula (Then et al. 2015),
+- Pauly's growth and temperature formula (Pauly 1980), and
+- Then's maximum age formula (Then et al. 2015);
+- Gislason's length-based formula (Gislason et al. 2010);
+- Lorenzen's length-based formula (Lorenzen et al. 2022);
+
+While the first and the last two options do not require any additional
+information, the second requires the average annual sea surface temperature
+(SST) in degrees Celsius and allows for a correction for schooling fish
+(multiplication with 0.8). The third option requires an estimate of the maximum
+age of the fish.
+
+## Estimation of total and fishing mortality rates
+
+The length-converted catch curve is used to estimate the total mortality rate
+(Z) and the fishing mortality rate (F) based on M: F = Z - M.
+
+## Estimation of the stock status
+
+The Thompson and Bell yield per recruit (YPR) model is used to estimate yield
+and biomass per recruit as well as the spawning potential ratio (SPR) over a
+range of fishing mortality rates and selectivity definitions. The stock status
+is based on current F relative to biological reference points, such as
+\(F_{max}\), \(F_{0.1}\), \(F_{35}\). The estimation of SPR requires information
+about the maturity parameters.
+
+
+## Assumptions of TropFishR
+
+The above mentioned methods make specific assumptions about the data, the stock,
+or the fisheries targeting the stock. It is important to be aware of these
+assumptions and, thus, the limitations of the results.
+
+- Representative length measurements: The routine assumes that the dataset is
+  representative of the length distributions of the whole catch. This means that
+  either the length of all individuals in the catch were measured or a
+  randomised subsample of the catch was measured.
+
+- Gear/fleet selectivity: The routine assumes sigmoidal selectivity as it is
+  commonly assumed for 'trawl-like' fishing gear. While the selectivity of
+  gillnets and hook-based methods might correspond to a bell-shaped curve, the
+  combination of various mesh and hook sizes might lead to an overall
+  'trawl-like' fleet selectivity.
+
+- Equilibrium conditions: The routine assumes constant recruitment, fishing and
+  natural mortality as well as somatic growth and maturation over time, i.e.
+  within the year and over all years covered by the dataset.
+
+- Density dependence: The routine assumes density independent maturity and
+  somatic growth. All reference points are based on the 'per recruit' model,
+  thus no assumptions are made about the stock recruitment relationship.
+
+- Correlation of life-history parameters: The use of empirical formulae for the
+  estimation of natural mortality assumes that the growth parameters
+  (\(L_\infty\) and K) are reliable predictors of the natural mortality.
+
+- Somatic growth follows VBG: The estimation of growth parameters with ELEFAN
+  assumes that the growth of individuals in length follows the logistic von
+  Bertlanffy growth (VBG) function. This is an often made assumption for the
+  growth of fish, but might not reflect well the growth of species with an
+  exoskeleton, such as crustaceans, nor the growth of early life stages of fish.
+
+- Closed population: The routine assumes that the stock (population) under study
+  is closed, meaning that there is no immigration or emigration taking place.
+  Immigration and emigration can both bias estimated mortality rates and stock
+  status. Furthermore, fish migrations often vary for various life stages and
+  might thus affect the representativeness of the length measurements if the
+  population is not closed.
+
+&nbsp;
+&nbsp;
+&nbsp;
+
+# Input parameters
+
+The uploaded length data set (\verb|`r input$fileGa$name`|) spans over
+`r years = unique(as.numeric(as.character(format(elefan_ga$dataExplo$lfq$dates,"%Y")))); if(length(years) == 1){ paste0("1 year (", years, ")") }else{ paste0(length(years), "years (",paste(range(years), collapse = " - "),")")}` (Fig 1.).
+
+Figure 1 shows the length-frequency distributions per sampling time (x axis),
+where panel A in shows the raw data, while panel B shows the restructured data,
+i.e. the data after subtracting the moving average (MA) from each length class.
+The combination of bin size and MA critically affects the separation of peaks
+(i.e. potential cohorts) in the dataset and thus the estimation of growth
+parameters by ELEFAN. Blue shading indicates a high count per length bin (panel
+A) and a high positive value (panel B). Red shading indicates a negative value
+(only panel B). A good bin size value reduces noise in the data by aggregation
+and should be defined before the MA value. A good MA value leads to visually
+distinct peaks, particularly among the smaller length classes.
+
+```{r echo=FALSE, fig.align="center", dpi=300, fig.width=9, fig.height=8}
+plotTropFishR.data(elefan_ga, input)
+```
+```{r echo=FALSE,results='asis'}
+writeLines(captionTropFishR.plots(elefan_ga, input, format = "withFigLatex", type = "explo"))
+```
+
+An overview over the input parameters is provided in Table 1.
+
+```{r echo=FALSE}
+tableTropFishR.input(elefan_ga, input, format = "kable")
+```
+
+&nbsp;
+&nbsp;
+&nbsp;
+
+# Results
+
+## Growth
+
+Figure 2 shows the same length frequency distributions as Figure 1 overlaid with
+the growth curves estimated by ELEFAN. This plot allows the visual inspection of
+how well the estimated curves connect the peaks in the length-frequency data
+(i.e. potential cohorts) in the raw (A) and restructured (B) data set.
+
+```{r echo=FALSE, fig.align="center", dpi=300, fig.width=9, fig.height=8}
+plotTropFishR.growth(elefan_ga, input)
+```
+```{r echo=FALSE,results='asis'}
+writeLines(captionTropFishR.plots(elefan_ga, input, format = "withFigLatex", type = "growth"))
+```
+
+Table 2 includes the estimated von Bertlanffy growth parameters \(L_\infty, K,
+t_a\) the growth performance coefficient phi', and the best score value (Rn).
+The growth performance index is calculated based on the formula \(phi' =
+\log_{10} K + 2 \log_{10} L_\infty\) and provides a metric that accounts for
+the correlation of \(L_\infty\) and \(K\) to compare growth parameters among
+analyses or species. The Rn value is the sum of all values associated with the
+bins after restructuring that intersect the growth curves. The value can be used
+to compare the fit of estimated growth parameters to the data set for different
+MA values, growth paramater search spaces, or ELEFAN optimisation parameters
+(e.g. population size). However, it cannot be used to compare the fit for
+different data sets or different bin sizes as this affects the maximum overall
+possible Rn value.
+
+
+```{r echo=FALSE}
+tableTropFishR.growth(elefan_ga, input, format = "kable")
+```
+
+Figure 3 shows the improvement of the ELEFAN fit in terms of the average and
+best score value (fitness value) of the genetic algorithm used in ELEFAN_GA over
+the number of iterations (generations). Ideally, the number of iterations
+(generations) is large enough so that there are no large jumps visible during
+the last iterations of the best and average score value.
+
+```{r echo=FALSE, fig.align="center", dpi=75, fig.width=6, fig.height=5}
+plotTropFishR.ga(elefan_ga, input)
+```
+```{r echo=FALSE,results='asis'}
+writeLines(captionTropFishR.plots(elefan_ga, input, format = "withFigLatex", type = "ga"))
+```
+
+
+&nbsp;
+
+## Mortality rates
+
+Figure 4 shows the estimated total, fishing, and natural mortality rates by
+length. The dashed lines correspond to the average mortality rates for the main
+exploited length classes, i.e. the length classes that are considered in the
+regression analysis for the length-converted catch curve. Note, that the natural
+mortality rates estimated by the empirical formulae after Then et al. (2015) and
+Pauly et al. (1980) are independent of length. By contrast, the formulae after
+Gislason et al. (2010) and Lorenzen et al. (2022) estimate length-dependent
+natural mortality rates based on the asymptotic length, growth coefficient, and
+body length of the fish.
+
+```{r echo=FALSE, fig.align="center", dpi=75, fig.width=6, fig.height=5}
+plotTropFishR.mort(elefan_ga, input)
+```
+```{r echo=FALSE,results='asis'}
+writeLines(captionTropFishR.plots(elefan_ga, input, format = "withFigLatex", type = "mort"))
+```
+
+Table 3 lists the estimated mortality rates (Z, F, M), the exploitation rate
+(E), and the estimated/provided selectivity parameters (\(L_{s50}, L_{s75}\)).
+
+```{r echo=FALSE}
+tableTropFishR.mort(elefan_ga, input, format = "kable")
+```
+
+Figure 5 shows the logarithm of the catch per length interval against the
+relative age (x axis). Highlighted points were used in the regression analysis
+of the catch curve for the estimation of the total mortality rate (Z), which
+corresponds to the slope of the displayed regression line. The selection of
+points is automatic and based on a list of expert recommendations.
+
+
+```{r echo=FALSE, fig.align="center", dpi=75, fig.width=6, fig.height=5}
+plotTropFishR.catchcurve(elefan_ga, input)
+```
+```{r echo=FALSE,results='asis'}
+writeLines(captionTropFishR.plots(elefan_ga, input, format = "withFigLatex", type = "cc"))
+```
+
+Figure 6 shows the probability of capture as a measure of the selectivity used
+in the assessment. The curve is either based on selectivity parameters provided
+by the user (\(L_{s50}\) and \(L_{s75}\) or selection width) or was estimated by the
+catch curve. The selection ogive that is displayed is used for the Yield Per
+Recruit analysis (YPR).
+
+```{r echo=FALSE, fig.align="center", dpi=75, fig.width=6, fig.height=5}
+plotTropFishR.sel(elefan_ga, input)
+```
+```{r echo=FALSE,results='asis'}
+writeLines(captionTropFishR.plots(elefan_ga, input, format = "withFigLatex", type = "sel"))
+```
+
+
+
+
+&nbsp;
+
+## Reference points
+
+Table 4 includes the estimated reference points (\(F_{max}, F_{0.1}, F_{0.5}\)),
+and the SPR-based reference points (\(F_{30}, F_{35}, F_{40}\)) if the maturity
+parameters (\(L_{m50}\) and \(L_{m75}\)) are provided.
+
+```{r echo=FALSE}
+tableTropFishR.refs(elefan_ga, input, format = "kable")
+```
+
+Figure 7 shows the results of the Yield Per Recruit model as yield and biomass
+per recruit in panel A and B, respectively, against a range of fishing mortality
+rates (x axis). Grey segments display the estimated reference points. Fmax is
+defined as the fishing mortality (F) leading to the maximum yield per recruit.
+F0.1 corresponds to F where the slope of the yield per recruit curve is equal to
+10% of the slope in the origin and represents a more conservative reference
+point than \(F_{max}\). \(F_{0.5}\) corresponds to F where the biomass per
+recruit is equal to 50% of the biomass per recruit without fishing. If the
+maturity parameters \(L_{m50}\) and \(L_{m75}\) are provided, an optional third
+panel (C) shows the Spawning Potential Ratio (SPR) for a range of fishing
+mortality rates. Furthermore, the three reference points \(F_{30}, F_{35}, and
+F_{40}\)are shown, which correspond to F that leads to an SPR of 30%, 35%, and
+40% respectively.
+
+```{r echo=FALSE, fig.align="center", dpi=300, fig.width=9, fig.height=10}
+plotTropFishR.ypr(elefan_ga, input)
+```
+```{r echo=FALSE,results='asis'}
+writeLines(captionTropFishR.plots(elefan_ga, input, format = "withFigLatex", type = "ypr"))
+```
+
+
+
+
+&nbsp;
+
+## Stock status and management
+
+Table 5 presents the estimated stock status in terms of the current fishing
+mortality (F) relative to reference points (\(F_{max}, F_{0.1}, F_{0.5}\)). If
+the maturity parameters (\(L_{m50}\) and \(L_{m75}\)) are provided, additional
+reference points (\(F_{30}, F_{35}, F_{40}\)) and the current Spawning Potential
+Ratio (SPR) are included as well.
+
+```{r echo=FALSE}
+tableTropFishR.status(elefan_ga, input, format = "kable")
+```
+
+Figure 8 shows the yield per recruit (A) and biomass per recruit (B) for various
+fishing mortality rates (x axis) and gear selectivities (y axis). The color
+indicates high (red) to low (blue) yield and biomass for the various
+combinations of F and L50 values. The black dot indicates the current yield and
+biomass.
+
+```{r echo=FALSE, fig.align="center", dpi=300, fig.width=9, fig.height=11}
+plotTropFishR.iso(elefan_ga, input)
+```
+```{r echo=FALSE,results='asis'}
+writeLines(captionTropFishR.plots(elefan_ga, input, format = "withFigLatex", type = "iso"))
+```
+
+
+
+&nbsp;
+&nbsp;
+&nbsp;
+
+
+# References
+
+Gislason, H., Daan, N., Rice, J.C. and Pope, J.G., 2010. Size, growth,
+temperature and the natural mortality of marine fish. Fish and Fisheries, 11(2),
+pp.149-158. https://doi.org/10.1111/j.1467-2979.2009.00350.x
+
+Lorenzen, K., Camp, E. V., and Garlock, T. M., 2022. Natural mortality and body
+size in fish populations. Fisheries Research, 252, 106327.
+https://doi.org/10.1016/j.fishres.2022.106327
+
+Mildenberger TK, Taylor MH, Wolff M, 2017. TropFishR: an R package for
+fisheries analysis with length-frequency data. Methods in Ecology and Evolution,
+8:11, 1520-1527. https://doi.org/10.1111/2041-210X.12791
+
+Pauly, D. 1980. On the interrelationships between natural mortality, growth
+parameters, and mean environmental temperature in 175 fish stocks. J. Cons. Int.
+Explor. Mer: 175-192.
+
+Pauly, D. and N. David, 1981. ELEFAN I, a BASIC program for the objective
+extraction of growth parameters from length-frequency data. Meeresforschung,
+28(4):205-211
+
+Pauly, D., 1983. Length-converted catch curves: a powerful tool for fisheries
+research in the tropics (part I). ICLARM Fishbyte, 1(2), 9-13
+
+Sparre, P. and Venema, S.C., 1998. Introduction to tropical fish stock assessment.
+Part 1. Manual. FAO Fisheries Technical Paper, (306.1, Rev. 2): 407 p.
+
+Taylor MH, Mildenberger TK, 2017. Extending electronic length frequency
+analysis in R. Fisheries Management and Ecology, 24:4, 230-238.
+https://doi.org/10.1111/fme.12232
+
+Then, A. Y., J. M. Hoenig, N. G. Hall, D. A. Hewitt. 2015. Evaluating the
+predictive performance of empirical estimators of natural mortality rate using
+information on over 200 fish species. ICES J. Mar. Sci. 72: 82-92.
+
+Thompson, W.F. and Bell, H. 1934. Biological statistics of the Pacific halibut
+fishery. 2.Effect of changes in intensity upon total yield, and yield per unit
+gear. Rep. Internat. Fish. Comm. 8, 48 pp.

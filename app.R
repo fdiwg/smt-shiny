@@ -6,13 +6,20 @@
 # Author: Enrico Anello <enrico.anello@fao.org> <enrico.anello@gmail.com>
 #
 #version/date to show on app
-SMT_VERSION = "0.5.1"
-SMT_DATE = "2021-10-23"
+SMT_VERSION = "0.6.1"
+SMT_DATE = "2023-03-13"
+
+## For local docker dev
+## set to FALSE for VRE and local processing without WPS;
+## set to TRUE for WPS not in VRE (requires token and docker setup)
+withtoken <- FALSE
+token <- '' ## specify for local docker + WPS
 
 ## Note that rfishbase v3.0.1 has to be installed for R<4.0.0:
 ## remotes::install_github("ropensci/rfishbase", ref = "3.0.1")
 ## Additional packages needed but no dependencies:
-## install.packages(c("pracma","googleVis","lubridate","XML"))
+## install.packages(c("pracma","googleVis","lubridate","XML","sf","terra"))
+## install.packages("LBSPR")
 
 library(shiny)
 library(shinyBS)
@@ -35,46 +42,80 @@ library(XML)
 library(d4storagehub4R)
 library(xml2)
 library(ows4R)
+library(DT)
+library(kableExtra)
+library(LBSPR)
+library(openxlsx)
+
+
 
 ##### Dependencies
+## UI
 source("ui/menu.R")
+## CMSY
 source("ui/cmsy/cmsyUI.R")
-source("ui/elefan/commonUI.R")
-source("ui/elefan/elefanGaUI.R")
-# source("ui/elefan/elefanSaUI.R")
-# source("ui/elefan/elefanUI.R")
+## Length-based methods
+source("ui/LBM/commonUI.R")
+source("ui/LBM/tropfishr/commonUI.R")
+source("ui/LBM/tropfishr/tropfishrUI.R")
+source("ui/LBM/lbi/commonUI.R")
+source("ui/LBM/lbi/lbiUI.R")
+source("ui/LBM/lbspr/commonUI.R")
+source("ui/LBM/lbspr/lbsprUI.R")
+## Others
 # source("ui/fishMethods/commonUI.R")
 # source("ui/fishMethods/sbprUI.R")
 # source("ui/fishMethods/yprUI.R")
+## Support
 source("ui/support/BasicSchaeferUI.R")
 source("ui/support/BasicVonBertalannfyUI.R")
 source("ui/support/NaturalMortalityUI.R")
 source("ui/support/SeasonalVonBertalannfyUI.R")
+## SERVER
 source("server/common.R")
+## CMSY
 source("server/cmsy/cmsyServer.R")
-source("server/elefan/elefanGaServer.R")
-# source("server/elefan/elefanSaServer.R")
-# source("server/elefan/elefanServer.R")
+## Length-based methods
+source("server/LBM/tropfishr/tropfishrServer.R")
+source("server/LBM/lbi/lbiServer.R")
+source("server/LBM/lbspr/lbsprServer.R")
+## Others
 # source("server/fishMethods/sbprServer.R")
 # source("server/fishMethods/yprServer.R")
+## Support
 source("server/support/BasicSchaeferServer.R")
 source("server/support/BasicVonBertalannfyServer.R")
 source("server/support/SeasonalVonBertalannfyServer.R")
 source("server/support/NaturalMortalityServer.R")
-source("assets/tropFishR/elefan_common.R")
-source("assets/tropFishR/algorithms/run_elefan_ga.R")
-source("assets/tropFishR/algorithms/temp_elefan_ga.R")  ## temporarily needed until TropFishR updated
-source("assets/tropFishR/algorithms/temp_predict_mod.R")  ## temporarily needed until TropFishR updated
-# source("assets/tropFishR/algorithms/run_elefan_sa.R")
-# source("assets/tropFishR/algorithms/run_elefan.R")
+## Functions
+source("assets/commons/commons.R")
+source("assets/commons/labels.R")
+## CMSY
 source("assets/cmsy/CmsyFunction.R")
+## LBM
+source("assets/LBM/commons.R")
+source("assets/LBM/tropfishr/algorithms/run_tropfishr.R")
+source("assets/LBM/tropfishr/algorithms/temp_elefan_ga.R")  ## temporarily needed until TropFishR updated
+source("assets/LBM/tropfishr/algorithms/temp_m_empirical.R")  ## temporarily needed until TropFishR updated
+source("assets/LBM/tropfishr/algorithms/temp_predict_mod.R")  ## temporarily needed until TropFishR updated
+source("assets/LBM/tropfishr/algorithms/tables.R")
+source("assets/LBM/tropfishr/algorithms/plotting.R")
+source("assets/LBM/tropfishr/algorithms/captions.R")
+source("assets/LBM/lbi/algorithms/run_lbi.R")
+source("assets/LBM/lbi/algorithms/plotting.R")
+source("assets/LBM/lbi/algorithms/tables.R")
+source("assets/LBM/lbi/algorithms/captions.R")
+source("assets/LBM/lbspr/algorithms/run_lbspr.R")
+source("assets/LBM/lbspr/algorithms/plotting.R")
+source("assets/LBM/lbspr/algorithms/tables.R")
+source("assets/LBM/lbspr/algorithms/captions.R")
+## Others
 # source("assets/fishmethods/methods.R")
+## Support
 source("assets/support/shaefer.R")
 source("assets/support/vonBertalannfly.R")
 source("assets/support/seasonalVonBertalannfly.R")
 source("assets/support/naturalMortality.R")
-source("assets/commons/commons.R")
-source("assets/commons/labels.R")
 
 fileLog <- Sys.getenv("SMT_LOG")
 if (is.null(fileLog) || is.na(fileLog) || fileLog == "") {
@@ -123,8 +164,13 @@ ui <- tagList(
       tabItem("homeTab",htmlOutput("homeInfo"), selected=T),
       tabCmsyIntro,
       tabCmsySampleDataset,
+      tabLBMIntro,
       tabElefanIntro,
-      tabElefanSampleDataset,
+      ## tabElefanSampleDataset,
+      tabLBIIntro,
+      ## tabLBISampleDataset,
+      tabLBSPRIntro,
+      ## tabLBSPRSampleDataset,
       # tabFishMethodsIntro,
       # tabFishMethodsSampleDataset,
       tabCmsy("cmsyModule"),
@@ -133,6 +179,8 @@ ui <- tagList(
       # tabElefan("elefanModule"),
       # tabSbpr("sbprModule"),
       # tabYpr("yprModule"),
+      tabLBI("lbiModule"),
+      tabLBSPR("lbsprModule"),
       tabBasicSchaefer("basicShaeferModule"),
       tabBasicVonBertalannfy("vonBertalannfyModule"),
       tabSeasonalVonBertalannfy("seasonalVonBertalannfyModule"),
@@ -159,7 +207,7 @@ server <- function(input, output, session) {
       sidebarMenu(id="smt-tabs",
         menuItem("Home", tabName="homeTab"),
         menuCmsy,
-        menuElefan,
+        menuLengthMethods,
         # menuFishMethods,
         menuSupportingTools
       )
@@ -185,11 +233,18 @@ server <- function(input, output, session) {
              'cmsy-intro'= {isolate({updateTabItems(session, "smt-tabs", "cmsyIntro")})},
              'cmsy'= {isolate({updateTabItems(session, "smt-tabs", "cmsyWidget")})},
              'cmsy-sample'= {isolate({updateTabItems(session, "smt-tabs", "cmsySampleDataset")})},
+             'lbm-intro' = {isolate({updateTabItems(session, "smt-tabs", "lbmIntro")})},
              'elefan-intro' = {isolate({updateTabItems(session, "smt-tabs", "ElefanIntro")})},
              'elefan-ga' = {isolate({updateTabItems(session, "smt-tabs", "ElefanGaWidget")})},
              # 'elefan-sa' = {isolate({updateTabItems(session, "smt-tabs", "ElefanSaWidget")})},
              # 'elefan' = {isolate({updateTabItems(session, "smt-tabs", "ElefanWidget")})},
-             'elefan-sample' = {isolate({updateTabItems(session, "smt-tabs", "ElefanSampleDataset")})},
+             ## 'elefan-sample' = {isolate({updateTabItems(session, "smt-tabs", "ElefanSampleDataset")})},
+             'lbi-intro' = {isolate({updateTabItems(session, "smt-tabs", "lbiIntro")})},
+             'lbi' = {isolate({updateTabItems(session, "smt-tabs", "lbiWidget")})},
+             ## 'lbi-sample' = {isolate({updateTabItems(session, "smt-tabs", "lbiSampleDataset")})},
+             'lbspr-intro' = {isolate({updateTabItems(session, "smt-tabs", "lbsprIntro")})},
+             'lbspr' = {isolate({updateTabItems(session, "smt-tabs", "lbsprWidget")})},
+             ## 'lbspr-sample' = {isolate({updateTabItems(session, "smt-tabs", "lbsprSampleDataset")})},
              # 'fishmethods-intro' = {isolate({updateTabItems(session, "smt-tabs", "FishMethodsIntro")})},
              # 'sbpr' = {isolate({updateTabItems(session, "smt-tabs", "SBPRWidget")})},
              # 'ypr' = {isolate({updateTabItems(session, "smt-tabs", "YPRWidget")})},
@@ -206,8 +261,9 @@ server <- function(input, output, session) {
     }
   })
 
+    session$userData$withtoken <- withtoken
   app_ctrl <- reactiveValues(
-    withtoken = FALSE
+    withtoken = withtoken
   )
   session$userData$sessionToken <- reactiveVal(NULL)
   session$userData$sessionUsername <- reactiveVal(NULL)
@@ -221,8 +277,8 @@ server <- function(input, output, session) {
   })
 
   #observer on token
-  observe({
-    if(!app_ctrl$withtoken){
+    observe({
+      if(!app_ctrl$withtoken){
       query <- parseQueryString(session$clientData$url_search)
       if(!is.null(query[[gcubeTokenQueryParam]])){
         token <- query[[gcubeTokenQueryParam]]
@@ -259,7 +315,43 @@ server <- function(input, output, session) {
       }
       flog.threshold(DEBUG)
       flog.appender(appender.file(fileLog))
-    }
+
+      }else{
+
+          ## set manually
+          session$userData$sessionToken(token)
+
+          #instantiate storagehub manager (uses a keyring 'env' backend by default)
+          sh_manager = d4storagehub4R::StoragehubManager$new(token = session$userData$sessionToken(), logger = "INFO")
+          session$userData$sessionUsername(sh_manager$getUserProfile()$username)
+          session$userData$storagehubManager(sh_manager)
+
+          #trace logs by user
+          fileLog <- sprintf("session_for_%s.log", sh_manager$getUserProfile()$username)
+
+          if (!is.null(session$userData$sessionToken())) {
+              flog.info("Session token is: %s", session$userData$sessionToken())
+          } else {
+              flog.info("Session token is: %s", "NULL")
+          }
+
+          if (!is.null(session$userData$sessionMode())) {
+              flog.info("Session mode is: %s", session$userData$sessionMode())
+          } else {
+              flog.info("Session mode is: %s", "NULL")
+          }
+
+          if (!is.null(session$userData$sessionUsername())) {
+              flog.info("Session username is: %s", session$userData$sessionUsername())
+              session$userData$sessionMode("GCUBE")
+          } else {
+              flog.info("Session username is: %s", "NULL")
+          }
+
+        flog.threshold(DEBUG)
+        flog.appender(appender.file(fileLog))
+
+      }
   })
 
    observeEvent(req(!is.null(session$userData$sessionToken())),{
@@ -268,7 +360,7 @@ server <- function(input, output, session) {
 
   flog.info("WPS url select : %s",wps_uri)
   print(sprintf("WPS url select : %s",wps_uri))
-  WPS<-WPSClient$new(
+  WPS <- WPSClient$new(
        url = wps_uri,
        serviceVersion = "1.0.0", logger ="DEBUG",
        headers = c("gcube-token"= session$userData$sessionToken())
@@ -297,6 +389,8 @@ server <- function(input, output, session) {
   session$userData$sbprUploadVreResult <- reactiveValues()
   session$userData$yprUploadVreResult <- reactiveValues()
 
+  session$userData$lbiUploadVreResult <- reactiveValues()
+  session$userData$lbsprUploadVreResult <- reactiveValues()
 
   callModule(cmsyModule, "cmsyModule")
   callModule(elefanGaModule, "elefanGaModule")
@@ -304,6 +398,8 @@ server <- function(input, output, session) {
   # callModule(elefanModule, "elefanModule")
   # callModule(sbprModule, "sbprModule")
   # callModule(yprModule, "yprModule")
+  callModule(lbiModule, "lbiModule")
+  callModule(lbsprModule, "lbsprModule")
   callModule(basicShaeferModule, "basicShaeferModule")
   callModule(vonBertalannfyModule, "vonBertalannfyModule")
   callModule(seasonalVonBertalannfyModule, "seasonalVonBertalannfyModule")
@@ -313,6 +409,7 @@ server <- function(input, output, session) {
 
 
 }
+
 
 # Run the application
 shinyApp(ui = ui, server = server)

@@ -21,7 +21,7 @@ check.neg <- function(pars){
     return(res)
 }
 
-run_elefan_ga <- function(
+run_tropfishr <- function(
                           x,
                           binSize = NULL,
                           seasonalised = FALSE,
@@ -75,6 +75,10 @@ run_elefan_ga <- function(
                           per_lm2 = NULL,
                           lm2 = NULL,
                           progressMessages = c("Running ELEFAN","Running YPR"),
+                          skip_elefan = FALSE,
+                          provide_linf = NA,
+                          provide_k = NA,
+                          provide_ta = NA,
                           ...
                           ) {
     set.seed(1)
@@ -140,6 +144,8 @@ run_elefan_ga <- function(
             stop("Then minimum and maximum of the F range are identical. That is not possible!")
         }
 
+        ## TODO: add checks for temp and tmax if thos natM are used!
+
         ## Don't allow negative input parameters
         check_pars <- c("binSize", "MA", "popSize", "maxiter", "run", "pmutation",
                     "pcrossover", "elitism",
@@ -164,18 +170,28 @@ run_elefan_ga <- function(
         ##--------------------
         ##  ELEFAN
         ##--------------------
-        withProgress(message = progressMessages[1], value = 0, {
-            resGA <- ELEFAN_GA_temp(lfq, MA = MA, seasonalised = seasonalised,
-                                    maxiter = maxiter, addl.sqrt = addl.sqrt,
-                                    low_par=low_par, up_par=up_par,
-                                    pmutation = pmutation, pcrossover = pcrossover,
-                                    elitism = elitism, popSize = popSize,
-                                    run = run,
-                                    monitor=shinyMonitor)
-        })
-        Linf <- resGA$par$Linf
-        K <- resGA$par$K
-        returnResults[['resGA']] <- resGA
+        if(skip_elefan && !is.na(provide_linf) && !is.na(provide_k) && !is.na(provide_ta)){
+            Linf <- provide_linf
+            K <- provide_k
+            resGA <- list()
+            resGA$par <- list(Linf = Linf, K = K, t_anchor = provide_ta) ## TODO: C and ts?
+            resGA$par$phiL <- log10(K) + 2 * log10(Linf)
+            returnResults[['resGA']] <- resGA
+        }else{
+            withProgress(message = progressMessages[1], value = 0, {
+                resGA <- ELEFAN_GA_temp(lfq, MA = MA, seasonalised = seasonalised,
+                                        maxiter = maxiter, addl.sqrt = addl.sqrt,
+                                        low_par=low_par, up_par=up_par,
+                                        pmutation = pmutation, pcrossover = pcrossover,
+                                        elitism = elitism, popSize = popSize,
+                                        run = run,
+                                        monitor=shinyMonitor)
+            })
+            Linf <- resGA$par$Linf
+            K <- resGA$par$K
+            returnResults[['resGA']] <- resGA
+        }
+
 
         ##--------------------
         ##  Natural mortality
@@ -186,10 +202,20 @@ run_elefan_ga <- function(
             natM <- "Pauly_Linf"
         }else if(natM_method == "Then's max. age formula"){
             natM <- "Then_tmax"
+        }else if(natM_method == "Gislason's length-based formula"){
+            natM <- "Gislason2"  ## below 10cm constant
+        }else if(natM_method == "Lorenzen's length-based formula"){
+            natM <- "Lorenzen_2022"
         }
-        M <- as.numeric(M_empirical(Linf = Linf, K_l = K,
-                                    method = natM, schooling = cor_schooling,
-                                    tmax = tmax, temp = temp))
+        flag.lb.m <- ifelse(natM %in% c("Gislason", "Gislason2","Lorenzen_2022"), TRUE, FALSE)
+        Mest <- M_empirical_temp(Linf = Linf, K_l = K, Bl = as.numeric(lfq$midLengths),
+                                         method = natM, schooling = cor_schooling,
+                                         tmax = tmax, temp = temp)
+        if(flag.lb.m){
+            M <- Mest$Ml
+        }else{
+            M <- rep(as.numeric(Mest), length(lfq$midLengths))
+        }
         returnResults[['resM']] <- M
 
 
@@ -215,13 +241,15 @@ run_elefan_ga <- function(
         lfq2 <- lfqModify(lfq,
                           vectorise_catch = TRUE,
                           Lmax = lmax)
+
         ## catch curve with auto-fitting
         resCC <- catchCurve(lfq2, reg_int = NULL,
                             calc_ogive = TRUE,
                             catch_columns = catch_columns,
                             plot=FALSE, auto = TRUE)
         Z <- resCC$Z
-        FM <- as.numeric(Z - M)
+        meanM <- mean(M[resCC$reg_int[1]:resCC$reg_int[2]])
+        FM <- as.numeric(Z - meanM)
         E <- FM/Z
         L50 <- resCC$L50
         L75 <- resCC$L75
@@ -246,8 +274,9 @@ run_elefan_ga <- function(
         lfq2$b <- LWb
 
         ## other parameters
-        lfq2$Z <- Z
+        ## lfq2$Z <- Z
         lfq2$M <- M
+        lfq2$meanM <- meanM
 
         ## Selectivity
         if(select_method == "Define L50 & L75"){
@@ -325,7 +354,11 @@ run_elefan_ga <- function(
                                     stock_size_1 = 1,
                                     curr.E = E,
                                     plot = FALSE,
-                                    hide.progressbar = TRUE)
+                                    hide.progressbar = TRUE,
+                                    m_emp_method = natM,
+                                    m_emp_schooling = cor_schooling,
+                                    m_emp_tmax = tmax,
+                                    m_emp_temp = temp)
 
         ## Thompson and Bell model with changes in F and Lc
         withProgress(message = progressMessages[2], value = 0, {
@@ -337,7 +370,11 @@ run_elefan_ga <- function(
                                         s_list = slist,
                                         plot = FALSE,
                                         hide.progressbar = TRUE,
-                                        monitor = shinyMonitor2)
+                                        monitor = shinyMonitor2,
+                                        m_emp_method = natM,
+                                        m_emp_schooling = cor_schooling,
+                                        m_emp_tmax = tmax,
+                                        m_emp_temp = temp)
         })
 
         returnResults[['resYPR1']] <- resYPR1

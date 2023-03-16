@@ -1,0 +1,224 @@
+---
+title: "Length-based spawning potential ratio (LBSPR)"
+output:
+  pdf_document:
+    extra_dependencies:
+      tabularx: null
+      booktabs: null
+      colortbl: null
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+header-includes:
+  - \usepackage{float}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message=FALSE, warning = FALSE, fig.align = "center", dpi=300,  fig.pos = "H")
+```
+
+# Method description
+
+The length-based spawning potential ratio method (LBSPR) allows to estimate the
+stock status for data-limited fisheries based only on length frequency data and
+some information about the life history parameters. Besides gear selectivity,
+the method estimates the fishing mortality relative to natural mortality (F/M)
+and the spawning potential ratio (SPR). SPR describes the ratio of the current
+spawning stock biomass and the theoretical spawning stock biomass if there was
+no fishing. Thus, an SPR of 0% would indicate that there are no mature female
+individuals are left. Suggested SPR reference points are a limit at 20% and a
+target of 40% (Hordy et al. 2015). The method does not require information about
+the uncertain natural mortality directly, but instead uses the ratio of natural
+mortality and the von Bertalanffy growth coefficient (K) (M/K). This ratio is
+believed to be less variable across stocks and species than the individual
+parameters and thus assumed to be 1.5 (Prince et al. 2015). However, other
+studies suggest that this ratio is not invariant but varies systematically based
+on the timing of maturation (e.g. Thorson et al. 2017).
+
+LBSPR makes the following assumptions:
+
+- Representative length measurements: The method assumes that the dataset is
+  representative of the length distributions of the whole catch. This means that
+  either the length of all individuals in the catch were measured or a
+  randomised subsample of the catch was measured.
+
+- Equilibrium conditions: The routine assumes constant recruitment and natural
+  mortality as well as somatic growth and maturation over time, i.e. within the
+  year and over all years covered by the data set.
+
+- Density dependence: The routine assumes density independent maturity and
+  somatic growth.
+
+- Length-independent natural mortality: The method assumes that the natural
+  mortality is equal for all length classes.
+
+- Somatic growth follows VBG: The method assumes that the growth of individuals
+  in length follows the logistic von Bertlanffy growth (VBG) function. This is
+  an often made assumption for the growth of fish, but might not reflect well
+  the growth of species with an exoskeleton, such as crustaceans, nor the growth
+  of early life stages of fish.
+
+- Closed population: The routine assumes that the stock (population) under study
+  is closed, meaning that there is no immigration or emigration taking place.
+  Immigration and emigration can both bias estimated mortality rates and stock
+  status. Furthermore, fish migrations often vary for various life stages and
+  might thus affect the representativeness of the length measurements if the
+  population is not closed.
+
+&nbsp;
+&nbsp;
+&nbsp;
+
+# Summary of input data and parameters
+
+The uploaded data (*"*`r paste0("*",input$fileLBSPR$name,"*")`*"*) spans `r length(lbspr_dat$dataExplo[['lfq']]$dates)` year(s). Following years were selected for the analysis: `r paste(input$LBSPR_years_selected, collapse = ", ")`. Figure 1 shows the length frequency distributions for each year that were binned with a bin size of `r input$LBSPR_binSize` `r input$LBSPR_lengthUnit`.
+
+&nbsp;
+&nbsp;
+&nbsp;
+
+```{r echo=FALSE, fig.width=9, fig.height=7}
+plotLBSPR.data(lbspr_dat, input)
+```
+
+```{r echo=FALSE,results='asis'}
+writeLines(captionLBSPR.plots(lbspr_dat, input,
+                              format = "withFigLatex", type = "data"))
+```
+
+
+
+&nbsp;
+&nbsp;
+&nbsp;
+
+The life-history parameters required for LBSPR were set to the values presented
+in Table 1.
+
+
+```{r echo=FALSE}
+tableLBSPR.inputPars(lbspr_dat, input, format = "kable")
+```
+
+&nbsp;
+&nbsp;
+&nbsp;
+
+
+# Results
+
+The estimated SPR, selectivity parameters (L~s50~ and L~s95~), and the ratio of
+fishing to natural mortality rate (F/M) are provided in Table 2. The estimated
+95% confidence interval for each parameter is provided in brackets. If the
+uploaded data spans several years, the table contains multiple rows and each row
+contains the estimates for the specific year.
+
+&nbsp;
+&nbsp;
+&nbsp;
+
+```{r echo=FALSE}
+tableLBSPR.results(lbspr_dat, input, format = "kable")
+```
+
+&nbsp;
+&nbsp;
+&nbsp;
+
+Figure 2 shows the estimated spawining potential ratio (SPR) value in relation
+to the SPR reference points. The estimated SPR is indicated by the dashed line
+with the SPR value next to the dashed line. The colored areas indicate the SPR
+reference points: The red area/line indicates the proportion of SPR below the
+limit reference point; the green area/line indicates the proportion above the
+limit and below the target reference point; and the the yellow area indicates
+the proportion above the target reference point. Note, that when the assessment
+is done for multiple years, only the last year of the assessment is shown in
+this graph.
+
+&nbsp;
+&nbsp;
+&nbsp;
+
+
+```{r echo=FALSE, fig.width=5, fig.height=5}
+plotLBSPR.pie(lbspr_dat, input)
+```
+
+```{r echo=FALSE,results='asis'}
+writeLines(captionLBSPR.plots(lbspr_dat, input,
+                              format = "withFigLatex", type = "pie"))
+```
+
+&nbsp;
+&nbsp;
+&nbsp;
+
+Figure 3 presents the provided maturity information (black line), as well as the
+estimated selectivity information (colored lines). The curves indicate the
+proportion of the stock that is mature or vulnerable to the gear (y axis) at a
+given length (x axis).
+
+&nbsp;
+&nbsp;
+&nbsp;
+
+
+```{r echo=FALSE, fig.width=5, fig.height=4}
+plotLBSPR.sel(lbspr_dat, input)
+```
+
+```{r echo=FALSE,results='asis'}
+writeLines(captionLBSPR.plots(lbspr_dat, input,
+                              format = "withFigLatex", type = "sel"))
+```
+
+&nbsp;
+&nbsp;
+&nbsp;
+
+Figure 4 shows a time series plot of the estimated selectivity parameters,
+fishing mortality relative to natural mortality, and spawning potential ratio
+(SPR). The lines correspond to the smoothed estimates over time. Note, that the
+graphs only show single points when the assessment spans a single year.
+
+&nbsp;
+&nbsp;
+&nbsp;
+
+```{r echo=FALSE, fig.width=9, fig.height=5}
+plotLBSPR.ts(lbspr_dat, input)
+```
+
+```{r echo=FALSE,results='asis'}
+writeLines(captionLBSPR.plots(lbspr_dat, input,
+                              format = "withFigLatex", type = "ts"))
+```
+
+&nbsp;
+&nbsp;
+&nbsp;
+
+
+
+# References
+
+Hordyk, A., Ono, K., Valencia, S., Loneragan, N., & Prince, J. (2015). A novel
+length-based empirical estimation method of spawning potential ratio (SPR), and
+tests of its performance, for small-scale, data-poor fisheries. ICES Journal of
+Marine Science, 72(1), 217-231. https://doi.org/10.1093/icesjms/fsu004
+
+Hordyk, A., Ono, K., Sainsbury, K., Loneragan, N., & Prince, J. (2015). Some
+explorations of the life history ratios to describe length composition,
+spawning-per-recruit, and the spawning potential ratio. ICES Journal of Marine
+Science, 72(1), 204-216. https://doi.org/10.1093/icesjms/fst235
+
+ICES (2018). ICES Technical guidance for providing reference points for stocks
+in categories 3 and 4. ICES Technical Guidelines.
+https://doi.org/10.17895/ices.pub.4128
+
+Prince, J., Hordyk, A., Valencia, S. R., Loneragan, N., & Sainsbury, K. (2015).
+Revisiting the concept of Beverton–Holt life-history invariants with the aim of
+informing data-poor fisheries assessment. ICES Journal of Marine Science, 72(1),
+194-203. https://doi.org/10.1093/icesjms/fsu011
+
+Thorson, J. T., Munch, S. B., Cope, J. M., & Gao, J. (2017). Predicting life
+history parameters for all fishes worldwide. Ecological Applications, 27(8),
+2262-2276. https://doi.org/10.1002/eap.1606

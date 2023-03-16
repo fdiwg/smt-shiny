@@ -5,3 +5,5 @@
 StockMonitoringTool.Rproj
 debug.log
 session.log
+*.tar.gz
+personal_token.R

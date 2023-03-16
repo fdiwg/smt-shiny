@@ -125,6 +125,10 @@ tabElefanGa <- function(id) {
                         size = "large",
                         p("The summer point (", withMathJax("\\(t_{s}\\)"), ") of the seasonalised von Bertalanffy growth (VBG) curve defines the point in time where the seasonally varying growth rate is the largest represented by the fraction of the calendar year, e.g. 0.25 corresponds to April 1st. Values for this field are between 0 and 1, which is also equal to the default search space for this parameter. Generally, it is not recommended to decrease the search space for this parameter.")),
 
+                bsModal("info_provide_gp", "Provide growth parameters", ns("infoProvideGP"),
+                        size = "large",
+                        p("It is possible to circumvent the estimation of growth parameters and use specified values instead. For this options, check the box before 'Provide growth parameters?' and enter any growth parameters in the appearing input fields. Note, that not all parameters (",withMathJax("\\(L_\\infty\\)"),withMathJax("\\(K\\)"),withMathJax("\\(t_\\a\\)"),") need to be specified. If only one or two parameters are specified, these parameters will be fixed and ELEFAN will be used to estimate missing parameters. If all three paramters are specified, the method will skip ELEFAN alltogether. ")),
+
                 bsModal("info_ga", "ELEFAN's genetic algorithm", ns("info_GA"),
                         size = "large",
                         HTML(paste0("<p>Genetic algorithms (GAs) are stochastic search algorithms inspired by the basic principles of biological evolution and natural selection.  GAs simulate the evolution of living organisms, where the fittest individuals dominate over the weaker ones, by mimicking the biological mechanisms of evolution, such as selection, crossover and mutation.<br><br> Changing default parameters can have a substantial effect on the optimization process and, thus, on estimated growth parameters. Therefore, please apply caution when changing these parameters. In fact, values should only be increased from the default, though please note that this will increase the run time of the assessment.</p>"))),
@@ -160,7 +164,7 @@ tabElefanGa <- function(id) {
 
                 bsModal("info_pred", "Prediction range", ns("infoPred"),
                         size = "large",
-                        HTML("<p>The prediction range determines the fishing mortality rates and length at 50% selectivity (L50) values which are used in the yield per recruit model. The model estimates yield per recruit (YPR), biomass per recruit (BPR), and spawning potential ratio (SPR; if maturity parameters are provided) for each combination of fishing mortality and L50 value. Thus, the prediction ranges (F and L50) affect the axes of Figures 6 and 7. <br> <br> The range for fishing mortality can be defined by the number of 'Steps' between the minimum ('Min') and maximum ('Max') mortality rate. <br> <br> If the selectivity is estimated (default), only the number of 'Steps' can be changed for the L50 range. If the selectivity parameters are provided (e.g. L50 and L75), the minimum ('Min') and maximum ('Max') of the L50 range can be changed.</p>")),
+                        HTML("<p>The prediction range determines the fishing mortality rates and length at 50% selectivity (L50) values which are used in the yield per recruit model. The model estimates yield per recruit (YPR), biomass per recruit (BPR), and spawning potential ratio (SPR; if maturity parameters are provided) for each combination of fishing mortality and L50 value. Thus, the prediction ranges (F and L50) affect the axes of Figures 7 and 8. <br> <br> The range for fishing mortality can be defined by the number of 'Steps' between the minimum ('Min') and maximum ('Max') mortality rate. <br> <br> If the selectivity is estimated (default), only the number of 'Steps' can be changed for the L50 range. If the selectivity parameters are provided (e.g. L50 and L75), the minimum ('Min') and maximum ('Max') of the L50 range can be changed.</p>")),
 
                 bsModal("info_lengthweight", "Length-weight relationship", ns("infoLengthWeight"),
                         size = "large",
@@ -188,7 +192,7 @@ tabElefanGa <- function(id) {
 
                 bsModal("info_natm", "Natural mortality", ns("infoNatM"),
                         size = "large",
-                        HTML("<p>The natural mortality rate (M) is required to estimate the fishing mortality (F) from the total mortality (Z) estimated by the catch curve (F = Z - M). The natural mortality is estimated by an empirical formula based on estimated growth parameters. The options are: <br> - Then's growth formula (<a href='https://doi.org/10.1093/icesjms/fsu136' target='_blank'>Then et al. 2015</a>), <br> - Pauly's growth and temperature formula (<a href='https://doi.org/10.1093/icesjms/39.2.175' target='_blank'>Pauly 1980</a>), and <br> - Then's maximum age formula (<a href='https://doi.org/10.1093/icesjms/fsu136' target='_blank'>Then et al. 2015</a>); <br><br> While the first option does not require any additional information, the second requires the average annual sea surface temperature (SST) in degrees Celsius and allows corrections for schooling fish (multiplication by 0.8). The third option requires an estimate of the maximum age of the fish.<br><br>Please see the Natural Mortality estimator page in the Supporting Tools menu for more information. </p>")
+                        HTML("<p>The natural mortality rate (M) is required to estimate the fishing mortality (F) from the total mortality (Z) estimated by the catch curve (F = Z - M). The natural mortality is estimated by an empirical formula based on estimated growth parameters. The options are: <br> - Then's growth formula (<a href='https://doi.org/10.1093/icesjms/fsu136' target='_blank'>Then et al. 2015</a>), <br> - Pauly's growth and temperature formula (<a href='https://doi.org/10.1093/icesjms/39.2.175' target='_blank'>Pauly 1980</a>), <br> - Then's maximum age formula (<a href='https://doi.org/10.1093/icesjms/fsu136' target='_blank'>Then et al. 2015</a>); <br> - Gislason's length-based formula (<a href='https://doi.org/10.1111/j.1467-2979.2009.00350.x' target='_blank'>Gislason et al. 2010</a>); and <br> - Lorenzen's length-based formula (<a href='https://doi.org/10.1016/j.fishres.2022.106327' target='_blank'>Lorenzen et al. 2020</a>); <br><br> While the first option does not require any additional information, the second requires the average annual sea surface temperature (SST) in degrees Celsius and allows corrections for schooling fish (multiplication by 0.8). The third option requires an estimate of the maximum age of the fish.<br><br>Please see the Natural Mortality estimator page in the Supporting Tools menu for more information. The last two options estimate a length-dependent natural mortality, i.e. the natural mortality rate depends on the body size of the fish. Note, that for Gislason's method, length classes below 10cm are assumed to have a constant natural mortality rate correspoding to a body length of 10cm, as the meta study by Gislason et al. (2010) does not include many data points below 10cm. </p>")
                         ),
 
 
@@ -224,7 +228,7 @@ tabElefanGa <- function(id) {
                     solidHeader = TRUE,
                     class = "collapsed-box",
 
-                    box(
+                    box(width = 6,
                         fileInput(ns("fileGa"), "Choose Input CSV File",
                                   accept = c(
                                       "text/csv",
@@ -232,7 +236,7 @@ tabElefanGa <- function(id) {
                                       ".csv")
                                   )
                     ),
-                    box(
+                    box(width = 3,
                         selectInput(ns("elefanGaDateFormat"),
                                     "Choose CSV date format",
                                     choices = c("Automatic guess" = "auto",
@@ -240,6 +244,11 @@ tabElefanGa <- function(id) {
                                                 "Year Day Month" = "ydm",
                                                 "Day Month Year" = "dmy",
                                                 "Month Day Year" = "mdy" ))
+                        ),
+                    box(width = 3,
+                        selectInput(ns("elefan_lengthUnit"),
+                                    "Choose length unit",
+                                    choices = c("cm", "mm", "in"))
                     )
                     ),
 
@@ -263,7 +272,7 @@ tabElefanGa <- function(id) {
                     tabBox(
                         title = "",
                         width = NULL,
-                        height = "730px",
+                        height = "810px",
                         side="left",
                         selected = "1. Data",
                         id = "settings",
@@ -340,7 +349,7 @@ tabElefanGa <- function(id) {
                                                                  tags$i(class = "fas fa-info",
                                                                         style="font-size: 8px"),
                                                                  class="infoBubbleButton")),
-                                                  5, min = 3, max = 101, step=2,
+                                                  5, min = 1, max = 101, step=2,
                                                   width ='100%'),
 
                                      br(),
@@ -351,7 +360,30 @@ tabElefanGa <- function(id) {
                                                                   tags$i(class = "fas fa-info",
                                                                          style="font-size: 8px"),
                                                                   class="infoBubbleButton")),
-                                                   FALSE)
+                                                   FALSE),
+
+                                     br(),
+
+                                     fluidRow(
+                                         column(6,
+                                                selectInput(ns("fig_format_ga"),
+                                                            "Format of archived figures",
+                                                            choices = c("pdf","png","jpeg","tiff","bmp","ps"),
+                                                            selected = "pdf",
+                                                            multiple = FALSE,
+                                                            width = "100%")
+                                                ),
+                                         column(6,
+                                                selectInput(ns("tab_format_ga"),
+                                                            "Format of archived tables",
+                                                            choices = c("csv","xls","xlsx"),
+                                                            selected = "csv",
+                                                            multiple = FALSE,
+                                                            width = "100%")
+                                                )
+                                     ),
+
+                                     br()
                                      ),
                                  box(title = "Data exploration",
                                      id = "box_exploPlots",
@@ -441,6 +473,83 @@ tabElefanGa <- function(id) {
                                                                            style="font-size: 8px"),
                                                                     class="infoBubbleButton")),
                                                      value=c(0,1), min = 0, max = 1, step=0.01)
+                                         ),
+
+                                     box(width = 12,
+                                         fluidRow(
+                                         column(3,
+                                                checkboxInput(ns("provideGP"),
+                                                              p("Provide growth parameters?",
+                                                                actionButton(ns("infoProvideGP"),
+                                                                             tags$i(class = "fas fa-info",
+                                                                                    style="font-size: 8px"),
+                                                                             class="infoBubbleButton")),
+                                                              FALSE)
+                                                ),
+                                         column(9,
+                                                box(id = "box_provide_gp",
+                                                    width=12,
+                                                    fluidRow(
+                                                        column(4,
+                                                               numericInput(ns("provide_Linf"),
+                                                                            p(HTML(paste0("<b> Asymptotic length (",withMathJax("\\(L_\\infty\\)"),") </b>")),
+                                                                              actionButton(ns("infok"),
+                                                                                           tags$i(class = "fas fa-info",
+                                                                                                  style="font-size: 8px"),
+                                                                                           class="infoBubbleButton")),
+                                                                            value = NA, min = 0, max = 1e5, step=0.001, width = "80%")
+                                                               ),
+                                                        column(4,
+                                                               numericInput(ns("provide_K"),
+                                                                            p(HTML(paste0("Growth rate (",withMathJax("\\(K\\)"),")")),
+                                                                              actionButton(ns("infok"),
+                                                                                           tags$i(class = "fas fa-info",
+                                                                                                  style="font-size: 8px"),
+                                                                                           class="infoBubbleButton")),
+                                                                            value = NA, min = 0, max = 1e5, step=0.001, width = "80%")
+                                                               ),
+                                                        column(4,
+                                                               numericInput(ns("provide_t_anchor"),
+                                                                            p(HTML(paste0("Time anchor (",withMathJax("\\(t_{a}\\)"),")")),
+                                                                              actionButton(ns("infotanchor"),
+                                                                                           tags$i(class = "fas fa-info",
+                                                                                                  style="font-size: 8px"),
+                                                                                           class="infoBubbleButton")),
+                                                                            value = NA, min = 0, max = 1, step=0.001, width = "80%")
+                                                               )
+                                                    ),
+
+                                                    br(),
+
+                                                    box(id = "box_provide_gp_sea",
+                                                        width=12,
+                                                        fluidRow(
+                                                            column(2),
+                                                            column(4,
+                                                                   numericInput(ns("provide_C"),
+                                                                                p(HTML(paste0("Amplitude (",withMathJax("\\(C\\)"),")")),
+                                                                                  actionButton(ns("infoC"),
+                                                                                               tags$i(class = "fas fa-info",
+                                                                                                      style="font-size: 8px"),
+                                                                                               class="infoBubbleButton")),
+                                                                                value = NA, min = 0, max = 10, step=0.001, width = "80%")
+                                                                   ),
+                                                            column(4,
+                                                                   numericInput(ns("provide_ts"),
+                                                                                p(HTML(paste0("Summer point (",withMathJax("\\(t_{s}\\)"),")")),
+                                                                                  actionButton(ns("infots"),
+                                                                                               tags$i(class = "fas fa-info",
+                                                                                                      style="font-size: 8px"),
+                                                                                               class="infoBubbleButton")),
+                                                                                value = NA, min = 0, max = 1, step=0.001, width = "85%")
+                                                                   ),
+                                                            column(2)
+                                                        )
+                                                        )
+
+                                                    )
+                                                )
+                                         )
                                          )
                                      ),
 
@@ -553,7 +662,9 @@ tabElefanGa <- function(id) {
                                                                 "Method:",
                                                                 choices = c("Then's growth formula",
                                                                             "Pauly's growth & temp. formula",
-                                                                            "Then's max. age formula"),
+                                                                            "Then's max. age formula",
+                                                                            "Gislason's length-based formula",
+                                                                            "Lorenzen's length-based formula"),
                                                                 selected = "Then's growth formula",
                                                                 width ='80%')
                                                     ),
@@ -732,8 +843,8 @@ tabElefanGa <- function(id) {
                                                     selectInput(ns("select"),
                                                                 p("Selectivity"),
                                                                 choices = c("Estimate",
-                                                                            "Define L50 & L75",
-                                                                            "Define L50 & (L75-L25)",
+                                                                            p("Define ",withMathJax("\\(L_{s50}\\)")," & ",withMathJax("\\(L_{s75}\\)")),
+                                                                            p("Define ",withMathJax("\\(L_{s50}\\)")," & (",withMathJax("\\(L_{s75}\\)"),"-",withMathJax("\\(L_{s25}\\)"),")"),
                                                                             "Other"),
                                                                 selected = "Estimate",
                                                                 width = "100%")
@@ -743,7 +854,7 @@ tabElefanGa <- function(id) {
                                                     div(
                                                         id ="ui_l50",
                                                         numericInput(ns("l50_user"),
-                                                                     p(withMathJax("\\(L_{50}\\)")," (user defined)"),
+                                                                     p(withMathJax("\\(L_{s50}\\)")," (user defined)"),
                                                                      value = NULL, min = 0, step = 1,
                                                                      width = "80%")
                                                     ),
@@ -765,7 +876,7 @@ tabElefanGa <- function(id) {
                                                         numericInput(ns("l1_user"),
                                                                      p("Length at ",
                                                                        withMathJax("\\(X_{1}\\)"),
-                                                                       " (",withMathJax("\\(L_{X1}\\)"),")"),
+                                                                       " (",withMathJax("\\(L_{sX1}\\)"),")"),
                                                                      value = NULL, min = 0, step = 1,
                                                                      width = "100%")
                                                     )
@@ -775,14 +886,14 @@ tabElefanGa <- function(id) {
                                                     div(
                                                         id ="ui_l75",
                                                         numericInput(ns("l75_user"),
-                                                                     p(withMathJax("\\(L_{75}\\)")," (user defined)"),
+                                                                     p(withMathJax("\\(L_{s75}\\)")," (user defined)"),
                                                                      value = NULL, min = 0, step = 1,
                                                                      width = "80%")
                                                     ),
                                                     div(
                                                         id ="ui_wqs",
                                                         numericInput(ns("wqs_user"),
-                                                                     p("Width (",withMathJax("\\(L_{75}-L_{25}\\)"),"; user defined)"),
+                                                                     p("Width (",withMathJax("\\(L_{s75}-L_{s25}\\)"),"; user defined)"),
                                                                      value = NULL, min = 0, step = 1,
                                                                      width = "80%")
                                                     ),
@@ -803,7 +914,7 @@ tabElefanGa <- function(id) {
                                                         numericInput(ns("l2_user"),
                                                                      p("Length at ",
                                                                        withMathJax("\\(X_{2}\\)"),
-                                                                       " (",withMathJax("\\(L_{X2}\\)"),")"),
+                                                                       " (",withMathJax("\\(L_{sX2}\\)"),")"),
                                                                      value = NULL, min = 0, step = 1,
                                                                      width = "100%")
                                                     )
@@ -897,6 +1008,7 @@ tabElefanGa <- function(id) {
                                          column(1)
                                      )
                                      )
+
                                  )
 
 
@@ -909,7 +1021,7 @@ tabElefanGa <- function(id) {
                 ## -------------------------------
                 br(),
 
-                box(title = p("Run Assessment & Download Report",
+                box(title = p("Run Assessment & Download Report and Results",
                               actionButton(ns("infoAssessment"),
                                            tags$i(class = "fas fa-info",
                                                   style="font-size: 8px"),
@@ -942,8 +1054,11 @@ tabElefanGa <- function(id) {
                             uiOutput(ns("downloadReport_ga"))
                             ),
                         div(style = "display: inline-block; vertical-align:center; margin-left: 20px;",
-                            uiOutput(ns("ElefanGaVREUpload"))
+                            uiOutput(ns("downloadzip_ga"))
                             ),
+                        div(style = "display: inline-block; vertical-align:center; margin-left: 20px;",
+                            uiOutput(ns("ElefanGaVREUpload"))
+                            )
                         ),
                     br(),br()
                     ),
@@ -961,7 +1076,7 @@ tabElefanGa <- function(id) {
                                                   style="font-size: 8px"),
                                            class="infoBubbleButton")),
                     width = NULL,
-                    height = "2600px",
+                    height = "3300px",
                     collapsible = FALSE,
                     solidHeader = TRUE,
                     class = "collapsed-box",
@@ -973,30 +1088,21 @@ tabElefanGa <- function(id) {
                             tags$div(
                                      plotOutput(ns("plot_growthCurves"), width = "90%",
                                                 height = "600px"),
-                                     div(style = "margin-top:0px; margin-left: 10px",
+                                     div(style = "margin-top:0px; margin-left: 10%; margin-right: 10%;",
                                          htmlOutput(ns("title_growthCurves"))
                                          ),
-                                     style = "margin-left: 10%;"
+                                     style = "margin-left: 0%; margin-right: 0%;"
                                  )
                         ),
                         column(
                             5,
-                            br(),
+                            br(),br(),br(),
                             tags$div(
-                                     div(style = "margin-bottom:0px; margin-left: 3px",
+                                     div(style = "margin-bottom:0px; margin-left: 0%; margin-right: 0%;",
                                          htmlOutput(ns("title_table_growth"))
                                          ),
-                                     tableOutput(ns("table_growth")),
-                                     style = "margin-left: 20%;"
-                                 ),
-                            br(),
-                            tags$div(
-                                     plotOutput(ns("plot_elefanFit"), width = "80%",
-                                                height = "400px"),
-                                     div(style = "margin-top:0px; margin-left: 3px",
-                                         htmlOutput(ns("title_elefanFit"))
-                                         ),
-                                     style = "margin-left: 0%;"
+                                     dataTableOutput(ns("table_growth")),
+                                     style = "margin-left: 5%; margin-right: 15%;"
                                  )
                         )
 
@@ -1008,23 +1114,53 @@ tabElefanGa <- function(id) {
                         column(
                             6,
                             tags$div(
+                                     plotOutput(ns("plot_elefanFit"), width = "80%",
+                                                height = "450px"),
+                                     div(style = "margin-top:0px; margin-left: 10%; margin-right: 10%;",
+                                         htmlOutput(ns("title_elefanFit"))
+                                         ),
+                                     style = "margin-left: 0%; margin-right: 0%;"
+                                 )
+                        ),
+                        column(
+                            6,
+                            tags$div(
+                                     plotOutput(ns("plot_mort"), width = "80%",
+                                                height = "450px"),
+                                     div(style = "margin-top:0px; margin-left: 10%; margin-right: 10%;",
+                                         htmlOutput(ns("title_mort"))
+                                         ),
+                                     style = "margin-left: 0%; margin-right: 0%;"
+                                 )
+                        )
+
+                    ),
+
+                    br(), br(),
+
+
+
+                    fluidRow (
+                        column(
+                            6,
+                            tags$div(
                                      plotOutput(ns("plot_catchCurve"), width = "80%",
-                                                height = "400px"),
-                                     div(style = "margin-top:0px; margin-left: 10px",
+                                                height = "450px"),
+                                     div(style = "margin-top:0px; margin-left: 10%; margin-right: 10%;",
                                          htmlOutput(ns("title_catchCurve"))
                                          ),
-                                     style = "margin-left: 10%;"
+                                     style = "margin-left: 0%; margin-right: 0%;"
                                  )
                         ),
                         column(
                             6,
                             tags$div(
                                      plotOutput(ns("plot_select"), width = "80%",
-                                                height = "400px"),
-                                     div(style = "margin-top:0px; margin-left: 10px",
+                                                height = "450px"),
+                                     div(style = "margin-top:0px; margin-left: 10%; margin-right: 10%;",
                                          htmlOutput(ns("title_select"))
                                          ),
-                                     style = "margin-left: 10%;"
+                                     style = "margin-left: 0%; margin-right: 0%;"
                                  )
                         )
 
@@ -1034,33 +1170,24 @@ tabElefanGa <- function(id) {
 
                     fluidRow(
                         column(
-                            4,
+                            5,
                             tags$div(
-                                     div(style = "margin-bottom:0px; margin-left: 7px",
+                                     div(style = "margin-bottom:0px; margin-left: 0%; margin-right: 0%;",
                                          htmlOutput(ns("title_table_mort"))
                                          ),
-                                     tableOutput(ns("table_mort")),
-                                     style = "margin-left: 5%;"
+                                     dataTableOutput(ns("table_mort")),
+                                     style = "margin-left: 25%; margin-right: 5%;"
                                  )
                         ),
+                        column(2),
                         column(
-                            4,
+                            5,
                             tags$div(
-                                     div(style = "margin-bottom:0px; margin-left: 2px",
+                                     div(style = "margin-bottom:0px; margin-left: 0%; margin-right: 0%;",
                                          htmlOutput(ns("title_table_refs"))
                                          ),
-                                     tableOutput(ns("table_refs")),
-                                     style = "margin-left: 0%;"
-                                 )
-                        ),
-                        column(
-                            4,
-                            tags$div(
-                                     div(style = "margin-bottom:0px; margin-left: 2px",
-                                         htmlOutput(ns("title_table_stockstatus"))
-                                         ),
-                                     tableOutput(ns("table_stockstatus")),
-                                     style = "margin-left: 0%;"
+                                     dataTableOutput(ns("table_refs")),
+                                     style = "margin-left: 5%; margin-right: 30%;"
                                  )
                         )
                     ),
@@ -1072,25 +1199,53 @@ tabElefanGa <- function(id) {
                             6,
                             tags$div(
                                      plotOutput(ns("plot_ypr"), width = "90%",
-                                                height = "700px"),
-                                     div(style = "margin-top:0px; margin-left: 10px",
+                                                height = "800px"),
+                                     div(style = "margin-top:0px; margin-left: 10%; margin-right: 10%;",
                                          htmlOutput(ns("title_ypr"))
                                          ),
-                                     style = "margin-left: 10%;"
+                                     style = "margin-left: 0%; margin-right: 0%;"
                                  )
                         ),
                         column(
                             6,
                             tags$div(
                                      plotOutput(ns("plot_ypr_iso"), width = "90%",
-                                                height = "700px"),
-                                     div(style = "margin-top:0px; margin-left: 10px",
+                                                height = "800px"),
+                                     div(style = "margin-top:0px; margin-left: 10%; margin-right: 10%;",
                                          htmlOutput(ns("title_ypr_iso"))
                                          ),
-                                     style = "margin-left: 10%;"
+                                     style = "margin-left: 0%; margin-right: 0%;"
                                  )
                         )
-                    )
+                    ),
+
+                    br(), br(),
+
+                    fluidRow(
+                        column(
+                            5,
+                            tags$div(
+                                     div(style = "margin-bottom:0px; margin-left: 0px; margin-right: 0px;",
+                                         htmlOutput(ns("title_table_stockstatus"))
+                                         ),
+                                     dataTableOutput(ns("table_stockstatus")),
+                                     style = "margin-left: 20%; margin-right: 5%;"
+                                 )
+                        ),
+                        column(2),
+                        column(
+                            5,
+                            tags$div(
+                                     div(style = "margin-bottom:0px; margin-left: 0px; margin-right: 0px;",
+                                         htmlOutput(ns("title_table_forOtherMethods"))
+                                         ),
+                                     dataTableOutput(ns("table_forOtherMethods")),
+                                     style = "margin-left: 5%; margin-right: 25%;"
+                                 )
+                        )
+                    ),
+
+                    br()
 
 
                     ##         "Results of the Thompson and Bell model: Curves of yield and biomass per recruit. The black dot represents yield and biomass under current fishing pressure. The yellow and red dashed lines represent fishing mortality for maximum sustainable yield (Fmsy) and fishing mortality to fish the stock at 50% of the virgin biomass (F0.5).",
