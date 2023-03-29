@@ -316,20 +316,20 @@ lbsprModule <- function(input, output, session) {
             flog.info("Starting LBSPR computation")
 
             ## COMMENT: this could be removed, but allows to run LBSPR without WPS
-            if(!session$userData$withtoken){
+            ## if(!session$userData$withtoken){
 
-                res <- run_lbspr(data = lbspr_dat$dataExplo[['lfq']],
-                               bin.size = input$LBSPR_binSize,
-                               linf = input$LBSPR_Linf,
-                               lm50 = input$LBSPR_Lm50,
-                               lm95 = input$LBSPR_Lm95,
-                               mk = mk,
-                               lwa = input$LBSPR_LWa,
-                               lwb = input$LBSPR_LWb,
-                               lunit = input$LBSPR_lengthUnit
-                               )
+            ##     res <- run_lbspr(data = lbspr_dat$dataExplo[['lfq']],
+            ##                    bin.size = input$LBSPR_binSize,
+            ##                    linf = input$LBSPR_Linf,
+            ##                    lm50 = input$LBSPR_Lm50,
+            ##                    lm95 = input$LBSPR_Lm95,
+            ##                    mk = mk,
+            ##                    lwa = input$LBSPR_LWa,
+            ##                    lwb = input$LBSPR_LWb,
+            ##                    lunit = input$LBSPR_lengthUnit
+            ##                    )
 
-            }else{
+            ## }else{
 
                 temp.dir <- tempdir()
                 dffile <- paste(temp.dir,"/","lbspr_data_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".csv",sep="")
@@ -395,7 +395,7 @@ lbsprModule <- function(input, output, session) {
                     print("LBSPR FAIL")
                     stop("WPS call failed.")
                 }
-            }
+            ## }
 
             js$hideComputing()
             js$enableAllButtons()
