@@ -261,9 +261,10 @@ server <- function(input, output, session) {
     }
   })
 
-    session$userData$withtoken <- withtoken
+
+    ## session$userData$withtoken <- withtoken
   app_ctrl <- reactiveValues(
-    withtoken = withtoken
+    withtoken = FALSE ## withtoken
   )
   session$userData$sessionToken <- reactiveVal(NULL)
   session$userData$sessionUsername <- reactiveVal(NULL)
@@ -316,42 +317,43 @@ server <- function(input, output, session) {
       flog.threshold(DEBUG)
       flog.appender(appender.file(fileLog))
 
-      }else{
-
-          ## set manually
-          session$userData$sessionToken(token)
-
-          #instantiate storagehub manager (uses a keyring 'env' backend by default)
-          sh_manager = d4storagehub4R::StoragehubManager$new(token = session$userData$sessionToken(), logger = "INFO")
-          session$userData$sessionUsername(sh_manager$getUserProfile()$username)
-          session$userData$storagehubManager(sh_manager)
-
-          #trace logs by user
-          fileLog <- sprintf("session_for_%s.log", sh_manager$getUserProfile()$username)
-
-          if (!is.null(session$userData$sessionToken())) {
-              flog.info("Session token is: %s", session$userData$sessionToken())
-          } else {
-              flog.info("Session token is: %s", "NULL")
-          }
-
-          if (!is.null(session$userData$sessionMode())) {
-              flog.info("Session mode is: %s", session$userData$sessionMode())
-          } else {
-              flog.info("Session mode is: %s", "NULL")
-          }
-
-          if (!is.null(session$userData$sessionUsername())) {
-              flog.info("Session username is: %s", session$userData$sessionUsername())
-              session$userData$sessionMode("GCUBE")
-          } else {
-              flog.info("Session username is: %s", "NULL")
-          }
-
-        flog.threshold(DEBUG)
-        flog.appender(appender.file(fileLog))
-
       }
+      ## else{
+
+      ##     ## set manually
+      ##     session$userData$sessionToken(token)
+
+      ##     #instantiate storagehub manager (uses a keyring 'env' backend by default)
+      ##     sh_manager = d4storagehub4R::StoragehubManager$new(token = session$userData$sessionToken(), logger = "INFO")
+      ##     session$userData$sessionUsername(sh_manager$getUserProfile()$username)
+      ##     session$userData$storagehubManager(sh_manager)
+
+      ##     #trace logs by user
+      ##     fileLog <- sprintf("session_for_%s.log", sh_manager$getUserProfile()$username)
+
+      ##     if (!is.null(session$userData$sessionToken())) {
+      ##         flog.info("Session token is: %s", session$userData$sessionToken())
+      ##     } else {
+      ##         flog.info("Session token is: %s", "NULL")
+      ##     }
+
+      ##     if (!is.null(session$userData$sessionMode())) {
+      ##         flog.info("Session mode is: %s", session$userData$sessionMode())
+      ##     } else {
+      ##         flog.info("Session mode is: %s", "NULL")
+      ##     }
+
+      ##     if (!is.null(session$userData$sessionUsername())) {
+      ##         flog.info("Session username is: %s", session$userData$sessionUsername())
+      ##         session$userData$sessionMode("GCUBE")
+      ##     } else {
+      ##         flog.info("Session username is: %s", "NULL")
+      ##     }
+
+      ##   flog.threshold(DEBUG)
+      ##   flog.appender(appender.file(fileLog))
+
+      ## }
   })
 
    observeEvent(req(!is.null(session$userData$sessionToken())),{
