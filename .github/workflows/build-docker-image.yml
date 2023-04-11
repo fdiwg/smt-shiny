@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - 'master'
-      - 'branch-*'
     tags:
       - "v*"
 
@@ -25,6 +24,7 @@ jobs:
           tags: |
             type=ref,event=branch
             type=ref,event=pr
+            type=ref,event=tag
             type=semver,pattern={{version}}  
       - name: Login to image repository
         if: github.ref_type == 'tag'
