@@ -1,4 +1,4 @@
-# Stock Monitoring Tools
+# smt-shiny: Stock Monitoring Tools
 This is the source code a the **Stock Monitoring Tool** Shiny application.
 The application has been developed on an Ubuntu 16.04 operating system and the following requirements are meant for that platform
 
@@ -42,13 +42,13 @@ install.packages(c('shiny', 'rmarkdown', 'shinythemes', 'shinydashboard', 'RCurl
 
 #### Pull / Run the image from DockerHub
 
-The SMT application nows come with an automated build & publication to [DockerHub](https://hub.docker.com/r/abennici/stock_monitoring_tool)
+The SMT application nows come with an automated build & publication to [Github Packages](https://github.com/fdiwg/smt-shiny/pkgs/container/smt-shiny)
 
 This procedure intends to facilitate the installation of the application, through a simple "pull & run":
 
 ```
-docker pull abennici/stock_monitoring_tool:latest
-docker run --name stock_monitoring_tool -p 3839:3838 abennici/stock_monitoring_tool
+docker pull ghcr.io/fdiwg/smt-shiny:latest
+docker run --name stock_monitoring_tool -p 3839:3838 fdiwg/smt-shiny
 ```
 
 And then point your browser to http://localhost:3839
