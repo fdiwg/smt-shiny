@@ -49,19 +49,17 @@ RUN R -e "devtools::install_github('AnalytixWare/ShinySky')"
 
 #Development
 ## git repo:
-# RUN git -C /root/ clone --branch lbspr4 https://github.com/tokami/StockMonitoringTool.git && echo "OK!"
+# RUN git -C /root/ clone --branch lbspr4 https://github.com/tokami/smt-shiny.git && echo "OK!"
 ## or local:
 # RUN mkdir -p root
 # RUN cd root
 # WORKDIR /root
-# ADD StockMonitoringTool.tar.gz /root/
+# ADD smt-shiny.tar.gz /root/
 
 #Development
-RUN git -C /root/ clone https://github.com/abennici/StockMonitoringTool.git && echo "OK!"
-#Deployment
-#RUN git -C /root/ clone https://github.com/pink-sh/StockMonitoringTool.git && echo "OK!"
+RUN git -C /root/ clone https://github.com/fdiwg/smt-shiny.git && echo "OK!"
 RUN mkdir -p /srv/shiny/
-RUN ln -s /root/StockMonitoringTool /srv/shiny/stockMonitoringTools
+RUN ln -s /root/smt-shiny /srv/shiny/smt-shiny
 
 EXPOSE 3838
 
@@ -70,6 +68,6 @@ ENV SMT_LOG=session.log
 RUN apt-get -y update
 RUN apt-get install -y curl
 #Development
-CMD ["R", "-e shiny::runApp('/srv/shiny/stockMonitoringTools',port=3838,host='0.0.0.0')"]
+CMD ["R", "-e shiny::runApp('/srv/shiny/smt-shiny',port=3838,host='0.0.0.0')"]
 #Deployment
-#CMD ["R", "-e shiny::runApp('/srv/shiny/stockMonitoringTools')"]
+#CMD ["R", "-e shiny::runApp('/srv/shiny/smt-shiny')"]

@@ -7,7 +7,7 @@
 #
 #version/date to show on app
 SMT_VERSION = "0.6.0"
-SMT_DATE = "2023-03-16"
+SMT_DATE = "2023-04-12"
 
 ## For local docker dev
 ## set to FALSE for VRE and local processing without WPS;
