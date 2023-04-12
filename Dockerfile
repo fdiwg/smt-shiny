@@ -57,7 +57,7 @@ RUN R -e "devtools::install_github('AnalytixWare/ShinySky')"
 # ADD smt-shiny.tar.gz /root/
 
 #Development
-RUN git -C /root/ clone https://github.com/fdiwg/smt-shiny.git && echo "OK!"
+RUN git -C /root/ clone git@github.com:fdiwg/smt-shiny.git && echo "OK!"
 RUN mkdir -p /srv/shiny/
 RUN ln -s /root/smt-shiny /srv/shiny/smt-shiny
 
