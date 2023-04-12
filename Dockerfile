@@ -41,7 +41,7 @@ RUN R -e "devtools::install_github('eblondel/ows4R')"
 RUN R -e "devtools::install_github('AnalytixWare/ShinySky')"
 
 #Development
-RUN git -C /root/ clone https://github.com/fdiwg/smt-shiny.git && echo "OK!"
+RUN git -C /root/ clone git@github.com:fdiwg/smt-shiny.git && echo "OK!"
 RUN git checkout branch-0.5.1 
 RUN mkdir -p /srv/shiny/
 RUN ln -s /root/smt-shiny /srv/shiny/smt-shiny
