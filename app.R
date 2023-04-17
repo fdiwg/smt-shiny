@@ -5,9 +5,6 @@
 #
 # Author: Enrico Anello <enrico.anello@fao.org> <enrico.anello@gmail.com>
 #
-#version/date to show on app
-SMT_VERSION = "0.6.0"
-SMT_DATE = "2023-04-12"
 
 ## For local docker dev
 ## set to FALSE for VRE and local processing without WPS;
@@ -15,39 +12,13 @@ SMT_DATE = "2023-04-12"
 withtoken <- FALSE
 token <- '' ## specify for local docker + WPS
 
-## Note that rfishbase v3.0.1 has to be installed for R<4.0.0:
-## remotes::install_github("ropensci/rfishbase", ref = "3.0.1")
-## Additional packages needed but no dependencies:
-## install.packages(c("pracma","googleVis","lubridate","XML","sf","terra"))
-## install.packages("LBSPR")
+#packages
+source("assets/commons/package_utils.R")
+loadAppPackages()
 
-library(shiny)
-library(shinyBS)
-library(shinyjs)
-#library(shinysky)
-library(shinythemes)
-library(shinydashboard)
-library(RCurl)
-library(httr)
-library(fishmethods)
-library(TropFishR)
-library(ggplot2)
-library(rfishbase)
-library(waiter)
-library(futile.logger)
-library(R.utils)
-library(knitr)
-library(shinyWidgets)
-library(XML)
-library(d4storagehub4R)
-library(xml2)
-library(ows4R)
-library(DT)
-library(kableExtra)
-library(LBSPR)
-library(openxlsx)
-
-
+#version/date to show on app
+SMT_VERSION = getAppVersion()
+SMT_DATE = getAppDate()
 
 ##### Dependencies
 ## UI

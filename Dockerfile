@@ -1,7 +1,6 @@
 FROM rocker/r-ver:4
 
-MAINTAINER Alexandre Bennici "alexandre.bennici@fao.org"
-
+MAINTAINER Alexandre Bennici "Alexandre.Bennici@fao.org"
 
 # system libraries of general use
 RUN apt-get update && apt-get install -y \
@@ -32,31 +31,19 @@ RUN apt-get update && apt-get install -y \
     libharfbuzz-dev \
     libfribidi-dev
 
-
-
 RUN apt-get update && apt-get upgrade -y
 
 RUN apt-get update && apt-get -y install cmake
 
-# install dependencies of the Stock monitoring tool app
+# install core package dependencies
 RUN install2.r --error --skipinstalled --ncpus -1 remotes
-RUN R -e "install.packages(c('XML', 'xml2','shiny','rmarkdown','shinyjs','shinythemes','shinydashboard','shinyWidgets','RCurl','ggplot2','rfishbase','shinyBS','lubridate','waiter','pracma','googleVis','stringr','R.utils','fishmethods','V8','DT','futile.logger','TropFishR','nloptr','R6','sodium','keyring'), repos='https://cran.r-project.org/')"
-RUN R -e "install.packages(c('kableExtra','LBSPR','openxlsx'), repos='https://cran.r-project.org/')"
-RUN R -e "remotes::install_github('eblondel/d4storagehub4R')"
-RUN R -e "remotes::install_github('eblondel/ows4R')"
-RUN R -e "remotes::install_github('AnalytixWare/ShinySky')"
-
-#Development
-## git repo:
-# RUN git -C /root/ clone --branch lbspr4 https://github.com/tokami/smt-shiny.git && echo "OK!"
-## or local:
-# RUN mkdir -p root
-# RUN cd root
-# WORKDIR /root
-# ADD smt-shiny.tar.gz /root/
-
-#Development
+RUN R -e "install.packages(c('jsonlite','yaml'), repos='https://cran.r-project.org/')"
+# clone app
 RUN git -C /root/ clone https://github.com/fdiwg/smt-shiny.git && echo "OK!"
+RUN ln -s /root/smt-shiny /srv/smt-shiny
+# install R app package dependencies
+RUN R -e "source('./srv/smt-shiny/install.R')"
+
 #RUN mkdir -p /srv/shiny/
 RUN ln -s /root/smt-shiny /srv/shiny/smt-shiny
 
@@ -68,5 +55,3 @@ RUN apt-get -y update
 RUN apt-get install -y curl
 #Development
 CMD ["R", "-e shiny::runApp('/srv/shiny/smt-shiny',port=3838,host='0.0.0.0')"]
-#Deployment
-#CMD ["R", "-e shiny::runApp('/srv/shiny/smt-shiny')"]
