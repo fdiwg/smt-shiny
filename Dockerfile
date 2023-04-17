@@ -39,6 +39,7 @@ RUN install2.r --error --skipinstalled --ncpus -1 remotes
 RUN R -e "install.packages(c('jsonlite','yaml'), repos='https://cran.r-project.org/')"
 # clone app
 RUN git -C /root/ clone https://github.com/fdiwg/smt-shiny.git && echo "OK!"
+RUN cd /root/smt-shiny
 RUN git checkout branch-0.5.1 
 RUN ln -s /root/smt-shiny /srv/shiny/smt-shiny
 # install R app package dependencies
