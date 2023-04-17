@@ -39,13 +39,12 @@ RUN apt-get update && apt-get upgrade -y
 RUN apt-get update && apt-get -y install cmake
 
 # install dependencies of the Stock monitoring tool app
-RUN R -e "install.packages(c('devtools'), repos='https://cran.r-project.org/', dependencies = TRUE)"
-
+RUN install2.r --error --skipinstalled --ncpus -1 remotes
 RUN R -e "install.packages(c('XML', 'xml2','shiny','rmarkdown','shinyjs','shinythemes','shinydashboard','shinyWidgets','RCurl','ggplot2','rfishbase','shinyBS','lubridate','waiter','pracma','googleVis','stringr','R.utils','fishmethods','V8','DT','futile.logger','TropFishR','nloptr','R6','sodium','keyring'), repos='https://cran.r-project.org/')"
 RUN R -e "install.packages(c('kableExtra','LBSPR','openxlsx'), repos='https://cran.r-project.org/')"
-RUN R -e "devtools::install_github('eblondel/d4storagehub4R')"
-RUN R -e "devtools::install_github('eblondel/ows4R')"
-RUN R -e "devtools::install_github('AnalytixWare/ShinySky')"
+RUN R -e "remotes::install_github('eblondel/d4storagehub4R')"
+RUN R -e "remotes::install_github('eblondel/ows4R')"
+RUN R -e "remotes::install_github('AnalytixWare/ShinySky')"
 
 #Development
 ## git repo:
