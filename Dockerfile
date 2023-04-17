@@ -32,7 +32,6 @@ RUN apt-get update && apt-get install -y \
     libfribidi-dev
 
 RUN apt-get update && apt-get upgrade -y
-
 RUN apt-get update && apt-get -y install cmake
 
 # install core package dependencies
