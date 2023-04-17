@@ -43,9 +43,6 @@ RUN ln -s /root/smt-shiny /srv/smt-shiny
 # install R app package dependencies
 RUN R -e "source('./srv/smt-shiny/install.R')"
 
-#RUN mkdir -p /srv/shiny/
-RUN ln -s /root/smt-shiny /srv/shiny/smt-shiny
-
 EXPOSE 3838
 
 ENV SMT_LOG=session.log
