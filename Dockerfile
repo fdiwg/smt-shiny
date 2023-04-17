@@ -1,6 +1,6 @@
 FROM rocker/r-ver:4
 
-MAINTAINER Alexandre Bennici "Alexandre.Bennici@fao.org"
+MAINTAINER Emmanuel Blondel "emmanuel.blondel@fao.org"
 
 # system libraries of general use
 RUN apt-get update && apt-get install -y \
