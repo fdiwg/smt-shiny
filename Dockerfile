@@ -50,4 +50,4 @@ ENV SMT_LOG=session.log
 RUN apt-get -y update
 RUN apt-get install -y curl
 #Development
-CMD ["R", "-e shiny::runApp('/srv/shiny/smt-shiny',port=3838,host='0.0.0.0')"]
+CMD ["R", "-e shiny::runApp('/srv/smt-shiny',port=3838,host='0.0.0.0')"]
