@@ -42,7 +42,7 @@ RUN git -C /root/ clone https://github.com/fdiwg/smt-shiny.git && echo "OK!"
 WORKDIR /root/smt-shiny
 RUN git checkout branch-0.5.1
 WORKDIR /
-RUN ln -s /root/smt-shiny /srv/shiny/smt-shiny
+RUN ln -s /root/smt-shiny /srv/smt-shiny
 # install R app package dependencies
 RUN R -e "source('./srv/smt-shiny/install.R')"
 
@@ -52,4 +52,4 @@ ENV SMT_LOG=session.log
 
 RUN apt-get install -y curl
 #Development
-CMD ["R", "-e shiny::runApp('/srv/shiny/smt-shiny',port=3838,host='0.0.0.0')"]
+CMD ["R", "-e shiny::runApp('/srv/smt-shiny',port=3838,host='0.0.0.0')"]
