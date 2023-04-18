@@ -2,7 +2,6 @@
 .Rhistory
 .RData
 .Ruserdata
-smt-shiny.Rproj
 debug.log
 session.log
 *.tar.gz
