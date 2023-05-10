@@ -34,6 +34,7 @@ loadAppPackages <- function(){
     return(pkg)
   })
   invisible(lapply(list_of_packages, function(x) {
+      if(x == "ShinySky") x <- "shinysky"
     require(x,character.only = TRUE, quietly = TRUE)
   }))
 }
