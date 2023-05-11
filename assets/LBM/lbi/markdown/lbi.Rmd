@@ -9,6 +9,10 @@ output:
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 header-includes:
   - \usepackage{float}
+  - \usepackage{booktabs}
+  - \usepackage{xcolor}
+  - \definecolor{Greeni}{HTML}{EA6249}
+  - \definecolor{Redi}{HTML}{6CB87B}
 ---
 
 ```{r setup, include=FALSE}
@@ -40,6 +44,7 @@ stock is likely to be harvested optimally (optimal yield and MSY).
 &nbsp;
 &nbsp;
 &nbsp;
+
 
 ```{r echo=FALSE}
 tableLBI.intro(lbi_dat, input, format = "kable")
@@ -83,7 +88,6 @@ The indicators make a number of assumptions:
 &nbsp;
 &nbsp;
 
-
 # Summary of input data and parameters
 
 The uploaded data (*"*`r paste0("*",input$fileLBI$name,"*")`*"*) spans `r length(lbi_dat$dataExplo[['lfq']]$dates)` year(s). Following years were selected for the analysis: `r paste(input$LBI_years_selected, collapse = ", ")`. Figure 1 shows the length frequency distributions for each year that were binned with a bin size of `r input$LBI_binSize` `r input$LBI_lengthUnit`.
@@ -106,7 +110,6 @@ writeLines(captionLBI.plots(lbi_dat, input, format = "withFigLatex", type = "dat
 
 The life-history parameters required for the estimation of the length-based
 indicators (LBIs) were set to following values (Table 2).
-
 
 ```{r echo=FALSE}
 tableLBI.inputPars(lbi_dat, input, format = "kable")

@@ -433,23 +433,30 @@ tableLBI.ratios <- function(lbi_dat, input, format = "datatable"){
         colnames(tmp) <- labs
         return(tmp)
     }else if(format == "kable"){
+        cols <- c("Greeni","Redi")
         capti <- captionLBI.tables(lbi_dat, input, format = format,
                                    type = "ratios")
-        tmp[,2] <- kableExtra::cell_spec(tmp[,2], background = ifelse(tmp[,2] > 0.8, cols[1], cols[2]))
-        tmp[,3] <- kableExtra::cell_spec(tmp[,3], background = ifelse(tmp[,3] > 0.8, cols[1], cols[2]))
-        tmp[,4] <- kableExtra::cell_spec(tmp[,4], background = ifelse(tmp[,4] > 0.3, cols[1], cols[2]))
-        tmp[,5] <- kableExtra::cell_spec(tmp[,5], background = ifelse(tmp[,5] > 1, cols[1], cols[2]))
-        tmp[,6] <- kableExtra::cell_spec(tmp[,6], background = ifelse(tmp[,6] > 1, cols[1], cols[2]))
-        tmp[,7] <- kableExtra::cell_spec(tmp[,7], background = ifelse(tmp[,7] > 1, cols[1], cols[2]))
-        tmp[,8] <- kableExtra::cell_spec(tmp[,8], background = ifelse(tmp[,8] > 1, cols[1], cols[2]))
-        if(ncol(tmp) > 8) tmp[,9] <- kableExtra::cell_spec(tmp[,9], background = ifelse(tmp[,9] > 1, cols[1], cols[2]))
-        return(knitr::kable(tmp, format = "latex", col.names = labs,
-                            row.names = FALSE, escape = FALSE,
-                            align=rep('c',ncol(tmp)),
-                            linesep = "",
-                            caption = capti)  %>%
-               kable_styling(font_size = 11, latex_options = "HOLD_position") %>%
-               column_spec(1:ncol(tmp), width = "1.7cm"))
+        tmp[,2] <- kableExtra::cell_spec(tmp[,2], format = "latex", background = ifelse(tmp[,2] > 0.8, cols[1], cols[2]))
+        tmp[,3] <- kableExtra::cell_spec(tmp[,3], format = "latex", background = ifelse(tmp[,3] > 0.8, cols[1], cols[2]))
+        tmp[,4] <- kableExtra::cell_spec(tmp[,4], format = "latex", background = ifelse(tmp[,4] > 0.3, cols[1], cols[2]))
+        tmp[,5] <- kableExtra::cell_spec(tmp[,5], format = "latex", background = ifelse(tmp[,5] > 1, cols[1], cols[2]))
+        tmp[,6] <- kableExtra::cell_spec(tmp[,6], format = "latex", background = ifelse(tmp[,6] > 1, cols[1], cols[2]))
+        tmp[,7] <- kableExtra::cell_spec(tmp[,7], format = "latex", background = ifelse(tmp[,7] > 1, cols[1], cols[2]))
+        tmp[,8] <- kableExtra::cell_spec(tmp[,8], format = "latex", background = ifelse(tmp[,8] > 1, cols[1], cols[2]))
+        if(ncol(tmp) > 8) tmp[,9] <- kableExtra::cell_spec(tmp[,9], format = "latex", background = ifelse(tmp[,9] > 1, cols[1], cols[2]))
+
+
+        return(
+            kableExtra::kable(tmp, format = "latex", col.names = labs,
+                              booktabs = TRUE,
+                              row.names = FALSE, escape = FALSE,
+                              align=rep('c',ncol(tmp)),
+                              linesep = "",
+                              caption = capti)  %>%
+            kable_styling(font_size = 11, latex_options = "HOLD_position") %>%
+            column_spec(1:ncol(tmp), width = "1.7cm")
+        )
+
     }else if(format == "datatable"){
         return(DT::datatable(tmp, colnames = labs,
                              escape = FALSE, rownames = FALSE,
