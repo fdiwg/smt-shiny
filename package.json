@@ -31,7 +31,7 @@
     {"package": "kableExtra", "version": "1.3.4", "repos": "https://cran.r-project.org"},
     {"package": "ows4R", "version": "0.3-5", "repos": "https://cran.r-project.org"},
     {"package": "d4storagehub4R", "version": "0.4-2", "repos": "https://cran.r-project.org"},
-    {"repo": "AnalytixWare/ShinySky", "from": "github", "dependencies": false},
+    {"repo": "AnalytixWare/shinysky", "from": "github", "dependencies": false},
     {"package": "rfishbase", "version": "4.1.1", "repos": "https://cran.r-project.org"},
     {"package": "fishmethods", "version": "1.12-0", "repos": "https://cran.r-project.org"},
     {"package": "TropFishR", "version": "1.6.3", "repos": "https://cran.r-project.org"},
