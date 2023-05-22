@@ -138,12 +138,17 @@ getResultConsiderationTextForCmsy <- function() {
 }
 
 
+linkEA <- "<a href='https://data.d4science.org/shub/E_Snp1NzhlUHlFOWg0M3lUL3lZWU0yMVVTVFY5NDhaYkI1ODY4blFtSi9NYlFiMVAyamxMNGc2QXh0TlpRNmdNdQ==' target='_blank'>click to download</a>"
+linkSE <- "<a href='https://data.d4science.org/shub/E_ZEhvM2ZpSVFZd0ZOSXl5MjlGZC90eC9vOUI1NG1hQ0NEMERtRGVHR2hqbThBZGxBYS9QWG5kc1BaWTluVHNvQw==' target='_blank'>click to download</a>"
+linkOSG <- "<a href='https://data.d4science.org/shub/E_SHJJRUJ5S1lxOGhLOW1zVWpKbUJFQzE1c2wzbnltRlVBUmYrUEphbDRkN1BxQzlYOUtwQWRzZ0JMdnJrSmRhZA==' target='_blank'>click to download</a>"
+
 
 
 ## ELEFAN
 ## ------------------------------------------------------
 getDataConsiderationTextForElefan <- function() {
-  text <- "<b>Dataset must include:</b>"
+    text <- "<b>Two data formats are accepted:</b><br>"
+  text <- paste0(text, "<b>1. Format: Length frequency data must include:</b>")
   text <- paste0(text, "<ul>")
   text <- paste0(text,
                  "<li>A column indicating the length classes of measured individuals (first column of dataset).</li>")
@@ -152,33 +157,44 @@ getDataConsiderationTextForElefan <- function() {
                  "<li>The number of individuals caught per length class (rows) and per sampling date (columns).</li>")
   text <- paste0(text, "</ul>")
   text <- paste0(text, "<br>")
-  text <- paste0(text, "<p> An example dataset in this format can be downloaded <a href='https://data.d4science.org/shub/E_Yzc0aHFhWE50WWdpaEhkMjl5TExHekdQU2NFR2FtNTM2NkRydTQ5clhMTzhVd3Y4bDJzcU16UXNSUWJzZ1NpTg=='> here </a>. </p>")
+  text <- paste0(text, "<p> An example dataset in this format can be downloaded here (",linkSE,"). </p>")
+  text <- paste0(text, "<br>")
+  text <- paste0(text, "<b>2. Format: Raw length measurements must include:</b>")
+  text <- paste0(text, "<ul>")
+  text <- paste0(text, "<li>A column indicating the dates when individuals were measured (first column of dataset).</li>")
+  text <- paste0(text,
+                 "<li>A column indicating the length of measured individuals (second column of dataset).</li>")
+
+  text <- paste0(text,
+                 "<li>Optionally: A column indicating the number of individuals of the given length (third column of the dataset).</li>")
+  text <- paste0(text, "</ul>")
+  text <- paste0(text, "<br>")
+  text <- paste0(text, "<p> An example dataset in this format can be downloaded here (",linkEA,"). </p>")
+  text <- paste0(text, "<br>")
   text <- paste0(text, "<br>")
   text <- paste0(text, "<b>Specific considerations regarding your own dataset:</b>")
   text <- paste0(text, "<ul>")
   text <- paste0(text, "<li>", "Save your dataset in 'csv' format.", "</li>")
   text <- paste0(text, "<li>", "The separator for the .csv file should be a comma ‘,’ semicolon ';' or tab. The default might differ depending on the language settings of your spreadsheet manipulation program (e.g. Excel).", "</li>")
   text <- paste0(text, "<li>", "Use a '.' to separate decimals in the data. The default might differ depending on the language settings of your spreadsheet manipulation program (e.g. Excel).", "</li>")
-  text <- paste0(text, "<li>", "The first column of the data set should include the mid lengths of the length classes.", "</li>")
-  text <- paste0(text, "<li>The data format of your data file should be automatically detected, or select the date format used in your data file under <b>'Choose CSV date format'</b>, e.g. DD/MM/YYYY format to select 'Day Month Year'.</li>")
-  text <- paste0(text, "<li>The date must include a specification of the day. If the data are aggregated or no information about the day is available, you could consider to set the day to the midpoint of the month, e.g. 15/01/2021.</li>")
-  text <- paste0(text, "<li>Your data set should at least be representative of a whole year. This is particularly important if seasonally varying growth is estimated.</li>")
-
-
-  ## text <- paste0(text, "<li>Ensure that your dates are given in chronological order.</li>")
-  ## text <- paste0(text, "<li>", "Ensure that the 'midLength' column name is identical to the sample dataset.", "</li>")
+  text <- paste0(text, "<li>The date format of your data file should be automatically detected, or select the date format used in your data file under <b>'Choose CSV date format'</b>, e.g. DD/MM/YYYY format to select 'Day Month Year'.</li>")
+  text <- paste0(text, "<li>For data format 1, the columns should represent catches representative for a whole year. If no date column is provided for data format 2, it is assumed that all samples are representative for a single year.</li>")
+  text <- paste0(text, "<li>Your data set should at least be representative of a whole year.</li>")
   text <- paste0(text, "</ul>")
+  text <- paste0(text, "<br>")
+
   text <- paste0(text, "<br>")
   text <- paste0(text, "<p> Further information about differnet formats of length-frequency datasets ",
                  "and how to convert one format to the other are described in a ",
                  "<a href='https://cran.r-project.org/web/packages/TropFishR/vignettes/lfqData.html'  target='blank_'>tutorial by Mildenberger (2020)</a>. </p>")
+
     return (text)
 }
 
 getWorkflowConsiderationTextForElefan <- function() {
   text <- "<h4> To run this length-based workflow in the Stock Monitoring Tool :</h4>"
   text <- paste0(text, "<ol>")
-  text <- paste0(text, "<li> Upload a size frequency data set (see Data Considerations or the <a href='https://data.d4science.org/shub/E_Yzc0aHFhWE50WWdpaEhkMjl5TExHekdQU2NFR2FtNTM2NkRydTQ5clhMTzhVd3Y4bDJzcU16UXNSUWJzZ1NpTg=='> Elefan Sample dataset </a>)</li>")
+  text <- paste0(text, "<li> Upload a size frequency data set (see Data Considerations or one of the sample datasets (e.g., ",linkSE,"))</li>")
   text <- paste0(text, "<li> Adjust the Assessment Settings")
   text <- paste0(text, "<ol type='a'>")
   text <- paste0(text, "<li> Data Settings - select the years of data to include in the analysis, adjust the aggregation, bin size and moving average (MA) of the dataset to optimise cohort recognition by the Elefan algorithm </li>")
@@ -381,12 +397,10 @@ getResultConsiderationTextForElefan <- function() {
 
 
 
-
-
 ## LBI
 ## ------------------------------------------------------
 getDataConsiderationTextForLBI <- function() {
-  text <- "<b>Two data formats are accepted:</b><br>"
+    text <- "<b>Two data formats are accepted:</b><br>"
   text <- paste0(text, "<b>1. Format: Length frequency data must include:</b>")
   text <- paste0(text, "<ul>")
   text <- paste0(text,
@@ -396,7 +410,7 @@ getDataConsiderationTextForLBI <- function() {
                  "<li>The number of individuals caught per length class (rows) and per sampling date (columns).</li>")
   text <- paste0(text, "</ul>")
   text <- paste0(text, "<br>")
-  text <- paste0(text, "<p> An example dataset in this format can be downloaded <a href='https://data.d4science.org/shub/E_Yzc0aHFhWE50WWdpaEhkMjl5TExHekdQU2NFR2FtNTM2NkRydTQ5clhMTzhVd3Y4bDJzcU16UXNSUWJzZ1NpTg=='> here </a>. </p>")
+  text <- paste0(text, "<p> An example dataset in this format can be downloaded here (",linkSE,"). </p>")
   text <- paste0(text, "<br>")
   text <- paste0(text, "<b>2. Format: Raw length measurements must include:</b>")
   text <- paste0(text, "<ul>")
@@ -408,7 +422,7 @@ getDataConsiderationTextForLBI <- function() {
                  "<li>Optionally: A column indicating the number of individuals of the given length (third column of the dataset).</li>")
   text <- paste0(text, "</ul>")
   text <- paste0(text, "<br>")
-  text <- paste0(text, "<p> An example dataset in this format can be downloaded <a href='https://data.d4science.org/shub/E_Yzc0aHFhWE50WWdpaEhkMjl5TExHekdQU2NFR2FtNTM2NkRydTQ5clhMTzhVd3Y4bDJzcU16UXNSUWJzZ1NpTg=='> here </a>. </p>")
+  text <- paste0(text, "<p> An example dataset in this format can be downloaded here (",linkEA,"). </p>")
   text <- paste0(text, "<br>")
   text <- paste0(text, "<br>")
   text <- paste0(text, "<b>Specific considerations regarding your own dataset:</b>")
@@ -433,7 +447,7 @@ getDataConsiderationTextForLBI <- function() {
 getWorkflowConsiderationTextForLBI <- function() {
   text <- "<h4> To run this length-based workflow in the Stock Monitoring Tool:</h4>"
   text <- paste0(text, "<ol>")
-  text <- paste0(text, "<li> Upload a size frequency data set (see Data Considerations or the <a href='https://data.d4science.org/shub/E_Yzc0aHFhWE50WWdpaEhkMjl5TExHekdQU2NFR2FtNTM2NkRydTQ5clhMTzhVd3Y4bDJzcU16UXNSUWJzZ1NpTg=='> LBI sample dataset </a>)</li>")
+  text <- paste0(text, "<li> Upload a size frequency data set (see Data Considerations or one of the sample datasets (e.g., ",linkSE,"))</li>")
   text <- paste0(text, "<li> Specify life history parameters such as the M/K ratio, Linf and Lm50. </li>")
   text <- paste0(text, "<li> If available specify the parameters of the length-weight relationship. </li>")
   text <- paste0(text, "<li> Run the assessment ('Run Assessment' button). </li>")
@@ -736,7 +750,7 @@ getDataConsiderationTextForLBSPR <- function() {
                  "<li>The number of individuals caught per length class (rows) and per sampling date (columns).</li>")
   text <- paste0(text, "</ul>")
   text <- paste0(text, "<br>")
-  text <- paste0(text, "<p> An example dataset in this format can be downloaded <a href='https://data.d4science.org/shub/E_Yzc0aHFhWE50WWdpaEhkMjl5TExHekdQU2NFR2FtNTM2NkRydTQ5clhMTzhVd3Y4bDJzcU16UXNSUWJzZ1NpTg=='> here </a>. </p>")
+  text <- paste0(text, "<p> An example dataset in this format can be downloaded here (",linkSE,"). </p>")
   text <- paste0(text, "<br>")
   text <- paste0(text, "<b>2. Format: Raw length measurements must include:</b>")
   text <- paste0(text, "<ul>")
@@ -748,7 +762,7 @@ getDataConsiderationTextForLBSPR <- function() {
                  "<li>Optionally: A column indicating the number of individuals of the given length (third column of the dataset).</li>")
   text <- paste0(text, "</ul>")
   text <- paste0(text, "<br>")
-  text <- paste0(text, "<p> An example dataset in this format can be downloaded <a href='https://data.d4science.org/shub/E_Yzc0aHFhWE50WWdpaEhkMjl5TExHekdQU2NFR2FtNTM2NkRydTQ5clhMTzhVd3Y4bDJzcU16UXNSUWJzZ1NpTg=='> here </a>. </p>")
+  text <- paste0(text, "<p> An example dataset in this format can be downloaded here (",linkEA,"). </p>")
   text <- paste0(text, "<br>")
   text <- paste0(text, "<br>")
   text <- paste0(text, "<b>Specific considerations regarding your own dataset:</b>")
@@ -773,7 +787,7 @@ getDataConsiderationTextForLBSPR <- function() {
 getWorkflowConsiderationTextForLBSPR <- function() {
   text <- "<h4> To run this length-based workflow in the Stock Monitoring Tool:</h4>"
   text <- paste0(text, "<ol>")
-  text <- paste0(text, "<li> Upload a size frequency data set (see Data Considerations or the <a href='https://data.d4science.org/shub/E_Yzc0aHFhWE50WWdpaEhkMjl5TExHekdQU2NFR2FtNTM2NkRydTQ5clhMTzhVd3Y4bDJzcU16UXNSUWJzZ1NpTg=='> LBSPR sample dataset </a>)</li>")
+  text <- paste0(text, "<li> Upload a size frequency data set (see Data Considerations or one of the sample datasets (e.g., ",linkSE,"))</li>")
   text <- paste0(text, "<li> Specify life history parameters such as the ratio of natural mortality and the von Bertlanaffy growth rate (",withMathJax('\\(M/K\\)'),"), the asymptotic length of the von Bertalanffy growth function (",withMathJax('\\(L_{\\infty}\\)'),"), and the maturity parameters (",withMathJax('\\(L_{m50}\\)')," and ",withMathJax('\\(L_{m95}\\)'),"). </li>")
   text <- paste0(text, "<li> If available specify the parameters of the length-weight relationship (a and b). Note, that the default values of the LBSPR method of 1e-4 and 3 are assumed for these two parameters, respectively, if not specified. </li>")
   text <- paste0(text, "<li> Run the assessment ('Run Assessment' button). </li>")

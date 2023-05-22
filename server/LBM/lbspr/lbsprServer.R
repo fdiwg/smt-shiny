@@ -309,11 +309,12 @@ lbsprModule <- function(input, output, session) {
                                     ),
                                   can.be.zero = FALSE)
 
-            if(input$LBSPR_Linf > max(lbspr_dat$dataExplo[['lfq']]$midLengths)){
-                stop(paste0("The specified asymptotic length (Linf = ",input$LBSPR_Linf,") is smaller than the largest length class (",max(lbspr_dat$dataExplo[['lfq']]$midLengths),"). This is not possible for LBSPR! Please consider using another Linf value."))
-            }
+            ## if(input$LBSPR_Linf > max(lbspr_dat$dataExplo[['lfq']]$midLengths)){
+            ##     stop(paste0("The specified asymptotic length (Linf = ",input$LBSPR_Linf,") is smaller than the largest length class (",max(lbspr_dat$dataExplo[['lfq']]$midLengths),"). This is not possible for LBSPR! Please consider using another Linf value."))
+            ## }
 
             flog.info("Starting LBSPR computation")
+
 
             ## COMMENT: this could be removed, but allows to run LBSPR without WPS
             ## if(!session$userData$withtoken){
@@ -395,7 +396,7 @@ lbsprModule <- function(input, output, session) {
                     print("LBSPR FAIL")
                     stop("WPS call failed.")
                 }
-            ## }
+            ## } ## HERE:
 
             js$hideComputing()
             js$enableAllButtons()

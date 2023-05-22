@@ -31,9 +31,9 @@ run_lbspr <- function(data, bin.size, linf, lm50, lm95, mk, lwa, lwb, lunit){
 
         ## More checks
         ## LBSPR returns error if Linf is larger than max length class
-        if(linf > max(midL + bin.size/2, na.rm = TRUE)){
-            stop("Linf cannot be smaller than max length class in data!")
-        }
+        ## if(linf > max(midL + bin.size/2, na.rm = TRUE)){
+        ##     stop("Linf cannot be smaller than max length class in data!")
+        ## }
         if(lm50 > lm95){
             stop("Lm50 is larger than Lm95! That is not possible")
         }
@@ -82,6 +82,18 @@ run_lbspr <- function(data, bin.size, linf, lm50, lm95, mk, lwa, lwb, lunit){
                                            dataType = "freq")})
         lblengths@Years <- as.numeric(lblengths@Years)
         lblengths@LMids <- dataYearly$midLengths  ## overwrite dummy midlengths
+
+        if(lbpars@Linf > max(dataYearly$midLengths)){
+
+            lmids <- dataYearly$midLengths
+            lmids.add <- seq(max(lmids), 2 * lbpars@Linf, lbpars@BinWidth)[-1]
+            lmids.add <- lmids.add[1:which(lmids.add > lbpars@Linf)[1]]
+            lblengths@LMids <- c(lmids,lmids.add)
+
+            ldata <- lblengths@LData
+            ldata <- rbind(ldata,matrix(0, length(lmids.add), ncol(ldata)))
+            lblengths@LData <- ldata
+        }
 
         ## Fit LBSPR
         modfit <- try(LBSPRfit(lbpars, lblengths, useCPP = TRUE))
