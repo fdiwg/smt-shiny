@@ -73,10 +73,11 @@ tableLBSPR.inputPars <- function(lbspr_dat, input, format = "datatable"){
                   "b")
     }
 
-
     ## Selection
+    if(length(ind.remove) > 0){
+        labs <- labs[-ind.remove]
+    }
     tmp <- tab
-    labs <- labs[-ind.remove]
 
     ## Rounding
     tmp[,which(labs != "Length unit")] <- signif(tmp[,which(labs != "Length unit")],

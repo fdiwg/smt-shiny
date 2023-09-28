@@ -179,7 +179,9 @@ tableLBI.inputPars <- function(lbi_dat, input, format = "datatable"){
                       a = input$LBI_LWa,
                       b = input$LBI_LWb)
     ind.remove <- which(is.na(tab[1,]))
-    tab <- tab[,-ind.remove]
+    if(length(ind.remove) > 0){
+        tab <- tab[,-ind.remove]
+    }
 
     if(format == "datatable"){
         labs <- c("Bin size",
@@ -212,11 +214,14 @@ tableLBI.inputPars <- function(lbi_dat, input, format = "datatable"){
                   "a",
                   "b")
     }
-    colnames(tab) <- labs[-ind.remove]
 
     ## Selection
+    if(length(ind.remove) > 0){
+        labs <- labs[-ind.remove]
+    }
+    colnames(tab) <- labs
     tmp <- tab
-    labs <- labs[-ind.remove]
+
 
     ## Rounding
     tmp[,which(labs != "Length unit")] <- signif(tmp[,which(labs != "Length unit")],
