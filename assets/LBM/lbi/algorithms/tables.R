@@ -433,12 +433,16 @@ tableLBI.ratios <- function(lbi_dat, input, format = "datatable"){
     tmp <- signif(tmp, digits = 3)
 
     ## cols <- rgb(t(col2rgb(c("darkred","darkgreen"))/255), alpha = 0.3)
+    # 
     cols <- c("#EA6249","#6CB87B")
     if(format == "dataframe"){
         colnames(tmp) <- labs
         return(tmp)
     }else if(format == "kable"){
-        cols <- c("Greeni","Redi")
+      cols <- c("#6CB87B","#EA6249")
+      # cols <- c("#EA6249","#6CB87B")
+        # cols <- c("Greeni","Redi")
+      
         capti <- captionLBI.tables(lbi_dat, input, format = format,
                                    type = "ratios")
         tmp[,2] <- kableExtra::cell_spec(tmp[,2], format = "latex", background = ifelse(tmp[,2] > 0.8, cols[1], cols[2]))
