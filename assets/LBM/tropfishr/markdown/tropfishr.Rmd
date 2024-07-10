@@ -7,6 +7,7 @@ output:
       booktabs: null
       colortbl: null
 date: "`r format(Sys.time(), '%d %B, %Y')`"
+keep_tex: true
 header-includes:
   - \usepackage{float}
 ---
