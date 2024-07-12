@@ -48,7 +48,7 @@ This procedure intends to facilitate the installation of the application, throug
 
 ```
 docker pull ghcr.io/fdiwg/smt-shiny:latest
-docker run --name stock_monitoring_tool -p 3839:3838 fdiwg/smt-shiny
+docker run --name stock_monitoring_tool -p 3839:3838 ghcr.io/fdiwg/smt-shiny
 ```
 
 And then point your browser to http://localhost:3839
