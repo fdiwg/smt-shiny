@@ -71,3 +71,4 @@ sudo docker run -p 3839:3838 stock_monitoring_tool
 ```
 
 And then point your browser to http://localhost:3839
+
