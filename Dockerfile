@@ -1,4 +1,4 @@
-FROM rocker/shiny:4.4.0
+FROM rocker/shiny:4.3.0
 
 MAINTAINER Emmanuel Blondel "emmanuel.blondel@fao.org"
 
