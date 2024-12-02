@@ -8,7 +8,7 @@
     {"package": "XML", "version": "3.99-0.17", "repos": "https://cran.r-project.org"},
     {"package": "xml2", "version": "1.3.6", "repos": "https://cran.r-project.org"},
     {"package": "rmarkdown", "version": "2.5", "repos": "https://cran.r-project.org"},
-    {"package": "shiny", "version": "1.7.1", "repos": "https://cran.r-project.org"},
+    {"package": "shiny", "version": "1.9.1", "repos": "https://cran.r-project.org"},
     {"package": "shinyjs", "version": "2.0.0", "repos": "https://cran.r-project.org"},
     {"package": "shinythemes", "version": "1.2.0", "repos": "https://cran.r-project.org"},
     {"package": "shinydashboard", "version": "0.7.2", "repos": "https://cran.r-project.org"},
