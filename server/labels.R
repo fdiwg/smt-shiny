@@ -817,6 +817,9 @@ output$fishMethodsIntroOut <- renderText({
 
 output$cmsySampleDataset <- renderText({
     session$userData$page('cmsy-sample')
+  
+    sample_dataset_url = "https://data.d4science.org/shub/E_N0JSRlVEN3gwdmpjRnp5Y1BIWm5sS1QxZnUzUTRNSlp5ek50R2xlY0ZUZXVDUlFHTFFES3liblJGRSt4YWExMw=="
+  
     link <- paste0("<a href='",sample_dataset_url,"' target='_blank'>Click Here</a>")
     text <- paste0("<p><h4>", link,"&nbsp; to download a sample dataset that can be used with <b>CMSY</b> methods", "</h4></p>")
     text <- paste0(text, "<hr />")
