@@ -1,6 +1,7 @@
 ########################### ALL LABELS ###########################
 output$homeInfo <- renderText({
     session$userData$page("home")
+  
     text <- "<h3>Stock Monitoring Tool for limited data</h3>"
 
     text <- paste0(text,"<p>")
@@ -74,6 +75,9 @@ This tool was designed to allow users with little to no programming experience t
 
 output$cmsyIntroOut <- renderText({
     session$userData$page("cmsy-intro")
+  
+    sample_dataset_url = "https://data.d4science.org/shub/E_N0JSRlVEN3gwdmpjRnp5Y1BIWm5sS1QxZnUzUTRNSlp5ek50R2xlY0ZUZXVDUlFHTFFES3liblJGRSt4YWExMw=="
+  
     text <- "<h3><b>CMSY - Catch-Maximum Sustainable Yield</b></h3>"
     text <- paste0(text, "<p>")
     # text <- paste0(text, "The <b>CMSY</b> method for data-limited stock assessment. Described in <a target='_blank' href='https://www.researchgate.net/publication/309283306_Estimating_fisheries_reference_points_from_catch_and_resilience'>Froese et al 2017</a>")
@@ -112,7 +116,7 @@ output$cmsyIntroOut <- renderText({
     text <- paste0(text, "<li><b>bt</b>: the value of the biomass (in tonnes, e.g. 34567), or the value of the CPUE or stock size index (e.g. 0.123), or NA if there is no information. Gaps filled with NA are acceptable for bt, i.e., abundance data can be fewer than catch data.</li>")
     text <- paste0(text, "</ul>")
     text <- paste0(text, "Other columns are identifiers that you may choose to include, but they are not necessary to run the model.<br><br>")
-    text <- paste0(text, "Use the <a href=https://data.d4science.org/shub/E_WWI3clpMdGVONG84eVNvblBxOWVPQ2FPUVArYkptQ1JsM2c1K2hkYWpjSlhmeUw1eXI2RGFLZUdMZW5aSis4aQ==> sample dataset </a> as a template to prepare your data.<br><br>")
+    text <- paste0(text, "Use the <a href=",sample_dataset_url,"> sample dataset </a> as a template to prepare your data.<br><br>")
     text <- paste0(text, "<b>Specific considerations regarding your own dataset:</b>")
     text <- paste0(text, "<ul>")
     text <- paste0(text, "<li>Save your dataset in 'csv' format.</li>")
@@ -139,7 +143,7 @@ output$cmsyIntroOut <- renderText({
     text <- paste0(text,"<h4> Workflow Considerations </h4>")
     text <- paste0(text,"<strong> To run the CMSY method in the Stock Monitoring Tool :</strong>")
     text <- paste0(text, "<ol>")
-    text <- paste0(text, "<li>Upload a csv file data set of catch time series for one or multiple stocks (see Data Considerations or the <a href='https://data.d4science.org/shub/E_WWI3clpMdGVONG84eVNvblBxOWVPQ2FPUVArYkptQ1JsM2c1K2hkYWpjSlhmeUw1eXI2RGFLZUdMZW5aSis4aQ=='>CMSY Sample dataset</a>).</li>")
+    text <- paste0(text, "<li>Upload a csv file data set of catch time series for one or multiple stocks (see Data Considerations or the <a href='",sample_dataset_url,"'>CMSY Sample dataset</a>).</li>")
     text <- paste0(text, "<ol type='a'>")
     text <- paste0(text, "<li> Select the stock upon which to perform the analysis </li>")
     text <- paste0(text, "</ol>")
@@ -813,7 +817,7 @@ output$fishMethodsIntroOut <- renderText({
 
 output$cmsySampleDataset <- renderText({
     session$userData$page('cmsy-sample')
-    link <- "<a href='https://data.d4science.org/shub/E_WWI3clpMdGVONG84eVNvblBxOWVPQ2FPUVArYkptQ1JsM2c1K2hkYWpjSlhmeUw1eXI2RGFLZUdMZW5aSis4aQ==' target='_blank'>Click Here</a>"
+    link <- paste0("<a href='",sample_dataset_url,"' target='_blank'>Click Here</a>")
     text <- paste0("<p><h4>", link,"&nbsp; to download a sample dataset that can be used with <b>CMSY</b> methods", "</h4></p>")
     text <- paste0(text, "<hr />")
     text <- paste0(text, "<p>")
@@ -827,7 +831,7 @@ output$cmsySampleDataset <- renderText({
     text <- paste0(text, "</ul>")
     text <- paste0(text, "Other columns are identifiers that you may choose to include, but they are not necessary to run the model.<br><br>")
 
-    text <- paste0(text, "Use the <a href='https://data.d4science.org/shub/E_WWI3clpMdGVONG84eVNvblBxOWVPQ2FPUVArYkptQ1JsM2c1K2hkYWpjSlhmeUw1eXI2RGFLZUdMZW5aSis4aQ==' target='_blank'> sample dataset </a> as a template to prepare your data.<br><br>")
+    text <- paste0(text, "Use the <a href='",sample_dataset_url,"' target='_blank'> sample dataset </a> as a template to prepare your data.<br><br>")
     text <- paste0(text, "<b>Specific considerations regarding your own dataset:</b>")
     text <- paste0(text, "<ul>")
     text <- paste0(text, "<li>Save your dataset in 'csv' format.</li>")
