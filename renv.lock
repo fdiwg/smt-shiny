@@ -569,22 +569,6 @@
       "Repository": "CRAN",
       "Hash": "14eb0596f987c71535d07c3aff814742"
     },
-    "contentid": {
-      "Package": "contentid",
-      "Version": "0.0.18",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "R",
-        "curl",
-        "fs",
-        "httr",
-        "methods",
-        "openssl",
-        "tools"
-      ],
-      "Hash": "874beec4fe3a7f7ad8cfd6a462d32ec1"
-    },
     "cpp11": {
       "Package": "cpp11",
       "Version": "0.5.0",
@@ -777,6 +761,21 @@
         "utils"
       ],
       "Hash": "2b1caf901d3662133543433f951e9d87"
+    },
+    "duckdbfs": {
+      "Package": "duckdbfs",
+      "Version": "0.0.7",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "DBI",
+        "dbplyr",
+        "dplyr",
+        "duckdb",
+        "fs",
+        "glue"
+      ],
+      "Hash": "a6bb930f47ad6ef7d9e1241d3fff2054"
     },
     "e1071": {
       "Package": "e1071",
@@ -1866,33 +1865,22 @@
     },
     "rfishbase": {
       "Package": "rfishbase",
-      "Version": "4.1.1",
+      "Version": "5.0.0",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
-        "DBI",
         "R",
-        "contentid",
-        "dbplyr",
         "dplyr",
-        "duckdb",
-        "fs",
+        "duckdbfs",
         "glue",
         "jsonlite",
         "magrittr",
         "memoise",
-        "methods",
-        "progress",
         "purrr",
-        "readr",
         "rlang",
-        "rstudioapi",
-        "stringr",
-        "tibble",
-        "tools",
-        "utils"
+        "stringr"
       ],
-      "Hash": "2b6f1eee9a79888bc1e7287368bc7c51"
+      "Hash": "fdda9a19cbe2ccb1019582961fce705d"
     },
     "rlang": {
       "Package": "rlang",
