@@ -569,6 +569,22 @@
       "Repository": "CRAN",
       "Hash": "14eb0596f987c71535d07c3aff814742"
     },
+    "contentid": {
+      "Package": "contentid",
+      "Version": "0.0.18",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "curl",
+        "fs",
+        "httr",
+        "methods",
+        "openssl",
+        "tools"
+      ],
+      "Hash": "874beec4fe3a7f7ad8cfd6a462d32ec1"
+    },
     "cpp11": {
       "Package": "cpp11",
       "Version": "0.5.0",
@@ -749,33 +765,16 @@
     },
     "duckdb": {
       "Package": "duckdb",
-      "Version": "1.1.3.9012",
+      "Version": "1.1.2",
       "Source": "Repository",
-      "Repository": "https://duckdb.r-universe.dev",
-      "RemoteUrl": "https://github.com/duckdb/duckdb-r",
-      "RemoteSha": "54bcf51832556048c290dc205531308eda0602ae",
+      "Repository": "CRAN",
       "Requirements": [
         "DBI",
         "R",
         "methods",
         "utils"
       ],
-      "Hash": "2b1caf901d3662133543433f951e9d87"
-    },
-    "duckdbfs": {
-      "Package": "duckdbfs",
-      "Version": "0.0.7",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Requirements": [
-        "DBI",
-        "dbplyr",
-        "dplyr",
-        "duckdb",
-        "fs",
-        "glue"
-      ],
-      "Hash": "a6bb930f47ad6ef7d9e1241d3fff2054"
+      "Hash": "83a09ee9c8380fecfcea1daeaa99e3b2"
     },
     "e1071": {
       "Package": "e1071",
@@ -1865,22 +1864,33 @@
     },
     "rfishbase": {
       "Package": "rfishbase",
-      "Version": "5.0.0",
+      "Version": "4.1.1",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
+        "DBI",
         "R",
+        "contentid",
+        "dbplyr",
         "dplyr",
-        "duckdbfs",
+        "duckdb",
+        "fs",
         "glue",
         "jsonlite",
         "magrittr",
         "memoise",
+        "methods",
+        "progress",
         "purrr",
+        "readr",
         "rlang",
-        "stringr"
+        "rstudioapi",
+        "stringr",
+        "tibble",
+        "tools",
+        "utils"
       ],
-      "Hash": "fdda9a19cbe2ccb1019582961fce705d"
+      "Hash": "2b6f1eee9a79888bc1e7287368bc7c51"
     },
     "rlang": {
       "Package": "rlang",
