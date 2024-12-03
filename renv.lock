@@ -217,6 +217,16 @@
       ],
       "Hash": "1d6ed2d006d483f31c6d5531f3a39923"
     },
+    "RJSONIO": {
+      "Package": "RJSONIO",
+      "Version": "1.3-1.9",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "methods"
+      ],
+      "Hash": "2f89abc0f88c647d3386c672632f4baf"
+    },
     "Rcpp": {
       "Package": "Rcpp",
       "Version": "1.0.13-1",
@@ -755,16 +765,18 @@
     },
     "duckdb": {
       "Package": "duckdb",
-      "Version": "1.1.3",
+      "Version": "1.1.3.9012",
       "Source": "Repository",
-      "Repository": "CRAN",
+      "Repository": "https://duckdb.r-universe.dev",
+      "RemoteUrl": "https://github.com/duckdb/duckdb-r",
+      "RemoteSha": "54bcf51832556048c290dc205531308eda0602ae",
       "Requirements": [
         "DBI",
         "R",
         "methods",
         "utils"
       ],
-      "Hash": "beb1e14711d97990855bd94b7d51f56b"
+      "Hash": "2b1caf901d3662133543433f951e9d87"
     },
     "e1071": {
       "Package": "e1071",
@@ -2122,6 +2134,22 @@
         "shiny"
       ],
       "Hash": "9ddfc91d4280eaa34c2103951538976f"
+    },
+    "shinysky": {
+      "Package": "shinysky",
+      "Version": "0.1.3",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "shinysky",
+      "RemoteUsername": "AnalytixWare",
+      "RemoteSha": "695b4b95dac2bdf217f21f2aa9703b53380f1670",
+      "Requirements": [
+        "RJSONIO",
+        "plyr",
+        "shiny"
+      ],
+      "Hash": "96d62e3e358c4d8a05828ede642b268b"
     },
     "shinythemes": {
       "Package": "shinythemes",
