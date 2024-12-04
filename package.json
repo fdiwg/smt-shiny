@@ -1,7 +1,7 @@
 {
   "id": "smt-shiny",
-  "version": "0.6.4",
-  "date": "2024-12-03",
+  "version": "0.6.5",
+  "date": "2024-12-04",
   "dependencies": [
     {"package": "yaml", "version": "2.3.10", "repos": "https://cran.r-project.org"},
     {"package": "jsonlite", "version": "1.8.4", "repos": "https://cran.r-project.org"},
