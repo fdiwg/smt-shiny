@@ -142,6 +142,108 @@ validateLBMInputFile <- function(file, type = "freq"){
 }
 
 
+validateLBMInputFile2 <- function(file, type = "freq"){
+
+    is_mostly_numeric <- function(df) {
+        numeric_cols <- sapply(df, is.numeric)
+        if (type == "freq") {
+            ## all have to be numeric
+            return(mean(numeric_cols) == 1)
+        } else {
+            ## assuming one date, one length, and one optional freq column at least 50% have to be numeric
+            return(mean(numeric_cols) >= 0.5)
+        }
+    }
+
+    separators <- c(",", ";", "\t")
+    decimals <- c(".", ",")
+    inputData <- NULL
+    check_csv <- FALSE
+    check_delimiter <- FALSE
+
+    for (sep_try in separators) {
+        for (dec_try in decimals) {
+            tmp <- try(read.csv(file, sep = sep_try, dec = dec_try), silent = TRUE)
+            if (!inherits(tmp, "try-error") && is.data.frame(tmp) && ncol(tmp) > 1 && is_mostly_numeric(tmp)) {
+                inputData <- tmp
+                check_csv <- TRUE
+                check_delimiter <- TRUE
+                break
+            }
+        }
+        if (check_csv) break
+    }
+
+    message(sprintf("Detected sep='%s', dec='%s'", sep_try, dec_try))
+
+    if(check_csv){
+
+        ## Can date be read from column names?
+        if(type == "freq"){
+            ## Is the first column numeric? -> length classes
+            check_lengths <- ifelse(is.numeric(inputData[,1]), TRUE, FALSE)
+            colnams <- as.vector(colnames(inputData))
+            dates <- sapply(colnams[2:length(colnams)], function(x){
+                x <- ifelse(startsWith(x, 'X'), substring(x, 2), x)
+                formatTimestamp(parse_date_time(x, c('ymd', 'dmy', 'mdy')))
+            })
+            inputData <- cbind(inputData[,1], inputData[,which(!is.na(dates))+1])
+        }else if(type == "raw"){
+            if(ncol(inputData) >= 2){
+                suppressWarnings(tmp <- try(sapply(head(inputData[,1]), function(x)
+                    formatTimestamp(parse_date_time(x, c('ymd', 'dmy', 'mdy')))),
+                    silent = TRUE))
+                if(inherits(tmp, "try-error") || all(is.na(tmp))){
+                    suppressWarnings(tmp <- try(sapply(head(inputData[,2]), function(x)
+                        formatTimestamp(parse_date_time(x, c('ymd', 'dmy', 'mdy')))),
+                        silent = TRUE))
+                    if(inherits(tmp, "try-error") || all(is.na(tmp))){
+                        ## stop("Neither first nor second one recognised as Date!")
+                    }else{
+                        dates <- tmp
+                        lengths <- inputData[,1]
+                    }
+                }else{
+                    dates <- tmp
+                    lengths <- inputData[,2]
+                }
+                dates <- inputData[,1]  ## assumes that second column is always date (if provided)
+
+                ## try to read first column as lengths
+                if(all(is.na(dates))){
+                    dates <- as.Date(format(Sys.time(),"%Y-%m-%d"))
+                    warning("No date found, maybe just length provided, using system date as placeholder for missing date.")
+                    lengths <- inputData[,1]
+                }
+            }else{
+                dates <- as.Date(format(Sys.time(),"%Y-%m-%d"))
+                warning("No date found, maybe just length provided, using system date as placeholder for missing date.")
+                lengths <- inputData[,1]
+            }
+            check_lengths <- ifelse(is.numeric(lengths), TRUE, FALSE)
+        }
+        check_dates <- ifelse(any(!is.na(dates)), TRUE, FALSE)
+
+        ## Only use numeric columns + Are there sufficient numeric samples?
+        if(type == "freq"){
+            inputData <- inputData[,sapply(inputData, is.numeric)]
+        }
+        check_ncols <- ifelse((!is.null(ncol(inputData)) && ncol(inputData) > 2) || type == "raw", TRUE, FALSE)
+
+    }else{
+        check_delimiter <- FALSE
+        check_lengths <- FALSE
+        check_dates <- FALSE
+        check_ncols <- FALSE
+    }
+
+    ## return checks
+    checks <- list(csv=check_csv, delimiter=check_delimiter, lengths=check_lengths,
+                   dates=check_dates, ncols=check_ncols)
+    return(list(inputData=inputData, checks=checks))
+}
+
+
 
 read_lbm_csv <- function(csvFile, format=""){
 
@@ -164,7 +266,7 @@ read_lbm_csv <- function(csvFile, format=""){
     }
 
     ## read in and validate csv file
-    dataset <- validateLBMInputFile(csvFile, type = "freq")
+    dataset <- validateLBMInputFile2(csvFile, type = "freq")
     if(all(unlist(dataset$checks))){
         inputData <- dataset$inputData
         ## lfq list
@@ -190,7 +292,7 @@ read_lbm_csv <- function(csvFile, format=""){
         colnames(dataset$lfq$catch) <- sort(dates)
     }else{
         ## requires that first column contains dates and second length measurements
-        dataset <- validateLBMInputFile(csvFile, type = "raw")
+        dataset <- validateLBMInputFile2(csvFile, type = "raw")
         if(all(unlist(dataset$checks))){
             inputData <- dataset$inputData
 
@@ -243,7 +345,7 @@ read_lbm_csv <- function(csvFile, format=""){
                                      bin_size = bs, aggregate_dates = TRUE)
         }else{
             ## If both wrong report errors from freq format
-            dataset <- validateLBMInputFile(csvFile, type = "freq")
+            dataset <- validateLBMInputFile2(csvFile, type = "freq")
         }
     }
 

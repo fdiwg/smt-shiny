@@ -95,7 +95,7 @@ source("server/support/SeasonalVonBertalannfyServer.R")
 source("server/support/NaturalMortalityServer.R")
 ## Functions
 source("assets/commons/commons.R")
-source("~/Documents/consulting/FAO/2025/glossary.R") ## TODO: add to assets/commons/ or somewhere else
+source("~/Documents/consulting/FAO/2025/glossary/glossary.R") ## TODO: add to assets/commons/ or somewhere else
 source("assets/commons/labels.R")
 ## CMSY
 source("assets/cmsy/CmsyFunction.R")
