@@ -95,6 +95,7 @@ source("server/support/SeasonalVonBertalannfyServer.R")
 source("server/support/NaturalMortalityServer.R")
 ## Functions
 source("assets/commons/commons.R")
+source("~/Documents/consulting/FAO/2025/glossary.R") ## TODO: add to assets/commons/ or somewhere else
 source("assets/commons/labels.R")
 ## CMSY
 source("assets/cmsy/CmsyFunction.R")
@@ -190,7 +191,8 @@ ui <- tagList(
       tabBasicSchaefer("basicShaeferModule"),
       tabBasicVonBertalannfy("vonBertalannfyModule"),
       tabSeasonalVonBertalannfy("seasonalVonBertalannfyModule"),
-      tabNaturalMortality("naturalMortalityModule")
+      tabNaturalMortality("naturalMortalityModule"),
+      tabItem("glossaryTab",htmlOutput("glossary"))
     )
   )
 ), tags$footer(footer(SMT_VERSION, SMT_DATE), align = "center")
@@ -215,8 +217,9 @@ server <- function(input, output, session) {
         menuCmsy,
         menuLengthMethods,
         # menuFishMethods,
-        menuSupportingTools
-      )
+        menuSupportingTools,
+        menuItem("Glossary", tabName="glossaryTab")
+        )
     )
   })
 
@@ -260,8 +263,9 @@ server <- function(input, output, session) {
              'seasonal-von-bertalannfy' = {isolate({updateTabItems(session, "smt-tabs", "SeasonalVonBertalannfy")})},
              'natural-mortality' = {isolate({updateTabItems(session, "smt-tabs", "NaturalMortality")})},
              'home' = {isolate({updateTabItems(session, "smt-tabs", "homeTab")})},
+             'glossary' = {isolate({updateTabItems(session, "smt-tabs", "glossaryTab")})},
              {isolate({updateTabItems(session, "smt-tabs", "homeTab")})}
-      )
+             )
     } else {
       isolate({updateTabItems(session, "smt-tabs", "homeTab")})
     }

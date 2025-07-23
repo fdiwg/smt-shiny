@@ -1,7 +1,7 @@
 ########################### ALL LABELS ###########################
 output$homeInfo <- renderText({
     session$userData$page("home")
-  
+
     text <- "<h3>Stock Monitoring Tool for limited data</h3>"
 
     text <- paste0(text,"<p>")
@@ -75,9 +75,9 @@ This tool was designed to allow users with little to no programming experience t
 
 output$cmsyIntroOut <- renderText({
     session$userData$page("cmsy-intro")
-  
+
     sample_dataset_url = "https://data.d4science.org/shub/E_N0JSRlVEN3gwdmpjRnp5Y1BIWm5sS1QxZnUzUTRNSlp5ek50R2xlY0ZUZXVDUlFHTFFES3liblJGRSt4YWExMw=="
-  
+
     text <- "<h3><b>CMSY - Catch-Maximum Sustainable Yield</b></h3>"
     text <- paste0(text, "<p>")
     # text <- paste0(text, "The <b>CMSY</b> method for data-limited stock assessment. Described in <a target='_blank' href='https://www.researchgate.net/publication/309283306_Estimating_fisheries_reference_points_from_catch_and_resilience'>Froese et al 2017</a>")
@@ -817,9 +817,9 @@ output$fishMethodsIntroOut <- renderText({
 
 output$cmsySampleDataset <- renderText({
     session$userData$page('cmsy-sample')
-  
+
     sample_dataset_url = "https://data.d4science.org/shub/E_N0JSRlVEN3gwdmpjRnp5Y1BIWm5sS1QxZnUzUTRNSlp5ek50R2xlY0ZUZXVDUlFHTFFES3liblJGRSt4YWExMw=="
-  
+
     link <- paste0("<a href='",sample_dataset_url,"' target='_blank'>Click Here</a>")
     text <- paste0("<p><h4>", link,"&nbsp; to download a sample dataset that can be used with <b>CMSY</b> methods", "</h4></p>")
     text <- paste0(text, "<hr />")
@@ -1169,4 +1169,10 @@ output$basicShaeferInfoText <- renderText({
 output$cmsyLegacyWarning <- renderText({
     text <- "<span style='margin-left: 20px;'>This computation may take several minutes to complete.</span>"
     text
+})
+
+
+output$glossary <- renderText({
+    session$userData$page("glossary")
+    render_glossary_html(glossary_df)
 })

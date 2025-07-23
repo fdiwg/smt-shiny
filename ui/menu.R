@@ -45,3 +45,4 @@ menuSupportingTools <- menuItem("Supporting Tools",
          menuSubItem("Seasonal Von Bertalanffy", tabName = "SeasonalVonBertalannfy"),
          menuSubItem("Natural Mortality Estimators", tabName = "NaturalMortality")
 )
+menuGlossary <- menuItem("Glossary", tabName="glossaryTab", selected = TRUE)
