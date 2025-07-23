@@ -1,4 +1,5 @@
 pkgs_file = './srv/smt-shiny/package.json'
+upgrade = "always" ## alternative: "ask", "never"
 on_server = file.exists(pkgs_file)
 if(!on_server) pkgs_file = './package.json'
 package <- jsonlite::read_json(pkgs_file)
@@ -16,5 +17,5 @@ invisible(lapply(package$dependencies, function(pkg){
   pkg_args <- pkg[!sapply(names(pkg), function(x){x %in% c("from","dependencies")})]
   pkg_deps <- NA
   if(!is.null(pkg$dependencies)) pkg_deps <- pkg$dependencies
-  do.call(pkg_installer, c(pkg_args, dependencies = pkg_deps))
+  do.call(pkg_installer, c(pkg_args, dependencies = pkg_deps, upgrade = upgrade))
 }))
