@@ -241,59 +241,8 @@ getMethodConsiderationTextForElefan <- function() {
                  "limitations of the results.</p>")
   text <- paste0(text, "<br>")
   text <- paste0(text, "<br>")
-  text <- paste0(text, "<b>Assumptions of TropFishR:</b>")
-  text <- paste0(text, "<br>")
-  text <- paste0(text, "<br>")
-  text <- paste0(text, "<ul>")
-  text <- paste0(text, "<li><b>Representative length measurements:</b> ",
-                 "The routine assumes that the dataset is representative of the length distributions of the whole catch. ",
-                 "This means that either the length of all individuals in the catch were measured or ",
-                 "a randomised subsample of the catch was measured.", "</li>")
-  text <- paste0(text, "<br>")
-  text <- paste0(text, "<li><b>Gear/fleet selectivity:</b> ",
-                 "The routine assumes sigmoidal selectivity as it is commonly assumed for 'trawl-like' ",
-                 "fishing gear. While the selectivity of gillnets and hook-based methods might correspond ",
-                 "to a bell-shaped curve, the combination of various mesh and hook sizes might lead to ",
-                 "an overall 'trawl-like' fleet selectivity.",
-                 "</li>")
-  text <- paste0(text, "<br>")
-  text <- paste0(text, "<li><b>Equilibrium conditions:</b> ",
-                 "The routine assumes constant recruitment, fishing and natural mortality as well as somatic growth and maturation over time, i.e. within the year and over all years covered by the dataset.",
-                 "</li>")
-  text <- paste0(text, "<br>")
-  text <- paste0(text, "<li><b>Density dependence:</b> ",
-                 "The routine assumes density independent maturity and somatic growth. All reference points ",
-                 "are based on the 'per recruit' model, thus no assumptions are made about the stock recruitment ",
-                 "relationship.",
-                 "</li>")
-  text <- paste0(text, "<br>")
-  text <- paste0(text, "<li><b>Correlation of life-history parameters:</b> ",
-                 "The use of empirical formulae for the estimation of natural mortality assumes that the ",
-                 "growth parameters (",withMathJax("\\(L_\\infty\\)")," and ",withMathJax("\\(K\\)"),") are ",
-                 "reliable predictors of the natural mortality.",
-                 "</li>")
-  text <- paste0(text, "<br>")
-  text <- paste0(text, "<li><b>Length-independent natural mortality:</b> ",
-                 "The current implementation of SMT assumes that the natural mortality is equal for all length ",
-                 "classes. (Note this assumption will be relaxed in the future.)",
-                 "</li>")
-  text <- paste0(text, "<br>")
-  text <- paste0(text, "<li><b>Somatic growth follows VBG:</b> ",
-                 "The estimation of growth parameters with ELEFAN assumes that the growth of individuals in length ",
-                 "follows the logistic von Bertlanffy growth (VBG) function. This is an often made assumption for the ",
-                 "growth of fish, but might not reflect well the growth of species with an exoskeleton, ",
-                 "such as crustaceans, nor the growth of early life stages of fish.",
-                 "</li>")
-  text <- paste0(text, "<br>")
-  text <- paste0(text, "<li><b>Closed population:</b> ",
-                 "The routine assumes that the stock (population) under study ",
-                 "is closed, meaning that there is no immigration or emigration taking place. Immigration and emigration",
-                 " can both bias estimated mortality rates and stock status. Furthermore, fish migrations ",
-                 "often vary for various life stages and might thus affect the representativeness of the length ",
-                 "measurements if the population is not closed.",
-                 "</li>")
-  text <- paste0(text, "</ul>")
-    return (text)
+  text <- paste0(text, tropfishrAssumptionsHTML())
+  return (text)
 }
 
 getResultConsiderationTextForElefan <- function() {
@@ -635,46 +584,8 @@ getMethodConsiderationTextForLBI <- function() {
                  "limitations of the results.</p>")
   text <- paste0(text, "<br>")
   text <- paste0(text, "<br>")
-  text <- paste0(text, "<b>Assumptions of LBI:</b>")
-  text <- paste0(text, "<br>")
-  text <- paste0(text, "<br>")
-  text <- paste0(text, "<ul>")
-  text <- paste0(text, "<li><b>Representative length measurements:</b> ",
-                 "The routine assumes that the dataset is representative of the length distributions of the whole catch. ",
-                 "This means that either the length of all individuals in the catch were measured or ",
-                 "a randomised subsample of the catch was measured.", "</li>")
-  text <- paste0(text, "<br>")
-  text <- paste0(text, "<li><b>Equilibrium conditions:</b> ",
-                 "The routine assumes constant recruitment, fishing and natural mortality as well as somatic growth and maturation over time, i.e. within the year and over all years covered by the dataset.",
-                 "</li>")
-  text <- paste0(text, "<br>")
-  text <- paste0(text, "<li><b>Density dependence:</b> ",
-                 "The routine assumes density independent maturity and somatic growth. All reference points ",
-                 "are based on the 'per recruit' model, thus no assumptions are made about the stock recruitment ",
-                 "relationship.",
-                 "</li>")
-  text <- paste0(text, "<br>")
-  text <- paste0(text, "<li><b>Length-independent natural mortality:</b> ",
-                 "The current implementation of SMT assumes that the natural mortality is equal for all length ",
-                 "classes.",
-                 "</li>")
-  text <- paste0(text, "<br>")
-  text <- paste0(text, "<li><b>Somatic growth follows VBG:</b> ",
-                 "The estimation of growth parameters with ELEFAN assumes that the growth of individuals in length ",
-                 "follows the logistic von Bertlanffy growth (VBG) function. This is an often made assumption for the ",
-                 "growth of fish, but might not reflect well the growth of species with an exoskeleton, ",
-                 "such as crustaceans, nor the growth of early life stages of fish.",
-                 "</li>")
-  text <- paste0(text, "<br>")
-  text <- paste0(text, "<li><b>Closed population:</b> ",
-                 "The routine assumes that the stock (population) under study ",
-                 "is closed, meaning that there is no immigration or emigration taking place. Immigration and emigration",
-                 " can both bias estimated mortality rates and stock status. Furthermore, fish migrations ",
-                 "often vary for various life stages and might thus affect the representativeness of the length ",
-                 "measurements if the population is not closed.",
-                 "</li>")
-  text <- paste0(text, "</ul>")
-    return (text)
+  text <- paste0(text, lbiAssumptionsHTML())
+  return (text)
 }
 
 getResultConsiderationTextForLBI <- function() {
@@ -809,47 +720,8 @@ getMethodConsiderationTextForLBSPR <- function() {
                  "limitations of the results.</p>")
   text <- paste0(text, "<br>")
   text <- paste0(text, "<br>")
-  text <- paste0(text, "<b>Assumptions of LBSPR:</b>")
-  text <- paste0(text, "<br>")
-  text <- paste0(text, "<br>")
-  text <- paste0(text, "<ul>")
-  text <- paste0(text, "<li><b>Representative length measurements:</b> ",
-                 "The routine assumes that the dataset is representative of the length distributions of the whole catch. ",
-                 "This means that either the length of all individuals in the catch were measured or ",
-                 "a randomised subsample of the catch was measured.", "</li>")
-  text <- paste0(text, "<br>")
-  text <- paste0(text, "<li><b>Equilibrium conditions:</b> ",
-                 "The routine assumes constant recruitment, fishing and natural mortality as well as somatic growth and ",
-                 "maturation over time, i.e. within the year and over all years covered by the dataset.",
-                 "</li>")
-  text <- paste0(text, "<br>")
-  text <- paste0(text, "<li><b>Density dependence:</b> ",
-                 "The routine assumes density independent maturity and somatic growth. All reference points ",
-                 "are based on the 'per recruit' model, thus no assumptions are made about the stock recruitment ",
-                 "relationship.",
-                 "</li>")
-  text <- paste0(text, "<br>")
-  text <- paste0(text, "<li><b>Length-independent natural mortality:</b> ",
-                 "The current implementation of SMT assumes that the natural mortality is equal for all length ",
-                 "classes.",
-                 "</li>")
-  text <- paste0(text, "<br>")
-  text <- paste0(text, "<li><b>Somatic growth follows VBG:</b> ",
-                 "The estimation of growth parameters with ELEFAN assumes that the growth of individuals in length ",
-                 "follows the logistic von Bertlanffy growth (VBG) function. This is an often made assumption for the ",
-                 "growth of fish, but might not reflect well the growth of species with an exoskeleton, ",
-                 "such as crustaceans, nor the growth of early life stages of fish.",
-                 "</li>")
-  text <- paste0(text, "<br>")
-  text <- paste0(text, "<li><b>Closed population:</b> ",
-                 "The routine assumes that the stock (population) under study ",
-                 "is closed, meaning that there is no immigration or emigration taking place. Immigration and emigration",
-                 " can both bias estimated mortality rates and stock status. Furthermore, fish migrations ",
-                 "often vary for various life stages and might thus affect the representativeness of the length ",
-                 "measurements if the population is not closed.",
-                 "</li>")
-  text <- paste0(text, "</ul>")
-    return (text)
+  text <- paste0(text, lbsprAssumptionsHTML())
+  return (text)
 }
 
 getResultConsiderationTextForLBSPR <- function() {

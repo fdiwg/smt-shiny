@@ -78,6 +78,7 @@ source("ui/support/BasicVonBertalannfyUI.R")
 source("ui/support/NaturalMortalityUI.R")
 source("ui/support/SeasonalVonBertalannfyUI.R")
 ## SERVER
+source("server/assumptions.R")
 source("server/common.R")
 ## CMSY
 source("server/cmsy/cmsyServer.R")

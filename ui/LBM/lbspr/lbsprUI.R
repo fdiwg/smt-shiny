@@ -254,7 +254,7 @@ tabLBSPR <- function(id) {
                 br(),
 
                 box(id = "box_settings",
-                    title = p("Settings",
+                    title = p("Data exploration & Settings",
                               actionButton(ns("lbsprMethodConsiderations2"),
                                            tags$i(class = "fas fa-info",
                                                   style="font-size: 8px"),

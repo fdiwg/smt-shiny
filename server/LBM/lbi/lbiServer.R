@@ -17,6 +17,8 @@ lbiModule <- function(input, output, session) {
         upload = NULL
     )
 
+    lbiAcknowledged <- reactiveVal(FALSE)
+
     ## Definition of functions
     ## ----------------------------
     lbiFileData <- reactive({
@@ -237,6 +239,31 @@ lbiModule <- function(input, output, session) {
 
     ## Action buttons
     observeEvent(input$go_lbi, {
+        lbiAcknowledged(FALSE)
+
+        showModal(modalDialog(
+            title = "Acknowledge model assumptions",
+            bsCollapse(id = ns("assumptions"), open = NULL,
+                       bsCollapsePanel("▶ Click to show/hide",
+                                       HTML(lbiAssumptionsHTML()))
+                       ),
+            tags$p(HTML("See the <a href='https://elearning.fao.org/course/view.php?id=502' target='_blank'>FAO eLearning module</a> for more information.")),
+            footer = tagList(
+                modalButton("Cancel"),
+                actionButton(ns("lbi_ack"), "I Acknowledge", class = "btn-success")
+            ),
+            easyClose = FALSE
+        ))
+    })
+
+    observeEvent(input$lbi_ack, {
+        removeModal()
+        lbiAcknowledged(TRUE)
+    })
+
+    observeEvent(lbiAcknowledged(), {
+        req(lbiAcknowledged())
+
         req(inputLBIData$data)
 
         js$showComputing()
@@ -289,7 +316,7 @@ lbiModule <- function(input, output, session) {
                 flog.info("Uploading LBI report to i-Marine workspace")
                 reportFileName <- paste(tempdir(),"/","LBI_report_",
                                         format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
-                #createLBIPDFReport(reportFileName,lbi_dat,input)
+                                        #createLBIPDFReport(reportFileName,lbi_dat,input)
                 createLBIPDFReport(reportFileName, lbi_dat, input, output)
                 lbiUploadVreResult$res <- FALSE
 

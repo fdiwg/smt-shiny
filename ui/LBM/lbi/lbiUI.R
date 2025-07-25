@@ -239,7 +239,7 @@ tabLBI <- function(id) {
                 br(),
 
                 box(id = "box_settings",
-                    title = p("Settings",
+                    title = p("Data exploration & Settings",
                               actionButton(ns("lbiMethodConsiderations2"),
                                            tags$i(class = "fas fa-info",
                                                   style="font-size: 8px"),
@@ -249,260 +249,273 @@ tabLBI <- function(id) {
                     solidHeader = TRUE,
                     class = "collapsed-box",
 
-
-                    box(title = "",
-                        width = 4,
-
-                        fluidRow(
-                            div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
-                                HTML("<b>Select years for analysis</b>")
-                                ),
-                            div(style = "display: inline-block; vertical-align:center; margin-left: 3px;",
-                                actionButton(ns("infoYearSel"),
-                                             tags$i(class = "fas fa-info",
-                                                    style="font-size: 8px"),
-                                             class="infoBubbleButton")
-                                )
-
-                        ),
-                        div(style = "margin-top:-3px",
-                            uiOutput(ns("LBI_years_selected_out"))
-                            ),
-
-                        br(),
-
-                        ## bin size + M/K
-                        column(6,
-                               fluidRow(
-                                   div(style = "display: inline-block; vertical-align:center; margin-left: 15px; margin-top: 10px;",
-                                       HTML("<b>Bin Size</b>")
-                                       ),
-                                   div(style = "display: inline-block; vertical-align:center; margin-left: 3px; margin-top: 10px;",
-                                       actionButton(ns("infoBS"),
-                                                    tags$i(class = "fas fa-info",
-                                                           style="font-size: 8px"),
-                                                    ## size = "extra-small",
-                                                    ##                                                      style='padding:1px; font-size:70%',
-                                                    class="infoBubbleButton")
-                                       )
-                               ),
-                               div(style = "margin-top:-5px",
-                                   uiOutput(ns("LBI_binSize_out")),
-                                   )
-                               ),
-                        column(6,
-                               fluidRow(
-                                   div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
-                                       HTML("<b>M/K</b>")
-                                       ),
-                                   div(style = "display: inline-block; vertical-align:center; margin-left: 3px;",
-                                       actionButton(ns("infoMK"),
-                                                    tags$i(class = "fas fa-info",
-                                                           style="font-size: 8px"),
-                                                    ## size = "extra-small",
-                                                    ##                                                      style='padding:1px; font-size:70%',
-                                                    class="infoBubbleButton")
-                                       ),
-                                   div(style = "display: inline-block; vertical-align:center; margin-left: 5px;",
-                                       HTML("<p>or enter M and K?</p>")
-                                       ),
-                                   div(style = "display: inline-block; vertical-align:center; margin-left: 8px;",
-                                       checkboxInput(ns("LBI_split_mk"),
-                                                     "",
-                                                     FALSE)
-                                       ),
-                               ),
-                               div(style = "margin-top:-10px",
-                                   uiOutput(ns("LBI_MK_out")),
-                                   )
-                               ),
-
-                        br(),
-                        br(),
-
-                        box(id="box_lbi_split_mk",
-                            width = 12,
-
-                        ## K
-                        ## ---------------------
-                        column(6,
-                               fluidRow(
-                                   div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
-                                       HTML("<b>M</b>")
-                                       ),
-                                   div(style = "display: inline-block; vertical-align:center; margin-left: 3px;",
-                                       actionButton(ns("infoM"),
-                                                    tags$i(class = "fas fa-info",
-                                                           style="font-size: 8px"),
-                                                    ## size = "extra-small",
-                                                    ##                                                      style='padding:1px; font-size:70%',
-                                                    class="infoBubbleButton")
-                                       )
-                               ),
-                               div(style = "margin-top:-3px",
-                                   numericInput(ns("LBI_M"),
-                                                label = "",
-                                                min = 0.0001,
-                                                max = 10,
-                                                value = NULL,
-                                                step = 0.01)
-                                   )
-                               ),
-
-                        ## M
-                        ## ---------------------
-                        column(6,
-                               fluidRow(
-                                   div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
-                                       HTML("<b>K</b>")
-                                       ),
-                                   div(style = "display: inline-block; vertical-align:center; margin-left: 3px;",
-                                       actionButton(ns("infoK"),
-                                                    tags$i(class = "fas fa-info",
-                                                           style="font-size: 8px"),
-                                                    ## size = "extra-small",
-                                                    ##                                                      style='padding:1px; font-size:70%',
-                                                    class="infoBubbleButton")
-                                       )
-                               ),
-                               div(style = "margin-top:-3px",
-                                   numericInput(ns("LBI_K"),
-                                                label = "",
-                                                min = 0.0001,
-                                                max = 10,
-                                                value = NULL,
-                                                step = 0.01)
-                                   )
-                               )
-                        ),
-                        br(),
-                        br(),
-
-                        ## Linf
-                        ## ---------------------
-                        column(6,
-                               fluidRow(
-                                   div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
-                                       HTML('<b>L<sub style="font-size:14px">&#8734;</sub></b>')
-                                       ),
-                                   div(style = "display: inline-block; vertical-align:center; margin-left: 3px;",
-                                       actionButton(ns("infoLinf"),
-                                                    tags$i(class = "fas fa-info",
-                                                           style="font-size: 8px"),
-                                                    ## size = "extra-small",
-                                                    ##                                                      style='padding:1px; font-size:70%',
-                                                    class="infoBubbleButton")
-                                       )
-                               ),
-                               div(style = "margin-top:-3px",
-                                   uiOutput(ns("LBI_Linf_out")),
-                                   )
-                               ),
+                    tabBox(
+                        title = "",
+                        width = NULL,
+                        height = "810px",
+                        side="left",
+                        selected = "1. Data",
+                        id = "settings",
 
 
-                        ## Lm50
-                        ## ---------------------
-                        column(6,
-                               fluidRow(
-                                   div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
-                                       HTML('<b>L<sub style="font-size:12px">m50<sub></b>')
-                                       ),
-                                   div(style = "display: inline-block; vertical-align:center; margin-left: 3px;",
-                                       actionButton(ns("infoLm50"),
-                                                    tags$i(class = "fas fa-info",
-                                                           style="font-size: 8px"),
-                                                    ## size = "extra-small",
-                                                    ##                                                      style='padding:1px; font-size:70%',
-                                                    class="infoBubbleButton")
-                                       )
-                               ),
-                               div(style = "margin-top:-3px",
-                                   uiOutput(ns("LBI_Lm50_out")),
-                                   )
-                               ),
+                        tabPanel("1. Data",
 
+                                 box(title = "",
+                                     width = 4,
 
-                        br(),
-                        br(),
-                        br(),
+                                     fluidRow(
+                                         div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
+                                             HTML("<b>Select years for analysis</b>")
+                                             ),
+                                         div(style = "display: inline-block; vertical-align:center; margin-left: 3px;",
+                                             actionButton(ns("infoYearSel"),
+                                                          tags$i(class = "fas fa-info",
+                                                                 style="font-size: 8px"),
+                                                          class="infoBubbleButton")
+                                             )
 
-                        ## LWa and LWb
-                        ## ---------------------
-
-                        box(
-                            title = p(HTML(paste0("Length-weight relationship (",
-                                                  withMathJax("\\(W = a \ L^{b}\\)"),"; optional)")),
-                                      actionButton(ns("infoLengthWeight"),
-                                                   tags$i(class = "fas fa-info",
-                                                          style="font-size: 8px"),
-                                                   class="infoBubbleButton")),
-                            width = 12,
-                            height = "180px",
-                            fluidRow(
-                                column(6,
-                                       numericInput(ns("LBI_LWa"),
-                                                    label=" Constant  (a) ",
-                                                    min = 0.0001,
-                                                    max = 10,
-                                                    value = NULL,
-                                                    step = 0.01,
-                                                    width = "80%")),
-                                column(6,
-                                       numericInput(ns("LBI_LWb"),
-                                                    label="Exponent (b) ",
-                                                    min = 0.0001,
-                                                    max = 10,
-                                                    value = NULL,
-                                                    step = 0.1,
-                                                    width = "80%"))
-                            )
-                        ),
-
-                        br(),
-                        br(),
-
-                        fluidRow(
-                            column(6,
-                                   selectInput(ns("fig_format_lbi"),
-                                               "Format of archived figures",
-                                               choices = c("pdf","png","jpeg","tiff","bmp","ps"),
-                                               selected = "pdf",
-                                               multiple = FALSE,
-                                               width = "100%")
-                                   ),
-                            column(6,
-                                   selectInput(ns("tab_format_lbi"),
-                                               "Format of archived tables",
-                                               choices = c("csv","xls","xlsx"),
-                                               selected = "csv",
-                                               multiple = FALSE,
-                                               width = "100%")
-                                   )
-                        ),
-
-                        br()
-
-                        ), ## end box settings
-
-                    box(title = "",
-                        id = "box_exploPlots",
-                        width = 8,
-                        tags$div(
-                                 plotOutput(ns("plot_explo1"), width = "95%",
-                                            height = "700px"),
-                                 div(style = "margin-top:-5px; margin-left: 10px",
-                                     htmlOutput(ns("title_explo1"))
                                      ),
-                                 ## plotOutput(ns("plot_explo2"), width = "90%",
-                                 ##            height = "280px"),
-                                 ## div(style = "margin-top:-10px; margin-left: 10px",
-                                 ##     htmlOutput(ns("title_explo2"))
-                                 ##     ),
-                                 style = "margin-left: 10%;"
-                             )
-                        )
+                                     div(style = "margin-top:-3px",
+                                         uiOutput(ns("LBI_years_selected_out"))
+                                         ),
 
-                    ),## end of settings box
+                                     br(),
+
+                                     ## bin size + M/K
+                                     column(6,
+                                            fluidRow(
+                                                div(style = "display: inline-block; vertical-align:center; margin-left: 15px; margin-top: 10px;",
+                                                    HTML("<b>Bin Size</b>")
+                                                    ),
+                                                div(style = "display: inline-block; vertical-align:center; margin-left: 3px; margin-top: 10px;",
+                                                    actionButton(ns("infoBS"),
+                                                                 tags$i(class = "fas fa-info",
+                                                                        style="font-size: 8px"),
+                                                                 ## size = "extra-small",
+                                                                 ##                                                      style='padding:1px; font-size:70%',
+                                                                 class="infoBubbleButton")
+                                                    )
+                                            ),
+                                            div(style = "margin-top:-5px",
+                                                uiOutput(ns("LBI_binSize_out")),
+                                                )
+                                            ),
+                                     column(6,
+                                            fluidRow(
+                                                div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
+                                                    HTML("<b>M/K</b>")
+                                                    ),
+                                                div(style = "display: inline-block; vertical-align:center; margin-left: 3px;",
+                                                    actionButton(ns("infoMK"),
+                                                                 tags$i(class = "fas fa-info",
+                                                                        style="font-size: 8px"),
+                                                                 ## size = "extra-small",
+                                                                 ##                                                      style='padding:1px; font-size:70%',
+                                                                 class="infoBubbleButton")
+                                                    ),
+                                                div(style = "display: inline-block; vertical-align:center; margin-left: 5px;",
+                                                    HTML("<p>or enter M and K?</p>")
+                                                    ),
+                                                div(style = "display: inline-block; vertical-align:center; margin-left: 8px;",
+                                                    checkboxInput(ns("LBI_split_mk"),
+                                                                  "",
+                                                                  FALSE)
+                                                    ),
+                                                ),
+                                            div(style = "margin-top:-10px",
+                                                uiOutput(ns("LBI_MK_out")),
+                                                )
+                                            ),
+
+                                     br(),
+                                     br(),
+
+                                     box(id="box_lbi_split_mk",
+                                         width = 12,
+
+                                         ## K
+                                         ## ---------------------
+                                         column(6,
+                                                fluidRow(
+                                                    div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
+                                                        HTML("<b>M</b>")
+                                                        ),
+                                                    div(style = "display: inline-block; vertical-align:center; margin-left: 3px;",
+                                                        actionButton(ns("infoM"),
+                                                                     tags$i(class = "fas fa-info",
+                                                                            style="font-size: 8px"),
+                                                                     ## size = "extra-small",
+                                                                     ##                                                      style='padding:1px; font-size:70%',
+                                                                     class="infoBubbleButton")
+                                                        )
+                                                ),
+                                                div(style = "margin-top:-3px",
+                                                    numericInput(ns("LBI_M"),
+                                                                 label = "",
+                                                                 min = 0.0001,
+                                                                 max = 10,
+                                                                 value = NULL,
+                                                                 step = 0.01)
+                                                    )
+                                                ),
+
+                                         ## M
+                                         ## ---------------------
+                                         column(6,
+                                                fluidRow(
+                                                    div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
+                                                        HTML("<b>K</b>")
+                                                        ),
+                                                    div(style = "display: inline-block; vertical-align:center; margin-left: 3px;",
+                                                        actionButton(ns("infoK"),
+                                                                     tags$i(class = "fas fa-info",
+                                                                            style="font-size: 8px"),
+                                                                     ## size = "extra-small",
+                                                                     ##                                                      style='padding:1px; font-size:70%',
+                                                                     class="infoBubbleButton")
+                                                        )
+                                                ),
+                                                div(style = "margin-top:-3px",
+                                                    numericInput(ns("LBI_K"),
+                                                                 label = "",
+                                                                 min = 0.0001,
+                                                                 max = 10,
+                                                                 value = NULL,
+                                                                 step = 0.01)
+                                                    )
+                                                )
+                                         ),
+                                     br(),
+                                     br(),
+
+                                     ## Linf
+                                     ## ---------------------
+                                     column(6,
+                                            fluidRow(
+                                                div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
+                                                    HTML('<b>L<sub style="font-size:14px">&#8734;</sub></b>')
+                                                    ),
+                                                div(style = "display: inline-block; vertical-align:center; margin-left: 3px;",
+                                                    actionButton(ns("infoLinf"),
+                                                                 tags$i(class = "fas fa-info",
+                                                                        style="font-size: 8px"),
+                                                                 ## size = "extra-small",
+                                                                 ##                                                      style='padding:1px; font-size:70%',
+                                                                 class="infoBubbleButton")
+                                                    )
+                                            ),
+                                            div(style = "margin-top:-3px",
+                                                uiOutput(ns("LBI_Linf_out")),
+                                                )
+                                            ),
+
+
+                                     ## Lm50
+                                     ## ---------------------
+                                     column(6,
+                                            fluidRow(
+                                                div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
+                                                    HTML('<b>L<sub style="font-size:12px">m50<sub></b>')
+                                                    ),
+                                                div(style = "display: inline-block; vertical-align:center; margin-left: 3px;",
+                                                    actionButton(ns("infoLm50"),
+                                                                 tags$i(class = "fas fa-info",
+                                                                        style="font-size: 8px"),
+                                                                 ## size = "extra-small",
+                                                                 ##                                                      style='padding:1px; font-size:70%',
+                                                                 class="infoBubbleButton")
+                                                    )
+                                            ),
+                                            div(style = "margin-top:-3px",
+                                                uiOutput(ns("LBI_Lm50_out")),
+                                                )
+                                            ),
+
+
+                                     br(),
+                                     br(),
+                                     br(),
+
+                                     ## LWa and LWb
+                                     ## ---------------------
+
+                                     box(
+                                         title = p(HTML(paste0("Length-weight relationship (",
+                                                               withMathJax("\\(W = a \ L^{b}\\)"),"; optional)")),
+                                                   actionButton(ns("infoLengthWeight"),
+                                                                tags$i(class = "fas fa-info",
+                                                                       style="font-size: 8px"),
+                                                                class="infoBubbleButton")),
+                                         width = 12,
+                                         height = "180px",
+                                         fluidRow(
+                                             column(6,
+                                                    numericInput(ns("LBI_LWa"),
+                                                                 label=" Constant  (a) ",
+                                                                 min = 0.0001,
+                                                                 max = 10,
+                                                                 value = NULL,
+                                                                 step = 0.01,
+                                                                 width = "80%")),
+                                             column(6,
+                                                    numericInput(ns("LBI_LWb"),
+                                                                 label="Exponent (b) ",
+                                                                 min = 0.0001,
+                                                                 max = 10,
+                                                                 value = NULL,
+                                                                 step = 0.1,
+                                                                 width = "80%"))
+                                         )
+                                     ),
+
+                                     br(),
+                                     br(),
+
+                                     fluidRow(
+                                         column(6,
+                                                selectInput(ns("fig_format_lbi"),
+                                                            "Format of archived figures",
+                                                            choices = c("pdf","png","jpeg","tiff","bmp","ps"),
+                                                            selected = "pdf",
+                                                            multiple = FALSE,
+                                                            width = "100%")
+                                                ),
+                                         column(6,
+                                                selectInput(ns("tab_format_lbi"),
+                                                            "Format of archived tables",
+                                                            choices = c("csv","xls","xlsx"),
+                                                            selected = "csv",
+                                                            multiple = FALSE,
+                                                            width = "100%")
+                                                )
+                                     ),
+
+                                     br()
+
+                                     ), ## end box settings
+
+                                 box(title = "",
+                                     id = "box_exploPlots",
+                                     width = 8,
+                                     tags$div(
+                                              plotOutput(ns("plot_explo1"), width = "95%",
+                                                         height = "700px"),
+                                              div(style = "margin-top:-5px; margin-left: 10px",
+                                                  htmlOutput(ns("title_explo1"))
+                                                  ),
+                                              ## plotOutput(ns("plot_explo2"), width = "90%",
+                                              ##            height = "280px"),
+                                              ## div(style = "margin-top:-10px; margin-left: 10px",
+                                              ##     htmlOutput(ns("title_explo2"))
+                                              ##     ),
+                                              style = "margin-left: 10%;"
+                                          )
+                                     )
+
+                                 )
+            )
+
+            ),## end of settings box
 
 
                 ## Action buttons

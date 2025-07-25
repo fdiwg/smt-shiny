@@ -17,6 +17,8 @@ elefanGaModule <- function(input, output, session) {
         upload = NULL
     )
 
+    elefanAcknowledged <- reactiveVal(FALSE)
+
 
     ## Definition of functions
     ## ----------------------------
@@ -634,6 +636,30 @@ elefanGaModule <- function(input, output, session) {
 
 
     observeEvent(input$go_ga, {
+        elefanAcknowledged(FALSE)
+
+        showModal(modalDialog(
+            title = "Acknowledge model assumptions",
+            bsCollapse(id = ns("assumptions"), open = NULL,
+                       bsCollapsePanel("▶ Click to show/hide",
+                                       HTML(tropfishrAssumptionsHTML()))
+                       ),
+            tags$p(HTML("See the <a href='https://elearning.fao.org/course/view.php?id=502' target='_blank'>FAO eLearning module</a> for more information.")),
+            footer = tagList(
+                modalButton("Cancel"),
+                actionButton(ns("elefan_ack"), "I Acknowledge", class = "btn-success")
+            ),
+            easyClose = FALSE
+        ))
+    })
+
+    observeEvent(input$elefan_ack, {
+        removeModal()
+        elefanAcknowledged(TRUE)
+    })
+
+    observeEvent(elefanAcknowledged(), {
+        req(elefanAcknowledged())
 
         js$showComputing()
         js$disableAllButtons()
@@ -797,7 +823,7 @@ elefanGaModule <- function(input, output, session) {
             if (!is.null(session$userData$sessionMode()) && session$userData$sessionMode()=="GCUBE") {
                 flog.info("Uploading Elefan GA report to i-Marine workspace")
                 reportFileName <- paste(tempdir(),"/","ElefanGA_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
-                #createElefanGaPDFReport(reportFileName,elefan_ga,input)
+                                        #createElefanGaPDFReport(reportFileName,elefan_ga,input)
                 createElefanGaPDFReport(reportFileName, elefan_ga, input, output)
                 elefanGaUploadVreResult$res <- FALSE
 
@@ -840,7 +866,6 @@ elefanGaModule <- function(input, output, session) {
 
     })
 
-
     observeEvent(input$reset_ga, {
         fileGaState$upload <- NULL
         resetElefanGaInputValues()
@@ -864,6 +889,22 @@ elefanGaModule <- function(input, output, session) {
     output$title_explo1 <- renderText({
         req(inputElefanGaData$data, input$ELEFAN_years_selected)
         captionTropFishR.plots(elefan_ga, input, format = "withFig", type = "explo")
+    })
+
+    ## Data diagnostics
+    ## --------------------------
+    output$plot_diag1 <- renderPlot({
+        req(inputElefanGaData$data, input$ELEFAN_years_selected)
+        elefan_ga$dataExplo[['lfq']] <- elefanGaDataExplo1()
+        elefan_ga$dataExplo[['lfqbin']] <- elefanGaDataExplo2()
+        plotTropFishR.diag1(elefan_ga, input)
+    },
+    width = "auto",
+    height = "auto",
+    res = 100)
+    output$title_diag1 <- renderText({
+        req(inputElefanGaData$data, input$ELEFAN_years_selected)
+        captionTropFishR.plots(elefan_ga, input, format = "withFig", type = "diag1")
     })
 
     ## Growth

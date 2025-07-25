@@ -259,7 +259,7 @@ tabElefanGa <- function(id) {
                 br(),
 
                 box(id = "box_settings",
-                    title = p("Assessment Settings",
+                    title = p("Data exploration & Settings",
                               actionButton(ns("methodConsiderations2"),
                                            tags$i(class = "fas fa-info",
                                                   style="font-size: 8px"),
@@ -1009,8 +1009,25 @@ tabElefanGa <- function(id) {
                                      )
                                      )
 
-                                 )
+                                 ),
 
+                        tabPanel("5. Diagnostics",
+
+                                 tags$div(
+                                          plotOutput(ns("plot_diag1"),
+                                                     width = "90%",
+                                                     height = "600px"),
+                                          div(style = "margin-top:-10px; margin-left: 10px",
+                                              htmlOutput(ns("title_diag1"))
+                                              ),
+                                          ## plotOutput(ns("plot_explo2"), width = "90%",
+                                          ##            height = "280px"),
+                                          ## div(style = "margin-top:-10px; margin-left: 10px",
+                                          ##     htmlOutput(ns("title_explo2"))
+                                          ##     ),
+                                          style = "margin-left: 10%;"
+                                      )
+                                 )
 
                     )
                     ),
