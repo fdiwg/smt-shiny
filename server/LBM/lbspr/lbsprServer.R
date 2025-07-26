@@ -7,7 +7,9 @@ lbsprModule <- function(input, output, session) {
     ## ----------------------------
     lbspr_dat <- reactiveValues(
         dataExplo = NULL,
-        results = NULL
+        results = NULL,
+        years_selected = NULL,
+        binSize = NULL
     )
     lbsprUploadVreResult <- reactiveValues()
 
@@ -23,13 +25,11 @@ lbsprModule <- function(input, output, session) {
     ## ----------------------------
     lbsprFileData <- reactive({
         if (is.null(input$fileLBSPR) || is.null(fileLBSPRState$upload)) {
-            return(NA)
+            return(NULL)
         }
 
-        input$fileLBSPR$datapath
-        input$lbsprDateFormat
-
         dataset <- read_lbm_csv(input$fileLBSPR$datapath, input$lbsprDateFormat)
+        dataset$checks$fileName <- input$fileLBSPR$name
         checks <- dataset$checks
 
         print(input$fileLBSPR)
@@ -57,23 +57,28 @@ lbsprModule <- function(input, output, session) {
             return (NULL)
         } else {
             shinyjs::enable("go_lbspr")
-            return (dataset$lfq)
+            res <- list(lfq = dataset$lfq,
+                        raw = dataset$raw,
+                        checks = dataset$checks)
+            return(res)
         }
     })
 
     lbsprDataExplo1 <- reactive({
         req(inputLBSPRData$data)
+        req(lbspr_dat$years_selected)
+        req(lbspr_dat$binSize)
 
         res <- tryCatch({
             lbspr_dat$dataExplo <- list()
-            years <- input$LBSPR_years_selected
+            years <- lbspr_dat$years_selected
             if(is.null(years)){
                 stop("No year selected for the analysis. Please select at least one year of uploaded data set.")
             }
             dat <- inputLBSPRData$data
             class(dat) <- "lfq"
 
-            binSize <- input$LBSPR_binSize
+            binSize <- lbspr_dat$binSize
             if(!is.numeric(binSize)){
                 stop("The bin size is not numeric! Please check your input!")
             }
@@ -139,9 +144,12 @@ lbsprModule <- function(input, output, session) {
         ## resetting reactive values
         lbspr_dat$dataExplo <- NULL
         lbspr_dat$results <- NULL
+        lbspr_dat$years_selected <- NULL
+        lbspr_dat$binSize <- NULL
         inputLBSPRData$data <- NULL
         fileLBSPRState$upload <- NULL
         ## lbsprUploadVreResult ?
+        lbsprAcknowledged(FALSE)
     }
 
 
@@ -262,45 +270,131 @@ lbsprModule <- function(input, output, session) {
         }
     })
 
+    observeEvent(input$LBSPR_years_selected, {
+        lbspr_dat$years_selected <- input$LBSPR_years_selected
+    })
+
+    observeEvent(input$LBSPR_binSize, {
+        lbspr_dat$binSize <- input$LBSPR_binSize
+    })
+
     observeEvent(input$fileLBSPR, {
         fileLBSPRState$upload <- 'uploaded'
-        inputLBSPRData$data <- lbsprFileData()
+        tmp <- lbsprFileData()
+        inputLBSPRData$data <- tmp$lfq
+        inputLBSPRData$raw <- tmp$raw
+        inputLBSPRData$checks <- tmp$checks
+        ## bin size
+        if(is.null(inputLBSPRData$data)){
+            binSize <- 2
+            maxL <- 10
+        }else{
+            binSize <- try(min(diff(inputLBSPRData$data$midLengths)),silent=TRUE)
+            maxL <- try(max(inputLBSPRData$data$midLengths),silent=TRUE)
+            if(inherits(binSize,"try-error")){
+                binSize <- 2
+                maxL <- 10
+            }else{
+                binSize <- round(0.23 * maxL^0.6, 1)
+                if(binSize == 0) binSize <- 0.1
+            }
+        }
+        lbspr_dat$binSize <- binSize
+        ## years selected
+        if(is.null(inputLBSPRData$data)){
+            allyears <- NULL
+        }else{
+            allyears <- try(unique(format(inputLBSPRData$data$dates,"%Y")),silent=TRUE)
+            if(inherits(allyears,"try-error")) allyears <- NULL
+        }
+        lbspr_dat$years_selected <- allyears
     })
 
     observeEvent(input$lbsprDateFormat, {
-        inputLBSPRData$data <- lbsprFileData()
+        tmp <- lbsprFileData()
+        inputLBSPRData$data <- tmp$lfq
+        inputLBSPRData$raw <- tmp$raw
+        inputLBSPRData$checks <- tmp$checks
+        ## bin size
+        if(is.null(inputLBSPRData$data)){
+            binSize <- 2
+            maxL <- 10
+        }else{
+            binSize <- try(min(diff(inputLBSPRData$data$midLengths)),silent=TRUE)
+            maxL <- try(max(inputLBSPRData$data$midLengths),silent=TRUE)
+            if(inherits(binSize,"try-error")){
+                binSize <- 2
+                maxL <- 10
+            }else{
+                binSize <- round(0.23 * maxL^0.6, 1)
+                if(binSize == 0) binSize <- 0.1
+            }
+        }
+        lbspr_dat$binSize <- binSize
+        ## years selected
+        if(is.null(inputLBSPRData$data)){
+            allyears <- NULL
+        }else{
+            allyears <- try(unique(format(inputLBSPRData$data$dates,"%Y")),silent=TRUE)
+            if(inherits(allyears,"try-error")) allyears <- NULL
+        }
+        lbspr_dat$years_selected <- allyears
     })
 
 
 
     ## Action buttons
     observeEvent(input$go_lbspr, {
-        lbsprAcknowledged(FALSE)
+        tryCatch({
+            req(inputLBSPRData$data)
 
-        showModal(modalDialog(
-            title = "Acknowledge model assumptions",
-            bsCollapse(id = ns("assumptions"), open = NULL,
-                       bsCollapsePanel("▶ Click to show/hide",
-                                       HTML(lbsprAssumptionsHTML()))
-                       ),
-            tags$p(HTML("See the <a href='https://elearning.fao.org/course/view.php?id=502' target='_blank'>FAO eLearning module</a> for more information.")),
-            footer = tagList(
-                modalButton("Cancel"),
-                actionButton(ns("lbspr_ack"), "I Acknowledge", class = "btn-success")
-            ),
-            easyClose = FALSE
-        ))
+            if (input$LBSPR_split_mk) {
+                mk <- input$LBSPR_M / input$LBSPR_K
+            } else {
+                mk <- input$LBSPR_MK
+            }
+
+            check.numeric.and.min(c(
+                binSize = input$LBSPR_binSize,
+                linf = input$LBSPR_Linf,
+                lm50 = input$LBSPR_Lm50,
+                lm95 = input$LBSPR_Lm95,
+                mk = mk,
+                a = input$LBSPR_LWa,
+                b = input$LBSPR_LWb
+            ), can.be.zero = FALSE)
+
+            lbsprAcknowledged(FALSE)
+
+            showModal(modalDialog(
+                title = "Acknowledge model assumptions",
+                bsCollapse(id = ns("assumptions"), open = NULL,
+                           bsCollapsePanel("▶ Click to show/hide",
+                                           HTML(lbsprAssumptionsHTML()))
+                           ),
+                tags$p(HTML("See the <a href='https://elearning.fao.org/course/view.php?id=502' target='_blank'>FAO eLearning module</a> for more information.")),
+                footer = tagList(
+                    modalButton("Cancel"),
+                    actionButton(ns("lbspr_ack"), "I Acknowledge", class = "btn-success")
+                ),
+                easyClose = FALSE
+            ))
+
+        }, error = function(e) {
+            showModal(modalDialog(
+                title = "Input Error",
+                e$message,
+                easyClose = TRUE,
+                footer = NULL
+            ))
+        })
     })
+
 
     observeEvent(input$lbspr_ack, {
+        req(inputLBSPRData$data)
         removeModal()
         lbsprAcknowledged(TRUE)
-    })
-
-    observeEvent(lbsprAcknowledged(), {
-        req(lbsprAcknowledged())
-
-        req(inputLBSPRData$data)
 
         js$showComputing()
         js$disableAllButtons()
@@ -354,7 +448,7 @@ lbsprModule <- function(input, output, session) {
             ##                    mk = mk,
             ##                    lwa = input$LBSPR_LWa,
             ##                    lwb = input$LBSPR_LWb,
-            ##                    lunit = input$LBSPR_lengthUnit
+            ##                    lunit = input$lbspr_lengthUnit
             ##                    )
 
             ## }else{
@@ -391,7 +485,7 @@ lbsprModule <- function(input, output, session) {
                                 lwb = WPSLiteralData$new(value = as.double(input$LBSPR_LWb)),
                                 sprLim = WPSLiteralData$new(value = as.double(input$LBSPR_sprLim)),
                                 sprTarg = WPSLiteralData$new(value = as.double(input$LBSPR_sprTarg)),
-                                lengthUnit = WPSLiteralData$new(value = as.character(input$LBSPR_lengthUnit)),
+                                lengthUnit = WPSLiteralData$new(value = as.character(input$lbspr_lengthUnit)),
                                 fig_format = WPSLiteralData$new(value = as.character(input$fig_format_lbspr)),
                                 tab_format = WPSLiteralData$new(value = as.character(input$tab_format_lbspr)),
                                 inputFile = WPSComplexData$new(value = body, mimeType = "application/d4science")
@@ -467,7 +561,6 @@ lbsprModule <- function(input, output, session) {
         })
     })
 
-
     observeEvent(input$reset_lbspr, {
         fileLBSPRState$upload <- NULL
         resetLBSPRInputValues()
@@ -488,7 +581,55 @@ lbsprModule <- function(input, output, session) {
     output$title_explo1 <- renderText({
         req(inputLBSPRData$data, input$LBSPR_years_selected)
         captionLBSPR.plots(lbspr_dat, input, format = "withFig",
-                                type = "data")
+                           type = "data")
+    })
+
+
+    ## Data diagnostics
+    ## --------------------------
+    output$plot_diag1 <- renderPlot({
+        req(inputLBSPRData$data, input$LBSPR_years_selected)
+        lbspr_dat$dataExplo[['lfq']] <- lbsprDataExplo1()
+        lbspr_dat$dataExplo[['raw']] <- inputLBSPRData$raw
+        lbspr_dat$dataExplo[['checks']] <- inputLBSPRData$checks
+        plotLBSPR.diag1(lbspr_dat, input)
+    },
+    width = "auto",
+    height = "auto",
+    res = 100)
+    output$title_diag1 <- renderText({
+        req(inputLBSPRData$data, input$LBSPR_years_selected)
+        captionLBSPR.plots(lbspr_dat, input, format = "withFig", type = "diag1")
+    })
+
+    output$plot_diag2 <- renderPlot({
+        req(inputLBSPRData$data, input$LBSPR_years_selected)
+        lbspr_dat$dataExplo[['lfq']] <- lbsprDataExplo1()
+        lbspr_dat$dataExplo[['raw']] <- inputLBSPRData$raw
+        lbspr_dat$dataExplo[['checks']] <- inputLBSPRData$checks
+        plotLBSPR.diag2(lbspr_dat, input)
+    },
+    width = "auto",
+    height = "auto",
+    res = 100)
+    output$title_diag2 <- renderText({
+        req(inputLBSPRData$data, input$LBSPR_years_selected)
+        captionLBSPR.plots(lbspr_dat, input, format = "withFig", type = "diag2")
+    })
+
+    output$plot_diag3 <- renderPlot({
+        req(inputLBSPRData$data, input$LBSPR_years_selected)
+        lbspr_dat$dataExplo[['lfq']] <- lbsprDataExplo1()
+        lbspr_dat$dataExplo[['raw']] <- inputLBSPRData$raw
+        lbspr_dat$dataExplo[['checks']] <- inputLBSPRData$checks
+        plotLBSPR.diag3(lbspr_dat, input)
+    },
+    width = "auto",
+    height = "auto",
+    res = 100)
+    output$title_diag3 <- renderText({
+        req(inputLBSPRData$data, input$LBSPR_years_selected)
+        captionLBSPR.plots(lbspr_dat, input, format = "withFig", type = "diag3")
     })
 
 
@@ -518,7 +659,7 @@ lbsprModule <- function(input, output, session) {
     output$title_lbsprPie <- renderText({
         req(lbspr_dat$results)
         captionLBSPR.plots(lbspr_dat, input, format = "withFig",
-                                type = "pie")
+                           type = "pie")
     })
 
     output$plot_lbsprSel <- renderPlot({
@@ -531,7 +672,7 @@ lbsprModule <- function(input, output, session) {
     output$title_lbsprSel <- renderText({
         req(lbspr_dat$results)
         captionLBSPR.plots(lbspr_dat, input, format = "withFig",
-                                type = "sel")
+                           type = "sel")
     })
 
     output$plot_lbsprTimeSeries <- renderPlot({
@@ -544,7 +685,21 @@ lbsprModule <- function(input, output, session) {
     output$title_lbsprTimeSeries <- renderText({
         req(lbspr_dat$results)
         captionLBSPR.plots(lbspr_dat, input, format = "withFig",
-                                type = "ts")
+                           type = "ts")
+    })
+
+
+    ## Text
+    ## --------------------------
+
+    ## Data diagnostics
+    ## --------------------------
+    output$text_diag1 <- renderUI({
+        req(inputLBSPRData$data, input$LBSPR_years_selected)
+        lbspr_dat$dataExplo[['lfq']] <- lbsprDataExplo1()
+        lbspr_dat$dataExplo[['raw']] <- inputLBSPRData$raw
+        lbspr_dat$dataExplo[['checks']] <- inputLBSPRData$checks
+        textLBSPR.diag1(lbspr_dat, input)
     })
 
 

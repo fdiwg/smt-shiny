@@ -137,7 +137,8 @@ validateLBMInputFile <- function(file, type = "freq"){
 
     ## return checks
     checks <- list(csv=check_csv, delimiter=check_delimiter, lengths=check_lengths,
-                   dates=check_dates, ncols=check_ncols)
+                   dates=check_dates, ncols=check_ncols,
+                   format = NULL)
     return(list(inputData=inputData, checks=checks))
 }
 
@@ -188,6 +189,7 @@ validateLBMInputFile2 <- function(file, type = "freq"){
                 formatTimestamp(parse_date_time(x, c('ymd', 'dmy', 'mdy')))
             })
             inputData <- cbind(inputData[,1], inputData[,which(!is.na(dates))+1])
+            colnames(inputData) <- colnams
         }else if(type == "raw"){
             if(ncol(inputData) >= 2){
                 suppressWarnings(tmp <- try(sapply(head(inputData[,1]), function(x)
@@ -226,9 +228,10 @@ validateLBMInputFile2 <- function(file, type = "freq"){
 
         ## Only use numeric columns + Are there sufficient numeric samples?
         if(type == "freq"){
-            inputData <- inputData[,sapply(inputData, is.numeric)]
+            inputData <- inputData[,apply(inputData, 2, is.numeric)]
         }
-        check_ncols <- ifelse((!is.null(ncol(inputData)) && ncol(inputData) > 2) || type == "raw", TRUE, FALSE)
+        check_ncols <- ifelse((!is.null(ncol(inputData)) &&
+                               ncol(inputData) >= 2) || type == "raw", TRUE, FALSE)
 
     }else{
         check_delimiter <- FALSE
@@ -239,7 +242,8 @@ validateLBMInputFile2 <- function(file, type = "freq"){
 
     ## return checks
     checks <- list(csv=check_csv, delimiter=check_delimiter, lengths=check_lengths,
-                   dates=check_dates, ncols=check_ncols)
+                   dates=check_dates, ncols=check_ncols,
+                   format = NULL)
     return(list(inputData=inputData, checks=checks))
 }
 
@@ -267,7 +271,8 @@ read_lbm_csv <- function(csvFile, format=""){
 
     ## read in and validate csv file
     dataset <- validateLBMInputFile2(csvFile, type = "freq")
-    if(all(unlist(dataset$checks))){
+    if(all(unlist(dataset$checks[c("csv","delimiter","lengths","dates","ncols")]))){
+        dataset$checks$format <- "wide"
         inputData <- dataset$inputData
         ## lfq list
         dataset$lfq <- list()
@@ -288,12 +293,30 @@ read_lbm_csv <- function(csvFile, format=""){
         dataset$lfq$midLengths <- inputData[,1]
 
         ## catch matrix
-        dataset$lfq$catch <- as.matrix(inputData[,-1])[,order(dates)]
+        tmp <- as.matrix(inputData[,-1])[,order(dates)]
+        if(!is.matrix(tmp)) {
+            dataset$lfq$catch <- matrix(tmp, ncol = 1)
+        } else {
+            dataset$lfq$catch <- tmp
+        }
+
         colnames(dataset$lfq$catch) <- sort(dates)
+
+        ## Raw data format
+        tmp <- dataset$lfq$catch
+        colnames(tmp) <- dataset$lfq$dates
+        rownames(tmp) <- dataset$lfq$midLengths
+        tmp2 <- reshape2::melt(tmp)
+        colnames(tmp2) <- c("Length","Date","Frequency")
+        tmp2 <- tmp2[tmp2$Frequency > 0,]
+        tmp2$Date <- as.Date(tmp2$Date)
+
+        dataset$raw <- tmp2
     }else{
         ## requires that first column contains dates and second length measurements
         dataset <- validateLBMInputFile2(csvFile, type = "raw")
-        if(all(unlist(dataset$checks))){
+        if(all(unlist(dataset$checks[c("csv","delimiter","lengths","dates","ncols")]))){
+            dataset$checks$format <- "long"
             inputData <- dataset$inputData
 
             if(ncol(inputData) == 1){
@@ -341,8 +364,12 @@ read_lbm_csv <- function(csvFile, format=""){
                               min(tmp[tmp > 0], na.rm = TRUE),
                               0.05*0.23*max(newData$Length, na.rm = TRUE)^0.6)),2)
             ## lfq list
-            dataset$lfq <- lfqCreate(newData, Lname = "Length", Dname = "Date", Fname = "Frequency",
+            dataset$lfq <- lfqCreate(newData, Lname = "Length",
+                                     Dname = "Date", Fname = "Frequency",
                                      bin_size = bs, aggregate_dates = TRUE)
+            ## Raw data format
+            dataset$raw <- newData
+
         }else{
             ## If both wrong report errors from freq format
             dataset <- validateLBMInputFile2(csvFile, type = "freq")

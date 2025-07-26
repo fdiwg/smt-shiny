@@ -1011,22 +1011,41 @@ tabElefanGa <- function(id) {
 
                                  ),
 
-                        tabPanel("5. Diagnostics",
+                        tabPanel("5. Summary & Diagnostics",
 
-                                 tags$div(
-                                          plotOutput(ns("plot_diag1"),
-                                                     width = "90%",
-                                                     height = "600px"),
-                                          div(style = "margin-top:-10px; margin-left: 10px",
-                                              htmlOutput(ns("title_diag1"))
-                                              ),
-                                          ## plotOutput(ns("plot_explo2"), width = "90%",
-                                          ##            height = "280px"),
-                                          ## div(style = "margin-top:-10px; margin-left: 10px",
-                                          ##     htmlOutput(ns("title_explo2"))
-                                          ##     ),
-                                          style = "margin-left: 10%;"
-                                      )
+                                 fluidRow(
+                                     column(3,
+
+                                            uiOutput(ns("text_diag1")),
+
+                                            br()
+                                            ),
+
+                                     column(9,
+
+                                            tags$div(
+                                                     plotOutput(ns("plot_diag1"),
+                                                                width = "90%",
+                                                                height = "400px"),
+                                                     div(style = "margin-top:-10px; margin-left: 10px",
+                                                         htmlOutput(ns("title_diag1"))
+                                                         ),
+                                                     plotOutput(ns("plot_diag2"),
+                                                                width = "90%",
+                                                                height = "400px"),
+                                                     div(style = "margin-top:-10px; margin-left: 10px",
+                                                         htmlOutput(ns("title_diag2"))
+                                                         ),
+                                                     plotOutput(ns("plot_diag3"),
+                                                                width = "90%",
+                                                                height = "600px"),
+                                                     div(style = "margin-top:-10px; margin-left: 10px",
+                                                         htmlOutput(ns("title_diag3"))
+                                                         ),
+                                                     style = "margin-left: 10%;"
+                                                 )
+                                            )
+                                 )
                                  )
 
                     )

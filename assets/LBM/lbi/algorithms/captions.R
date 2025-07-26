@@ -71,8 +71,20 @@ captionLBI.plots <- function(lbi_dat, input, format = "withFig", type){
                plot.num <- 1
                txt <- paste0("Uploaded length-frequency distributions for each year. The bin size affects the binning of the data and thus the distributions in this graph. A good bin size is as small as possible while at the same time large enough to reduce the noise in the data.")
            },
-           "fit" = {
+           "diag1" = {
                plot.num <- 2
+               txt <- paste0("Number of samples by month.")
+           },
+           "diag2" = {
+               plot.num <- 3
+               txt <- paste0("Length frequency distributions by month.")
+           },
+           "diag3" = {
+               plot.num <- 4
+               txt <- paste0("Length frequency distributions by year.")
+           },
+           "fit" = {
+               plot.num <- 5
                if(format == "datatable"){
                    vals <- paste0(withMathJax('\\(L_{mean}/L_{opt}\\)'))
                }else if(format == "kable"){

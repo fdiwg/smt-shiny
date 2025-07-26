@@ -6,7 +6,9 @@ elefanGaModule <- function(input, output, session) {
     ## ----------------------------
     elefan_ga <- reactiveValues(
         dataExplo = NULL,
-        results = NULL
+        results = NULL,
+        years_selected = NULL,
+        binSize = NULL
     )
 
     elefanGaUploadVreResult <- reactiveValues()
@@ -24,10 +26,11 @@ elefanGaModule <- function(input, output, session) {
     ## ----------------------------
     elefanGaFileData <- reactive({
         if (is.null(input$fileGa) || is.null(fileGaState$upload)) {
-            return(NA)
+            return(NULL)
         }
 
         dataset <- read_lbm_csv(input$fileGa$datapath, input$elefanGaDateFormat)
+        dataset$checks$fileName <- input$fileGa$name
         checks <- dataset$checks
 
         print(input$fileGa)
@@ -57,16 +60,21 @@ elefanGaModule <- function(input, output, session) {
         } else {
             shinyjs::enable("go_ga")
             shinyjs::enable("check_ga")
-            return (dataset$lfq)
+            res <- list(lfq = dataset$lfq,
+                        raw = dataset$raw,
+                        checks = dataset$checks)
+            return(res)
         }
     })
 
     elefanGaDataExplo1 <- reactive({
         req(inputElefanGaData$data)
+        req(elefan_ga$years_selected)
+        req(elefan_ga$binSize)
 
         res <- tryCatch({
             elefan_ga$dataExplo <- list()
-            years <- input$ELEFAN_years_selected
+            years <- elefan_ga$years_selected
             if(is.null(years)){
                 stop("No year selected for the analysis. Please select at least one year of uploaded data set.")
             }
@@ -79,7 +87,7 @@ elefanGaModule <- function(input, output, session) {
             dat <- inputElefanGaData$data
             class(dat) <- "lfq"
 
-            binSize <- input$ELEFAN_GA_binSize
+            binSize <- elefan_ga$binSize
             if(!is.numeric(binSize)){
                 stop("The bin size is not numeric! Please check your input!")
             }
@@ -96,7 +104,7 @@ elefanGaModule <- function(input, output, session) {
             lfq <- lfqModify(dat,
                              bin_size = binSize,
                              years = years,
-                             ##                         plus_group = input$ELEFAN_GA_PLUS_GROUP,
+                             ## plus_group = input$ELEFAN_GA_PLUS_GROUP,
                              aggregate = agg)
 
             ## Leave in original unit!
@@ -154,6 +162,10 @@ elefanGaModule <- function(input, output, session) {
             }
             if((ma / 2) %% 1 == 0){
                 stop("The moving average (MA) has to be an odd number (1,3,5,7,...)!")
+            }
+
+            if(!is.matrix(elefan_ga$dataExplo$lfq$catch)) {
+                stop("The catch matrix in the length frequency data set is numeric implying a single sampling time. This could be caused if the data in fact only contains a single sampling time or if the aggregation level is too coarse, for example, if the data was aggregated over a full year. ELEFAN requires more than one length frequency sample, ideally corresponding to different seasons/months in the same year. Please check your data.")
             }
 
             lfqbin <- lfqRestructure(elefan_ga$dataExplo$lfq,
@@ -245,9 +257,12 @@ elefanGaModule <- function(input, output, session) {
         ## resetting reactive values
         elefan_ga$dataExplo <- NULL
         elefan_ga$results <- NULL
+        elefan_ga$years_selected <- NULL
+        elefan_ga$binSize <- NULL
         inputElefanGaData$data <- NULL
         fileGaState$upload <- NULL
         ## elefanGaUploadVreResult ?
+        elefanAcknowledged(FALSE)
     }
 
 
@@ -336,6 +351,14 @@ elefanGaModule <- function(input, output, session) {
         }else{
             js$showBox2("box_provide_gp")
         }
+    })
+
+    observeEvent(input$ELEFAN_years_selected, {
+        elefan_ga$years_selected <- input$ELEFAN_years_selected
+    })
+
+    observeEvent(input$ELEFAN_GA_binSize, {
+        elefan_ga$binSize <- input$ELEFAN_GA_binSize
     })
 
     observe({
@@ -435,11 +458,65 @@ elefanGaModule <- function(input, output, session) {
 
     observeEvent(input$fileGa, {
         fileGaState$upload <- 'uploaded'
-        inputElefanGaData$data <- elefanGaFileData()
+        tmp <- elefanGaFileData()
+        inputElefanGaData$data <- tmp$lfq
+        inputElefanGaData$raw <- tmp$raw
+        inputElefanGaData$checks <- tmp$checks
+        ## bin size
+        if(is.null(inputElefanGaData$data)){
+            binSize <- 2
+            maxL <- 10
+        }else{
+            binSize <- try(min(diff(inputElefanGaData$data$midLengths)),silent=TRUE)
+            maxL <- try(max(inputElefanGaData$data$midLengths),silent=TRUE)
+            if(inherits(binSize,"try-error")){
+                binSize <- 2
+                maxL <- 10
+            }else{
+                binSize <- round(0.23 * maxL^0.6, 1)
+                if(binSize == 0) binSize <- 0.1
+            }
+        }
+        elefan_ga$binSize <- binSize
+        ## years selected
+        if(is.null(inputElefanGaData$data)){
+            allyears <- NULL
+        }else{
+            allyears <- try(unique(format(inputElefanGaData$data$dates,"%Y")),silent=TRUE)
+            if(inherits(allyears,"try-error")) allyears <- NULL
+        }
+        elefan_ga$years_selected <- allyears
     })
 
     observeEvent(input$elefanGaDateFormat, {
-        inputElefanGaData$data <- elefanGaFileData()
+        tmp <- elefanGaFileData()
+        inputElefanGaData$data <- tmp$lfq
+        inputElefanGaData$raw <- tmp$raw
+        inputElefanGaData$checks <- tmp$checks
+        ## bin size
+        if(is.null(inputElefanGaData$data)){
+            binSize <- 2
+            maxL <- 10
+        }else{
+            binSize <- try(min(diff(inputElefanGaData$data$midLengths)),silent=TRUE)
+            maxL <- try(max(inputElefanGaData$data$midLengths),silent=TRUE)
+            if(inherits(binSize,"try-error")){
+                binSize <- 2
+                maxL <- 10
+            }else{
+                binSize <- round(0.23 * maxL^0.6, 1)
+                if(binSize == 0) binSize <- 0.1
+            }
+        }
+        elefan_ga$binSize <- binSize
+        ## years selected
+        if(is.null(inputElefanGaData$data)){
+            allyears <- NULL
+        }else{
+            allyears <- try(unique(format(inputElefanGaData$data$dates,"%Y")),silent=TRUE)
+        if(inherits(allyears,"try-error")) allyears <- NULL
+        }
+        elefan_ga$years_selected <- allyears
     })
 
 
@@ -447,7 +524,6 @@ elefanGaModule <- function(input, output, session) {
 
     ## Action buttons
     ## ----------------------------
-
     observeEvent(input$check_ga, {
 
         js$showComputing()
@@ -636,30 +712,130 @@ elefanGaModule <- function(input, output, session) {
 
 
     observeEvent(input$go_ga, {
-        elefanAcknowledged(FALSE)
+        req(inputElefanGaData$data)
 
-        showModal(modalDialog(
-            title = "Acknowledge model assumptions",
-            bsCollapse(id = ns("assumptions"), open = NULL,
-                       bsCollapsePanel("▶ Click to show/hide",
-                                       HTML(tropfishrAssumptionsHTML()))
-                       ),
-            tags$p(HTML("See the <a href='https://elearning.fao.org/course/view.php?id=502' target='_blank'>FAO eLearning module</a> for more information.")),
-            footer = tagList(
-                modalButton("Cancel"),
-                actionButton(ns("elefan_ack"), "I Acknowledge", class = "btn-success")
-            ),
-            easyClose = FALSE
-        ))
+        res <- tryCatch({
+            ## needed because of renderUI in hidden tabs
+            if(is.null(input$ELEFAN_GA_Linf)){
+                linf_range <- c(0.8,1.2) * round(max(inputElefanGaData$data$midLengths)/0.95)
+            }else{
+                linf_range <- range(input$ELEFAN_GA_Linf)
+            }
+            k_range <- c(min(input$ELEFAN_GA_K), max(input$ELEFAN_GA_K))
+            ta_range <- c(min(input$ELEFAN_GA_t_anchor),
+                          max(input$ELEFAN_GA_t_anchor))
+            c_range <- c(min(input$ELEFAN_GA_C), max(input$ELEFAN_GA_C))
+            ts_range <- c(min(input$ELEFAN_GA_ts), max(input$ELEFAN_GA_ts))
+
+            if(is.null(input$yearsCC)){
+                yearsCC <- unique(format(inputElefanGaData$data$dates,"%Y"))
+            }else{
+                yearsCC <- input$ELEFAN_years_selected_cc
+            }
+
+
+            ## Double-check that lower bounds are met
+            popSize <- input$ELEFAN_GA_popSize
+            if(popSize < 50) popSize <- 50
+            maxiter <- input$ELEFAN_GA_maxiter
+            if(maxiter < 20) maxiter <- 20
+            pmutation <- input$ELEFAN_GA_pmutation
+            if(pmutation < 0.1) pmutation <- 0.1
+            run <- input$ELEFAN_GA_run
+            if(run < 10) run <- 10
+            pcrossover <- input$ELEFAN_GA_pcrossover
+            if(pcrossover < 0.1) pcrossover <- 0.1
+            elitism <- input$ELEFAN_GA_elitism
+            if(elitism < 1) elitism <- 1
+
+            ## Fix parameters
+            if(!is.na(input$provide_Linf)){
+                linf_range <- c(input$provide_Linf,input$provide_Linf)
+            }
+            if(!is.na(input$provide_K)){
+                k_range <- c(input$provide_K,input$provide_K)
+            }
+            if(!is.na(input$provide_t_anchor)){
+                ta_range <- c(input$provide_t_anchor,input$provide_t_anchor)
+            }
+            if(!is.na(input$provide_C)){
+                c_range <- c(input$provide_C,input$provide_C)
+            }
+            if(!is.na(input$provide_ts)){
+                ts_range <- c(input$provide_ts,input$provide_ts)
+            }
+
+            ## Parameter/Input checks
+            check.numeric.and.min(c(popSize = popSize,
+                                    maxiter = maxiter,
+                                    run = run,
+                                    pmut = pmutation,
+                                    pcross = pcrossover,
+                                    elite = elitism,
+                                    ma = input$ELEFAN_GA_MA,
+                                    binSize = input$ELEFAN_GA_binSize,
+                                    a = input$LWa,
+                                    b = input$LWb,
+                                    fRangeMax = input$fRangeMax),
+                                  can.be.zero = FALSE)
+            check.numeric.and.min(c(fRangeMin = input$fRangeMin),
+                                  can.be.zero = TRUE)
+            if(!is.na(input$provide_Linf)){
+                if(!is.numeric(linf_range)){
+                    stop(paste0("The provided Linf value is not numeric! Please check your input!"))
+                }
+                if(linf_range <= 0){
+                    stop(paste0("The provided Linf value has to be larger than 0!"))
+                }
+            }
+            if(!is.na(input$provide_K)){
+                if(!is.numeric(k_range)){
+                    stop(paste0("The provided K value is not numeric! Please check your input!"))
+                }
+                if(k_range <= 0){
+                    stop(paste0("The provided K value has to be larger than 0!"))
+                }
+            }
+            if(!is.na(input$provide_t_anchor)){
+                if(!is.numeric(ta_range)){
+                    stop(paste0("The provided time anchor (ta) is not numeric! Please check your input!"))
+                }
+                if(ta_range <= 0){
+                    stop(paste0("The provided time anchor (ta) has to be larger than 0!"))
+                }
+            }
+
+            elefanAcknowledged(FALSE)
+
+            showModal(modalDialog(
+                title = "Acknowledge model assumptions",
+                bsCollapse(id = ns("assumptions"), open = NULL,
+                           bsCollapsePanel("▶ Click to show/hide",
+                                           HTML(tropfishrAssumptionsHTML()))
+                           ),
+                tags$p(HTML("See the <a href='https://elearning.fao.org/course/view.php?id=502' target='_blank'>FAO eLearning module</a> for more information.")),
+                footer = tagList(
+                    modalButton("Cancel"),
+                    actionButton(ns("elefan_ack"), "I Acknowledge", class = "btn-success")
+                ),
+                easyClose = FALSE
+            ))
+
+        }, error = function(cond) {
+            flog.error("Error in TropFishR: %s ",cond)
+            showModal(modalDialog(
+                title = "Error",
+                cond$message,
+                easyClose = TRUE,
+                footer = NULL
+            ))
+        })
     })
 
     observeEvent(input$elefan_ack, {
+        req(inputElefanGaData$data)
         removeModal()
         elefanAcknowledged(TRUE)
-    })
-
-    observeEvent(elefanAcknowledged(), {
-        req(elefanAcknowledged())
 
         js$showComputing()
         js$disableAllButtons()
@@ -881,7 +1057,11 @@ elefanGaModule <- function(input, output, session) {
         req(inputElefanGaData$data, input$ELEFAN_years_selected)
         elefan_ga$dataExplo[['lfq']] <- elefanGaDataExplo1()
         elefan_ga$dataExplo[['lfqbin']] <- elefanGaDataExplo2()
-        plotTropFishR.data(elefan_ga, input)
+        if(is.matrix(elefan_ga$dataExplo$lfq$catch)) {
+            plotTropFishR.data(elefan_ga, input)
+        } else {
+            NULL
+        }
     },
     width = "auto",
     height = "auto",
@@ -897,6 +1077,8 @@ elefanGaModule <- function(input, output, session) {
         req(inputElefanGaData$data, input$ELEFAN_years_selected)
         elefan_ga$dataExplo[['lfq']] <- elefanGaDataExplo1()
         elefan_ga$dataExplo[['lfqbin']] <- elefanGaDataExplo2()
+        elefan_ga$dataExplo[['raw']] <- inputElefanGaData$raw
+        elefan_ga$dataExplo[['checks']] <- inputElefanGaData$checks
         plotTropFishR.diag1(elefan_ga, input)
     },
     width = "auto",
@@ -905,6 +1087,38 @@ elefanGaModule <- function(input, output, session) {
     output$title_diag1 <- renderText({
         req(inputElefanGaData$data, input$ELEFAN_years_selected)
         captionTropFishR.plots(elefan_ga, input, format = "withFig", type = "diag1")
+    })
+
+    output$plot_diag2 <- renderPlot({
+        req(inputElefanGaData$data, input$ELEFAN_years_selected)
+        elefan_ga$dataExplo[['lfq']] <- elefanGaDataExplo1()
+        elefan_ga$dataExplo[['lfqbin']] <- elefanGaDataExplo2()
+        elefan_ga$dataExplo[['raw']] <- inputElefanGaData$raw
+        elefan_ga$dataExplo[['checks']] <- inputElefanGaData$checks
+        plotTropFishR.diag2(elefan_ga, input)
+    },
+    width = "auto",
+    height = "auto",
+    res = 100)
+    output$title_diag2 <- renderText({
+        req(inputElefanGaData$data, input$ELEFAN_years_selected)
+        captionTropFishR.plots(elefan_ga, input, format = "withFig", type = "diag2")
+    })
+
+    output$plot_diag3 <- renderPlot({
+        req(inputElefanGaData$data, input$ELEFAN_years_selected)
+        elefan_ga$dataExplo[['lfq']] <- elefanGaDataExplo1()
+        elefan_ga$dataExplo[['lfqbin']] <- elefanGaDataExplo2()
+        elefan_ga$dataExplo[['raw']] <- inputElefanGaData$raw
+        elefan_ga$dataExplo[['checks']] <- inputElefanGaData$checks
+        plotTropFishR.diag3(elefan_ga, input)
+    },
+    width = "auto",
+    height = "auto",
+    res = 100)
+    output$title_diag3 <- renderText({
+        req(inputElefanGaData$data, input$ELEFAN_years_selected)
+        captionTropFishR.plots(elefan_ga, input, format = "withFig", type = "diag3")
     })
 
     ## Growth
@@ -1070,6 +1284,23 @@ elefanGaModule <- function(input, output, session) {
     })
 
 
+    ## Text
+    ## --------------------------
+
+    ## Data diagnostics
+    ## --------------------------
+    output$text_diag1 <- renderUI({
+        req(inputElefanGaData$data, input$ELEFAN_years_selected)
+        elefan_ga$dataExplo[['lfq']] <- elefanGaDataExplo1()
+        elefan_ga$dataExplo[['lfqbin']] <- elefanGaDataExplo2()
+        elefan_ga$dataExplo[['raw']] <- inputElefanGaData$raw
+        elefan_ga$dataExplo[['checks']] <- inputElefanGaData$checks
+        textTropFishR.diag1(elefan_ga, input)
+    })
+
+
+    ## Files
+    ## --------------------------
 
     output$downloadReport_ga <- renderUI({
         req(elefan_ga$results)

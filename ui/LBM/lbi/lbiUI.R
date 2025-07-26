@@ -228,7 +228,7 @@ tabLBI <- function(id) {
                                                 "Month Day Year" = "mdy" ))
                     ),
                     box(width = 3,
-                        selectInput(ns("LBI_lengthUnit"),
+                        selectInput(ns("lbi_lengthUnit"),
                                     "Choose length unit",
                                     choices = c("cm", "mm", "in"))
                     )
@@ -254,11 +254,11 @@ tabLBI <- function(id) {
                         width = NULL,
                         height = "810px",
                         side="left",
-                        selected = "1. Data",
+                        selected = "1. Data and settings",
                         id = "settings",
 
 
-                        tabPanel("1. Data",
+                        tabPanel("1. Data and settings",
 
                                  box(title = "",
                                      width = 4,
@@ -512,8 +512,44 @@ tabLBI <- function(id) {
                                           )
                                      )
 
+                                 ),
+                        tabPanel("2. Summary & Diagnostics",
+
+                                 fluidRow(
+                                     column(3,
+
+                                            uiOutput(ns("text_diag1")),
+
+                                            br()
+                                            ),
+
+                                     column(9,
+
+                                            tags$div(
+                                                     plotOutput(ns("plot_diag1"),
+                                                                width = "90%",
+                                                                height = "400px"),
+                                                     div(style = "margin-top:-10px; margin-left: 10px",
+                                                         htmlOutput(ns("title_diag1"))
+                                                         ),
+                                                     plotOutput(ns("plot_diag2"),
+                                                                width = "90%",
+                                                                height = "400px"),
+                                                     div(style = "margin-top:-10px; margin-left: 10px",
+                                                         htmlOutput(ns("title_diag2"))
+                                                         ),
+                                                     plotOutput(ns("plot_diag3"),
+                                                                width = "90%",
+                                                                height = "600px"),
+                                                     div(style = "margin-top:-10px; margin-left: 10px",
+                                                         htmlOutput(ns("title_diag3"))
+                                                         ),
+                                                     style = "margin-left: 10%;"
+                                                 )
+                                            )
                                  )
-            )
+                                 )
+                    )
 
             ),## end of settings box
 

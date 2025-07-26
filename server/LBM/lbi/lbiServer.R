@@ -7,7 +7,9 @@ lbiModule <- function(input, output, session) {
     ## ----------------------------
     lbi_dat <- reactiveValues(
         dataExplo = NULL,
-        results = NULL
+        results = NULL,
+        years_selected = NULL,
+        binSize = NULL
     )
     lbiUploadVreResult <- reactiveValues()
 
@@ -23,13 +25,11 @@ lbiModule <- function(input, output, session) {
     ## ----------------------------
     lbiFileData <- reactive({
         if (is.null(input$fileLBI) || is.null(fileLBIState$upload)) {
-            return(NA)
+            return(NULL)
         }
 
-        input$fileLBI$datapath
-        input$lbiDateFormat
-
         dataset <- read_lbm_csv(input$fileLBI$datapath, input$lbiDateFormat)
+        dataset$checks$fileName <- input$fileLBI$name
         checks <- dataset$checks
 
         print(input$fileLBI)
@@ -57,22 +57,27 @@ lbiModule <- function(input, output, session) {
             return (NULL)
         } else {
             shinyjs::enable("go_lbi")
-            return (dataset$lfq)
+            res <- list(lfq = dataset$lfq,
+                        raw = dataset$raw,
+                        checks = dataset$checks)
+            return (res)
         }
     })
 
     lbiDataExplo1 <- reactive({
         req(inputLBIData$data)
+        req(lbi_dat$years_selected)
+        req(lbi_dat$binSize)
 
         lbi_dat$dataExplo <- list()
-        years <- input$LBI_years_selected
+        years <- lbi_dat$years_selected
         if(is.null(years)){
             stop("No year selected for the analysis. Please select at least one year of uploaded data set.")
         }
         dat <- inputLBIData$data
         class(dat) <- "lfq"
 
-        binSize <- input$LBI_binSize
+        binSize <- lbi_dat$binSize
         if(!is.numeric(binSize)){
             stop("The bin size is not numeric! Please check your input!")
         }
@@ -87,15 +92,15 @@ lbiModule <- function(input, output, session) {
         }
 
         suppressWarnings({lfq <- lfqModify(dat,
-                         bin_size = binSize,
-                         years = years,
+                                           bin_size = binSize,
+                                           years = years,
                          aggregate = "year")})
 
         ## Leave in original unit!
         ## Account for length unit
-        ## if(input$LBI_lengthUnit == "mm"){
+        ## if(input$lbi_lengthUnit == "mm"){
         ##     lfq$midLengths <- lfq$midLengths * 10
-        ## }else if(input$LBI_lengthUnit == "in"){
+        ## }else if(input$lbi_lengthUnit == "in"){
         ##     lfq$midLengths <- lfq$midLengths * 2.54
         ## }
 
@@ -123,9 +128,12 @@ lbiModule <- function(input, output, session) {
         ## resetting reactive values
         lbi_dat$dataExplo <- NULL
         lbi_dat$results <- NULL
+        lbi_dat$years_selected <- NULL
+        lbi_dat$binSize <- NULL
         inputLBIData$data <- NULL
         fileLBIState$upload <- NULL
         ## lbiUploadVreResult ?
+        lbiAcknowledged(FALSE)
     }
 
 
@@ -226,45 +234,141 @@ lbiModule <- function(input, output, session) {
         }
     })
 
+    observeEvent(input$LBI_years_selected, {
+        lbi_dat$years_selected <- input$LBI_years_selected
+    })
+
+    observeEvent(input$LBI_binSize, {
+        lbi_dat$binSize <- input$LBI_binSize
+    })
+
     observeEvent(input$fileLBI, {
         fileLBIState$upload <- 'uploaded'
-        inputLBIData$data <- lbiFileData()
+        tmp <- lbiFileData()
+        inputLBIData$data <- tmp$lfq
+        inputLBIData$raw <- tmp$raw
+        inputLBIData$checks <- tmp$checks
+        ## bin size
+        if(is.null(inputLBIData$data)){
+            binSize <- 2
+            maxL <- 10
+        }else{
+            binSize <- try(min(diff(inputLBIData$data$midLengths)),silent=TRUE)
+            maxL <- try(max(inputLBIData$data$midLengths),silent=TRUE)
+            if(inherits(binSize,"try-error")){
+                binSize <- 2
+                maxL <- 10
+            }else{
+                binSize <- round(0.23 * maxL^0.6, 1)
+                if(binSize == 0) binSize <- 0.1
+            }
+        }
+        lbi_dat$binSize <- binSize
+        ## years selected
+        if(is.null(inputLBIData$data)){
+            allyears <- NULL
+        }else{
+            allyears <- try(unique(format(inputLBIData$data$dates,"%Y")),silent=TRUE)
+            if(inherits(allyears,"try-error")) allyears <- NULL
+        }
+        lbi_dat$years_selected <- allyears
     })
 
     observeEvent(input$lbiDateFormat, {
-        inputLBIData$data <- lbiFileData()
+        tmp <- lbiFileData()
+        inputLBIData$data <- tmp$lfq
+        inputLBIData$raw <- tmp$raw
+        inputLBIData$checks <- tmp$checks
+        ## bin size
+        if(is.null(inputLBIData$data)){
+            binSize <- 2
+            maxL <- 10
+        }else{
+            binSize <- try(min(diff(inputLBIData$data$midLengths)),silent=TRUE)
+            maxL <- try(max(inputLBIData$data$midLengths),silent=TRUE)
+            if(inherits(binSize,"try-error")){
+                binSize <- 2
+                maxL <- 10
+            }else{
+                binSize <- round(0.23 * maxL^0.6, 1)
+                if(binSize == 0) binSize <- 0.1
+            }
+        }
+        lbi_dat$binSize <- binSize
+        ## years selected
+        if(is.null(inputLBIData$data)){
+            allyears <- NULL
+        }else{
+            allyears <- try(unique(format(inputLBIData$data$dates,"%Y")),silent=TRUE)
+            if(inherits(allyears,"try-error")) allyears <- NULL
+        }
+        lbi_dat$years_selected <- allyears
     })
-
 
 
     ## Action buttons
     observeEvent(input$go_lbi, {
-        lbiAcknowledged(FALSE)
+        req(inputLBIData$data)
 
-        showModal(modalDialog(
-            title = "Acknowledge model assumptions",
-            bsCollapse(id = ns("assumptions"), open = NULL,
-                       bsCollapsePanel("▶ Click to show/hide",
-                                       HTML(lbiAssumptionsHTML()))
-                       ),
-            tags$p(HTML("See the <a href='https://elearning.fao.org/course/view.php?id=502' target='_blank'>FAO eLearning module</a> for more information.")),
-            footer = tagList(
-                modalButton("Cancel"),
-                actionButton(ns("lbi_ack"), "I Acknowledge", class = "btn-success")
-            ),
-            easyClose = FALSE
-        ))
+        result <- tryCatch({
+
+            ## no weight at length -> no Lmaxy and Lmaxy_Lopt
+            ## TODO: but how to enter weight in SMT?
+            ## ADD: weight-at-length input
+            lbi_dat$dataExplo[['lfq']]$weight <- input$LBI_LWa * lbi_dat$dataExplo[['lfq']]$midLengths ^ input$LBI_LWb
+
+            if(input$LBI_split_mk){
+                mk <- input$LBI_M / input$LBI_K
+            }else{
+                mk <- input$LBI_MK
+            }
+
+            ## Warnings
+            years <- as.numeric(format(lbi_dat$dataExplo[['lfq']]$dates, "%Y"))
+            if(any(duplicated(years))){
+                showModal(modalDialog(
+                    title = "Warning",
+                    HTML("The length frequency data is not aggregated by year. This method should be used with yearly aggregated data!<hr/>")))
+            }
+
+            ## Parameter/Input checks
+            check.numeric.and.min(c(binSize = input$LBI_binSize,
+                                    linf = input$LBI_Linf,
+                                    lm50 = input$LBI_Lm50,
+                                    mk = mk
+                                    ),
+                                  can.be.zero = FALSE)
+
+            lbiAcknowledged(FALSE)
+
+            showModal(modalDialog(
+                title = "Acknowledge model assumptions",
+                bsCollapse(id = ns("assumptions"), open = NULL,
+                           bsCollapsePanel("▶ Click to show/hide",
+                                           HTML(lbiAssumptionsHTML()))
+                           ),
+                tags$p(HTML("See the <a href='https://elearning.fao.org/course/view.php?id=502' target='_blank'>FAO eLearning module</a> for more information.")),
+                footer = tagList(
+                    modalButton("Cancel"),
+                    actionButton(ns("lbi_ack"), "I Acknowledge", class = "btn-success")
+                ),
+                easyClose = FALSE
+            ))
+
+        }, error = function(e) {
+            showModal(modalDialog(
+                title = "Input Error",
+                e$message,
+                easyClose = TRUE,
+                footer = NULL
+            ))
+        })
     })
 
     observeEvent(input$lbi_ack, {
+        req(inputLBIData$data)
         removeModal()
         lbiAcknowledged(TRUE)
-    })
-
-    observeEvent(lbiAcknowledged(), {
-        req(lbiAcknowledged())
-
-        req(inputLBIData$data)
 
         js$showComputing()
         js$disableAllButtons()
@@ -370,7 +474,55 @@ lbiModule <- function(input, output, session) {
     res = 100)
     output$title_explo1 <- renderText({
         req(inputLBIData$data, input$LBI_years_selected)
-        captionLBI.plots(lbi_data, input, format = "withFig", type = "data")
+        captionLBI.plots(lbi_dat, input, format = "withFig", type = "data")
+    })
+
+
+    ## Data diagnostics
+    ## --------------------------
+    output$plot_diag1 <- renderPlot({
+        req(inputLBIData$data, input$LBI_years_selected)
+        lbi_dat$dataExplo[['lfq']] <- lbiDataExplo1()
+        lbi_dat$dataExplo[['raw']] <- inputLBIData$raw
+        lbi_dat$dataExplo[['checks']] <- inputLBIData$checks
+        plotLBI.diag1(lbi_dat, input)
+    },
+    width = "auto",
+    height = "auto",
+    res = 100)
+    output$title_diag1 <- renderText({
+        req(inputLBIData$data, input$LBI_years_selected)
+        captionLBI.plots(lbi_dat, input, format = "withFig", type = "diag1")
+    })
+
+    output$plot_diag2 <- renderPlot({
+        req(inputLBIData$data, input$LBI_years_selected)
+        lbi_dat$dataExplo[['lfq']] <- lbiDataExplo1()
+        lbi_dat$dataExplo[['raw']] <- inputLBIData$raw
+        lbi_dat$dataExplo[['checks']] <- inputLBIData$checks
+        plotLBI.diag2(lbi_dat, input)
+    },
+    width = "auto",
+    height = "auto",
+    res = 100)
+    output$title_diag2 <- renderText({
+        req(inputLBIData$data, input$LBI_years_selected)
+        captionLBI.plots(lbi_dat, input, format = "withFig", type = "diag2")
+    })
+
+    output$plot_diag3 <- renderPlot({
+        req(inputLBIData$data, input$LBI_years_selected)
+        lbi_dat$dataExplo[['lfq']] <- lbiDataExplo1()
+        lbi_dat$dataExplo[['raw']] <- inputLBIData$raw
+        lbi_dat$dataExplo[['checks']] <- inputLBIData$checks
+        plotLBI.diag3(lbi_dat, input)
+    },
+    width = "auto",
+    height = "auto",
+    res = 100)
+    output$title_diag3 <- renderText({
+        req(inputLBIData$data, input$LBI_years_selected)
+        captionLBI.plots(lbi_dat, input, format = "withFig", type = "diag3")
     })
 
 
@@ -385,7 +537,7 @@ lbiModule <- function(input, output, session) {
     res = 120)
     output$title_lbiFit <- renderText({
         req(lbi_dat$results)
-        captionLBI.plots(lbi_data, input, format = "withFig", type = "fit")
+        captionLBI.plots(lbi_dat, input, format = "withFig", type = "fit")
     })
 
 
@@ -400,8 +552,8 @@ lbiModule <- function(input, output, session) {
     })
     output$title_table_intro_lbi <- renderText({
         req(lbi_dat$results)
-        captionLBI.tables(lbi_data, input, format = "datatable",
-                                type = "intro")
+        captionLBI.tables(lbi_dat, input, format = "datatable",
+                          type = "intro")
     })
 
     ## Indicators
@@ -412,8 +564,8 @@ lbiModule <- function(input, output, session) {
     })
     output$title_table_lbi <- renderText({
         req(lbi_dat$results)
-        captionLBI.tables(lbi_data, input, format = "datatable",
-                                type = "indicators")
+        captionLBI.tables(lbi_dat, input, format = "datatable",
+                          type = "indicators")
     })
 
     ## Ratios
@@ -424,91 +576,104 @@ lbiModule <- function(input, output, session) {
     })
     output$title_table2_lbi <- renderText({
         req(lbi_dat$results)
-        captionLBI.tables(lbi_data, input, format = "datatable",
-                                type = "ratios")
+        captionLBI.tables(lbi_dat, input, format = "datatable",
+                          type = "ratios")
     })
 
 
-
-
-    ## Report & Co
+    ## Text
     ## --------------------------
-    output$downloadReport_lbi <- renderUI({
-        req(lbi_dat$results)
-        downloadButton(session$ns('createLBIReport'), 'Download Report')
+
+    ## Data diagnostics
+    ## --------------------------
+    output$text_diag1 <- renderUI({
+        req(inputLBIData$data, input$LBI_years_selected)
+        lbi_dat$dataExplo[['lfq']] <- lbiDataExplo1()
+        lbi_dat$dataExplo[['raw']] <- inputLBIData$raw
+        lbi_dat$dataExplo[['checks']] <- inputLBIData$checks
+        textLBI.diag1(lbi_dat, input)
     })
 
-    output$downloadzip_lbi <- renderUI({
-        req(lbi_dat$results)
-        downloadButton(session$ns('createLBIzip'), 'Download Results (zip archive)')
-    })
 
-    output$lbiVREUpload <- renderText({
-        text <- ""
-        req(lbi_dat$results)
-        if (!is.null(session$userData$sessionMode()) && session$userData$sessionMode() == "GCUBE") {
-            if (isTRUE(lbiUploadVreResult$res)) {
-                text <- paste0(text, VREUploadText)
+
+        ## Report & Co
+        ## --------------------------
+        output$downloadReport_lbi <- renderUI({
+            req(lbi_dat$results)
+            downloadButton(session$ns('createLBIReport'), 'Download Report')
+        })
+
+        output$downloadzip_lbi <- renderUI({
+            req(lbi_dat$results)
+            downloadButton(session$ns('createLBIzip'), 'Download Results (zip archive)')
+        })
+
+        output$lbiVREUpload <- renderText({
+            text <- ""
+            req(lbi_dat$results)
+            if (!is.null(session$userData$sessionMode()) && session$userData$sessionMode() == "GCUBE") {
+                if (isTRUE(lbiUploadVreResult$res)) {
+                    text <- paste0(text, VREUploadText)
+                }
             }
-        }
-        text
-    })
+            text
+        })
 
-    output$createLBIReport <- downloadHandler(
-        filename = paste("LBI_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep=""),
-        content = function(file) {
-            createLBIPDFReport(file, lbi_dat, input, output)
-        }
-    )
+        output$createLBIReport <- downloadHandler(
+            filename = paste("LBI_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep=""),
+            content = function(file) {
+                createLBIPDFReport(file, lbi_dat, input, output)
+            }
+        )
 
-    output$createLBIzip <- downloadHandler(
-        filename = paste("LBI_results_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".zip",sep=""),
-        content = function(file) {
-            makeContentLBIzip(file, lbi_dat, input, output)
-        },
-        contentType = "application/zip"
-    )
+        output$createLBIzip <- downloadHandler(
+            filename = paste("LBI_results_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".zip",sep=""),
+            content = function(file) {
+                makeContentLBIzip(file, lbi_dat, input, output)
+            },
+            contentType = "application/zip"
+        )
 
-    output$lbiTitle <- renderText({
-        session$userData$page("lbi")
-        text <- "<span><h3><b>Length-based indicators (LBIs)</b></h3></span>"
-        text
-    })
+        output$lbiTitle <- renderText({
+            session$userData$page("lbi")
+            text <- "<span><h3><b>Length-based indicators (LBIs)</b></h3></span>"
+            text
+        })
 
-    output$lbiWorkflowConsiderationsText <- renderText({
-        text <- getWorkflowConsiderationTextForLBI()
-        text
-    })
+        output$lbiWorkflowConsiderationsText <- renderText({
+            text <- getWorkflowConsiderationTextForLBI()
+            text
+        })
 
-    output$lbiDataConsiderationsText <- renderText({
-        text <- getDataConsiderationTextForLBI()
-        text
-    })
+        output$lbiDataConsiderationsText <- renderText({
+            text <- getDataConsiderationTextForLBI()
+            text
+        })
 
-    output$lbiDataConsiderationsText2 <- renderText({
-        text <- getDataConsiderationTextForLBI()
-        text
-    })
+        output$lbiDataConsiderationsText2 <- renderText({
+            text <- getDataConsiderationTextForLBI()
+            text
+        })
 
-    output$lbiMethodConsiderationsText <- renderText({
-        text <- getMethodConsiderationTextForLBI()
-        text
-    })
+        output$lbiMethodConsiderationsText <- renderText({
+            text <- getMethodConsiderationTextForLBI()
+            text
+        })
 
-    output$lbiMethodConsiderationsText2 <- renderText({
-        text <- getMethodConsiderationTextForLBI()
-        text
-    })
+        output$lbiMethodConsiderationsText2 <- renderText({
+            text <- getMethodConsiderationTextForLBI()
+            text
+        })
 
-    output$lbiResultConsiderationsText <- renderText({
-        text <- getResultConsiderationTextForLBI()
-        text
-    })
+        output$lbiResultConsiderationsText <- renderText({
+            text <- getResultConsiderationTextForLBI()
+            text
+        })
 
-    output$lbiResultConsiderationsText2 <- renderText({
-        text <- getResultConsiderationTextForLBI()
-        text
-    })
+        output$lbiResultConsiderationsText2 <- renderText({
+            text <- getResultConsiderationTextForLBI()
+            text
+        })
 
 
 }

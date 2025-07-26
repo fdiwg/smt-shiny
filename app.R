@@ -109,14 +109,17 @@ source("assets/LBM/tropfishr/algorithms/temp_predict_mod.R")  ## temporarily nee
 source("assets/LBM/tropfishr/algorithms/tables.R")
 source("assets/LBM/tropfishr/algorithms/plotting.R")
 source("assets/LBM/tropfishr/algorithms/captions.R")
+source("assets/LBM/tropfishr/algorithms/output.R")
 source("assets/LBM/lbi/algorithms/run_lbi.R")
 source("assets/LBM/lbi/algorithms/plotting.R")
 source("assets/LBM/lbi/algorithms/tables.R")
 source("assets/LBM/lbi/algorithms/captions.R")
+source("assets/LBM/lbi/algorithms/output.R")
 source("assets/LBM/lbspr/algorithms/run_lbspr.R")
 source("assets/LBM/lbspr/algorithms/plotting.R")
 source("assets/LBM/lbspr/algorithms/tables.R")
 source("assets/LBM/lbspr/algorithms/captions.R")
+source("assets/LBM/lbspr/algorithms/output.R")
 ## Others
 # source("assets/fishmethods/methods.R")
 ## Support

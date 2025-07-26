@@ -243,7 +243,7 @@ tabLBSPR <- function(id) {
                                                 "Month Day Year" = "mdy" ))
                     ),
                     box(width = 3,
-                        selectInput(ns("LBSPR_lengthUnit"),
+                        selectInput(ns("lbspr_lengthUnit"),
                                     "Choose length unit",
                                     choices = c("cm", "mm", "in"))
                     )
@@ -264,340 +264,389 @@ tabLBSPR <- function(id) {
                     solidHeader = TRUE,
                     class = "collapsed-box",
 
+                    tabBox(
+                        title = "",
+                        width = NULL,
+                        height = "810px",
+                        side="left",
+                        selected = "1. Data and settings",
+                        id = "settings",
 
-                    box(title = "",
-                        width = 4,
+                        tabPanel("1. Data and settings",
 
-                        fluidRow(
-                            div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
-                                HTML("<b>Select years for analysis</b>")
-                                ),
-                            div(style = "display: inline-block; vertical-align:center; margin-left: 3px;",
-                                actionButton(ns("infoYearSel"),
-                                             tags$i(class = "fas fa-info",
-                                                    style="font-size: 8px"),
-                                             class="infoBubbleButton")
-                                )
+                                 box(title = "",
+                                     width = 4,
 
-                        ),
-                        div(style = "margin-top:-3px",
-                            uiOutput(ns("LBSPR_years_selected_out"))
-                            ),
+                                     fluidRow(
+                                         div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
+                                             HTML("<b>Select years for analysis</b>")
+                                             ),
+                                         div(style = "display: inline-block; vertical-align:center; margin-left: 3px;",
+                                             actionButton(ns("infoYearSel"),
+                                                          tags$i(class = "fas fa-info",
+                                                                 style="font-size: 8px"),
+                                                          class="infoBubbleButton")
+                                             )
 
-                        br(),
+                                     ),
+                                     div(style = "margin-top:-3px",
+                                         uiOutput(ns("LBSPR_years_selected_out"))
+                                         ),
 
-                        ## Bin size
-                        ## ---------------------
-                        fluidRow(
-                            column(6,
-                                   fluidRow(
-                                       div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
-                                           HTML("<b>Bin Size</b>")
-                                           ),
-                                       div(style = "display: inline-block; vertical-align:center; margin-left: 3px;",
-                                           actionButton(ns("infoBS"),
-                                                        tags$i(class = "fas fa-info",
-                                                               style="font-size: 8px"),
-                                                        ## size = "extra-small",
-                                                        ##                                                      style='padding:1px; font-size:70%',
-                                                        class="infoBubbleButton")
-                                           )
-                                   ),
-                                   div(style = "margin-top:-5px",
-                                       uiOutput(ns("LBSPR_binSize_out")),
-                                       )
-                                   ),
-                        ## Linf
-                        ## ---------------------
-                            column(6,
-                                   fluidRow(
-                                       div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
-                                           HTML('<b>L<sub style="font-size:14px">&#8734;</sub></b>')
-                                           ),
-                                       div(style = "display: inline-block; vertical-align:center; margin-left: 3px;",
-                                           actionButton(ns("infoLinf"),
-                                                        tags$i(class = "fas fa-info",
-                                                               style="font-size: 8px"),
-                                                        ## size = "extra-small",
-                                                        ##                                                      style='padding:1px; font-size:70%',
-                                                        class="infoBubbleButton")
-                                           )
-                                   ),
-                                   div(style = "margin-top:-3px",
-                                       uiOutput(ns("LBSPR_Linf_out")),
-                                       )
-                                   )
-                        ),
+                                     br(),
 
-                        br(),
+                                     ## Bin size
+                                     ## ---------------------
+                                     fluidRow(
+                                         column(6,
+                                                fluidRow(
+                                                    div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
+                                                        HTML("<b>Bin Size</b>")
+                                                        ),
+                                                    div(style = "display: inline-block; vertical-align:center; margin-left: 3px;",
+                                                        actionButton(ns("infoBS"),
+                                                                     tags$i(class = "fas fa-info",
+                                                                            style="font-size: 8px"),
+                                                                     ## size = "extra-small",
+                                                                     ##                                                      style='padding:1px; font-size:70%',
+                                                                     class="infoBubbleButton")
+                                                        )
+                                                ),
+                                                div(style = "margin-top:-5px",
+                                                    uiOutput(ns("LBSPR_binSize_out")),
+                                                    )
+                                                ),
+                                         ## Linf
+                                         ## ---------------------
+                                         column(6,
+                                                fluidRow(
+                                                    div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
+                                                        HTML('<b>L<sub style="font-size:14px">&#8734;</sub></b>')
+                                                        ),
+                                                    div(style = "display: inline-block; vertical-align:center; margin-left: 3px;",
+                                                        actionButton(ns("infoLinf"),
+                                                                     tags$i(class = "fas fa-info",
+                                                                            style="font-size: 8px"),
+                                                                     ## size = "extra-small",
+                                                                     ##                                                      style='padding:1px; font-size:70%',
+                                                                     class="infoBubbleButton")
+                                                        )
+                                                ),
+                                                div(style = "margin-top:-3px",
+                                                    uiOutput(ns("LBSPR_Linf_out")),
+                                                    )
+                                                )
+                                     ),
 
-                        ## M/K
-                        ## ---------------------
-                        fluidRow(
-                            column(6,
-                                   fluidRow(
-                                       div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
-                                           HTML("<b>M/K</b>")
-                                           ),
-                                       div(style = "display: inline-block; vertical-align:center; margin-left: 3px;",
-                                           actionButton(ns("infoMK"),
-                                                        tags$i(class = "fas fa-info",
-                                                               style="font-size: 8px"),
-                                                        ## size = "extra-small",
-                                                        ##                                                      style='padding:1px; font-size:70%',
-                                                        class="infoBubbleButton")
-                                           )
-                                   ),
-                                   div(style = "margin-top:-10px",
-                                       uiOutput(ns("LBSPR_MK_out")),
-                                       )
-                                   ),
-                            column(6,
-                                   br(),
-                                   fluidRow(
-                                       div(style = "display: inline-block; vertical-align: center; margin-left: 5px; margin-top: 10px",
-                                           HTML('<p style="font-size: 14px">Enter M and K directly?</p>')
-                                           ),
-                                       div(style = "display: inline-block; vertical-align: center; margin-left: 8px; margin-top: 15px",
-                                           checkboxInput(ns("LBSPR_split_mk"),
-                                                         "",
-                                                         FALSE)
-                                           )
-                                   )
-                                   )
+                                     br(),
 
-                        ),
+                                     ## M/K
+                                     ## ---------------------
+                                     fluidRow(
+                                         column(6,
+                                                fluidRow(
+                                                    div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
+                                                        HTML("<b>M/K</b>")
+                                                        ),
+                                                    div(style = "display: inline-block; vertical-align:center; margin-left: 3px;",
+                                                        actionButton(ns("infoMK"),
+                                                                     tags$i(class = "fas fa-info",
+                                                                            style="font-size: 8px"),
+                                                                     ## size = "extra-small",
+                                                                     ##                                                      style='padding:1px; font-size:70%',
+                                                                     class="infoBubbleButton")
+                                                        )
+                                                ),
+                                                div(style = "margin-top:-10px",
+                                                    uiOutput(ns("LBSPR_MK_out")),
+                                                    )
+                                                ),
+                                         column(6,
+                                                br(),
+                                                fluidRow(
+                                                    div(style = "display: inline-block; vertical-align: center; margin-left: 5px; margin-top: 10px",
+                                                        HTML('<p style="font-size: 14px">Enter M and K directly?</p>')
+                                                        ),
+                                                    div(style = "display: inline-block; vertical-align: center; margin-left: 8px; margin-top: 15px",
+                                                        checkboxInput(ns("LBSPR_split_mk"),
+                                                                      "",
+                                                                      FALSE)
+                                                        )
+                                                )
+                                                )
 
-                        box(id="box_lbspr_split_mk",
-                            width = 12,
+                                     ),
 
-                            ## K
-                            ## ---------------------
-                            column(6,
-                                   fluidRow(
-                                       div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
-                                           HTML("<b>M</b>")
-                                           ),
-                                       div(style = "display: inline-block; vertical-align:center; margin-left: 3px;",
-                                           actionButton(ns("infoM"),
-                                                        tags$i(class = "fas fa-info",
-                                                               style="font-size: 8px"),
-                                                        ## size = "extra-small",
-                                                        ##                                                      style='padding:1px; font-size:70%',
-                                                        class="infoBubbleButton")
-                                           )
-                                   ),
-                                   div(style = "margin-top:-3px",
-                                       numericInput(ns("LBSPR_M"),
-                                                    label = "",
-                                                    min = 0.0001,
-                                                    max = 10,
-                                                    value = NULL,
-                                                    step = 0.01)
-                                       )
-                                   ),
+                                     box(id="box_lbspr_split_mk",
+                                         width = 12,
 
-                            ## M
-                            ## ---------------------
-                            column(6,
-                                   fluidRow(
-                                       div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
-                                           HTML("<b>K</b>")
-                                           ),
-                                       div(style = "display: inline-block; vertical-align:center; margin-left: 3px;",
-                                           actionButton(ns("infoK"),
-                                                        tags$i(class = "fas fa-info",
-                                                               style="font-size: 8px"),
-                                                        ## size = "extra-small",
-                                                        ##                                                      style='padding:1px; font-size:70%',
-                                                        class="infoBubbleButton")
-                                           )
-                                   ),
-                                   div(style = "margin-top:-3px",
-                                       numericInput(ns("LBSPR_K"),
-                                                    label = "",
-                                                    min = 0.0001,
-                                                    max = 10,
-                                                    value = NULL,
-                                                    step = 0.01)
-                                       )
-                                   )
-                            ),
-                        br(),
+                                         ## K
+                                         ## ---------------------
+                                         column(6,
+                                                fluidRow(
+                                                    div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
+                                                        HTML("<b>M</b>")
+                                                        ),
+                                                    div(style = "display: inline-block; vertical-align:center; margin-left: 3px;",
+                                                        actionButton(ns("infoM"),
+                                                                     tags$i(class = "fas fa-info",
+                                                                            style="font-size: 8px"),
+                                                                     ## size = "extra-small",
+                                                                     ##                                                      style='padding:1px; font-size:70%',
+                                                                     class="infoBubbleButton")
+                                                        )
+                                                ),
+                                                div(style = "margin-top:-3px",
+                                                    numericInput(ns("LBSPR_M"),
+                                                                 label = "",
+                                                                 min = 0.0001,
+                                                                 max = 10,
+                                                                 value = NULL,
+                                                                 step = 0.01)
+                                                    )
+                                                ),
 
-                        ## Lm50 + Lm95
-                        ## ---------------------
-                        box(
-                            title = p(HTML(paste0("Maturity information")),
-                                      actionButton(ns("infoMaturity"),
-                                                   tags$i(class = "fas fa-info",
-                                                          style="font-size: 8px"),
-                                                   class="infoBubbleButton")),
-                            width = 12,
-                            height = "180px",
+                                         ## M
+                                         ## ---------------------
+                                         column(6,
+                                                fluidRow(
+                                                    div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
+                                                        HTML("<b>K</b>")
+                                                        ),
+                                                    div(style = "display: inline-block; vertical-align:center; margin-left: 3px;",
+                                                        actionButton(ns("infoK"),
+                                                                     tags$i(class = "fas fa-info",
+                                                                            style="font-size: 8px"),
+                                                                     ## size = "extra-small",
+                                                                     ##                                                      style='padding:1px; font-size:70%',
+                                                                     class="infoBubbleButton")
+                                                        )
+                                                ),
+                                                div(style = "margin-top:-3px",
+                                                    numericInput(ns("LBSPR_K"),
+                                                                 label = "",
+                                                                 min = 0.0001,
+                                                                 max = 10,
+                                                                 value = NULL,
+                                                                 step = 0.01)
+                                                    )
+                                                )
+                                         ),
+                                     br(),
 
-                            fluidRow(
-                                column(6,
-                                       fluidRow(
-                                           div(style = "display: inline-block; vertical-align:center; margin-left: 15px; margin-top: 5px",
-                                               HTML('<b>L<sub style="font-size:12px">m50<sub></b>')
-                                               ),
-                                           ),
-                                       div(style = "margin-top:-3px",
-                                           uiOutput(ns("LBSPR_Lm50_out")),
-                                           )
-                                       ),
-                                column(6,
-                                       fluidRow(
-                                           div(style = "display: inline-block; vertical-align:center; margin-left: 15px; margin-top: 5px",
-                                               HTML('<b>L<sub style="font-size:12px">m95<sub></b>')
-                                               ),
-                                           ),
-                                       div(style = "margin-top:-3px",
-                                           uiOutput(ns("LBSPR_Lm95_out")),
-                                           )
-                                       )
-                            )
-                        ),
+                                     ## Lm50 + Lm95
+                                     ## ---------------------
+                                     box(
+                                         title = p(HTML(paste0("Maturity information")),
+                                                   actionButton(ns("infoMaturity"),
+                                                                tags$i(class = "fas fa-info",
+                                                                       style="font-size: 8px"),
+                                                                class="infoBubbleButton")),
+                                         width = 12,
+                                         height = "180px",
 
-                        br(),
+                                         fluidRow(
+                                             column(6,
+                                                    fluidRow(
+                                                        div(style = "display: inline-block; vertical-align:center; margin-left: 15px; margin-top: 5px",
+                                                            HTML('<b>L<sub style="font-size:12px">m50<sub></b>')
+                                                            ),
+                                                        ),
+                                                    div(style = "margin-top:-3px",
+                                                        uiOutput(ns("LBSPR_Lm50_out")),
+                                                        )
+                                                    ),
+                                             column(6,
+                                                    fluidRow(
+                                                        div(style = "display: inline-block; vertical-align:center; margin-left: 15px; margin-top: 5px",
+                                                            HTML('<b>L<sub style="font-size:12px">m95<sub></b>')
+                                                            ),
+                                                        ),
+                                                    div(style = "margin-top:-3px",
+                                                        uiOutput(ns("LBSPR_Lm95_out")),
+                                                        )
+                                                    )
+                                         )
+                                     ),
 
-                        ## LWa and LWb
-                        ## ---------------------
-                        box(
-                            title = p(HTML(paste0("Length-weight relationship (",
-                                                  withMathJax("\\(W = a \ L^{b}\\)"),")")),
-                                      actionButton(ns("infoLengthWeight"),
-                                                   tags$i(class = "fas fa-info",
-                                                          style="font-size: 8px"),
-                                                   class="infoBubbleButton")),
-                            width = 12,
-                            height = "180px",
-                            fluidRow(
-                                column(6,
-                                       fluidRow(
-                                           div(style = "display: inline-block; vertical-align:center; margin-left: 15px; margin-top: 5px",
-                                               HTML('<b>Constant (a)</b>')
-                                               ),
-                                           ),
-                                       div(style = "margin-top:-3px",
-                                           numericInput(ns("LBSPR_LWa"),
-                                                        label = "",
-                                                        min = 0.0001,
-                                                        max = 10,
-                                                        value = 1e-4,
-                                                        step = 0.01,
-                                                        width = "80%"))
-                                       ),
-                                column(6,
-                                       fluidRow(
-                                           div(style = "display: inline-block; vertical-align:center; margin-left: 15px; margin-top: 5px",
-                                               HTML('<b>Exponent (b)</b>')
-                                               ),
-                                           ),
-                                       div(style = "margin-top:-3px",
-                                           numericInput(ns("LBSPR_LWb"),
-                                                        label = "",
-                                                        min = 0.0001,
-                                                        max = 10,
-                                                        value = 3,
-                                                        step = 0.1,
-                                                        width = "80%"))
-                                       )
-                            )
-                        ),
+                                     br(),
 
-                        br(),
+                                     ## LWa and LWb
+                                     ## ---------------------
+                                     box(
+                                         title = p(HTML(paste0("Length-weight relationship (",
+                                                               withMathJax("\\(W = a \ L^{b}\\)"),")")),
+                                                   actionButton(ns("infoLengthWeight"),
+                                                                tags$i(class = "fas fa-info",
+                                                                       style="font-size: 8px"),
+                                                                class="infoBubbleButton")),
+                                         width = 12,
+                                         height = "180px",
+                                         fluidRow(
+                                             column(6,
+                                                    fluidRow(
+                                                        div(style = "display: inline-block; vertical-align:center; margin-left: 15px; margin-top: 5px",
+                                                            HTML('<b>Constant (a)</b>')
+                                                            ),
+                                                        ),
+                                                    div(style = "margin-top:-3px",
+                                                        numericInput(ns("LBSPR_LWa"),
+                                                                     label = "",
+                                                                     min = 0.0001,
+                                                                     max = 10,
+                                                                     value = 1e-4,
+                                                                     step = 0.01,
+                                                                     width = "80%"))
+                                                    ),
+                                             column(6,
+                                                    fluidRow(
+                                                        div(style = "display: inline-block; vertical-align:center; margin-left: 15px; margin-top: 5px",
+                                                            HTML('<b>Exponent (b)</b>')
+                                                            ),
+                                                        ),
+                                                    div(style = "margin-top:-3px",
+                                                        numericInput(ns("LBSPR_LWb"),
+                                                                     label = "",
+                                                                     min = 0.0001,
+                                                                     max = 10,
+                                                                     value = 3,
+                                                                     step = 0.1,
+                                                                     width = "80%"))
+                                                    )
+                                         )
+                                     ),
 
-                        ## Reference points
-                        ## ---------------------
-                        box(
-                            title = p(HTML(paste0("SPR reference points")),
-                                      actionButton(ns("infoRefs"),
-                                                   tags$i(class = "fas fa-info",
-                                                          style="font-size: 8px"),
-                                                   class="infoBubbleButton")),
-                            width = 12,
-                            height = "180px",
-                            fluidRow(
-                                column(6,
-                                       fluidRow(
-                                           div(style = "display: inline-block; vertical-align:center; margin-left: 15px; margin-top: 5px",
-                                               HTML('<b>SPR limit</b>')
-                                               ),
-                                           ),
-                                       div(style = "margin-top:-3px",
-                                           numericInput(ns("LBSPR_sprLim"),
-                                                        label = "",
-                                                        min = 0.0001,
-                                                        max = 1,
-                                                        value = 0.2,
-                                                        step = 0.01,
-                                                        width = "80%"))
-                                       ),
-                                column(6,
-                                       fluidRow(
-                                           div(style = "display: inline-block; vertical-align:center; margin-left: 15px; margin-top: 5px",
-                                               HTML('<b>SPR target</b>')
-                                               ),
-                                           ),
-                                       div(style = "margin-top:-3px",
-                                           numericInput(ns("LBSPR_sprTarg"),
-                                                        label = "",
-                                                        min = 0.0001,
-                                                        max = 1,
-                                                        value = 0.4,
-                                                        step = 0.1,
-                                                        width = "80%"))
-                                       )
-                            )
-                        ),
+                                     br(),
 
-                        br(),
-                        br(),
+                                     ## Reference points
+                                     ## ---------------------
+                                     box(
+                                         title = p(HTML(paste0("SPR reference points")),
+                                                   actionButton(ns("infoRefs"),
+                                                                tags$i(class = "fas fa-info",
+                                                                       style="font-size: 8px"),
+                                                                class="infoBubbleButton")),
+                                         width = 12,
+                                         height = "180px",
+                                         fluidRow(
+                                             column(6,
+                                                    fluidRow(
+                                                        div(style = "display: inline-block; vertical-align:center; margin-left: 15px; margin-top: 5px",
+                                                            HTML('<b>SPR limit</b>')
+                                                            ),
+                                                        ),
+                                                    div(style = "margin-top:-3px",
+                                                        numericInput(ns("LBSPR_sprLim"),
+                                                                     label = "",
+                                                                     min = 0.0001,
+                                                                     max = 1,
+                                                                     value = 0.2,
+                                                                     step = 0.01,
+                                                                     width = "80%"))
+                                                    ),
+                                             column(6,
+                                                    fluidRow(
+                                                        div(style = "display: inline-block; vertical-align:center; margin-left: 15px; margin-top: 5px",
+                                                            HTML('<b>SPR target</b>')
+                                                            ),
+                                                        ),
+                                                    div(style = "margin-top:-3px",
+                                                        numericInput(ns("LBSPR_sprTarg"),
+                                                                     label = "",
+                                                                     min = 0.0001,
+                                                                     max = 1,
+                                                                     value = 0.4,
+                                                                     step = 0.1,
+                                                                     width = "80%"))
+                                                    )
+                                         )
+                                     ),
 
-                        fluidRow(
-                            column(6,
-                                   selectInput(ns("fig_format_lbspr"),
-                                               "Format of archived figures",
-                                               choices = c("pdf","png","jpeg","tiff","bmp","ps"),
-                                               selected = "pdf",
-                                               multiple = FALSE,
-                                               width = "100%")
-                                   ),
-                            column(6,
-                                   selectInput(ns("tab_format_lbspr"),
-                                               "Format of archived tables",
-                                               choices = c("csv","xls","xlsx"),
-                                               selected = "csv",
-                                               multiple = FALSE,
-                                               width = "100%")
-                                   )
-                        ),
+                                     br(),
+                                     br(),
 
-                        br()
+                                     fluidRow(
+                                         column(6,
+                                                selectInput(ns("fig_format_lbspr"),
+                                                            "Format of archived figures",
+                                                            choices = c("pdf","png","jpeg","tiff","bmp","ps"),
+                                                            selected = "pdf",
+                                                            multiple = FALSE,
+                                                            width = "100%")
+                                                ),
+                                         column(6,
+                                                selectInput(ns("tab_format_lbspr"),
+                                                            "Format of archived tables",
+                                                            choices = c("csv","xls","xlsx"),
+                                                            selected = "csv",
+                                                            multiple = FALSE,
+                                                            width = "100%")
+                                                )
+                                     ),
 
-                    ), ## end box settings
+                                     br()
 
-                box(title = "",
-                    id = "box_exploPlots",
-                    width = 8,
-                    tags$div(
-                             plotOutput(ns("plot_explo1"), width = "95%",
-                                        height = "700px"),
-                             div(style = "margin-top:-5px; margin-left: 10px",
-                                 htmlOutput(ns("title_explo1"))
+                                     ), ## end box settings
+
+                                 box(title = "",
+                                     id = "box_exploPlots",
+                                     width = 8,
+                                     tags$div(
+                                              plotOutput(ns("plot_explo1"), width = "95%",
+                                                         height = "700px"),
+                                              div(style = "margin-top:-5px; margin-left: 10px",
+                                                  htmlOutput(ns("title_explo1"))
+                                                  ),
+                                              ## plotOutput(ns("plot_explo2"), width = "90%",
+                                              ##            height = "280px"),
+                                              ## div(style = "margin-top:-10px; margin-left: 10px",
+                                              ##     htmlOutput(ns("title_explo2"))
+                                              ##     ),
+                                              style = "margin-left: 10%;"
+                                          )
+                                     )
+
                                  ),
-                             ## plotOutput(ns("plot_explo2"), width = "90%",
-                             ##            height = "280px"),
-                             ## div(style = "margin-top:-10px; margin-left: 10px",
-                             ##     htmlOutput(ns("title_explo2"))
-                             ##     ),
-                             style = "margin-left: 10%;"
-                         )
+
+                        tabPanel("2. Summary & Diagnostics",
+
+                                 fluidRow(
+                                     column(3,
+
+                                            uiOutput(ns("text_diag1")),
+
+                                            br()
+                                            ),
+
+                                     column(9,
+
+                                            tags$div(
+                                                     plotOutput(ns("plot_diag1"),
+                                                                width = "90%",
+                                                                height = "400px"),
+                                                     div(style = "margin-top:-10px; margin-left: 10px",
+                                                         htmlOutput(ns("title_diag1"))
+                                                         ),
+                                                     plotOutput(ns("plot_diag2"),
+                                                                width = "90%",
+                                                                height = "400px"),
+                                                     div(style = "margin-top:-10px; margin-left: 10px",
+                                                         htmlOutput(ns("title_diag2"))
+                                                         ),
+                                                     plotOutput(ns("plot_diag3"),
+                                                                width = "90%",
+                                                                height = "600px"),
+                                                     div(style = "margin-top:-10px; margin-left: 10px",
+                                                         htmlOutput(ns("title_diag3"))
+                                                         ),
+                                                     style = "margin-left: 10%;"
+                                                 )
+                                            )
+                                 )
+                                 )
                     )
 
-            ),## end of settings box
+                    ),## end of settings box
 
 
                 ## Action buttons
