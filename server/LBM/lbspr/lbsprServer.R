@@ -36,6 +36,8 @@ lbsprModule <- function(input, output, session) {
 
         if (is.null(dataset$lfq)) {
             shinyjs::disable("go_lbspr")
+            shinyjs::disable("createLBSPRReport")
+            shinyjs::disable("createLBSPRzip")
             showModal(modalDialog(
                 title = "Error",
                 if(!checks$csv){
@@ -100,6 +102,8 @@ lbsprModule <- function(input, output, session) {
 
         }, error = function(cond) {
             shinyjs::disable("go_lbspr")
+            shinyjs::disable("createLBSPRReport")
+            shinyjs::disable("createLBSPRzip")
             showModal(modalDialog(
                 title = "Error",
                 cond$message,
@@ -140,6 +144,8 @@ lbsprModule <- function(input, output, session) {
 
         ## disable buttons
         shinyjs::disable("go_lbspr")
+        shinyjs::disable("createLBSPRReport")
+        shinyjs::disable("createLBSPRzip")
 
         ## resetting reactive values
         lbspr_dat$dataExplo <- NULL
@@ -558,6 +564,10 @@ lbsprModule <- function(input, output, session) {
         finally = {
             js$hideComputing()
             js$enableAllButtons()
+            if (!is.null(lbspr_dat$results)) {
+                shinyjs::enable("createLBSPRReport")
+                shinyjs::enable("createLBSPRzip")
+            }
         })
     })
 
@@ -702,50 +712,397 @@ lbsprModule <- function(input, output, session) {
         textLBSPR.diag1(lbspr_dat, input)
     })
 
+    ## Information windows -----------------------
+    observeEvent(input$workflowConsiderations, {
+        showModal(modalDialog(
+            title = "Workflow Considerations - LBSPR",
+            HTML(getWorkflowConsiderationTextForLBSPR()),
+            easyClose = TRUE,
+            size = "l"
+        ))
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$dataConsiderations, {
+        showModal(modalDialog(
+            title = "Data Loading and Formatting Considerations - LBSPR",
+            HTML(getDataConsiderationTextForLBSPR()),
+            easyClose = TRUE,
+            size = "l"
+        ))
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$dataConsiderations2, {
+        showModal(modalDialog(
+            title = "Data Considerations - LBSPR",
+            HTML(getDataConsiderationTextForLBSPR()),
+            easyClose = TRUE,
+            size = "l"
+        ))
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$methodConsiderations, {
+        showModal(modalDialog(
+            title = "Methodological Considerations - LBSPR",
+            HTML(getMethodConsiderationTextForLBSPR()),
+            easyClose = TRUE,
+            size = "l"
+        ))
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$methodConsiderations2, {
+        showModal(modalDialog(
+            title = "Methodological Considerations - LBSPR",
+            HTML(getMethodConsiderationTextForLBSPR()),
+            easyClose = TRUE,
+            size = "l"
+        ))
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$resultConsiderations, {
+        showModal(modalDialog(
+            title = "Results Considerations - LBSPR",
+            HTML(getResultConsiderationTextForLBSPR()),
+            easyClose = TRUE,
+            size = "l"
+        ))
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$resultConsiderations2, {
+        showModal(modalDialog(
+            title = "Results Considerations - LBSPR",
+            HTML(getResultConsiderationTextForLBSPR()),
+            easyClose = TRUE,
+            size = "l"
+        ))
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$infoYearSel, {
+        showModal(modalDialog(
+            title = "Selected years",
+            HTML("<p>Select all or a range of years in the uploaded data set to be ",
+                 "included in the analysis. ",
+                 "<br><br> The method estimates SPR and fishing mortality for every year.</p>"),
+            easyClose = TRUE,
+            size = "l"
+        ))
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$infoBS, {
+        showModal(modalDialog(
+            title = "Bin Size",
+            HTML(paste0("<p>The bin size corresponds to the length interval over ",
+                        "which the length frequency ",
+                        "data are aggregated, for example 2 cm. <br><br> Ideally, ",
+                        "the bin size is as small as ",
+                        "possible, but large enough to reduce noise. By default the ",
+                        "bin size is set dependent ",
+                        "on the maximum length: ", withMathJax("\\(0.23 L_{max}^{0.6}\\)"),
+                        " (Wang et al. 2020).</p>")),
+            easyClose = TRUE,
+            size = "l"
+        ))
+    }, ignoreInit = TRUE)
+
+
+    observeEvent(input$infoLinf, {
+        showModal(modalDialog(
+            title = withMathJax("\\(L_\\infty\\)"),
+            HTML(paste0("<p>The asymptotic length (",
+                        withMathJax("\\L_{\\infty}\\)"),
+                        ") refers to the asymptote of the von Bertlanffy growth function, ",
+                        "thus describing the theoretical maximum length at which growth is ",
+                        "zero. (Refer to the 'Von Bertalanffy growth function' ",
+                        "tab for more information). This parameter is required for LBSPR ",
+                        " and ",
+                        " can be estimated from monthly length-frequency data with TropFishR ",
+                        "(see side menu on the left) or extracted from literature (e.g.",
+                        "<a href='http://www.fishbase.org/search.php' ",
+                        "target='blank_'> FishBase</a> or <a href='https://www.sealifebase.ca' ",
+                        "target='blank_'> SeaLifeBase</a> for invertebrates",
+                        ").</p>")),
+            easyClose = TRUE,
+            size = "l"
+        ))
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$infoMK, {
+        showModal(modalDialog(
+            title = withMathJax("\\(M/K\\)"),
+            HTML(paste0("<p>M/K is the ratio of the two life history parameters M, the ",
+                        "instantaneous natural ",
+                        "mortality rate and K, the von Bertalanffy growth constant. These two ",
+                        "parameters can be estimated from monthly length-frequency data with ",
+                        "TropFishR (see side menu on the left) or extracted from literature (",
+                        "e.g. ",
+                        "<a href='http://www.fishbase.org/search.php' ",
+                        "target='blank_'> FishBase</a> or <a href='https://www.sealifebase.ca' ",
+                        "target='blank_'> SeaLifeBase</a> for invertebrates",
+                        "). <br> The M and K values can also be entered",
+                        "separately by clicking the checkbox after 'or enter M and K?'",
+                        "<br> Some scientists might argue that the M/K ratio ",
+                        "does not vary a lot and a default value of 1.5 can be assumed. ",
+                        " However, other references argue that this life history 'invariant' ",
+                        "shows in fact a wide distribution between stocks. Please refer to the ",
+                        "references in the method introduction page for more information on this ",
+                        "topic.",
+                        "</p>"))           ,
+            easyClose = TRUE,
+            size = "l"
+        ))
+    }, ignoreInit = TRUE)
+
+
+    observeEvent(input$infoM, {
+        showModal(modalDialog(
+            title = withMathJax("\\(M\\)"),
+            HTML(paste0("<p>M is the ",
+                        "instantaneous natural ",
+                        "mortality rate and can be estimated from monthly length-frequency data with ",
+                        "TropFishR (see side menu on the left) or extracted from literature (",
+                        "e.g. ",
+                        "<a href='http://www.fishbase.org/search.php' ",
+                        "target='blank_'> FishBase</a> or <a href='https://www.sealifebase.ca' ",
+                        "target='blank_'> SeaLifeBase</a> for invertebrates",
+                        ").",
+                        "</p>")),
+            easyClose = TRUE,
+            size = "l"
+        ))
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$infoK, {
+        showModal(modalDialog(
+            title = withMathJax("\\(K\\)"),
+            HTML(paste0("<p>K is the von Bertalanffy growth constant and can be estimated",
+                        "from monthly length-frequency data with ",
+                        "TropFishR (see side menu on the left) or extracted from literature (",
+                        "e.g. ",
+                        "<a href='http://www.fishbase.org/search.php' ",
+                        "target='blank_'> FishBase</a> or <a href='https://www.sealifebase.ca' ",
+                        "target='blank_'> SeaLifeBase</a> for invertebrates",
+                        ").",
+                        "</p>")),
+            easyClose = TRUE,
+            size = "l"
+        ))
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$infoLengthWeight, {
+        showModal(modalDialog(
+            title = "Length-weight relationship",
+            HTML(paste0("<p>The calculation of the ", withMathJax("\\(L_{maxy}\\)")," indicator requires ",
+                        "the average weight per length class, which can be estimated with the length-weight ",
+                        "relationship. A common assumption is the allometric relationship ",
+                        withMathJax("\\(W = a L^{b}\\)"),", with the constant <i>a</i> in ",
+                        withMathJax("\\( g/cm^{3}\\)"), " and the exponent ",
+                        withMathJax("\\( b\\)")," being unitless. <br><br>Ideally, the parameters are ",
+                        "estimated based on length and weight measurements of the stock under study. ",
+                        "Alternatively, information about the length-weight relationship of the species ",
+                        "under study can be found on <a href='http://www.fishbase.org/search.php' ",
+                        "target='blank_'> FishBase</a> or <a href='https://www.sealifebase.ca' ",
+                        "target='blank_'> SeaLifeBase</a>  for invertebrates. This information is optional ",
+                        "and if missing ",
+                        "the ",withMathJax("\\(L_{maxy}\\)")," indicator is not calculated.",
+                        "</p>")),
+            easyClose = TRUE,
+            size = "l"
+        ))
+    }, ignoreInit = TRUE)
+
+
+    observeEvent(input$infoMaturity, {
+        showModal(modalDialog(
+            title = "Maturity information",
+            HTML(paste0("<p>The length at 50% maturity (",withMathJax("\\L_{m50}\\)"),") ",
+                        "is an important life history parameter and defines the length ",
+                        "at which 50% of the population reached maturity. This parameter ",
+                        "has to be estimated externally (outside SMT) or extracted from ",
+                        "literature (e.g. ",
+                        "<a href='http://www.fishbase.org/search.php' ",
+                        "target='blank_'> FishBase</a> or <a href='https://www.sealifebase.ca' ",
+                        "target='blank_'> SeaLifeBase</a> for invertebrates",
+                        ").</p>")),
+            easyClose = TRUE,
+            size = "l"
+        ))
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$infoRefs, {
+        showModal(modalDialog(
+            title = "SPR reference points",
+            HTML(paste0("<p> The stock status in terms of the spawning potential ",
+                        "ratio (SPR) is defined relative to the limit and reference ",
+                        "target points (SPR limit and SPR target, respectively). ",
+                        "While an SPR below the limit reference point indicates ",
+                        "overexploitation, a level above the target reference point ",
+                        "would suggest underexploitation. ",
+                        "Various levels have been suggested as reference levels (see ",
+                        "e.g. Brooks et al. 2010, Clark 2002). ",
+                        "The default levels are set to 0.2 and 0.4 for the limit ",
+                        "and target reference points, respectively.",
+                        " </p>")),
+            easyClose = TRUE,
+            size = "l"
+        ))
+    }, ignoreInit = TRUE)
+
+
+    observeEvent(input$infoAssessment, {
+        showModal(modalDialog(
+            title = "Assessment, Reset & Report",
+            HTML("<p><b>'Run Assessment'</b> runs the LBSPR method and produces ",
+                 "a table and three figures in the results section upon successful completion. ",
+                 "<br> <br> <b>'Reset'</b> removes all results, the uploaded dataset, ",
+                 "and resets all settings to default values. <br> <br> After successful completion ",
+                 "of the method, two additional buttons <b>'Download Report'</b> and ",
+                 "<b>'Download Results (zip)'</b> allow you to download an automated assessment ",
+                 "report as a pdf document ",
+                 "and a zip archive with all results, respectively. ",
+                 "The report is also automatically ",
+                 "uploaded to your private workspace.</p>"
+                 ),
+            easyClose = TRUE,
+            size = "l"
+        ))
+    }, ignoreInit = TRUE)
+
+
+    ## Tour --------------------------------
+    observeEvent(input$tour_general, {
+
+        steps <- list(
+            list(element = NA,
+                 intro = paste0("This tour takes you through the main steps of the length-based spawning potential ratio method (LBSPR).<br><br>",
+                                "Click 'Next' to continue.")),
+            list(element = paste0("#", ns("file_wrapper")),
+                 intro = "As a first step, you need to upload data. You can do that by clicking on 'Browse' and select a csv file on your computer."),
+            list(element = paste0("#", ns("dataConsiderations2")),
+                 intro = "If you do not have your own file and want to use an example fiel or if you are interested in more information about the data type and format, click on the small the information button here. <br><br>Note these information buttons (indicated by 'i') throughout the whole app."),
+            list(element = paste0("#", ns("lbsprDateFormat"),
+                                  " + .selectize-control"),
+                 intro = "By default, the app will try to recognize the date format, but you can also specify it here."),
+            list(element = paste0("#", ns("lbspr_lengthUnit"),
+                                  " + .selectize-control"),
+                 intro = "By default, the app assumes that your length measurements are in centimeter (cm), but you can choose other length unit here. Currently, millimeter (mm) and inces (in) are implemented."),
+            list(element = paste0("#", ns("box_settings")),
+                 intro = "After you chose your data set and it was uploaded successfully (no error messages), you can explore your data and adjust settings in this box."),
+            list(element = "#settings_lbspr ul.nav.nav-tabs",
+                 intro = "There are multiple tabs that allow you to adjust various aspects of the assessment method."),
+            list(element = paste0("#", ns("tab1")),
+                 intro = "For example, the first tab allows you to visually inspect the uploaded data and set important parameters, such as the bin size or moving average.<br><br> Remeber the small information buttons ('i') next to the labels, if you need more information about these parameters.")
+        )
+
+        current_tab <- input$settings
+        ## If tab 1 selected
+        if (!is.null(current_tab) && current_tab == "data") {
+            steps <- append(steps,
+                            list(
+                                list(element = paste0("#", ns("plot_explo1")),
+                                     intro = paste0("A length frequency plot will be shown here when the data was uploaded successfully."))
+                            ))
+        }
+
+        steps <- append(steps,
+                        list(
+                            list(element = paste0("#", ns("tab2")),
+                                 intro = "The last tab contains summary statistics and diagnostics of the uploaded data."),
+                            list(element = paste0("#", ns("go_lbspr")),
+                                 intro = "If the check is successful, you can run the length-based stock assessment by clicking here.<br><br>Note, that a pop-up window will ask you if you are aware and acknowledge the model assumptions."),
+                            list(element = paste0("#", ns("reset_lbspr")),
+                                 intro = "This button allows you to reset all settings.<br><br>Note, that this also removes your input data."),
+                            list(element = paste0("#", ns("createLBSPRReport")),
+                                 intro = "This button creates and downloads an automatic assessment report with information about your data, settings and results."),
+                            list(element = paste0("#", ns("createLBSPRzip")),
+                                 intro = "You can also download all graphs and tables in a zip archive by clicking here.")))
+
+        if (!is.null(current_tab) && current_tab == "data") {
+            steps <- append(steps,
+                            list(
+                                list(element = paste0("#", ns("fig_format_lbspr"),
+                                                      " + .selectize-control"),
+                                     intro = paste0("You can select the format of the figures in the zip archive here.")),
+                                list(element = paste0("#", ns("tab_format_lbspr"),
+                                                      " + .selectize-control"),
+                                     intro = paste0("And the format of the tables here."))
+                            ))
+        }
+
+        steps <- append(steps,
+                        list(
+                            list(element = paste0("#", ns("tour_res")),
+                                 intro = "The results tour might be helpful to get an overview over the results.<br><br> Note, that the tour only makes sense after LBSPR was run successfully."),
+                            list(element = NA,
+                                 intro = "This concludes the LBSPR tour.<br><br>Remeber the information buttons ('i') that might be helpful when uploading data, adjusting settings or interpreting results."),
+                            list(element = paste0("#", ns("info_wrapper")),
+                                 intro = "These buttons offer another helpful option to get detailed information on the workflow, data, methods, and results."),
+                            list(element = NA,
+                                 intro = "For more information, you might also consider to visit the <a href='https://elearning.fao.org/course/view.php?id=502' target='_blank'>FAO e-learning course</a>.")))
+
+
+        later::later(function() {
+            introjs(session, options = list(steps = steps))
+        }, delay = 0.5)
+    }, ignoreInit = TRUE)
+
+
+    ## Results tour
+    observeEvent(input$tour_res, {
+
+        steps <- list(
+            list(element = NA,
+                 intro = "This is a tour that takes you through the results of the length-based spawning potential ratio method (LBSPR).")
+        )
+
+        if(is.null(lbi_dat$results)) {
+
+            steps <- append(steps,
+                            list(
+                                list(element = NA,
+                                     intro = "No results found. This tour only works if you run the assessment."),
+                                list(element = paste0("#", ns("go_lbspr")),
+                                     intro = "Make sure you uploaded your data and run the assessment by clicking here."),
+                                list(element = NA,
+                                     intro = "Start this tour again after you see some tables and graphs below.")))
+
+        } else {
+
+            steps <- append(steps,
+                            list(
+                                list(element = paste0("#", ns("table_lbspr")),
+                                     intro = "This table shows the estimated spawning potential ratio (SPR), selectivity parameters, and fishing mortality relative to natural mortality (F/M)."),
+                                list(element = paste0("#", ns("plot_lbsprPie")),
+                                     intro = "This figure shows the estimated SPR relative to specified reference points."),
+                                list(element = paste0("#", ns("plot_lbsprSel")),
+                                     intro = "This graph shows the estimated selectivity ogives (per year if data set spans multiple years) and the specified maturity ogive."),
+                                list(element = paste0("#", ns("plot_lbsprTimeSeries")),
+                                     intro = "This graph shows the selectivity, F/M, and SPR per year and if the data set spans multiple years, a smothed trend line."),
+                                list(
+                                    element = paste0("#",ns("resultConsiderations")),
+                                    intro = paste0(
+                                        "This concludes the tour through the LBI results.<br><br> For more and detailed information, click on this button and refer to the figure and table captions."))))
+
+        }
+
+        later::later(function() {
+            introjs(session, options = list(steps = steps))
+        }, delay = 0.5)
+    }, ignoreInit = TRUE)
+
+
 
     ## Report & Co
     ## --------------------------
-    output$downloadReport_lbspr <- renderUI({
-        req(lbspr_dat$results)
-        downloadButton(session$ns('createLBSPRReport'), 'Download Report')
-    })
-
-    output$downloadzip_lbspr <- renderUI({
-        req(lbspr_dat$results)
-        downloadButton(session$ns('createLBSPRzip'), 'Download Results (zip archive)')
-    })
-
-    output$zip_fig_format_lbspr <- renderUI({
-        req(lbspr_dat$results)
-        selectInput(session$ns("fig_format_lbspr"),
-                    "Format of archived figures",
-                    choices = c("pdf","png","jpeg","tiff","bmp","ps"),
-                    selected = "pdf",
-                    multiple = FALSE,
-                    width = "100%")
-    })
-
-
-    output$lbsprVREUpload <- renderText({
-        text <- ""
-        req(lbspr_dat$results)
-        if (!is.null(session$userData$sessionMode()) && session$userData$sessionMode() == "GCUBE") {
-            if (isTRUE(lbsprUploadVreResult$res)) {
-                text <- paste0(text, VREUploadText)
-            }
-        }
-        text
-    })
-
     output$createLBSPRReport <- downloadHandler(
-        filename = paste("LBSPR_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep=""),
+        filename = paste("LBSPR_report_",
+                         format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep=""),
         content = function(file) {
             createLBSPRPDFReport(file, lbspr_dat, input, output)
         }
     )
 
     output$createLBSPRzip <- downloadHandler(
-        filename = paste("LBSPR_results_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".zip",sep=""),
+        filename = paste("LBSPR_results_",
+                         format(Sys.time(), "%Y%m%d_%H%M_%s"),".zip",sep=""),
         content = function(file) {
             makeContentLBSPRzip(file, lbspr_dat, input, output)
         },
@@ -757,41 +1114,5 @@ lbsprModule <- function(input, output, session) {
         text <- "<span><h3><b>Length-based spawning potential ratio (LBSPR)</b></h3></span>"
         text
     })
-
-    output$lbsprWorkflowConsiderationsText <- renderText({
-        text <- getWorkflowConsiderationTextForLBSPR()
-        text
-    })
-
-    output$lbsprDataConsiderationsText <- renderText({
-        text <- getDataConsiderationTextForLBSPR()
-        text
-    })
-
-    output$lbsprDataConsiderationsText2 <- renderText({
-        text <- getDataConsiderationTextForLBSPR()
-        text
-    })
-
-    output$lbsprMethodConsiderationsText <- renderText({
-        text <- getMethodConsiderationTextForLBSPR()
-        text
-    })
-
-    output$lbsprMethodConsiderationsText2 <- renderText({
-        text <- getMethodConsiderationTextForLBSPR()
-        text
-    })
-
-    output$lbsprResultConsiderationsText <- renderText({
-        text <- getResultConsiderationTextForLBSPR()
-        text
-    })
-
-    output$lbsprResultConsiderationsText2 <- renderText({
-        text <- getResultConsiderationTextForLBSPR()
-        text
-    })
-
 
 }
