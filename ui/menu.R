@@ -33,12 +33,18 @@ menuLengthMethods <- menuItem("Length-based methods",
                                        ##             tabName = "lbsprSampleDataset")
                                        )
                               )
-# menuFishMethods <- menuItem("Fish Methods",
-#          menuSubItem("Introduction", tabName = "FishMethodsIntro"),
-#          menuSubItem("SBPR", tabName = "SBPRWidget"),
-#          menuSubItem("YPR", tabName = "YPRWidget"),
-#          menuSubItem("Fishmethods Sample Dataset", tabName = "FishMethodsSampleDataset")
-# )
+menuSPICT <- menuItem("SPiCT",
+                      menuSubItem("Information",
+                                  tabName = "spictIntro"),
+                      menuSubItem("Tool",
+                                  tabName = "spictWidget")
+                      )
+## menuFishMethods <- menuItem("Fish Methods",
+##          menuSubItem("Introduction", tabName = "FishMethodsIntro"),
+##          menuSubItem("SBPR", tabName = "SBPRWidget"),
+##          menuSubItem("YPR", tabName = "YPRWidget"),
+##          menuSubItem("Fishmethods Sample Dataset", tabName = "FishMethodsSampleDataset")
+## )
 menuSupportingTools <- menuItem("Supporting Tools",
          menuSubItem("Schaefer logistic growth", tabName = "BasicSchaefer"),
          menuSubItem("Von Bertalanffy growth function", tabName = "BasicVonBertalannfy"),

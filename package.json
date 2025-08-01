@@ -40,6 +40,8 @@
     {"package": "fishmethods", "version": "1.12-0", "repos": "https://cran.r-project.org"},
     {"package": "TropFishR", "version": "1.6.3", "repos": "https://cran.r-project.org"},
     {"package": "LBSPR", "version": "0.1.6", "repos": "https://cran.r-project.org"},
-    {"package": "rintrojs", "version": "0.3.4", "repos": "https://cran.r-project.org"}
+      {"package": "rintrojs", "version": "0.3.4", "repos": "https://cran.r-project.org"},
+      {"repo": "DTUAqua/spict/spict", "from": "github", "dependencies": true},
+      {"package": "shinybusy", "version": "0.3.3", "repos": "https://cran.r-project.org"}
   ]
 }

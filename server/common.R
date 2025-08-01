@@ -781,6 +781,208 @@ getResultConsiderationTextForLBSPR <- function() {
 
 
 
+## SPiCT  TODO
+## ------------------------------------------------------
+getDataConsiderationTextForSpict <- function() {
+    text <- "<b>Two data formats are accepted:</b><br>"
+    text <- paste0(text, "<b>1. Format: Length frequency data must include:</b>")
+    text <- paste0(text, "<ul>")
+    text <- paste0(text,
+                   "<li>A column indicating the length classes of measured individuals (first column of dataset).</li>")
+    text <- paste0(text, "<li>A row indicating the dates when individuals were measured (first row of dataset excluding the first column).</li>")
+    text <- paste0(text,
+                   "<li>The number of individuals caught per length class (rows) and per sampling date (columns).</li>")
+    text <- paste0(text, "</ul>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<p> An example dataset in this format can be downloaded here (",linkSE,"). </p>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<b>2. Format: Raw length measurements must include:</b>")
+    text <- paste0(text, "<ul>")
+    text <- paste0(text, "<li>A column indicating the dates when individuals were measured (first column of dataset).</li>")
+    text <- paste0(text,
+                   "<li>A column indicating the length of measured individuals (second column of dataset).</li>")
+
+    text <- paste0(text,
+                   "<li>Optionally: A column indicating the number of individuals of the given length (third column of the dataset).</li>")
+    text <- paste0(text, "</ul>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<p> An example dataset in this format can be downloaded here (",linkEA,"). </p>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<b>Specific considerations regarding your own dataset:</b>")
+    text <- paste0(text, "<ul>")
+    text <- paste0(text, "<li>", "Save your dataset in 'csv' format.", "</li>")
+    text <- paste0(text, "<li>", "The separator for the .csv file should be a comma ‘,’ semicolon ';' or tab. The default might differ depending on the language settings of your spreadsheet manipulation program (e.g. Excel).", "</li>")
+    text <- paste0(text, "<li>", "Use a '.' to separate decimals in the data. The default might differ depending on the language settings of your spreadsheet manipulation program (e.g. Excel).", "</li>")
+    text <- paste0(text, "<li>The date format of your data file should be automatically detected, or select the date format used in your data file under <b>'Choose CSV date format'</b>, e.g. DD/MM/YYYY format to select 'Day Month Year'.</li>")
+    text <- paste0(text, "<li>For data format 1, the columns should represent catches representative for a whole year. If no date column is provided for data format 2, it is assumed that all samples are representative for a single year.</li>")
+    text <- paste0(text, "<li>Your data set should at least be representative of a whole year.</li>")
+    text <- paste0(text, "</ul>")
+    text <- paste0(text, "<br>")
+
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<p> Further information about differnet formats of length-frequency datasets ",
+                   "and how to convert one format to the other are described in a ",
+                   "<a href='https://cran.r-project.org/web/packages/TropFishR/vignettes/lfqData.html'  target='blank_'>tutorial by Mildenberger (2020)</a>. </p>")
+
+    return (text)
+}
+
+getWorkflowConsiderationTextForSpict <- function() {
+    text <- "<h4> To run this length-based workflow in the Stock Monitoring Tool :</h4>"
+    text <- paste0(text, "<ol>")
+    text <- paste0(text, "<li> Upload a size frequency data set (see Data Considerations or one of the sample datasets (e.g., ",linkSE,"))</li>")
+    text <- paste0(text, "<li> Adjust the Assessment Settings")
+    text <- paste0(text, "<ol type='a'>")
+    text <- paste0(text, "<li> Data Settings - select the years of data to include in the analysis, adjust the aggregation, bin size and moving average (MA) of the dataset to optimise cohort recognition by the Elefan algorithm </li>")
+    text <- paste0(text, "<li> Elefan - set the search space of the Elefan algorithm to estimate growth parameters </li>")
+    text <- paste0(text, "<li> Stock status - set the parameters required to estimate mortality and perform YPR (and SPR; optional) </li>")
+    text <- paste0(text, "</ol>")
+    text <- paste0(text, "</li>")
+    text <- paste0(text, "<li> Check and Run the Assessment:")
+    text <- paste0(text, "<ol type='a'>")
+    text <- paste0(text, "<li> Run a check on the parameterisations prior to running the full assessment (Run Check button)</li>")
+    text <- paste0(text, "<li> Run the assessment ('Run Assessment' button). Watch for the progress bar in the center of the screen</li>")
+    text <- paste0(text, "</ol>")
+    text <- paste0(text, "</li>")
+    text <- paste0(text, "<li> Download the report as a pdf (Download Report button). The report should also automatically upload to your private workspace. </li>")
+    text <- paste0(text, "<li> The Reset button removes the uploaded data and resets the settings to default</li>")
+    text <- paste0(text, "</ol>")
+    text <- paste0(text, "Further information can be found in the popup information buttons at each field, and in the Data, Methods, and Results Considerations tabs. Note that error messages may display in the center of the page and in place of any figures where an error has occurred.")
+    text <- paste0(text, "</p>")
+    return (text)
+}
+
+
+getMethodConsiderationTextForSpict <- function() {
+    text <- "<b>Consecutive steps of the length-based stock assessment routine workflow:</b>"
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<ol>")
+    text <- paste0(text, "<li> ELEFAN: Estimation of growth parameters of the von Bertlanffy growth (VBG) function.</li>")
+    text <- paste0(text, "<li> Empirical formulae: Estimation of the natural mortality rate (M).</li>")
+    text <- paste0(text, "<li> Catch curve: Estimation of the total (Z) and fishing (F) mortality rate.</li>")
+    text <- paste0(text, "<li> Yield per recruit analysis (YPR): Estimation of reference points based on fishing ",
+                   "mortality and Spawning Potential Ratio (SPR), such as ",withMathJax("\\(F_{max}\\)"),", ",withMathJax("\\(F_{0.1}\\)"),", ",
+                   withMathJax("\\(F_{35\\%SPR}\\)"),", as well as the stock status ",
+                   "(e.g. ",withMathJax("\\(F/F_{0.1}\\)")," or SPR).</li>")
+    text <- paste0(text, "</ol>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text,
+                   "<p>This length-based stock assessment routine was outlined in the technical report ",
+                   "<a href='http://www.fao.org/documents/card/en/c/9bb12a06-2f05-5dcb-a6ca-2d6dd3080f65/'  target='blank_'> Introduction to Tropical Fish Stock Assessment (FAO, 1998)</a>",
+                   ", and compiled into the R package ",
+                   "<a href='https://cran.r-project.org/web/packages/TropFishR'  target='blank_'> TropFishR </a>",
+                   " by ", "<a href='https://doi.org/10.1111/2041-210X.12791'  target='blank_'> Mildenberger et al. (2017)</a>",
+                   ". The above mentioned methods make specific assumptions about the data, the stock, or the ",
+                   "fisheries targeting the stock. It is important to be aware of these assumptions and, thus, the ",
+                   "limitations of the results.</p>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, spictAssumptionsHTML())
+    return (text)
+}
+
+getResultConsiderationTextForSpict <- function() {
+    text <- "<b>Data exploration:</b>"
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text,
+                   "Directly after the successful upload of your data set, <b>Figure 1</b> shows the length-frequency distributions per sampling time (x axis). Panel A shows the raw data, while panel B shows the restructured data, i.e. the data after subtracting the moving average (MA) from each length class. The combination of bin size and MA critically affects the separation of peaks (i.e. potential cohorts) in the dataset and thus the estimation of growth parameters by ELEFAN. Blue shading indicates a high count per length bin (panel A) and a high positive value (panel B). Red shading indicates a negative value (only panel B). A good bin size value reduces noise in the data by aggregation and should be defined before the MA value. A good MA value leads to visually distinct peaks, particularly among the smaller length classes.")
+    text <- paste0(text, "<br><br>")
+    text <- paste0(text, "After setting the parameter search space and running the assessment successfully (click 'Run Assessment'),
+  two figures and a table summarise the results of the estimation of growth parameters by ELEFAN using the genetic algorithm (GA)
+                 and four figures and three tables summarise the stock status results.")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text,"<b>ELEFAN:</b>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<ul>")
+    text <- paste0(text, "<li><b>Figure 2</b> shows the same length frequency distributions as Figure 1 overlaid with the growth curves estimated by ELEFAN. This plot allows the visual inspection of how well the estimated curves connect the peaks in the length-frequency data (i.e. potential cohorts) in the raw (A) and restructured (B) data set.",
+                   "</li>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<li><b>Table 1</b> includes the estimated von Bertlanffy growth parameters (",
+                   withMathJax("\\(L_\\infty, K, t_a\\)"),"), the growth performance coefficient phi', and the best score value (Rn). The growth performance index is calculated based on the formula ",withMathJax("\\(phi' = \\log_{10} K + 2 \\log_{10} L_\\infty\\)"), "and provides a metric that accounts for the correlation of ",withMathJax("\\(L_\\infty\\)")," and ",withMathJax("\\(K\\)")," to compare growth parameters among analyses or species. The Rn value is the sum of all values associated with the bins after restructuring that intersect the growth curves. The value allows comparison of the fit of estimated growth parameters to the data set for different MA values, growth paramater search spaces, or ELEFAN optimisation parameters (e.g. population size), but not for different data sets or bin sizes.",
+                   "</li>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<li><b>Figure 3 </b> shows the improvement of the ELEFAN fit in terms of the average and best score value (fitness value) of the genetic algorithm used in ELEFAN_GA over the number of iterations (generations). Ideally, the number of iterations (generations) is large enough so that there are no large jumps visible during the last iterations of the best and average score value.",
+                   "</li>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<li><b>Figure 4 </b> shows the estimated total, fishing, and natural mortality rates by length. The dashed lines correspond to the average mortality rates for the main exploited length classes, i.e. the length classes that are considered in the regression analysis for the length-converted catch curve. Note, that the natural mortality rates estimated by the empirical formulae after Then et al. (2015) and Pauly et al. (1980) are independent of length. By contrast, the formulae after Gislason et al. (2010) and Lorenzen et al. (2022) estimate length-dependent natural mortality rates based on the asymptotic length, growth coefficient, and body length of the fish.",
+                   "</li>")
+    text <- paste0(text, "</ul>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text,"<b>Stock status:</b>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<ul>")
+    text <- paste0(text,
+                   "<li><b>Figure 5</b> shows the logarithm of the catch per length interval against the relative age (x axis). ",
+                   "Highlighted points were used in the regression analysis of the catch curve for the estimation of the total ",
+                   "mortality rate (Z), which ",
+                   "corresponds to the slope of the displayed regression line. The selection of points is automatic and based on a ",
+                   "list of expert recommendations.",
+                   "</li>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<li><b>Figure 6</b> shows the probability of capture as a measure of the selectivity used in the assessment. ",
+                   "The curve is either based on selectivity parameters provided by the user (L50 and L75 or selection width) or was estimated ",
+                   "by the catch curve. The selection ogive that is displayed is used for the Yield Per Recruit analysis (YPR).",
+                   "</li>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<li><b>Table 2</b> lists the estimated mortality rates (Z, F, M), the exploitation ",
+                   "rate (E), and the estimated/provided selectivity parameters (",withMathJax('\\(L_{50}\\)'),", ",
+                   withMathJax('\\(L_{75}\\)'),").",
+                   "</li>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<li><b>Table 3</b> includes the estimated reference points (",withMathJax('\\(F_{max}\\)'),", ",
+                   withMathJax('\\(F_{0.1}\\)'),", ",withMathJax('\\(F_{0.5}\\)'),"), ",
+                   "and the SPR-based reference points (",withMathJax('\\(F_{30\\%SPR}\\)'),",",withMathJax('\\(F_{35\\%SPR}\\)'),",",
+                   withMathJax('\\(F_{40\\%SPR}\\)'),") if the maturity parameters (",withMathJax('\\(L_{m50}\\)')," and ",
+                   withMathJax('\\(L_{m75}\\)'),") are provided.",
+                   "</li>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<li><b>Table 4</b> presents the estimated stock status in terms of the current ",
+                   "fishing mortality (F) relative to reference points (",withMathJax('\\(F_{max}\\)'),", ",
+                   withMathJax('\\(F_{0.1}\\)'),", ",withMathJax('\\(F_{0.5}\\)'),"). If the maturity ",
+                   "parameters (",withMathJax('\\(L_{m50}\\)')," and ",
+                   withMathJax('\\(L_{m75}\\)'),") are provided, additional reference points (",withMathJax('\\(F_{30\\%SPR}\\)'),
+                   ", ",withMathJax('\\(F_{35\\%SPR}\\)'),", ",
+                   withMathJax('\\(F_{40\\%SPR}\\)'),") and the current Spawning Potential Ratio (SPR) are included as well.",
+                   "</li>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text,
+                   "<li><b>Figure 7</b> shows the results of the Yield Per Recruit (YPR) model as yield and biomass per recruit ",
+                   "in panel A and B, respectively, against a range of fishing mortality rates (x axis). ",
+                   "Grey segments display the estimated reference points. Fmax is defined as the fishing ",
+                   " mortality (F) leading to the maximum yield per recruit. ",withMathJax('\\(F_{0.1}\\)'),
+                   " corresponds to F where the slope of the yield per ",
+                   "recruit curve is equal to 10% of the slope in the origin and represents a more conservative reference point than Fmax. ",
+                   "F0.5 corresponds to F where the biomass per recruit is equal to 50% of the biomass per recruit without fishing. ",
+                   "If the maturity parameters ",withMathJax('\\(L_{m50}\\)')," and ",
+                   withMathJax('\\(L_{m75}\\)')," are provided, an optional third panel (C) shows the Spawning Potential Ratio (SPR) ",
+                   "for a range of fishing mortality rates. Furthermore, the three reference points ",
+                   withMathJax('\\(F_{30\\%SPR}\\)'),", ",
+                   withMathJax('\\(F_{35\\%SPR}\\)'),", and ",
+                   withMathJax('\\(F_{40\\%SPR}\\)')," are shown, which ",
+                   "correspond to F that leads to an SPR of 30%, 35%, and 40% respectively.",
+                   "</li>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<li><b>Figure 8</b> shows the yield per recruit (A) and biomass per recruit (B) for a range of fishing mortality ",
+                   "rates (x axis) and gear selectivity (y axis) combinations. Colors indicate high (red) to low (blue) yield and biomass.",
+                   "The black dot indicates the current yield and biomass per recruit.",
+                   "</li>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<li><b>Table 5</b> Parameters estimated with TropFishR that can be used as input for the other length-based stock assessment methods (e.g. LBI and LBSPR).",
+                   "</li>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "</ul>")
+    return (text)
+}
+
+
+
 
 
 ## Other

@@ -1,0 +1,54 @@
+---
+title: "Data-limited stock assessment with SPiCT"
+output:
+  pdf_document:
+    extra_dependencies:
+      tabularx: null
+      booktabs: null
+      colortbl: null
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+keep_tex: true
+header-includes:
+  - \usepackage{float}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message=FALSE, warning = FALSE, fig.align = "center", fig.pos = "H")
+```
+
+
+# Method description
+
+The data-limited stock assessment with SPiCT is ...
+
+&nbsp;
+&nbsp;
+&nbsp;
+
+TODO
+
+&nbsp;
+&nbsp;
+&nbsp;
+
+
+# References
+
+Kokkalis, A., Berg, C.W., Kapur, M.S., Winker, H., Jacobsen, N.S., Taylor, M.H.,
+Ichinokawa, M., Miyagawa, M., Medeiros-Leal, W., Nielsen, J.R. and Mildenberger,
+T.K., 2024. Good practices for surplus production models. Fisheries Research,
+275, p.107010. https://doi.org/10.1016/j.fishres.2024.107010
+
+Mildenberger, T.K., Berg, C.W., Pedersen, M.W., Kokkalis, A. and Nielsen,
+J.R. 2020. Time-variant productivity in biomass dynamic models on seasonal and
+long-term scales. ICES Journal of Marine Science, 77(1), pp.174-187.
+https://doi.org/10.1093/icesjms/fsz154
+
+Mildenberger, T.K., Berg, C.W., Kempf, A., Rindorf, A., MacCall, A.D. and
+Taylor, M.H., 2025. Estimating Time-Varying Productivity and Reference Points: A
+Case of North Sea Demersal Fish Stocks. Fish and Fisheries.
+https://doi.org/10.1111/faf.12910
+
+Pedersen, M.W., and Berg, C.W. 2017. A stochastic surplus production model in
+continuous time. Fish and Fisheries, 18(2), 226-243.
+https://doi.org/10.1111/faf.12174

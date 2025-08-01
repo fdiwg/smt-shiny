@@ -1,6 +1,4 @@
 
-library(lubridate)
-
 
 check.numeric.and.min <- function(pars, can.be.zero = FALSE){
 

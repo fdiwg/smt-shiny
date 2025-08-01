@@ -1,10 +1,10 @@
-#
-# This is the StockMonitoringTool Shiny web application. You can run the application by clicking
-# the 'Run App' button above.
-# The StockMonitoringTool shiny application will support the FAO - SDG 14.4.1 E-learning course
-#
-# Author: Enrico Anello <enrico.anello@fao.org> <enrico.anello@gmail.com>
-#
+##
+## This is the StockMonitoringTool Shiny web application. You can run the application by clicking
+## the 'Run App' button above.
+## The StockMonitoringTool shiny application will support the FAO - SDG 14.4.1 E-learning course
+##
+## Author: Enrico Anello <enrico.anello@fao.org> <enrico.anello@gmail.com>
+##
 
 ## For local docker dev
 ## set to FALSE for VRE and local processing without WPS;
@@ -12,7 +12,7 @@
 withtoken <- FALSE
 token <- '' ## specify for local docker + WPS
 
-#packages
+## packages
 source("assets/commons/package_utils.R")
 library(yaml)
 library(jsonlite)
@@ -51,6 +51,8 @@ library(fishmethods)
 library(TropFishR)
 library(LBSPR)
 library(rintrojs) ## install.packages("rintrojs")
+library(spict) ## remotes::install_github("DTUAqua/spict/spict")
+library(shinybusy) ## install.packages("shinybusy")
 
 ##version/date to show on app
 SMT_VERSION = getAppVersion()
@@ -69,10 +71,12 @@ source("ui/LBM/lbi/commonUI.R")
 source("ui/LBM/lbi/lbiUI.R")
 source("ui/LBM/lbspr/commonUI.R")
 source("ui/LBM/lbspr/lbsprUI.R")
+source("ui/spict/commonUI.R")
+source("ui/spict/spictUI.R")
 ## Others
-                                        # source("ui/fishMethods/commonUI.R")
-                                        # source("ui/fishMethods/sbprUI.R")
-                                        # source("ui/fishMethods/yprUI.R")
+## source("ui/fishMethods/commonUI.R")
+## source("ui/fishMethods/sbprUI.R")
+## source("ui/fishMethods/yprUI.R")
 ## Support
 source("ui/support/BasicSchaeferUI.R")
 source("ui/support/BasicVonBertalannfyUI.R")
@@ -87,9 +91,10 @@ source("server/cmsy/cmsyServer.R")
 source("server/LBM/tropfishr/tropfishrServer.R")
 source("server/LBM/lbi/lbiServer.R")
 source("server/LBM/lbspr/lbsprServer.R")
+source("server/spict/spictServer.R")
 ## Others
-                                        # source("server/fishMethods/sbprServer.R")
-                                        # source("server/fishMethods/yprServer.R")
+## source("server/fishMethods/sbprServer.R")
+## source("server/fishMethods/yprServer.R")
 ## Support
 source("server/support/BasicSchaeferServer.R")
 source("server/support/BasicVonBertalannfyServer.R")
@@ -121,6 +126,13 @@ source("assets/LBM/lbspr/algorithms/plotting.R")
 source("assets/LBM/lbspr/algorithms/tables.R")
 source("assets/LBM/lbspr/algorithms/captions.R")
 source("assets/LBM/lbspr/algorithms/output.R")
+## spict
+source("assets/spict/algorithms/readin.R")
+source("assets/spict/algorithms/run_spict.R")
+source("assets/spict/algorithms/plotting.R")
+source("assets/spict/algorithms/tables.R")
+source("assets/spict/algorithms/captions.R")
+source("assets/spict/algorithms/output.R")
 ## Others
 ## source("assets/fishmethods/methods.R")
 ## Support
@@ -166,6 +178,7 @@ ui <- tagList(
             useShinyjs(),
             extendShinyjs(text = jscode, functions =  c("showBox", "removeBox","showBox2", "removeBox2", "disableAllButtons", "enableAllButtons", "showComputing", "hideComputing", "expandBox","collapseBox")),
             introjsUI(),
+            add_busy_spinner(spin = "fading-circle", color = "#112446"),
             tags$head(
                      tags$link(rel = "stylesheet", type = "text/css", href = "custom.css")
                  ),
@@ -175,8 +188,6 @@ ui <- tagList(
                                         #busyIndicator(wait = 7000),
             tabItems(
                 tabItem("homeTab",htmlOutput("homeInfo"), selected=T),
-                tabCmsyIntro,
-                tabCmsySampleDataset,
                 tabLBMIntro,
                 tabElefanIntro,
                 ## tabElefanSampleDataset,
@@ -184,16 +195,20 @@ ui <- tagList(
                 ## tabLBISampleDataset,
                 tabLBSPRIntro,
                 ## tabLBSPRSampleDataset,
-                                        # tabFishMethodsIntro,
-                                        # tabFishMethodsSampleDataset,
-                tabCmsy("cmsyModule"),
+                ## tabFishMethodsIntro,
+                ## tabFishMethodsSampleDataset,
                 tabElefanGa("elefanGaModule"),
-                                        # tabElefanSa("elefanSaModule"),
-                                        # tabElefan("elefanModule"),
-                                        # tabSbpr("sbprModule"),
-                                        # tabYpr("yprModule"),
+                ## tabElefanSa("elefanSaModule"),
+                ## tabElefan("elefanModule"),
+                ## tabSbpr("sbprModule"),
+                ## tabYpr("yprModule"),
                 tabLBI("lbiModule"),
                 tabLBSPR("lbsprModule"),
+                tabSPICTIntro,
+                tabSPICT("spictModule"),
+                tabCmsyIntro,
+                tabCmsySampleDataset,
+                tabCmsy("cmsyModule"),
                 tabBasicSchaefer("basicShaeferModule"),
                 tabBasicVonBertalannfy("vonBertalannfyModule"),
                 tabSeasonalVonBertalannfy("seasonalVonBertalannfyModule"),
@@ -205,135 +220,138 @@ ui <- tagList(
 )
 
 
-server <- function(input, output, session) {
+    server <- function(input, output, session) {
 
                                         #flog.threshold(DEBUG)
                                         #flog.appender(appender.file(fileLog))
 
-    session$allowReconnect("force")
-    waiter_hide()
-    onStop(function() {
-        flog.warn("Lost connection to R server")
-    })
+        session$allowReconnect("force")
+        waiter_hide()
+        onStop(function() {
+            flog.warn("Lost connection to R server")
+        })
 
-    output$sidebar <- renderUI({
-        dashboardSidebar(
-            sidebarMenu(id="smt-tabs",
-                        menuItem("Home", tabName="homeTab"),
-                        menuCmsy,
-                        menuLengthMethods,
-                                        # menuFishMethods,
-                        menuSupportingTools,
-                        menuItem("Glossary", tabName="glossaryTab")
-                        )
-        )
-    })
+        output$sidebar <- renderUI({
+            dashboardSidebar(
+                sidebarMenu(id="smt-tabs",
+                            menuItem("Home", tabName="homeTab"),
+                            menuLengthMethods,
+                            ## menuFishMethods,
+                            menuSPICT,
+                            menuCmsy,
+                            menuSupportingTools,
+                            menuItem("Glossary", tabName="glossaryTab")
+                            )
+            )
+        })
 
-    session$userData$page <- reactiveVal(NULL)
+        session$userData$page <- reactiveVal(NULL)
 
 ### Render the page set as last visited in session or by page= query param
-    observe({
-        currentPage <- NA
-        if (!is.null(session$userData$page())) {
-            currentPage <- session$userData$page()
-        } else {
-            query <- parseQueryString(session$clientData$url_search)
-            if (!is.null(query$page)) {
-                currentPage <- query$page
+        observe({
+            currentPage <- NA
+            if (!is.null(session$userData$page())) {
+                currentPage <- session$userData$page()
+            } else {
+                query <- parseQueryString(session$clientData$url_search)
+                if (!is.null(query$page)) {
+                    currentPage <- query$page
+                }
             }
-        }
-        flog.info("Current Page: %s", currentPage)
-        if (!is.na(currentPage)) {
-            switch(currentPage,
-                   'cmsy-intro'= {isolate({updateTabItems(session, "smt-tabs", "cmsyIntro")})},
-                   'cmsy'= {isolate({updateTabItems(session, "smt-tabs", "cmsyWidget")})},
-                   'cmsy-sample'= {isolate({updateTabItems(session, "smt-tabs", "cmsySampleDataset")})},
-                   'lbm-intro' = {isolate({updateTabItems(session, "smt-tabs", "lbmIntro")})},
-                   'elefan-intro' = {isolate({updateTabItems(session, "smt-tabs", "ElefanIntro")})},
-                   'elefan-ga' = {isolate({updateTabItems(session, "smt-tabs", "ElefanGaWidget")})},
-                                        # 'elefan-sa' = {isolate({updateTabItems(session, "smt-tabs", "ElefanSaWidget")})},
-                                        # 'elefan' = {isolate({updateTabItems(session, "smt-tabs", "ElefanWidget")})},
-                   ## 'elefan-sample' = {isolate({updateTabItems(session, "smt-tabs", "ElefanSampleDataset")})},
-                   'lbi-intro' = {isolate({updateTabItems(session, "smt-tabs", "lbiIntro")})},
-                   'lbi' = {isolate({updateTabItems(session, "smt-tabs", "lbiWidget")})},
-                   ## 'lbi-sample' = {isolate({updateTabItems(session, "smt-tabs", "lbiSampleDataset")})},
-                   'lbspr-intro' = {isolate({updateTabItems(session, "smt-tabs", "lbsprIntro")})},
-                   'lbspr' = {isolate({updateTabItems(session, "smt-tabs", "lbsprWidget")})},
-                   ## 'lbspr-sample' = {isolate({updateTabItems(session, "smt-tabs", "lbsprSampleDataset")})},
-                                        # 'fishmethods-intro' = {isolate({updateTabItems(session, "smt-tabs", "FishMethodsIntro")})},
-                                        # 'sbpr' = {isolate({updateTabItems(session, "smt-tabs", "SBPRWidget")})},
-                                        # 'ypr' = {isolate({updateTabItems(session, "smt-tabs", "YPRWidget")})},
-                                        # 'fishmethods-sample' = {isolate({updateTabItems(session, "smt-tabs", "FishMethodsSampleDataset")})},
-                   'basic-shaefer' = {isolate({updateTabItems(session, "smt-tabs", "BasicSchaefer")})},
-                   'basic-von-bertalannfy' = {isolate({updateTabItems(session, "smt-tabs", "BasicVonBertalannfy")})},
-                   'seasonal-von-bertalannfy' = {isolate({updateTabItems(session, "smt-tabs", "SeasonalVonBertalannfy")})},
-                   'natural-mortality' = {isolate({updateTabItems(session, "smt-tabs", "NaturalMortality")})},
-                   'home' = {isolate({updateTabItems(session, "smt-tabs", "homeTab")})},
-                   'glossary' = {isolate({updateTabItems(session, "smt-tabs", "glossaryTab")})},
-                   {isolate({updateTabItems(session, "smt-tabs", "homeTab")})}
-                   )
-        } else {
-            isolate({updateTabItems(session, "smt-tabs", "homeTab")})
-        }
-    })
+            flog.info("Current Page: %s", currentPage)
+            if (!is.na(currentPage)) {
+                switch(currentPage,
+                       'cmsy-intro'= {isolate({updateTabItems(session, "smt-tabs", "cmsyIntro")})},
+                       'cmsy'= {isolate({updateTabItems(session, "smt-tabs", "cmsyWidget")})},
+                       'cmsy-sample'= {isolate({updateTabItems(session, "smt-tabs", "cmsySampleDataset")})},
+                       'lbm-intro' = {isolate({updateTabItems(session, "smt-tabs", "lbmIntro")})},
+                       'elefan-intro' = {isolate({updateTabItems(session, "smt-tabs", "ElefanIntro")})},
+                       'elefan-ga' = {isolate({updateTabItems(session, "smt-tabs", "ElefanGaWidget")})},
+                       ## 'elefan-sa' = {isolate({updateTabItems(session, "smt-tabs", "ElefanSaWidget")})},
+                       ## 'elefan' = {isolate({updateTabItems(session, "smt-tabs", "ElefanWidget")})},
+                       ## 'elefan-sample' = {isolate({updateTabItems(session, "smt-tabs", "ElefanSampleDataset")})},
+                       'lbi-intro' = {isolate({updateTabItems(session, "smt-tabs", "lbiIntro")})},
+                       'lbi' = {isolate({updateTabItems(session, "smt-tabs", "lbiWidget")})},
+                       ## 'lbi-sample' = {isolate({updateTabItems(session, "smt-tabs", "lbiSampleDataset")})},
+                       'lbspr-intro' = {isolate({updateTabItems(session, "smt-tabs", "lbsprIntro")})},
+                       'lbspr' = {isolate({updateTabItems(session, "smt-tabs", "lbsprWidget")})},
+                       ## 'lbspr-sample' = {isolate({updateTabItems(session, "smt-tabs", "lbsprSampleDataset")})},
+                       ## 'fishmethods-intro' = {isolate({updateTabItems(session, "smt-tabs", "FishMethodsIntro")})},
+                       ## 'sbpr' = {isolate({updateTabItems(session, "smt-tabs", "SBPRWidget")})},
+                       ## 'ypr' = {isolate({updateTabItems(session, "smt-tabs", "YPRWidget")})},
+                       ## 'fishmethods-sample' = {isolate({updateTabItems(session, "smt-tabs", "FishMethodsSampleDataset")})},
+                       'spict-intro' = {isolate({updateTabItems(session, "smt-tabs", "spictIntro")})},
+                       'spict' = {isolate({updateTabItems(session, "smt-tabs", "spictWidget")})},
+                       'basic-shaefer' = {isolate({updateTabItems(session, "smt-tabs", "BasicSchaefer")})},
+                       'basic-von-bertalannfy' = {isolate({updateTabItems(session, "smt-tabs", "BasicVonBertalannfy")})},
+                       'seasonal-von-bertalannfy' = {isolate({updateTabItems(session, "smt-tabs", "SeasonalVonBertalannfy")})},
+                       'natural-mortality' = {isolate({updateTabItems(session, "smt-tabs", "NaturalMortality")})},
+                       'home' = {isolate({updateTabItems(session, "smt-tabs", "homeTab")})},
+                       'glossary' = {isolate({updateTabItems(session, "smt-tabs", "glossaryTab")})},
+                       {isolate({updateTabItems(session, "smt-tabs", "homeTab")})}
+                       )
+            } else {
+                isolate({updateTabItems(session, "smt-tabs", "homeTab")})
+            }
+        })
 
 
-    ## session$userData$withtoken <- withtoken
-    app_ctrl <- reactiveValues(
-        withtoken = FALSE ## withtoken
-    )
-    session$userData$sessionToken <- reactiveVal(NULL)
-    session$userData$sessionUsername <- reactiveVal(NULL)
-    session$userData$sessionMode <- reactiveVal(NULL)
-    session$userData$storagehubManager <- reactiveVal(NULL)
-    session$userData$sessionWps <- reactiveVal(NULL)
+        ## session$userData$withtoken <- withtoken
+        app_ctrl <- reactiveValues(
+            withtoken = FALSE ## withtoken
+        )
+        session$userData$sessionToken <- reactiveVal(NULL)
+        session$userData$sessionUsername <- reactiveVal(NULL)
+        session$userData$sessionMode <- reactiveVal(NULL)
+        session$userData$storagehubManager <- reactiveVal(NULL)
+        session$userData$sessionWps <- reactiveVal(NULL)
 
-    ## Hide any overlay when session starts
-    observe({
-        js$hideComputing()
-    })
+        ## Hide any overlay when session starts
+        observe({
+            js$hideComputing()
+        })
 
                                         #observer on token
-    observe({
-        if(!app_ctrl$withtoken){
-            query <- parseQueryString(session$clientData$url_search)
-            if(!is.null(query[[gcubeTokenQueryParam]])){
-                token <- query[[gcubeTokenQueryParam]]
-                session$userData$sessionToken(token)
-                app_ctrl$withtoken <- TRUE
+        observe({
+            if(!app_ctrl$withtoken){
+                query <- parseQueryString(session$clientData$url_search)
+                if(!is.null(query[[gcubeTokenQueryParam]])){
+                    token <- query[[gcubeTokenQueryParam]]
+                    session$userData$sessionToken(token)
+                    app_ctrl$withtoken <- TRUE
 
                                         #instantiate storagehub manager (uses a keyring 'env' backend by default)
-                sh_manager = d4storagehub4R::StoragehubManager$new(token = session$userData$sessionToken(), logger = "INFO")
-                session$userData$sessionUsername(sh_manager$getUserProfile()$username)
-                session$userData$storagehubManager(sh_manager)
+                    sh_manager = d4storagehub4R::StoragehubManager$new(token = session$userData$sessionToken(), logger = "INFO")
+                    session$userData$sessionUsername(sh_manager$getUserProfile()$username)
+                    session$userData$storagehubManager(sh_manager)
 
                                         #trace logs by user
-                fileLog <- sprintf("session_for_%s.log", sh_manager$getUserProfile()$username)
+                    fileLog <- sprintf("session_for_%s.log", sh_manager$getUserProfile()$username)
 
-                if (!is.null(session$userData$sessionToken())) {
-                    flog.info("Session token is: %s", session$userData$sessionToken())
-                } else {
-                    flog.info("Session token is: %s", "NULL")
-                }
+                    if (!is.null(session$userData$sessionToken())) {
+                        flog.info("Session token is: %s", session$userData$sessionToken())
+                    } else {
+                        flog.info("Session token is: %s", "NULL")
+                    }
 
-                if (!is.null(session$userData$sessionMode())) {
-                    flog.info("Session mode is: %s", session$userData$sessionMode())
-                } else {
-                    flog.info("Session mode is: %s", "NULL")
-                }
+                    if (!is.null(session$userData$sessionMode())) {
+                        flog.info("Session mode is: %s", session$userData$sessionMode())
+                    } else {
+                        flog.info("Session mode is: %s", "NULL")
+                    }
 
-                if (!is.null(session$userData$sessionUsername())) {
-                    flog.info("Session username is: %s", session$userData$sessionUsername())
-                    session$userData$sessionMode("GCUBE")
-                } else {
-                    flog.info("Session username is: %s", "NULL")
+                    if (!is.null(session$userData$sessionUsername())) {
+                        flog.info("Session username is: %s", session$userData$sessionUsername())
+                        session$userData$sessionMode("GCUBE")
+                    } else {
+                        flog.info("Session username is: %s", "NULL")
+                    }
+
                 }
+                flog.threshold(DEBUG)
+                flog.appender(appender.file(fileLog))
 
             }
-            flog.threshold(DEBUG)
-            flog.appender(appender.file(fileLog))
-
-        }
         ## else{
 
         ##     ## set manually
@@ -390,8 +408,8 @@ server <- function(input, output, session) {
 
     session$userData$cmsy <- reactiveValues()
 
-                                        # session$userData$elefan_sa <- reactiveValues()
-                                        # session$userData$elefan <- reactiveValues()
+    ## session$userData$elefan_sa <- reactiveValues()
+    ## session$userData$elefan <- reactiveValues()
     session$userData$sbprExec <- reactiveValues()
     session$userData$yprExec <- reactiveValues()
     session$userData$fishingMortality <- reactiveValues()
@@ -402,32 +420,33 @@ server <- function(input, output, session) {
 
     session$userData$cmsyUploadVreResult <- reactiveValues()
     session$userData$elefanGaUploadVreResult <- reactiveValues()
-                                        # session$userData$elefanSaUploadVreResult <- reactiveValues()
-                                        # session$userData$elefanUploadVreResult <- reactiveValues()
+    ## session$userData$elefanSaUploadVreResult <- reactiveValues()
+    ## session$userData$elefanUploadVreResult <- reactiveValues()
     session$userData$sbprUploadVreResult <- reactiveValues()
     session$userData$yprUploadVreResult <- reactiveValues()
 
     session$userData$lbiUploadVreResult <- reactiveValues()
-session$userData$lbsprUploadVreResult <- reactiveValues()
+    session$userData$lbsprUploadVreResult <- reactiveValues()
 
-  callModule(cmsyModule, "cmsyModule")
-  callModule(elefanGaModule, "elefanGaModule")
-  # callModule(elefanSaModule, "elefanSaModule")
-  # callModule(elefanModule, "elefanModule")
-  # callModule(sbprModule, "sbprModule")
-  # callModule(yprModule, "yprModule")
-  callModule(lbiModule, "lbiModule")
-  callModule(lbsprModule, "lbsprModule")
-  callModule(basicShaeferModule, "basicShaeferModule")
-  callModule(vonBertalannfyModule, "vonBertalannfyModule")
-  callModule(seasonalVonBertalannfyModule, "seasonalVonBertalannfyModule")
-  callModule(naturalMortalityModule, "naturalMortalityModule")
+    callModule(cmsyModule, "cmsyModule")
+    callModule(elefanGaModule, "elefanGaModule")
+    ## callModule(elefanSaModule, "elefanSaModule")
+    ## callModule(elefanModule, "elefanModule")
+    ## callModule(sbprModule, "sbprModule")
+    ## callModule(yprModule, "yprModule")
+    callModule(lbiModule, "lbiModule")
+    callModule(lbsprModule, "lbsprModule")
+    callModule(spictModule, "spictModule")
+    callModule(basicShaeferModule, "basicShaeferModule")
+    callModule(vonBertalannfyModule, "vonBertalannfyModule")
+    callModule(seasonalVonBertalannfyModule, "seasonalVonBertalannfyModule")
+    callModule(naturalMortalityModule, "naturalMortalityModule")
 
-  source("server/labels.R", local=TRUE)
+    source("server/labels.R", local=TRUE)
 
 
 }
 
 
-# Run the application
+## Run the application
 shinyApp(ui = ui, server = server)

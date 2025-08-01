@@ -628,6 +628,86 @@ text <- paste0(text, "<li> Download the results as a zip archive ('Download Resu
 })
 
 
+## SPiCT
+## ---------------------------------
+output$spictIntroOut <- renderText({
+    session$userData$page('spict-intro')
+    text <- "<h3><b>Data-limited stock assessment with SPiCT</b></h3>"
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<p>")
+    text <- paste0(text, "The stochastic surplus production model in continuous time (SPiCT) is one of the official assessment models of the International Council for the Exploration of the Sea (ICES) and to estimate stock status and give catch quota advice for around 20 data-limited stocks in the Northeast Atlantic.")
+    text <- paste0(text, "</p>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<h4> Method description </h4>")
+    text <- paste0(text, "TODO")
+    text <- paste0(text, "<br>")
+
+    text <- paste0(text, "<p style='margin-left: 20px'>")
+    text <- paste0(text,
+                   "This workflow requires at least 10 years of catch and relative abundance information. Ideally, a fishery-independent survey is available as an index of relative abundance, but a commercial catch per unit of effort (CPUE) time series might also suffice.")
+    text <- paste0(text, "</p>")
+
+    text <- paste0(text, "<p>")
+    text <- paste0(text, "<strong>Further information</strong><br>")
+    text <- paste0(text, "Please visit the <a href='https://elearning.fao.org/course/view.php?id=502' target='_blank'>SDG Indicator 14.4.1 - Fish stocks sustainability eLearning course</a>, <b>(Lesson TODO, Slides TODO)</b> for further information:")
+    text <- paste0(text, "</p>")
+
+    text <- paste0(text, "<br>")
+    text <- paste0(text, spictAssumptionsHTML())
+    text <- paste0(text, "<br>")
+
+    text <- paste0(text,"<h4> Workflow considerations</h4>")
+    text <- paste0(text,"<strong> To run the SPiCT assessment workflow in the Stock Monitoring Tool :</strong>")
+    text <- paste0(text, "<ol>")
+    text <- paste0(text, "<li> Navigate to the 'tool' tab under SPiCT in the sidebar menu.</li>")
+    text <- paste0(text, "<li> Upload a spict data set (for more information check the 'Data Considerations' tab in the tool).</li>")
+    text <- paste0(text, "<li> Adjust the Assessment Settings")
+    text <- paste0(text, "<ol type='a'>")
+    text <- paste0(text, "<li> Data Settings - select the years of data to include in the analysis, adjust ... TODO </li>")
+    text <- paste0(text, "<li> Priors - TODO </li>")
+    text <- paste0(text, "<li> Other - TODO </li>")
+    text <- paste0(text, "</ol>")
+    text <- paste0(text, "</li>")
+    text <- paste0(text, "<li> Run the Assessment:")
+    text <- paste0(text, "<ol type='a'>")
+    text <- paste0(text, "<li> Run the assessment ('Run Assessment' button). Watch for the progress bar in the center of the screen</li>")
+    text <- paste0(text, "</ol>")
+    text <- paste0(text, "</li>")
+    text <- paste0(text, "<li> Download the report as a pdf ('Download Report' button). The report will also be automatically uploaded to your private workspace. </li>")
+    text <- paste0(text, "<li> Download the results as a zip archive ('Download Results (zip)' button).</li>")
+    text <- paste0(text, "<li> The 'Reset' button removes the uploaded data and resets the settings to default values.</li>")
+    text <- paste0(text, "</ol>")
+    text <- paste0(text, "Further information can be found in the popup information buttons at each field, and in the Workflow, Data, Methods, and Results Considerations tabs. Note that error messages may display in the center of the page and in place of any figures where an error has occurred.")
+    text <- paste0(text, "</p>")
+    text <- paste0(text, "<br>")
+
+    text <- paste0(text, "<h4>Run time </h4>")
+    text <- paste0(text, "<p>")
+    text <- paste0(text, "The run time varies with the time series length, the number of abundance indices, and Euler time step used for estimation. ",
+                   "This is noted in the information button of these fields.",
+                   "With the exsample datasets, the run time is below <b> 1 min</b>.")
+    text <- paste0(text, "</p>")
+    text <- paste0(text, "<br>")
+
+    text <- paste0(text, "<h4>References</h4>")
+    text <- paste0(text, "<ul>")
+    text <- paste0(text, "<li>Kokkalis, A., Berg, C.W., Kapur, M.S., Winker, H., Jacobsen, N.S., Taylor, M.H., Ichinokawa, M., Miyagawa, M., Medeiros-Leal, W., Nielsen, J.R. and Mildenberger, T.K., 2024. Good practices for surplus production models. Fisheries Research, 275, p.107010. <a href='https://doi.org/10.1016/j.fishres.2024.107010' target='_blank'>https://doi.org/10.1016/j.fishres.2024.107010</a></li>")
+
+    text <- paste0(text, "<li>Mildenberger, T.K., Berg, C.W., Pedersen, M.W., Kokkalis, A. and Nielsen, J.R. 2020. Time-variant productivity in biomass dynamic models on seasonal and long-term scales. ICES Journal of Marine Science, 77(1), pp.174-187.<a href='https://doi.org/10.1093/icesjms/fsz154' target='_blank'>https://doi.org/10.1093/icesjms/fsz154</a></li>")
+
+    text <- paste0(text, "<li>Mildenberger, T.K., Berg, C.W., Kempf, A., Rindorf, A., MacCall, A.D. and Taylor, M.H., 2025. Estimating Time-Varying Productivity and Reference Points: A Case of North Sea Demersal Fish Stocks. Fish and Fisheries. <a href='https://doi.org/10.1111/faf.12910' target='_blank'>https://doi.org/10.1111/faf.12910</a></li>")
+
+    text <- paste0(text, "<li>Pedersen, M.W., and Berg, C.W. 2017. A stochastic surplus production model in continuous time. Fish and Fisheries, 18(2), 226-243. <a href='https://doi.org/10.1111/faf.12174' target='_blank'>https://doi.org/10.1111/faf.12174</a></li>")
+
+    text <- paste0(text, "</ul>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<br>")
+
+    text <- paste0(text, "<p>")
+    text
+})
+
+
 
 ## Fish methods
 output$fishMethodsIntroOut <- renderText({
@@ -1047,6 +1127,16 @@ output$cmsyLegacyWarning <- renderText({
 })
 
 
+
+## spict -------------------------
+output$spictVersion <- renderText({
+    text <- paste0("<span class='subTitle'>", "By <a href='https://github.com/DTUAqua/spict/blob/master/spict/DESCRIPTION' target='_blank'>SPiCT</a> version ", packageVersion("spict"),"</span>")
+    text
+})
+
+
+
+## glossary -------------------------
 output$glossary <- renderText({
     session$userData$page("glossary")
     render_glossary_html(glossary_df)
