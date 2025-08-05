@@ -61,8 +61,6 @@ SMT_DATE = getAppDate()
 ##### Dependencies
 ## UI
 source("ui/menu.R")
-## CMSY
-source("ui/cmsy/cmsyUI.R")
 ## Length-based methods
 source("ui/LBM/commonUI.R")
 source("ui/LBM/tropfishr/commonUI.R")
@@ -71,8 +69,13 @@ source("ui/LBM/lbi/commonUI.R")
 source("ui/LBM/lbi/lbiUI.R")
 source("ui/LBM/lbspr/commonUI.R")
 source("ui/LBM/lbspr/lbsprUI.R")
-source("ui/spict/commonUI.R")
-source("ui/spict/spictUI.R")
+## Surplus production models
+source("ui/SPM/commonUI.R")
+source("ui/SPM/spict/commonUI.R")
+source("ui/SPM/spict/spictUI.R")
+source("ui/SPM/jabba/commonUI.R")
+source("ui/SPM/jabba/jabbaUI.R")
+source("ui/SPM/cmsy/cmsyUI.R")
 ## Others
 ## source("ui/fishMethods/commonUI.R")
 ## source("ui/fishMethods/sbprUI.R")
@@ -85,13 +88,13 @@ source("ui/support/SeasonalVonBertalannfyUI.R")
 ## SERVER
 source("server/assumptions.R")
 source("server/common.R")
-## CMSY
-source("server/cmsy/cmsyServer.R")
 ## Length-based methods
 source("server/LBM/tropfishr/tropfishrServer.R")
 source("server/LBM/lbi/lbiServer.R")
 source("server/LBM/lbspr/lbsprServer.R")
-source("server/spict/spictServer.R")
+source("server/SPM/spict/spictServer.R")
+source("server/SPM/jabba/jabbaServer.R")
+source("server/SPM/cmsy/cmsyServer.R")
 ## Others
 ## source("server/fishMethods/sbprServer.R")
 ## source("server/fishMethods/yprServer.R")
@@ -104,8 +107,6 @@ source("server/support/NaturalMortalityServer.R")
 source("assets/commons/commons.R")
 source("~/Documents/consulting/FAO/2025/glossary/glossary.R") ## TODO: add to assets/commons/ or somewhere else
 source("assets/commons/labels.R")
-## CMSY
-source("assets/cmsy/CmsyFunction.R")
 ## LBM
 source("assets/LBM/commons.R")
 source("assets/LBM/tropfishr/algorithms/run_tropfishr.R")
@@ -127,12 +128,14 @@ source("assets/LBM/lbspr/algorithms/tables.R")
 source("assets/LBM/lbspr/algorithms/captions.R")
 source("assets/LBM/lbspr/algorithms/output.R")
 ## spict
-source("assets/spict/algorithms/readin.R")
-source("assets/spict/algorithms/run_spict.R")
-source("assets/spict/algorithms/plotting.R")
-source("assets/spict/algorithms/tables.R")
-source("assets/spict/algorithms/captions.R")
-source("assets/spict/algorithms/output.R")
+source("assets/SPM/spict/algorithms/readin.R")
+source("assets/SPM/spict/algorithms/run_spict.R")
+source("assets/SPM/spict/algorithms/plotting.R")
+source("assets/SPM/spict/algorithms/tables.R")
+source("assets/SPM/spict/algorithms/captions.R")
+source("assets/SPM/spict/algorithms/output.R")
+## CMSY
+source("assets/SPM/cmsy/CmsyFunction.R")
 ## Others
 ## source("assets/fishmethods/methods.R")
 ## Support
@@ -204,8 +207,11 @@ ui <- tagList(
                 ## tabYpr("yprModule"),
                 tabLBI("lbiModule"),
                 tabLBSPR("lbsprModule"),
+                tabSPMIntro,
                 tabSPICTIntro,
                 tabSPICT("spictModule"),
+                tabJABBAIntro,
+                tabJABBA("jabbaModule"),
                 tabCmsyIntro,
                 tabCmsySampleDataset,
                 tabCmsy("cmsyModule"),
@@ -236,9 +242,10 @@ ui <- tagList(
                 sidebarMenu(id="smt-tabs",
                             menuItem("Home", tabName="homeTab"),
                             menuLengthMethods,
+                            menuSPMs,
                             ## menuFishMethods,
-                            menuSPICT,
-                            menuCmsy,
+                            ## menuSPICT,
+                            ## menuCmsy,
                             menuSupportingTools,
                             menuItem("Glossary", tabName="glossaryTab")
                             )
@@ -280,8 +287,11 @@ ui <- tagList(
                        ## 'sbpr' = {isolate({updateTabItems(session, "smt-tabs", "SBPRWidget")})},
                        ## 'ypr' = {isolate({updateTabItems(session, "smt-tabs", "YPRWidget")})},
                        ## 'fishmethods-sample' = {isolate({updateTabItems(session, "smt-tabs", "FishMethodsSampleDataset")})},
+                       'spm-intro' = {isolate({updateTabItems(session, "smt-tabs", "spmIntro")})},
                        'spict-intro' = {isolate({updateTabItems(session, "smt-tabs", "spictIntro")})},
                        'spict' = {isolate({updateTabItems(session, "smt-tabs", "spictWidget")})},
+                       'jabba-intro' = {isolate({updateTabItems(session, "smt-tabs", "jabbaIntro")})},
+                       'jabba' = {isolate({updateTabItems(session, "smt-tabs", "jabbaWidget")})},
                        'basic-shaefer' = {isolate({updateTabItems(session, "smt-tabs", "BasicSchaefer")})},
                        'basic-von-bertalannfy' = {isolate({updateTabItems(session, "smt-tabs", "BasicVonBertalannfy")})},
                        'seasonal-von-bertalannfy' = {isolate({updateTabItems(session, "smt-tabs", "SeasonalVonBertalannfy")})},
@@ -381,13 +391,13 @@ ui <- tagList(
         ##         flog.info("Session username is: %s", session$userData$sessionUsername())
         ##         session$userData$sessionMode("GCUBE")
         ##     } else {
-        ##         flog.info("Session username is: %s", "NULL")
-        ##     }
+            ##         flog.info("Session username is: %s", "NULL")
+            ##     }
 
-        ##   flog.threshold(DEBUG)
-        ##   flog.appender(appender.file(fileLog))
+            ##   flog.threshold(DEBUG)
+            ##   flog.appender(appender.file(fileLog))
 
-        ## }
+            ## }
     })
 
     observeEvent(req(!is.null(session$userData$sessionToken())),{
@@ -434,18 +444,19 @@ ui <- tagList(
     ## callModule(elefanModule, "elefanModule")
     ## callModule(sbprModule, "sbprModule")
     ## callModule(yprModule, "yprModule")
-    callModule(lbiModule, "lbiModule")
-    callModule(lbsprModule, "lbsprModule")
-    callModule(spictModule, "spictModule")
-    callModule(basicShaeferModule, "basicShaeferModule")
-    callModule(vonBertalannfyModule, "vonBertalannfyModule")
-    callModule(seasonalVonBertalannfyModule, "seasonalVonBertalannfyModule")
-    callModule(naturalMortalityModule, "naturalMortalityModule")
+        callModule(lbiModule, "lbiModule")
+        callModule(lbsprModule, "lbsprModule")
+        callModule(spictModule, "spictModule")
+        callModule(jabbaModule, "jabbaModule")
+        callModule(basicShaeferModule, "basicShaeferModule")
+        callModule(vonBertalannfyModule, "vonBertalannfyModule")
+        callModule(seasonalVonBertalannfyModule, "seasonalVonBertalannfyModule")
+        callModule(naturalMortalityModule, "naturalMortalityModule")
 
-    source("server/labels.R", local=TRUE)
+        source("server/labels.R", local=TRUE)
 
 
-}
+    }
 
 
 ## Run the application

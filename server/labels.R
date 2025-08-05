@@ -628,6 +628,84 @@ text <- paste0(text, "<li> Download the results as a zip archive ('Download Resu
 })
 
 
+## Surplus production models - General Introduction
+## ---------------------------------
+output$spmIntroOut <- renderText({
+    session$userData$page('spm-intro')
+    text <- "<h3><b> Data-limited stock assessment with surplus production models </b></h3>"
+    text <- paste0(text, "<br>")
+
+    text <- paste0(text, "<p>")
+    text <- paste0(text, "Surplus production models ... There is a variety of models available. Three models are currently implemented in the SMT: (1) SPiCT, (2) JABBA, and (3) CMSY.")
+    text <- paste0(text, "</p>")
+    text <- paste0(text, "<br>")
+
+    text <- paste0(text, "<h4> 1. Data-limited assessment with <b>SPiCT</b> </h4>")
+    text <- paste0(text, "<p>")
+    text <- paste0(text, "SPiCT is a ... ")
+    text <- paste0(text, " Find more information about this method in the SPiCT tab in the sidebar ",
+                   "menu on the left.")
+    text <- paste0(text, "</p>")
+    text <- paste0(text, "<br>")
+
+    text <- paste0(text, "<h4> 2. Data-limited assessment with <b>JABBA</b> </h4>")
+    text <- paste0(text, "<p>")
+    text <- paste0(text, "JABBA is a ...")
+    text <- paste0(text, " Find more information about this method in the JABBA tab in the sidebar ",
+                   "menu on the left.")
+    text <- paste0(text, "</p>")
+    text <- paste0(text, "<br>")
+
+    text <- paste0(text, "<h4> 3. Data-limited assessment with <b>CMSY</b> </h4>")
+    text <- paste0(text, "<p>")
+    text <- paste0(text, "CMSY is a ...")
+    text <- paste0(text, " Find more information about this method in the CMSY tab in the sidebar ",
+                   "menu on the left.")
+    text <- paste0(text, "</p>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<br>")
+
+    text <- paste0(text, "<h4><b> Data for surplus production models </b></h4>")
+    text <- paste0(text, "<br>")
+
+    text <- paste0(text, "<p> SMT accepts two different data formats for surplus production models:</p>")
+    text <- paste0(text, "<ol>")
+    text <- paste0(text, "<li> <b>Wide format</b>: This format contains multiple columns ... </li>")
+    text <- paste0(text, "<li> <b>Long format</b>: This format contains two columns ... </li>")
+    text <- paste0(text, "</ol>")
+
+    text <- paste0(text, "<p> Further information about the two data formats ",
+                   "and how to convert one format to the other are described in a tutorial </p>")
+
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<b> Example data sets </b>")
+    text <- paste0(text, "<p> Three example data sets are available that demonstrate the two different data formats and represent three species with different life-history parameters:</p>")
+    text <- paste0(text, "<ul>")
+    text <- paste0(text, "<li> A short-lived species in the long format: European anchovy (LINK)</li>")  ## &nbsp;
+    text <- paste0(text, "<li> A medium-lived species in the wide format: Spangled Emperor (LINK)</li>")
+    text <- paste0(text, "<li> A long-lived species in the wide format: Orange-spotted grouper(LINK)</li>")
+    text <- paste0(text, "</ul>")
+
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<b> Further data format considerations </b>")
+    text <- paste0(text, "<ul>")
+    text <- paste0(text, "<li>", "Save your dataset in 'csv' format.", "</li>")
+    text <- paste0(text, "<li>", "The separator for the .csv file should be a comma ‘,’ semicolon ';' or tab. The default might differ depending on the language settings of your spreadsheet manipulation program (e.g. Excel).", "</li>")
+    text <- paste0(text, "<li>", "Use a '.' to separate decimals in the data. The default might differ depending on the language settings of your spreadsheet manipulation program (e.g. Excel).", "</li>")
+    text <- paste0(text, "<li>The data format of your data file should be automatically detected, or select the date format used in your data file under <b>'Choose CSV date format'</b>, e.g. DD/MM/YYYY format to select 'Day Month Year'.</li>")
+
+
+    ## text <- paste0(text, "<li>Ensure that your dates are given in chronological order.</li>")
+    ## text <- paste0(text, "<li>", "Ensure that the 'midLength' column name is identical to the sample dataset.", "</li>")
+    text <- paste0(text, "</ul>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<br>")
+
+    text
+})
+
+
 ## SPiCT
 ## ---------------------------------
 output$spictIntroOut <- renderText({
