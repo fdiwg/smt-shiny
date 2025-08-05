@@ -49,7 +49,7 @@ captionSpict.plots <- function(dat, input, format = "withFig", type){
            "abs" = {
                plot.num <- 7
                txt <- paste0("Estimated absolute biomass (left panel) and fishing mortality (right panel).")
-           }
+           },
            "prod" = {
                plot.num <- 8
                txt <- paste0("Estimated production curve.")
