@@ -1,6 +1,6 @@
 
 
-validate_spict_csv <- function(file){
+validate_spict_csv <- function(file, sep = "", dec = ""){
 
     is_mostly_numeric <- function(df) {
         numeric_cols <- sapply(df, is.numeric)
@@ -8,8 +8,16 @@ validate_spict_csv <- function(file){
         return(mean(numeric_cols) == 1)
     }
 
-    separators <- c(",", ";", "\t")
-    decimals <- c(".", ",")
+    if(sep == "auto") {
+        separators <- c(",", ";", "\t", " ")
+    } else {
+        separators <- sep
+    }
+    if(dec == "auto") {
+        decimals <- c(".", ",")
+    } else {
+        decimals <- dec
+    }
     inputData <- NULL
     check_csv <- FALSE
     check_delimiter <- FALSE
@@ -40,12 +48,24 @@ validate_spict_csv <- function(file){
 }
 
 
-read_spict_csv <- function(csvFile){
+read_spict_csv <- function(csvFile, sep = "", dec = ""){
 
     Sys.setlocale("LC_TIME", "C")
 
+    print (paste0("Separator is: ", sep))
+
+    if (is.null(sep) || is.na(sep)) {
+        sep <- "auto"
+    }
+
+    print (paste0("Decimal delimiter is: ", dec))
+
+    if (is.null(dec) || is.na(dec)) {
+        dec <- "auto"
+    }
+
     ## read in and validate csv file
-    dataset <- validate_spict_csv(csvFile)
+    dataset <- validate_spict_csv(csvFile, sep = sep, dec = dec)
 
     return(dataset)
 }

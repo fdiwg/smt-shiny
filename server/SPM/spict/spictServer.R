@@ -36,7 +36,9 @@ spictModule <- function(input, output, session) {
             return(NULL)
         }
 
-        dataset <- read_spict_csv(input$file$datapath)
+        dataset <- read_spict_csv(input$file$datapath,
+                                  input$spictCSVsep,
+                                  input$spictCSVdec)
         dataset$checks$fileName <- input$file$name
         checks <- dataset$checks
 

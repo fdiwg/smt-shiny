@@ -64,7 +64,31 @@ tabLBSPR <- function(id) {
                                       )
                             )
                         ),
-                    box(width = 3,
+                    box(width = 2,
+                        selectizeInput(
+                            ns("lbsprCSVsep"),
+                            "Choose CSV field separator",
+                            choices = c("Automatic guess" = "auto",
+                                        "Comma (,)" = ",",
+                                        "Semicolon (;)" = ";",
+                                        "Space ( )" = " ",
+                                        "Tab (\\t)" = "\t"),
+                            selected = "auto",
+                            options = list(create = TRUE)
+                        )
+                        ),
+                    box(width = 2,
+                        selectizeInput(
+                            ns("lbsprCSVdec"),
+                            "Choose CSV decimal separator",
+                            choices = c("Automatic guess" = "auto",
+                                        "Point (.)" = ".",
+                                        "Comma (,)" = ","),
+                            selected = "auto",
+                            options = list(create = TRUE)
+                        )
+                        ),
+                    box(width = 2,
                         selectInput(ns("lbsprDateFormat"),
                                     "Choose CSV date format",
                                     choices = c("Automatic guess" = "auto",
@@ -72,11 +96,6 @@ tabLBSPR <- function(id) {
                                                 "Year Day Month" = "ydm",
                                                 "Day Month Year" = "dmy",
                                                 "Month Day Year" = "mdy" ))
-                    ),
-                    box(width = 3,
-                        selectInput(ns("lbspr_lengthUnit"),
-                                    "Choose length unit",
-                                    choices = c("cm", "mm", "in"))
                     )
                     ),
 
@@ -127,6 +146,12 @@ tabLBSPR <- function(id) {
                                     div(style = "margin-top:-3px",
                                         uiOutput(ns("LBSPR_years_selected_out"))
                                         ),
+
+                                    br(),
+
+                                    selectInput(ns("lbspr_lengthUnit"),
+                                                "Choose length unit",
+                                                choices = c("cm", "mm", "in")),
 
                                     br(),
 
@@ -377,43 +402,43 @@ tabLBSPR <- function(id) {
                                                                     max = 1,
                                                                     value = 0.2,
                                                                     step = 0.01,
-                                                                    width = "80%"))
-                                                   ),
-                                            column(6,
-                                                   fluidRow(
-                                                            div(style = "display: inline-block; vertical-align:center; margin-left: 15px; margin-top: 5px",
-                                                                HTML('<b>SPR target</b>')
-                                                                ),
-                                                            ),
-                                                        div(style = "margin-top:-3px",
-                                                            numericInput(ns("LBSPR_sprTarg"),
-                                                                         label = "",
-                                                                         min = 0.0001,
-                                                                         max = 1,
-                                                                         value = 0.4,
-                                                                         step = 0.1,
-                                                                         width = "80%"))
-                                                        )
-                                             )
-                                         ),
+                                                        width = "80%"))
+                                       ),
+                                column(6,
+                                       fluidRow(
+                                           div(style = "display: inline-block; vertical-align:center; margin-left: 15px; margin-top: 5px",
+                                               HTML('<b>SPR target</b>')
+                                               ),
+                                           ),
+                                       div(style = "margin-top:-3px",
+                                           numericInput(ns("LBSPR_sprTarg"),
+                                                        label = "",
+                                                        min = 0.0001,
+                                                        max = 1,
+                                                        value = 0.4,
+                                                        step = 0.1,
+                                                        width = "80%"))
+                                       )
+                            )
+                        ),
 
-                                         br(),
-                                         br(),
+                        br(),
+                        br(),
 
-                                         fluidRow(
-                                             column(6,
-                                                    selectInput(ns("fig_format_lbspr"),
-                                                                "Format of archived figures",
-                                                                choices = c("pdf","png","jpeg","tiff","bmp","ps"),
-                                                                selected = "pdf",
-                                                                multiple = FALSE,
-                                                                width = "100%")
-                                                    ),
-                                             column(6,
-                                                    selectInput(ns("tab_format_lbspr"),
-                                                                "Format of archived tables",
-                                                                choices = c("csv","xls","xlsx"),
-                                                                selected = "csv",
+                        fluidRow(
+                            column(6,
+                                   selectInput(ns("fig_format_lbspr"),
+                                               "Format of archived figures",
+                                               choices = c("pdf","png","jpeg","tiff","bmp","ps"),
+                                               selected = "pdf",
+                                               multiple = FALSE,
+                                               width = "100%")
+                                   ),
+                            column(6,
+                                   selectInput(ns("tab_format_lbspr"),
+                                               "Format of archived tables",
+                                               choices = c("csv","xls","xlsx"),
+                                               selected = "csv",
                                                                 multiple = FALSE,
                                                                 width = "100%")
                                                     )

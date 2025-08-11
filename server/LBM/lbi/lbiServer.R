@@ -20,6 +20,7 @@ lbiModule <- function(input, output, session) {
     )
 
     lbiAcknowledged <- reactiveVal(FALSE)
+    lbiPendingRun   <- reactiveVal(FALSE)
 
     ## Definition of functions
     ## ----------------------------
@@ -28,7 +29,11 @@ lbiModule <- function(input, output, session) {
             return(NULL)
         }
 
-        dataset <- read_lbm_csv(input$fileLBI$datapath, input$lbiDateFormat)
+        dataset <- read_lbm_csv(input$fileLBI$datapath,
+                                input$lbiDateFormat,
+                                input$lbiCSVsep,
+                                input$lbiCSVdec)
+
         dataset$checks$fileName <- input$fileLBI$name
         checks <- dataset$checks
 
@@ -112,6 +117,8 @@ lbiModule <- function(input, output, session) {
     resetLBIInputValues <- function() {
         ## resetting UIs
         shinyjs::reset("fileLBI")
+        shinyjs::reset("lbiCSVsep")
+        shinyjs::reset("lbiCSVdec")
         shinyjs::reset("lbiDateFormat")
         shinyjs::reset("LBI_years_selected")
         shinyjs::reset("LBI_binSize")
@@ -140,6 +147,92 @@ lbiModule <- function(input, output, session) {
         lbiAcknowledged(FALSE)
     }
 
+
+    run_lbi_server <- function() {
+
+        result = tryCatch({
+
+            ## no weight at length -> no Lmaxy and Lmaxy_Lopt
+            ## TODO: but how to enter weight in SMT?
+            ## ADD: weight-at-length input
+            lbi_dat$dataExplo[['lfq']]$weight <- input$LBI_LWa * lbi_dat$dataExplo[['lfq']]$midLengths ^ input$LBI_LWb
+
+            if(input$LBI_split_mk){
+                mk <- input$LBI_M / input$LBI_K
+            }else{
+                mk <- input$LBI_MK
+            }
+
+            ## Warnings
+            years <- as.numeric(format(lbi_dat$dataExplo[['lfq']]$dates, "%Y"))
+            if(any(duplicated(years))){
+                showModal(modalDialog(
+                    title = "Warning",
+                    HTML("The length frequency data is not aggregated by year. This method should be used with yearly aggregated data!<hr/>")))
+            }
+
+            ## Parameter/Input checks
+            check.numeric.and.min(c(binSize = input$LBI_binSize,
+                                    linf = input$LBI_Linf,
+                                    lm50 = input$LBI_Lm50,
+                                    mk = mk
+                                    ),
+                                  can.be.zero = FALSE)
+
+            ## LBIs
+            flog.info("Starting LBI computation")
+            res <- run_lbi(data = lbi_dat$dataExplo[['lfq']],
+                           bin.size = input$LBI_binSize,
+                           linf = input$LBI_Linf,
+                           lmat = input$LBI_Lm50,
+                           mk = mk
+                           )
+
+            js$hideComputing()
+            js$enableAllButtons()
+
+            lbi_dat$results <- res$res
+
+            if (!is.null(session$userData$sessionMode()) && session$userData$sessionMode()=="GCUBE") {
+                flog.info("Uploading LBI report to i-Marine workspace")
+                reportFileName <- paste(tempdir(),"/","LBI_report_",
+                                        format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
+                                        #createLBIPDFReport(reportFileName,lbi_dat,input)
+                createLBIPDFReport(reportFileName, lbi_dat, input, output)
+                lbiUploadVreResult$res <- FALSE
+
+                basePath <- paste0("/Home/",session$userData$sessionUsername(),"/Workspace/")
+
+                SH_MANAGER <- session$userData$storagehubManager()
+
+                tryCatch({
+                    uploadToIMarineFolder(SH_MANAGER, reportFileName, basePath, uploadFolderName)
+                    lbiUploadVreResult$res <- TRUE
+                }, error = function(err) {
+                    flog.error("Error uploading LBI report to the i-Marine Workspace: %s", err)
+                    lbiUploadVreResult$res <- FALSE
+                }, finally = {})
+            }
+
+        }, error = function(cond) {
+            flog.error("Error in LBI: %s ",cond)
+            showModal(modalDialog(
+                title = "Error",
+                cond$message,
+                easyClose = TRUE,
+                footer = NULL
+            ))
+            return(NULL)
+        },
+        finally = {
+            js$hideComputing()
+            js$enableAllButtons()
+            if (!is.null(lbi_dat$results)) {
+                shinyjs::enable("createLBIReport")
+                shinyjs::enable("createLBIzip")
+            }
+        })
+    }
 
 
     ## Input-dependent UIs
@@ -309,6 +402,68 @@ lbiModule <- function(input, output, session) {
         lbi_dat$years_selected <- allyears
     })
 
+    observeEvent(input$lbiCSVsep, {
+        tmp <- lbiFileData()
+        inputLBIData$data <- tmp$lfq
+        inputLBIData$raw <- tmp$raw
+        inputLBIData$checks <- tmp$checks
+        ## bin size
+        if(is.null(inputLBIData$data)){
+            binSize <- 2
+            maxL <- 10
+        }else{
+            binSize <- try(min(diff(inputLBIData$data$midLengths)),silent=TRUE)
+            maxL <- try(max(inputLBIData$data$midLengths),silent=TRUE)
+            if(inherits(binSize,"try-error")){
+                binSize <- 2
+                maxL <- 10
+            }else{
+                binSize <- round(0.23 * maxL^0.6, 1)
+                if(binSize == 0) binSize <- 0.1
+            }
+        }
+        lbi_dat$binSize <- binSize
+        ## years selected
+        if(is.null(inputLBIData$data)){
+            allyears <- NULL
+        }else{
+            allyears <- try(unique(format(inputLBIData$data$dates,"%Y")),silent=TRUE)
+            if(inherits(allyears,"try-error")) allyears <- NULL
+        }
+        lbi_dat$years_selected <- allyears
+    })
+
+    observeEvent(input$lbiCSVdec, {
+        tmp <- lbiFileData()
+        inputLBIData$data <- tmp$lfq
+        inputLBIData$raw <- tmp$raw
+        inputLBIData$checks <- tmp$checks
+        ## bin size
+        if(is.null(inputLBIData$data)){
+            binSize <- 2
+            maxL <- 10
+        }else{
+            binSize <- try(min(diff(inputLBIData$data$midLengths)),silent=TRUE)
+            maxL <- try(max(inputLBIData$data$midLengths),silent=TRUE)
+            if(inherits(binSize,"try-error")){
+                binSize <- 2
+                maxL <- 10
+            }else{
+                binSize <- round(0.23 * maxL^0.6, 1)
+                if(binSize == 0) binSize <- 0.1
+            }
+        }
+        lbi_dat$binSize <- binSize
+        ## years selected
+        if(is.null(inputLBIData$data)){
+            allyears <- NULL
+        }else{
+            allyears <- try(unique(format(inputLBIData$data$dates,"%Y")),silent=TRUE)
+            if(inherits(allyears,"try-error")) allyears <- NULL
+        }
+        lbi_dat$years_selected <- allyears
+    })
+
 
     ## Action buttons
     observeEvent(input$go_lbi, {
@@ -343,21 +498,28 @@ lbiModule <- function(input, output, session) {
                                     ),
                                   can.be.zero = FALSE)
 
-            lbiAcknowledged(FALSE)
+            if(!lbiAcknowledged()) {
 
-            showModal(modalDialog(
-                title = "Acknowledge model assumptions",
-                bsCollapse(id = ns("assumptions"), open = NULL,
-                           bsCollapsePanel("▶ Click to show/hide",
-                                           HTML(lbiAssumptionsHTML()))
-                           ),
-                tags$p(HTML("See the <a href='https://elearning.fao.org/course/view.php?id=502' target='_blank'>FAO eLearning module</a> for more information.")),
-                footer = tagList(
-                    modalButton("Cancel"),
-                    actionButton(ns("lbi_ack"), "I Acknowledge", class = "btn-success")
-                ),
-                easyClose = FALSE
-            ))
+                lbiPendingRun(TRUE)
+
+                showModal(modalDialog(
+                    title = "Acknowledge model assumptions",
+                    bsCollapse(id = ns("assumptions"), open = NULL,
+                               bsCollapsePanel("▶ Click to show/hide",
+                                               HTML(lbiAssumptionsHTML()))
+                               ),
+                    tags$p(HTML("See the <a href='https://elearning.fao.org/course/view.php?id=502' target='_blank'>FAO eLearning module</a> for more information.")),
+                    footer = tagList(
+                        modalButton("Cancel"),
+                        actionButton(ns("lbi_ack"), "I Acknowledge", class = "btn-success")
+                    ),
+                    easyClose = FALSE
+                ))
+
+                return(invisible(NULL))
+            }
+
+            run_lbi_server()
 
         }, error = function(e) {
             showModal(modalDialog(
@@ -377,88 +539,10 @@ lbiModule <- function(input, output, session) {
         js$showComputing()
         js$disableAllButtons()
 
-        result = tryCatch({
-
-            ## no weight at length -> no Lmaxy and Lmaxy_Lopt
-            ## TODO: but how to enter weight in SMT?
-            ## ADD: weight-at-length input
-            lbi_dat$dataExplo[['lfq']]$weight <- input$LBI_LWa * lbi_dat$dataExplo[['lfq']]$midLengths ^ input$LBI_LWb
-
-            if(input$LBI_split_mk){
-                mk <- input$LBI_M / input$LBI_K
-            }else{
-                mk <- input$LBI_MK
-            }
-
-            ## Warnings
-            years <- as.numeric(format(lbi_dat$dataExplo[['lfq']]$dates, "%Y"))
-            if(any(duplicated(years))){
-                showModal(modalDialog(
-                    title = "Warning",
-                    HTML("The length frequency data is not aggregated by year. This method should be used with yearly aggregated data!<hr/>")))
-            }
-
-            ## Parameter/Input checks
-            check.numeric.and.min(c(binSize = input$LBI_binSize,
-                                    linf = input$LBI_Linf,
-                                    lm50 = input$LBI_Lm50,
-                                    mk = mk
-                                    ),
-                                  can.be.zero = FALSE)
-
-            ## LBIs
-            flog.info("Starting LBI computation")
-            res <- run_lbi(data = lbi_dat$dataExplo[['lfq']],
-                           bin.size = input$LBI_binSize,
-                           linf = input$LBI_Linf,
-                           lmat = input$LBI_Lm50,
-                           mk = mk
-                           )
-
-            js$hideComputing()
-            js$enableAllButtons()
-
-            lbi_dat$results <- res$res
-
-            if (!is.null(session$userData$sessionMode()) && session$userData$sessionMode()=="GCUBE") {
-                flog.info("Uploading LBI report to i-Marine workspace")
-                reportFileName <- paste(tempdir(),"/","LBI_report_",
-                                        format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
-                                        #createLBIPDFReport(reportFileName,lbi_dat,input)
-                createLBIPDFReport(reportFileName, lbi_dat, input, output)
-                lbiUploadVreResult$res <- FALSE
-
-                basePath <- paste0("/Home/",session$userData$sessionUsername(),"/Workspace/")
-
-                SH_MANAGER <- session$userData$storagehubManager()
-
-                tryCatch({
-                    uploadToIMarineFolder(SH_MANAGER, reportFileName, basePath, uploadFolderName)
-                    lbiUploadVreResult$res <- TRUE
-                }, error = function(err) {
-                    flog.error("Error uploading LBI report to the i-Marine Workspace: %s", err)
-                    lbiUploadVreResult$res <- FALSE
-                }, finally = {})
-            }
-
-        }, error = function(cond) {
-            flog.error("Error in LBI: %s ",cond)
-            showModal(modalDialog(
-                title = "Error",
-                cond$message,
-                easyClose = TRUE,
-                footer = NULL
-            ))
-            return(NULL)
-        },
-        finally = {
-            js$hideComputing()
-            js$enableAllButtons()
-            if (!is.null(lbi_dat$results)) {
-                shinyjs::enable("createLBIReport")
-                shinyjs::enable("createLBIzip")
-            }
-        })
+        if (isTRUE(lbiPendingRun())) {
+            lbiPendingRun(FALSE)
+            run_lbi_server()
+        }
     })
 
     observeEvent(input$reset_lbi, {
@@ -852,6 +936,12 @@ size = "l"
                  intro = "As a first step, you need to upload data. You can do that by clicking on 'Browse' and select a csv file on your computer."),
             list(element = paste0("#", ns("dataConsiderations2")),
                  intro = "If you do not have your own file and want to use an example fiel or if you are interested in more information about the data type and format, click on the small the information button here. <br><br>Note these information buttons (indicated by 'i') throughout the whole app."),
+            list(element = paste0("#", ns("lbiCSVsep"),
+                                  " + .selectize-control"),
+                 intro = "By default, the app will try to recognize the field separator, but you can also specify it here by either choosing from the list or by pressing backspace and enter any separator."),
+            list(element = paste0("#", ns("lbiCSVdec"),
+                                  " + .selectize-control"),
+                 intro = "Similarly, by default, the app will try to recognize the decimal separator, but you can also specify it here by either choosing from the list or by pressing backspace and enter any separator."),
             list(element = paste0("#", ns("lbiDateFormat"),
                                   " + .selectize-control"),
                  intro = "By default, the app will try to recognize the date format, but you can also specify it here."),

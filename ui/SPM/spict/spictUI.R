@@ -56,7 +56,7 @@ tabSPICT <- function(id) {
                     class = "collapsed-box",
 
                     fluidRow(
-                        column(6,
+                        column(5,
                                div(id = ns("file_wrapper"),
                                    fileInput(ns("file"), "Choose Input CSV File",
                                              accept = c(
@@ -75,6 +75,30 @@ tabSPICT <- function(id) {
                         ##                                "Day Month Year" = "dmy",
                         ##                                "Month Day Year" = "mdy" ))
                         ##        ),
+                        column(2,
+                               selectizeInput(
+                                   ns("spictCSVsep"),
+                                   "Choose CSV field separator",
+                                   choices = c("Automatic guess" = "auto",
+                                               "Comma (,)" = ",",
+                                               "Semicolon (;)" = ";",
+                                               "Space ( )" = ";",
+                                               "Tab (\\t)" = "\t"),
+                                   selected = "auto",
+                                   options = list(create = TRUE)
+                               )
+                               ),
+                        column(2,
+                               selectizeInput(
+                                   ns("spictCSVdec"),
+                                   "Choose CSV decimal separator",
+                                   choices = c("Automatic guess" = "auto",
+                                               "Point (.)" = ".",
+                                               "Comma (,)" = ","),
+                                   selected = "auto",
+                                   options = list(create = TRUE)
+                               )
+                               ),
                         column(2,
                                br(),
                                checkboxInput(

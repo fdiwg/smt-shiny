@@ -66,7 +66,31 @@ tabElefanGa <- function(id) {
                                       )
                             )
                         ),
-                    box(width = 3,
+                    box(width = 2,
+                        selectizeInput(
+                            ns("elefanGaCSVsep"),
+                            "Choose CSV field separator",
+                            choices = c("Automatic guess" = "auto",
+                                        "Comma (,)" = ",",
+                                        "Semicolon (;)" = ";",
+                                        "Space ( )" = " ",
+                                        "Tab (\\t)" = "\t"),
+                            selected = "auto",
+                            options = list(create = TRUE)
+                        )
+                        ),
+                    box(width = 2,
+                        selectizeInput(
+                            ns("elefanGaCSVdec"),
+                            "Choose CSV decimal separator",
+                            choices = c("Automatic guess" = "auto",
+                                        "Point (.)" = ".",
+                                        "Comma (,)" = ","),
+                            selected = "auto",
+                            options = list(create = TRUE)
+                        )
+                        ),
+                    box(width = 2,
                         selectInput(ns("elefanGaDateFormat"),
                                     "Choose CSV date format",
                                     choices = c("Automatic guess" = "auto",
@@ -74,12 +98,7 @@ tabElefanGa <- function(id) {
                                                 "Year Day Month" = "ydm",
                                                 "Day Month Year" = "dmy",
                                                 "Month Day Year" = "mdy" ))
-                        ),
-                    box(width = 3,
-                        selectInput(ns("elefan_lengthUnit"),
-                                    "Choose length unit",
-                                    choices = c("cm", "mm", "in"))
-                    )
+                        )
                     ),
 
 
@@ -147,6 +166,12 @@ tabElefanGa <- function(id) {
                                                             c("none","month","quarter","year")),
                                                 selected = "none",
                                                 width ='100%'),
+                                    br(),
+
+                                    selectInput(ns("elefan_lengthUnit"),
+                                                "Choose length unit",
+                                                choices = c("cm", "mm", "in")),
+
                                     br(),
 
                                     fluidRow(

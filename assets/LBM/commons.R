@@ -141,7 +141,7 @@ validateLBMInputFile <- function(file, type = "freq"){
 }
 
 
-validateLBMInputFile2 <- function(file, type = "freq"){
+validateLBMInputFile2 <- function(file, type = "freq", sep = "auto", dec = "auto"){
 
     is_mostly_numeric <- function(df) {
         numeric_cols <- sapply(df, is.numeric)
@@ -154,8 +154,16 @@ validateLBMInputFile2 <- function(file, type = "freq"){
         }
     }
 
-    separators <- c(",", ";", "\t")
-    decimals <- c(".", ",")
+    if(sep == "auto") {
+        separators <- c(",", ";", "\t", " ")
+    } else {
+        separators <- sep
+    }
+    if(dec == "auto") {
+        decimals <- c(".", ",")
+    } else {
+        decimals <- dec
+    }
     inputData <- NULL
     check_csv <- FALSE
     check_delimiter <- FALSE
@@ -247,7 +255,7 @@ validateLBMInputFile2 <- function(file, type = "freq"){
 
 
 
-read_lbm_csv <- function(csvFile, format=""){
+read_lbm_csv <- function(csvFile, format="auto", sep = "auto", dec = "auto"){
 
     Sys.setlocale("LC_TIME", "C")
 
@@ -267,8 +275,20 @@ read_lbm_csv <- function(csvFile, format=""){
         order <- c('ymd', 'ydm', 'dmy', 'mdy')
     }
 
+    print (paste0("Separator is: ", sep))
+
+    if (is.null(sep) || is.na(sep)) {
+        sep <- "auto"
+    }
+
+    print (paste0("Decimal delimiter is: ", dec))
+
+    if (is.null(dec) || is.na(dec)) {
+        dec <- "auto"
+    }
+
     ## read in and validate csv file
-    dataset <- validateLBMInputFile2(csvFile, type = "freq")
+    dataset <- validateLBMInputFile2(csvFile, type = "freq", sep = sep, dec = dec)
     if(all(unlist(dataset$checks[c("csv","delimiter","lengths","dates","ncols")]))){
         dataset$checks$format <- "wide"
         inputData <- dataset$inputData
