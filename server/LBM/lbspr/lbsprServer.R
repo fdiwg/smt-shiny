@@ -208,17 +208,20 @@ lbsprModule <- function(input, output, session) {
 
             ## COMMENT: this could be removed, but allows to run LBSPR without WPS
             ## if(!session$userData$withtoken){
+            ## if(withtoken){
 
-            ##     res <- run_lbspr(data = lbspr_dat$dataExplo[['lfq']],
-            ##                    bin.size = input$LBSPR_binSize,
-            ##                    linf = input$LBSPR_Linf,
-            ##                    lm50 = input$LBSPR_Lm50,
-            ##                    lm95 = input$LBSPR_Lm95,
-            ##                    mk = mk,
-            ##                    lwa = input$LBSPR_LWa,
-            ##                    lwb = input$LBSPR_LWb,
-            ##                    lunit = input$lbspr_lengthUnit
-            ##                    )
+            ## browser()
+
+            ## res <- run_lbspr(data = lbspr_dat$dataExplo[['lfq']],
+            ##                  bin.size = input$LBSPR_binSize,
+            ##                  linf = input$LBSPR_Linf,
+            ##                  lm50 = input$LBSPR_Lm50,
+            ##                  lm95 = input$LBSPR_Lm95,
+            ##                  mk = mk,
+            ##                  lwa = input$LBSPR_LWa,
+            ##                  lwb = input$LBSPR_LWb,
+            ##                  lunit = input$lbspr_lengthUnit
+            ##                  )
 
             ## }else{
 

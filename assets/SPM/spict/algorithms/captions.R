@@ -16,11 +16,11 @@ captionSpict.tables <- function(dat, input, format = "datatable", type){
            },
            "states" = {
                tab.num <- 4
-               txt <- paste0("Parameter estimates")
+               txt <- paste0("States and stock status")
            },
            "pred" = {
                tab.num <- 5
-               txt <- paste0("Parameter estimates")
+               txt <- paste0("Forecasted states and stock status")
            }
            )
 
