@@ -632,75 +632,62 @@ text <- paste0(text, "<li> Download the results as a zip archive ('Download Resu
 ## ---------------------------------
 output$spmIntroOut <- renderText({
     session$userData$page('spm-intro')
-    text <- "<h3><b> Data-limited stock assessment with surplus production models </b></h3>"
-    text <- paste0(text, "<br>")
 
-    text <- paste0(text, "<p>")
-    text <- paste0(text, "Surplus production models ... There is a variety of models available. Three models are currently implemented in the SMT: (1) SPiCT, (2) JABBA, and (3) CMSY.")
-    text <- paste0(text, "</p>")
-    text <- paste0(text, "<br>")
-
-    text <- paste0(text, "<h4> 1. Data-limited assessment with <b>SPiCT</b> </h4>")
-    text <- paste0(text, "<p>")
-    text <- paste0(text, "SPiCT is a ... ")
-    text <- paste0(text, " Find more information about this method in the SPiCT tab in the sidebar ",
-                   "menu on the left.")
-    text <- paste0(text, "</p>")
-    text <- paste0(text, "<br>")
-
-    text <- paste0(text, "<h4> 2. Data-limited assessment with <b>JABBA</b> </h4>")
-    text <- paste0(text, "<p>")
-    text <- paste0(text, "JABBA is a ...")
-    text <- paste0(text, " Find more information about this method in the JABBA tab in the sidebar ",
-                   "menu on the left.")
-    text <- paste0(text, "</p>")
-    text <- paste0(text, "<br>")
-
-    text <- paste0(text, "<h4> 3. Data-limited assessment with <b>CMSY</b> </h4>")
-    text <- paste0(text, "<p>")
-    text <- paste0(text, "CMSY is a ...")
-    text <- paste0(text, " Find more information about this method in the CMSY tab in the sidebar ",
-                   "menu on the left.")
-    text <- paste0(text, "</p>")
-    text <- paste0(text, "<br>")
-    text <- paste0(text, "<br>")
-    text <- paste0(text, "<br>")
-
-    text <- paste0(text, "<h4><b> Data for surplus production models </b></h4>")
-    text <- paste0(text, "<br>")
-
-    text <- paste0(text, "<p> SMT accepts two different data formats for surplus production models:</p>")
-    text <- paste0(text, "<ol>")
-    text <- paste0(text, "<li> <b>Wide format</b>: This format contains multiple columns ... </li>")
-    text <- paste0(text, "<li> <b>Long format</b>: This format contains two columns ... </li>")
-    text <- paste0(text, "</ol>")
-
-    text <- paste0(text, "<p> Further information about the two data formats ",
-                   "and how to convert one format to the other are described in a tutorial </p>")
-
-    text <- paste0(text, "<br>")
-    text <- paste0(text, "<b> Example data sets </b>")
-    text <- paste0(text, "<p> Three example data sets are available that demonstrate the two different data formats and represent three species with different life-history parameters:</p>")
-    text <- paste0(text, "<ul>")
-    text <- paste0(text, "<li> A short-lived species in the long format: European anchovy (LINK)</li>")  ## &nbsp;
-    text <- paste0(text, "<li> A medium-lived species in the wide format: Spangled Emperor (LINK)</li>")
-    text <- paste0(text, "<li> A long-lived species in the wide format: Orange-spotted grouper(LINK)</li>")
-    text <- paste0(text, "</ul>")
-
-    text <- paste0(text, "<br>")
-    text <- paste0(text, "<b> Further data format considerations </b>")
-    text <- paste0(text, "<ul>")
-    text <- paste0(text, "<li>", "Save your dataset in 'csv' format.", "</li>")
-    text <- paste0(text, "<li>", "The separator for the .csv file should be a comma ‘,’ semicolon ';' or tab. The default might differ depending on the language settings of your spreadsheet manipulation program (e.g. Excel).", "</li>")
-    text <- paste0(text, "<li>", "Use a '.' to separate decimals in the data. The default might differ depending on the language settings of your spreadsheet manipulation program (e.g. Excel).", "</li>")
-    text <- paste0(text, "<li>The data format of your data file should be automatically detected, or select the date format used in your data file under <b>'Choose CSV date format'</b>, e.g. DD/MM/YYYY format to select 'Day Month Year'.</li>")
-
-
-    ## text <- paste0(text, "<li>Ensure that your dates are given in chronological order.</li>")
-    ## text <- paste0(text, "<li>", "Ensure that the 'midLength' column name is identical to the sample dataset.", "</li>")
-    text <- paste0(text, "</ul>")
-    text <- paste0(text, "<br>")
-    text <- paste0(text, "<br>")
+    text <- paste(c(
+        "<h3><b>Data-limited stock assessment with surplus production models</b></h3>",
+        "<br>",
+        "<p>Surplus production models (SPMs) describe how a fish population grows and how catches remove biomass over time. ",
+        "They are especially useful when detailed age or length data are missing. ",
+        "The Stock Monitoring Tool (SMT) currently implements three SPMs: ",
+        "(1) <b>SPiCT</b>, (2) <b>JABBA</b>, and (3) <b>CMSY</b>.</p>",
+        "<br>",
+        "<h4>1) Data-limited assessment with <b>SPiCT</b></h4>",
+        "<p><b>SPiCT</b> (Stochastic surplus Production model in Continuos Time) is a <i>state-space</i> surplus production model. ",
+        "It estimates biomass and fishing mortality trajectories from catches together with one or more relative abundance indices, ",
+        "while explicitly accounting for process and observation error. ",
+        "Typical outputs include <i>B/B<sub>MSY</sub></i>, <i>F/F<sub>MSY</sub></i>, MSY, and uncertainty intervals. ",
+        "Use SPiCT when you have catch plus at least one index time series and want time-varying dynamics with rigorous uncertainty quantification. ",
+        "Find more information and options in the <b>SPiCT</b> tab in the left sidebar.</p>",
+        "<br>",
+        "<h4>2) Data-limited assessment with <b>JABBA</b></h4>",
+        "<p><b>JABBA</b> (Just Another Bayesian Biomass Assessment) is a <i>Bayesian</i> surplus production framework. ",
+        "It can combine multiple indices, specify informative priors, and produce posterior diagnostics, projections, and retrospective analyses. ",
+        "Use JABBA when you want a transparent Bayesian setup with flexible priors and multiple indices. ",
+        "Find more information in the <b>JABBA</b> tab in the left sidebar.</p>",
+        "<br>",
+        "<h4>3) Data-limited assessment with <b>CMSY</b></h4>",
+        "<p><b>CMSY</b> (Catch-MSY) is designed for <i>catch-only</i> situations, optionally augmented by resilience priors and index trends. ",
+        "It explores plausible productivity and depletion combinations consistent with the observed catches to estimate MSY, ",
+        "current stock status, and related reference points. ",
+        "Use CMSY when you have catches and limited auxiliary information. ",
+        "Find more information in the <b>CMSY</b> tab in the left sidebar.</p>",
+        "<br>",
+        "<br>",
+        "<h4><b>Data formats for surplus production models</b></h4>",
+        "<p>SMT accepts two input formats for SPMs:</p>",
+        "<ol>",
+        "<li><b>Wide format</b>: one row per time step (e.g., year), with separate columns for <i>Catch</i> and each <i>Index</i> series ",
+        "(e.g., <code>Index1</code>, <code>Index2</code>, …). Dates/years are in a dedicated column.</li>",
+        "<li><b>Long format</b>: one row per observation with columns such as <i>Time</i>, <i>Series</i> (index name), and <i>Value</i>. ",
+        "This is tidy and convenient when you have many indices or missing years.</li>",
+        "</ol>",
+        "<p>Guidance on converting between formats is provided in the tutorial linked from the method pages.</p>",
+        "<br>",
+        "<b>Example datasets</b>",
+        "<p>Three examples illustrate both formats and a range of life histories:</p>",
+        "<ul>",
+        "<li>Short-lived species (long format): European anchovy (link)</li>",
+        "<li>Medium-lived species (wide format): Spangled emperor (link)</li>",
+        "<li>Long-lived species (wide format): Orange‑spotted grouper (link)</li>",
+        "</ul>",
+        "<br>",
+        "<b>Import tips</b>",
+        "<ul>",
+        "<li>Save your dataset as <code>.csv</code>.</li>",
+        "<li>Common field separators are comma <code>,</code>, semicolon <code>;</code>, or tab, but any separator can be used and specified in the app.</li>",
+        "<li>Use a dot <code>.</code> as the decimal separator (or set the decimal option accordingly).</li>",
+        "</ul>"
+    ), collapse = "")
 
     text
 })
@@ -710,78 +697,85 @@ output$spmIntroOut <- renderText({
 ## ---------------------------------
 output$spictIntroOut <- renderText({
     session$userData$page('spict-intro')
-    text <- "<h3><b>Data-limited stock assessment with SPiCT</b></h3>"
-    text <- paste0(text, "<br>")
-    text <- paste0(text, "<p>")
-    text <- paste0(text, "The stochastic surplus production model in continuous time (SPiCT) is one of the official assessment models of the International Council for the Exploration of the Sea (ICES) and to estimate stock status and give catch quota advice for around 20 data-limited stocks in the Northeast Atlantic.")
-    text <- paste0(text, "</p>")
-    text <- paste0(text, "<br>")
-    text <- paste0(text, "<h4> Method description </h4>")
-    text <- paste0(text, "TODO")
-    text <- paste0(text, "<br>")
 
-    text <- paste0(text, "<p style='margin-left: 20px'>")
+    text <- "<h3><b>Data-limited stock assessment with SPiCT</b></h3><br>"
+
+    ## Intro
     text <- paste0(text,
-                   "This workflow requires at least 10 years of catch and relative abundance information. Ideally, a fishery-independent survey is available as an index of relative abundance, but a commercial catch per unit of effort (CPUE) time series might also suffice.")
-    text <- paste0(text, "</p>")
+                   "<p>The <b>Stochastic Production Model in Continuous Time (SPiCT)</b> ",
+                   "is one of the official assessment models used by the International Council for the Exploration of the Sea (ICES). ",
+                   "It is applied to estimate stock status and provide catch advice for around 20 data-limited stocks in the Northeast Atlantic. ",
+                   "SPiCT is a state-space surplus production model that operates in continuous time, allowing for flexible handling of irregularly spaced data and the separation of process and observation error.</p><br>"
+                   )
 
-    text <- paste0(text, "<p>")
-    text <- paste0(text, "<strong>Further information</strong><br>")
-    text <- paste0(text, "Please visit the <a href='https://elearning.fao.org/course/view.php?id=502' target='_blank'>SDG Indicator 14.4.1 - Fish stocks sustainability eLearning course</a>, <b>(Lesson TODO, Slides TODO)</b> for further information:")
-    text <- paste0(text, "</p>")
+    ## Method description
+    text <- paste0(text,
+                   "<h4>Method description</h4>",
+                   "<p>SPiCT fits a surplus production model to time series of catch and one or more relative abundance indices. ",
+                   "It estimates key biological parameters such as carrying capacity (<i>K</i>), intrinsic growth rate (<i>r</i>), and fishing mortality (<i>F</i>) over time. ",
+                   "The model can also estimate time-varying productivity, which is particularly useful when environmental conditions or ecosystem changes influence stock dynamics. ",
+                   "Results include biomass and fishing mortality relative to management reference points (e.g., <i>B</i><sub>MSY</sub> and <i>F</i><sub>MSY</sub>), ",
+                   "and projections can be used to evaluate sustainable catch levels.</p>"
+                   )
 
-    text <- paste0(text, "<br>")
-    text <- paste0(text, spictAssumptionsHTML())
-    text <- paste0(text, "<br>")
+    text <- paste0(text,
+                   "<p style='margin-left: 20px'>This workflow requires at least 10 years of catch and relative abundance data. ",
+                   "Ideally, a fishery-independent survey index is available, but a commercial CPUE time series may also be used, ",
+                   "provided it is representative of the exploited stock.</p><br>"
+                   )
 
-    text <- paste0(text,"<h4> Workflow considerations</h4>")
-    text <- paste0(text,"<strong> To run the SPiCT assessment workflow in the Stock Monitoring Tool :</strong>")
-    text <- paste0(text, "<ol>")
-    text <- paste0(text, "<li> Navigate to the 'tool' tab under SPiCT in the sidebar menu.</li>")
-    text <- paste0(text, "<li> Upload a spict data set (for more information check the 'Data Considerations' tab in the tool).</li>")
-    text <- paste0(text, "<li> Adjust the Assessment Settings")
-    text <- paste0(text, "<ol type='a'>")
-    text <- paste0(text, "<li> Data Settings - select the years of data to include in the analysis, adjust ... TODO </li>")
-    text <- paste0(text, "<li> Priors - TODO </li>")
-    text <- paste0(text, "<li> Other - TODO </li>")
-    text <- paste0(text, "</ol>")
-    text <- paste0(text, "</li>")
-    text <- paste0(text, "<li> Run the Assessment:")
-    text <- paste0(text, "<ol type='a'>")
-    text <- paste0(text, "<li> Run the assessment ('Run Assessment' button). Watch for the progress bar in the center of the screen</li>")
-    text <- paste0(text, "</ol>")
-    text <- paste0(text, "</li>")
-    text <- paste0(text, "<li> Download the report as a pdf ('Download Report' button). The report will also be automatically uploaded to your private workspace. </li>")
-    text <- paste0(text, "<li> Download the results as a zip archive ('Download Results (zip)' button).</li>")
-    text <- paste0(text, "<li> The 'Reset' button removes the uploaded data and resets the settings to default values.</li>")
-    text <- paste0(text, "</ol>")
-    text <- paste0(text, "Further information can be found in the popup information buttons at each field, and in the Workflow, Data, Methods, and Results Considerations tabs. Note that error messages may display in the center of the page and in place of any figures where an error has occurred.")
-    text <- paste0(text, "</p>")
-    text <- paste0(text, "<br>")
+    ## Further info
+    text <- paste0(text,
+                   "<p><strong>Further information</strong><br>",
+                   "For background on surplus production models and SPiCT applications, see the ",
+                   "<a href='https://elearning.fao.org/course/view.php?id=502' target='_blank'>SDG Indicator 14.4.1 - Fish Stocks Sustainability eLearning course</a>. ",
+                   "<b>(Lesson 3)</b>.</p><br>"
+                   )
 
-    text <- paste0(text, "<h4>Run time </h4>")
-    text <- paste0(text, "<p>")
-    text <- paste0(text, "The run time varies with the time series length, the number of abundance indices, and Euler time step used for estimation. ",
-                   "This is noted in the information button of these fields.",
-                   "With the exsample datasets, the run time is below <b> 1 min</b>.")
-    text <- paste0(text, "</p>")
-    text <- paste0(text, "<br>")
+    ## Assumptions
+    text <- paste0(text, spictAssumptionsHTML(), "<br>")
 
-    text <- paste0(text, "<h4>References</h4>")
-    text <- paste0(text, "<ul>")
-    text <- paste0(text, "<li>Kokkalis, A., Berg, C.W., Kapur, M.S., Winker, H., Jacobsen, N.S., Taylor, M.H., Ichinokawa, M., Miyagawa, M., Medeiros-Leal, W., Nielsen, J.R. and Mildenberger, T.K., 2024. Good practices for surplus production models. Fisheries Research, 275, p.107010. <a href='https://doi.org/10.1016/j.fishres.2024.107010' target='_blank'>https://doi.org/10.1016/j.fishres.2024.107010</a></li>")
+    ## Workflow considerations
+    text <- paste0(text,
+                   "<h4>Workflow considerations</h4>",
+                   "<strong>To run the SPiCT assessment in the Stock Monitoring Tool:</strong>",
+                   "<ol>",
+                   "<li>Navigate to the <b>'Tool'</b> tab under SPiCT in the sidebar menu.</li>",
+                   "<li>Upload a SPiCT-compatible dataset (see the <b>'Data Considerations'</b> tab for details).</li>",
+                   "<li>Adjust the assessment settings:",
+                   "<ol type='a'>",
+                   "<li><b>Data Settings</b> – Select years to include, choose indices, and adjust model inputs.</li>",
+                   "<li><b>Priors</b> – Specify prior distributions for key parameters if desired.</li>",
+                   "<li><b>Other</b> – Adjust advanced model options, such as process error or time-step size.</li>",
+                   "</ol>",
+                   "</li>",
+                   "<li>Run the assessment by clicking <b>'Run Assessment'</b>. A progress bar will appear while the model runs.</li>",
+                   "<li>Download the PDF report (<b>'Download Report'</b>), which is also saved to your private workspace.</li>",
+                   "<li>Download the full results as a ZIP archive (<b>'Download Results (zip)'</b>).</li>",
+                   "<li>Click <b>'Reset'</b> to clear uploaded data and restore default settings.</li>",
+                   "</ol>",
+                   "<p>Additional guidance is available in the popup information buttons next to each input, and in the <b>Workflow</b>, <b>Data</b>, <b>Methods</b>, and <b>Results</b> tabs. ",
+                   "Error messages may appear in the center of the page or in place of figures if a problem occurs.</p><br>"
+                   )
 
-    text <- paste0(text, "<li>Mildenberger, T.K., Berg, C.W., Pedersen, M.W., Kokkalis, A. and Nielsen, J.R. 2020. Time-variant productivity in biomass dynamic models on seasonal and long-term scales. ICES Journal of Marine Science, 77(1), pp.174-187.<a href='https://doi.org/10.1093/icesjms/fsz154' target='_blank'>https://doi.org/10.1093/icesjms/fsz154</a></li>")
+    ## Run time
+    text <- paste0(text,
+                   "<h4>Run time</h4>",
+                   "<p>Run time depends on the length of the time series, the number of abundance indices, and the Euler time-step setting. ",
+                   "These influences are explained in the corresponding information buttons. ",
+                   "For the example datasets, run time is typically <b>under 1 minute</b>.</p><br>"
+                   )
 
-    text <- paste0(text, "<li>Mildenberger, T.K., Berg, C.W., Kempf, A., Rindorf, A., MacCall, A.D. and Taylor, M.H., 2025. Estimating Time-Varying Productivity and Reference Points: A Case of North Sea Demersal Fish Stocks. Fish and Fisheries. <a href='https://doi.org/10.1111/faf.12910' target='_blank'>https://doi.org/10.1111/faf.12910</a></li>")
+    ## References
+    text <- paste0(text,
+                   "<h4>References</h4><ul>",
+                   "<li>Kokkalis, A., Berg, C.W., Kapur, M.S., Winker, H., Jacobsen, N.S., Taylor, M.H., Ichinokawa, M., Miyagawa, M., Medeiros-Leal, W., Nielsen, J.R. and Mildenberger, T.K., 2024. Good practices for surplus production models. Fisheries Research, 275, p.107010. <a href='https://doi.org/10.1016/j.fishres.2024.107010' target='_blank'>https://doi.org/10.1016/j.fishres.2024.107010</a></li>",
+                   "<li>Mildenberger, T.K., Berg, C.W., Pedersen, M.W., Kokkalis, A. and Nielsen, J.R., 2020. Time-variant productivity in biomass dynamic models on seasonal and long-term scales. ICES Journal of Marine Science, 77(1), pp.174–187. <a href='https://doi.org/10.1093/icesjms/fsz154' target='_blank'>https://doi.org/10.1093/icesjms/fsz154</a></li>",
+                   "<li>Mildenberger, T.K., Berg, C.W., Kempf, A., Rindorf, A., MacCall, A.D. and Taylor, M.H., 2025. Estimating Time-Varying Productivity and Reference Points: A Case of North Sea Demersal Fish Stocks. Fish and Fisheries. <a href='https://doi.org/10.1111/faf.12910' target='_blank'>https://doi.org/10.1111/faf.12910</a></li>",
+                   "<li>Pedersen, M.W., and Berg, C.W., 2017. A stochastic surplus production model in continuous time. Fish and Fisheries, 18(2), 226–243. <a href='https://doi.org/10.1111/faf.12174' target='_blank'>https://doi.org/10.1111/faf.12174</a></li>",
+                   "</ul><br><br>"
+                   )
 
-    text <- paste0(text, "<li>Pedersen, M.W., and Berg, C.W. 2017. A stochastic surplus production model in continuous time. Fish and Fisheries, 18(2), 226-243. <a href='https://doi.org/10.1111/faf.12174' target='_blank'>https://doi.org/10.1111/faf.12174</a></li>")
-
-    text <- paste0(text, "</ul>")
-    text <- paste0(text, "<br>")
-    text <- paste0(text, "<br>")
-
-    text <- paste0(text, "<p>")
     text
 })
 

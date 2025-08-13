@@ -1237,6 +1237,33 @@ observeEvent(input$fileGa, {
         ))
     }, ignoreInit = TRUE)
 
+    observeEvent(input$info_csv_sep, {
+        showModal(modalDialog(
+            title = "CSV file field separator",
+            HTML("<p>Choose the csv file field separator. By default, the app will try to guess the field separator automatically by trying various options. This field allows you to select a specific field separator or to enter your own. In order to enter your own separator, just press backspace to delete the current value in the input field and type the separator code, e.g. '.' for a point, or '\t' for tab separated fields (the single quotation marks are not needed in the input field).</p>"),
+            easyClose = TRUE,
+            size = "l"
+        ))
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$info_csv_dec, {
+        showModal(modalDialog(
+            title = "CSV file decimal separator",
+            HTML("<p>Choose the csv file decimal separator. By default, the app will try to guess the decimal separator automatically by trying various options. This field allows you to select a specific decimal separator or to enter your own. In order to enter your own separator, just press backspace to delete the current value in the input field and type the separator code, e.g. '.' for a point, or ' ' for a whitespace as decimal separator (the single quotation marks are not needed in the input field).</p>"),
+            easyClose = TRUE,
+            size = "l"
+        ))
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$info_csv_date, {
+        showModal(modalDialog(
+            title = "CSV date format",
+            HTML("<p>Choose the csv file date format. By default, the app will try to guess the date format automatically by trying various combinations. This field allows you to select a specific decimal separator or to enter your own. In order to enter your own separator, just press backspace to delete the current value in the input field and type the date format in the required format, e.g. '%Y-%m-%d' for year-month-day separated by hyphen or '%d.%m.%y' by day.month.year separated by dots and where the year is given as the two last digits (e.g. 99 for 1999).</p>"),
+            easyClose = TRUE,
+            size = "l"
+        ))
+    }, ignoreInit = TRUE)
+
     observeEvent(input$infoYearSel, {
         showModal(modalDialog(
             title = "Selected years",

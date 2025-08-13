@@ -69,7 +69,11 @@ tabElefanGa <- function(id) {
                     box(width = 2,
                         selectizeInput(
                             ns("elefanGaCSVsep"),
-                            "Choose CSV field separator",
+                            tagList("CSV field separator",
+                                    actionButton(ns("info_csv_sep"),
+                                                 tags$i(class = "fas fa-info",
+                                                        style="font-size: 8px"),
+                                                 class="infoBubbleButton")),
                             choices = c("Automatic guess" = "auto",
                                         "Comma (,)" = ",",
                                         "Semicolon (;)" = ";",
@@ -82,7 +86,11 @@ tabElefanGa <- function(id) {
                     box(width = 2,
                         selectizeInput(
                             ns("elefanGaCSVdec"),
-                            "Choose CSV decimal separator",
+                            tagList("CSV decimal separator",
+                                    actionButton(ns("info_csv_dec"),
+                                                 tags$i(class = "fas fa-info",
+                                                        style="font-size: 8px"),
+                                                 class="infoBubbleButton")),
                             choices = c("Automatic guess" = "auto",
                                         "Point (.)" = ".",
                                         "Comma (,)" = ","),
@@ -91,13 +99,20 @@ tabElefanGa <- function(id) {
                         )
                         ),
                     box(width = 2,
-                        selectInput(ns("elefanGaDateFormat"),
-                                    "Choose CSV date format",
-                                    choices = c("Automatic guess" = "auto",
-                                                "Year Month Day" = "ymd",
-                                                "Year Day Month" = "ydm",
-                                                "Day Month Year" = "dmy",
-                                                "Month Day Year" = "mdy" ))
+                        selectizeInput(ns("elefanGaDateFormat"),
+                                       tagList("CSV date format",
+                                               actionButton(ns("info_csv_date"),
+                                                            tags$i(class = "fas fa-info",
+                                                                   style="font-size: 8px"),
+                                                            class="infoBubbleButton")),
+                                       choices = c("Automatic guess" = "auto",
+                                                   "Year Month Day" = "ymd",
+                                                   "Year Day Month" = "ydm",
+                                                   "Day Month Year" = "dmy",
+                                                   "Month Day Year" = "mdy" ),
+                                       selected = "auto" ## ,
+                                       ## options = list(create = TRUE)
+                                       )
                         )
                     ),
 
@@ -169,7 +184,7 @@ tabElefanGa <- function(id) {
                                     br(),
 
                                     selectInput(ns("elefan_lengthUnit"),
-                                                "Choose length unit",
+                                                "Length unit",
                                                 choices = c("cm", "mm", "in")),
 
                                     br(),

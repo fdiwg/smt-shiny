@@ -4,8 +4,8 @@ validate_spict_csv <- function(file, sep = "", dec = ""){
 
     is_mostly_numeric <- function(df) {
         numeric_cols <- sapply(df, is.numeric)
-        ## all have to be numeric
-        return(mean(numeric_cols) == 1)
+        ## at least 50% numeric
+        return(mean(numeric_cols) >= 0.5)
     }
 
     if(sep == "auto") {
@@ -39,10 +39,14 @@ validate_spict_csv <- function(file, sep = "", dec = ""){
 
     message(sprintf("Detected sep='%s', dec='%s'", sep_try, dec_try))
 
+    if (check_csv) {
+        format <- if(is.character(inputData[,1]) && colnames(inputData)[1] == "variable") "long" else "wide"
+    }
+
     ## return checks
     checks <- list(csv = check_csv,
                    delimiter = check_delimiter,
-                   format = NULL)
+                   format = format)
     return(list(inputData = inputData,
                 checks = checks))
 }
@@ -75,7 +79,15 @@ read_spict_csv <- function(csvFile, sep = "", dec = ""){
 ## ------------------------------------------------------------------
 checkDat <- function(dat, colNames){
 
-    colNamesRaw <- colnames(dat)
+    checks <- dat$checks
+    format <- checks$format
+    dat <- dat$inputData
+
+    if (format == "wide") {
+        colNamesRaw <- colnames(dat)
+    } else {
+        colNamesRaw <- dat[,1]
+    }
 
     timeCInd <- which(colNames$timeC == colNamesRaw)
     obsCInd <- which(colNames$obsC == colNamesRaw)
@@ -85,8 +97,8 @@ checkDat <- function(dat, colNames){
     if(length(obsCInd) == 0) stop(paste0("Column ",colNames$obsC," for the catch observations not found in the uploaded file."))
 
     ## matched to too many columns?
-    if(length(timeCInd) > 1) stop(paste0("Several columns match to the times of the catch observations: ",paste0(colNamesRaw[timeCInd], collapse = ", "),". The column names in the uploaded file have to be unique! Please change them."))
-    if(length(obsCInd) > 1) stop(paste0("Several columns match to the catch observations: ",paste0(colNamesRaw[obsCInd], collapse = ", "),". The column names in the uploaded file have to be unique! Please change them."))
+    if(length(timeCInd) > 1 && format == "wide") stop(paste0("Several columns match to the times of the catch observations: ",paste0(colNamesRaw[timeCInd], collapse = ", "),". The column names in the uploaded file have to be unique! Please change them."))
+    if(length(obsCInd) > 1 && format == "wide") stop(paste0("Several columns match to the catch observations: ",paste0(colNamesRaw[obsCInd], collapse = ", "),". The column names in the uploaded file have to be unique! Please change them."))
 
     timeIInd <- list()
     obsIInd <- list()
@@ -109,8 +121,8 @@ checkDat <- function(dat, colNames){
     if(length(obsIInd) < 1 && length(obsEInd) < 1) stop(paste0("Neither a column for the index nor effort observations found in the uploaded file."))
 
     ## matched to too many columns?
-    if(length(timeEInd) > 1) stop(paste0("Several columns match to the times of the effort observations: ",paste0(colNamesRaw[timeEInd], collapse = ", "),". The column names in the uploaded file have to be unique! Please change them."))
-    if(length(obsEInd) > 1) stop(paste0("Several columns match to the catch observations: ",paste0(colNamesRaw[obsEInd], collapse = ", "),". The column names in the uploaded file have to be unique! Please change them."))
+    if(length(timeEInd) > 1 && format == "wide") stop(paste0("Several columns match to the times of the effort observations: ",paste0(colNamesRaw[timeEInd], collapse = ", "),". The column names in the uploaded file have to be unique! Please change them."))
+    if(length(obsEInd) > 1 && format == "wide") stop(paste0("Several columns match to the catch observations: ",paste0(colNamesRaw[obsEInd], collapse = ", "),". The column names in the uploaded file have to be unique! Please change them."))
 
     ## scaling of uncertainty of observations
     stdevfacCInd <- which(colNames$stdevfacC == colNamesRaw)
@@ -125,57 +137,115 @@ checkDat <- function(dat, colNames){
         }
     }
 
-    timeC <- dat[,timeCInd]
-    obsC <- dat[,obsCInd]
+    if (format == "wide") {
+        timeC <- dat[,timeCInd]
+        obsC <- dat[,obsCInd]
 
-    if(length(timeIInd) > 0){
-        timeI <- list()
-        for(i in 1:length(timeIInd)){
-            timeI[[i]] <- dat[,timeIInd[[i]]]
-        }
-    }else{
-        timeI <- NA
-    }
-    if(length(obsIInd) > 0){
-        obsI <- list()
-        for(i in 1:length(obsIInd)){
-            obsI[[i]] <- dat[,obsIInd[[i]]]
-        }
-    }else{
-        obsI <- NA
-    }
-
-    if(length(timeEInd) > 0){
-        timeE <- dat[,timeEInd]
-    }else{
-        timeE <- NA
-    }
-    if(length(obsEInd) > 0){
-        obsE <- dat[,obsEInd]
-    }else{
-        obsE <- NA
-    }
-
-    if(length(stdevfacCInd) > 0){
-        stdevfacC <- dat[,stdevfacCInd]
-    }else{
-        stdevfacC <- NA
-    }
-
-    if(length(stdevfacEInd) > 0){
-        stdevfacE <- dat[,stdevfacEInd]
-    }else{
-        stdevfacE <- NA
-    }
-
-    if(length(stdevfacIInd) > 0){
-        stdevfacI <- list()
-        for(i in 1:length(stdevfacIInd)){
-            if(!is.null(stdevfacIInd[[i]])) {
-                stdevfacI[[i]] <- dat[,stdevfacIInd[[i]]]
+        if(length(timeIInd) > 0){
+            timeI <- list()
+            for(i in 1:length(timeIInd)){
+                timeI[[i]] <- dat[,timeIInd[[i]]]
             }
+        }else{
+            timeI <- NA
         }
-    }else stdevfacI <- NA
+        if(length(obsIInd) > 0){
+            obsI <- list()
+            for(i in 1:length(obsIInd)){
+                obsI[[i]] <- dat[,obsIInd[[i]]]
+            }
+        }else{
+            obsI <- NA
+        }
+
+        if(length(timeEInd) > 0){
+            timeE <- dat[,timeEInd]
+        }else{
+            timeE <- NA
+        }
+        if(length(obsEInd) > 0){
+            obsE <- dat[,obsEInd]
+        }else{
+            obsE <- NA
+        }
+
+        if(length(stdevfacCInd) > 0){
+            stdevfacC <- dat[,stdevfacCInd]
+        }else{
+            stdevfacC <- NA
+        }
+
+        if(length(stdevfacEInd) > 0){
+            stdevfacE <- dat[,stdevfacEInd]
+        }else{
+            stdevfacE <- NA
+        }
+
+        if(length(stdevfacIInd) > 0){
+            stdevfacI <- list()
+            for(i in 1:length(stdevfacIInd)){
+                if(!is.null(stdevfacIInd[[i]])) {
+                    stdevfacI[[i]] <- dat[,stdevfacIInd[[i]]]
+                }
+            }
+        }else stdevfacI <- NA
+
+
+    } else {
+
+        timeC <- dat[timeCInd,2]
+        obsC <- dat[obsCInd,2]
+
+        if(length(timeIInd) > 0){
+            timeI <- list()
+            for(i in 1:length(timeIInd)){
+                timeI[[i]] <- dat[timeIInd[[i]],2]
+            }
+        }else{
+            timeI <- NA
+        }
+        if(length(obsIInd) > 0){
+            obsI <- list()
+            for(i in 1:length(obsIInd)){
+                obsI[[i]] <- dat[obsIInd[[i]],2]
+            }
+        }else{
+            obsI <- NA
+        }
+
+        if(length(timeEInd) > 0){
+            timeE <- dat[timeEInd,2]
+        }else{
+            timeE <- NA
+        }
+        if(length(obsEInd) > 0){
+            obsE <- dat[obsEInd,2]
+        }else{
+            obsE <- NA
+        }
+
+        if(length(stdevfacCInd) > 0){
+            stdevfacC <- dat[stdevfacCInd,2]
+        }else{
+            stdevfacC <- NA
+        }
+
+        if(length(stdevfacEInd) > 0){
+            stdevfacE <- dat[stdevfacEInd,2]
+        }else{
+            stdevfacE <- NA
+        }
+
+        if(length(stdevfacIInd) > 0){
+            stdevfacI <- list()
+            for(i in 1:length(stdevfacIInd)){
+                if(!is.null(stdevfacIInd[[i]])) {
+                    stdevfacI[[i]] <- dat[stdevfacIInd[[i]],2]
+                }
+            }
+        }else stdevfacI <- NA
+
+    }
 
 
     ## combine to dataframe

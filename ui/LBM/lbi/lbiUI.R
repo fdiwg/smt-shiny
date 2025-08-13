@@ -67,7 +67,11 @@ tabLBI <- function(id) {
                     box(width = 2,
                         selectizeInput(
                             ns("lbiCSVsep"),
-                            "Choose CSV field separator",
+                            tagList("CSV field separator",
+                                    actionButton(ns("info_csv_sep"),
+                                                 tags$i(class = "fas fa-info",
+                                                        style="font-size: 8px"),
+                                                 class="infoBubbleButton")),
                             choices = c("Automatic guess" = "auto",
                                         "Comma (,)" = ",",
                                         "Semicolon (;)" = ";",
@@ -80,7 +84,11 @@ tabLBI <- function(id) {
                     box(width = 2,
                         selectizeInput(
                             ns("lbiCSVdec"),
-                            "Choose CSV decimal separator",
+                            tagList("CSV decimal separator",
+                                    actionButton(ns("info_csv_dec"),
+                                                 tags$i(class = "fas fa-info",
+                                                        style="font-size: 8px"),
+                                                 class="infoBubbleButton")),
                             choices = c("Automatic guess" = "auto",
                                         "Point (.)" = ".",
                                         "Comma (,)" = ","),
@@ -89,14 +97,21 @@ tabLBI <- function(id) {
                         )
                         ),
                     box(width = 2,
-                        selectInput(ns("lbiDateFormat"),
-                                    "Choose CSV date format",
-                                    choices = c("Automatic guess" = "auto",
-                                                "Year Month Day" = "ymd",
-                                                "Year Day Month" = "ydm",
-                                                "Day Month Year" = "dmy",
-                                                "Month Day Year" = "mdy" ))
-                    )
+                        selectizeInput(ns("lbiDateFormat"),
+                                       tagList("CSV date format",
+                                               actionButton(ns("info_csv_date"),
+                                                            tags$i(class = "fas fa-info",
+                                                                   style="font-size: 8px"),
+                                                            class="infoBubbleButton")),
+                                       choices = c("Automatic guess" = "auto",
+                                                   "Year Month Day" = "ymd",
+                                                   "Year Day Month" = "ydm",
+                                                   "Day Month Year" = "dmy",
+                                                   "Month Day Year" = "mdy" ),
+                                       selected = "auto" ## ,
+                                       ## options = list(create = TRUE)
+                                       )
+                        )
                     ),
 
                 ## Input - Settings

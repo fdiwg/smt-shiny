@@ -2,9 +2,25 @@
 captionSpict.tables <- function(dat, input, format = "datatable", type){
 
     switch(type,
-           "create" = {
-               tab.num <- 0
-               txt <- paste0("Create")
+           "estimates" = {
+               tab.num <- 1
+               txt <- paste0("Parameter estimates")
+           },
+           "refs_s" = {
+               tab.num <- 2
+               txt <- paste0("Stochastic reference points")
+           },
+           "refs_d" = {
+               tab.num <- 3
+               txt <- paste0("Deterministic reference points")
+           },
+           "states" = {
+               tab.num <- 4
+               txt <- paste0("Parameter estimates")
+           },
+           "pred" = {
+               tab.num <- 5
+               txt <- paste0("Parameter estimates")
            }
            )
 

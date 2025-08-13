@@ -51,16 +51,48 @@ lbsprAssumptionsHTML <- function() {
 }
 
 spictAssumptionsHTML <- function() {
-    paste0("<h4>Assumptions of SPiCT:</h4>",
-           "<p>SPiCT make specific assumptions about the data, the stock, and the ",
-           "fisheries targeting the stock. It is important to be aware of these assumptions and, thus, the ",
-           "limitations of the results.</p>", "<ul>",
-           "<li><b>Exploitable stock biomass:</b> Biomass corresponds to the exploitable stock biomass, which is the part of the population that is vulnerable to the fishing gear.</li>",
-           "<li><b>No lagged effects:</b> Lagged effects as caused by variability in the size/age distribution cannot be modeled by spict.</li>",
-           "<li><b>Constant catchability:</b> No change in technology or fishing technique that changes q.</li>",
-           "<li><b>Gear selectivity:</b> Gear selectivity is unmodelled.</li>",
-           "<li><b>Representative abundance index:</b> TODO</li>",
-           "<li><b>Density dependence:</b> TODO</li>",
-           "<li><b>Closed population:</b> The routine assumes that the stock (population) under study is closed, meaning that there is no immigration or emigration taking place. Immigration and emigration can both bias estimated mortality rates and stock status. Furthermore, fish migrations often vary for various life stages and might thus affect the representativeness of the length measurements if the population is not closed.</li>",
-           "</ul><br>")
+    paste0(
+        "<h4>Assumptions of SPiCT</h4>",
+        "<p><b>SPiCT</b> (Stochastic Production in Continuous Time) makes specific ",
+        "assumptions about the data, the stock, and the fishery. ",
+        "Being aware of these assumptions is essential for interpreting the results ",
+        "and understanding their limitations.</p>",
+        "<ul>",
+        "<li><b>Exploitable biomass:</b> Biomass in the model represents the exploitable component of the stock – ",
+        "the fraction of the population vulnerable to the fishing gear. ",
+        "Changes in the proportion of vulnerable biomass over time are not explicitly modelled.</li>",
+
+        "<li><b>No lagged cohort effects:</b> SPiCT does not model delayed effects of strong or weak year-classes ",
+        "on biomass dynamics. Variability in the size/age structure that influences productivity is ignored.</li>",
+
+        "<li><b>Constant catchability (<i>q</i>):</b> Catchability is assumed constant over time for each index. ",
+        "Changes in fishing technology, survey methods, vessel efficiency, or targeting behaviour that affect <i>q</i> ",
+        "can bias results if not accounted for in the data.</li>",
+
+        "<li><b>Unmodelled gear selectivity:</b> Selectivity patterns are assumed constant and are not estimated. ",
+        "If selectivity changes over time (e.g. due to gear modifications, seasonal closures, or changes in targeting), ",
+        "this may influence estimated stock status.</li>",
+
+        "<li><b>Representative abundance index:</b> Any index used (e.g. survey CPUE) is assumed to be proportional ",
+        "to exploitable biomass and representative of the whole stock’s dynamics in space and time. ",
+        "Biased or spatially restricted indices may misrepresent true abundance trends.</li>",
+
+        "<li><b>Density dependence:</b> Stock dynamics are assumed to follow a logistic surplus production model ",
+        "with a single carrying capacity and intrinsic growth rate.</li>",
+
+        "<li><b>Closed population:</b> The stock is assumed to be closed to immigration and emigration. ",
+        "Significant movement into or out of the modelled area can bias mortality estimates and biomass trends. ",
+        "Life-stage-specific migrations can also affect the representativeness of abundance indices.</li>",
+
+        "<li><b>Reliable catch data:</b> Catch (removals) data are assumed to be accurate and include all sources of fishing mortality. ",
+        "Systematic under- or over-reporting will bias the results.</li>",
+
+        "<li><b>Continuous-time dynamics:</b> The model assumes continuous biomass dynamics, but observations are discrete ",
+        "(typically annual or seasonal). Observation intervals should be regular and cover a sufficient time span to capture trends.</li>",
+
+        "<li><b>Process and observation error:</b> SPiCT separates process error (true variability in biomass dynamics) ",
+        "and observation error (measurement noise) in a state-space framework. ",
+        "Both are assumed to be normally distributed on log scale.</li>",
+        "</ul><br>"
+    )
 }

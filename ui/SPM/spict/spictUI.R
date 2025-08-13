@@ -78,7 +78,11 @@ tabSPICT <- function(id) {
                         column(2,
                                selectizeInput(
                                    ns("spictCSVsep"),
-                                   "Choose CSV field separator",
+                                   tagList("CSV field separator",
+                                           actionButton(ns("info_csv_sep"),
+                                                        tags$i(class = "fas fa-info",
+                                                               style="font-size: 8px"),
+                                                        class="infoBubbleButton")),
                                    choices = c("Automatic guess" = "auto",
                                                "Comma (,)" = ",",
                                                "Semicolon (;)" = ";",
@@ -91,7 +95,11 @@ tabSPICT <- function(id) {
                         column(2,
                                selectizeInput(
                                    ns("spictCSVdec"),
-                                   "Choose CSV decimal separator",
+                                   tagList("CSV decimal separator",
+                                           actionButton(ns("info_csv_dec"),
+                                                        tags$i(class = "fas fa-info",
+                                                               style="font-size: 8px"),
+                                                        class="infoBubbleButton")),
                                    choices = c("Automatic guess" = "auto",
                                                "Point (.)" = ".",
                                                "Comma (,)" = ","),
@@ -608,14 +616,14 @@ tabSPICT <- function(id) {
                                                     style = "margin-left: 10%; margin-right: 10%; text-align: center;",
                                                     plotOutput(ns("plot_diag1"),
                                                                width = "90%",
-                                                               height = "400px"),
+                                                               height = "800px"),
                                                     div(
                                                         style = "margin-top: 15px;",
                                                         htmlOutput(ns("title_diag1"))
                                                     ),
                                                     plotOutput(ns("plot_diag2"),
                                                                width = "90%",
-                                                               height = "400px"),
+                                                               height = "350px"),
                                                     div(
                                                         style = "margin-top: 15px;",
                                                         htmlOutput(ns("title_diag2"))
@@ -623,10 +631,7 @@ tabSPICT <- function(id) {
                                                 )
                                            )
                                 )
-
-
                             )
-
                         ))
                     ),
 
@@ -704,87 +709,145 @@ tabSPICT <- function(id) {
                     class = "collapsed-box",
                     collapsed = FALSE,
 
+                    div(id = "results_spict",
+                        tabBox(
+                            title = "",
+                            width = NULL,
+                            height = "600px",
+                            side = "left",
+                            selected = "res1",
+                            id = ns("results"),
 
-                    fluidRow(
-                        column(
-                            7,
-                            style = "padding-right: 15px;padding-left: 5px;",
-                            tags$div(
-                                     style = "width: 100%; margin: 0 auto; text-align: center;",
-                                     plotOutput(ns("plot_sum"), width = "100%", height = "700px"),
-                                     div(style = "margin-top: 10px;", htmlOutput(ns("title_sum"))),
-                                     br(),
-                                     plotOutput(ns("plot_abs"), width = "100%", height = "400px"),
-                                     div(style = "margin-top: 10px;", htmlOutput(ns("title_abs")))
-                                 )
-                        ),
-                        column(
-                            4,
-                            style = "padding-right: 5px;",
-                            verbatimTextOutput(ns("fit"))
-                        )
-                    ),
+                            tabPanel(
+                                title = div(id = ns("tab_res1"),
+                                            "1. Main results"),
+                                value = "res1",
 
-                    br(),
+                                fluidRow(
+                                    column(
+                                        7,
+                                        style = "padding-right: 15px;padding-left: 5px;",
+                                        tags$div(
+                                                 style = "width: 100%; margin: 0 auto; text-align: center;",
+                                                 plotOutput(ns("plot_sum"), width = "100%", height = "700px"),
+                                                 div(style = "margin-top: 10px;", htmlOutput(ns("title_sum")))
+                                             )
+                                    ),
+                                    column(
+                                        5,
+                                        tags$div(
+                                                 div(style = "margin-bottom:0px; margin-left: 0%; margin-right: 0%;",
+                                                     htmlOutput(ns("title_table_est"))
+                                                     ),
+                                                 dataTableOutput(ns("table_est")),
+                                                 style = "margin-left: 5%; margin-right: 30%;"
+                                             ),
+                                        br(),
+                                        tags$div(
+                                                 div(style = "margin-bottom:0px; margin-left: 0%; margin-right: 0%;",
+                                                     htmlOutput(ns("title_table_refs_s"))
+                                                     ),
+                                                 dataTableOutput(ns("table_refs_s")),
+                                                 style = "margin-left: 5%; margin-right: 30%;"
+                                             ),
+                                        br(),
+                                        tags$div(
+                                                 div(style = "margin-bottom:0px; margin-left: 0%; margin-right: 0%;",
+                                                     htmlOutput(ns("title_table_states"))
+                                                     ),
+                                                 dataTableOutput(ns("table_states")),
+                                                 style = "margin-left: 5%; margin-right: 30%;"
+                                             )
+                                    )
+                                )
 
-                    fluidRow(
-                        column(
-                            4,
-                            plotOutput(ns("plot_prod"),
-                                       width = "100%",
-                                       height = "500px"),
-                            div(
-                                style = "margin-top: 10px;",
-                                htmlOutput(ns("title_prod"))
+                            ),
+                            tabPanel(
+                                title = div(id = ns("tab_res2"),
+                                            "2. Additional results"),
+                                value = "res2",
+
+                                fluidRow(
+                                    column(
+                                        4,
+                                        plotOutput(ns("plot_prod"),
+                                                   width = "100%",
+                                                   height = "500px"),
+                                        div(
+                                            style = "margin-top: 10px;",
+                                            htmlOutput(ns("title_prod"))
+                                        )
+                                    ),
+                                    column(
+                                        8,
+                                        tags$div(
+                                                 style = "margin-left: 10%; margin-right: 10%; text-align: center;",
+                                                 uiOutput(ns("plot_priors2_ui")),
+                                                 div(
+                                                     style = "margin-top: 15px;",
+                                                     htmlOutput(ns("title_priors2"))
+                                                 )
+                                             )
+                                    )
+                                ),
+
+                                br(),
+
+                                plotOutput(ns("plot_abs"), width = "100%", height = "400px"),
+                                div(style = "margin-top: 10px;", htmlOutput(ns("title_abs"))),
+                                br(),
+
+                                tags$div(
+                                         div(style = "margin-bottom:0px; margin-left: 0%; margin-right: 0%;",
+                                             htmlOutput(ns("title_table_refs_d"))
+                                             ),
+                                         dataTableOutput(ns("table_refs_d")),
+                                         style = "margin-left: 5%; margin-right: 30%;"
+                                     ),
+                                br(),
+                                tags$div(
+                                         div(style = "margin-bottom:0px; margin-left: 0%; margin-right: 0%;",
+                                             htmlOutput(ns("title_table_pred"))
+                                             ),
+                                         dataTableOutput(ns("table_pred")),
+                                         style = "margin-left: 5%; margin-right: 30%;"
+                                     )
+                            ),
+                            tabPanel(
+                                title = div(id = ns("tab_res3"),
+                                            "3. Diagnostics"),
+                                value = "res3",
+
+                                fluidRow(
+                                    column(
+                                        6,
+                                        tags$div(
+                                                 style = "width: 90%; margin: 0 auto; text-align: center;",
+                                                 plotOutput(ns("plot_resid1"),
+                                                            height = "800px"),
+                                                 div(
+                                                     style = "margin-top: 10px;",
+                                                     htmlOutput(ns("title_resid1"))
+                                                 )
+                                             )
+                                    ),
+                                    column(
+                                        6,
+                                        tags$div(
+                                                 style = "width: 90%; margin: 0 auto; text-align: center;",
+                                                 plotOutput(ns("plot_resid2"),
+                                                            height = "800px"),
+                                                 div(
+                                                     style = "margin-top: 10px;",
+                                                     htmlOutput(ns("title_resid2"))
+                                                 )
+                                             )
+                                    )
+                                )
                             )
-                        ),
-                        column(
-                            8,
-                            tags$div(
-                                     style = "margin-left: 10%; margin-right: 10%; text-align: center;",
-                                     uiOutput(ns("plot_priors2_ui")),
-                                     div(
-                                         style = "margin-top: 15px;",
-                                         htmlOutput(ns("title_priors2"))
-                                     )
-                                 )
                         )
-                    ),
-
-                    br(),
-
-                    fluidRow(
-                        column(
-                            6,
-                            tags$div(
-                                     style = "width: 90%; margin: 0 auto; text-align: center;",
-                                     plotOutput(ns("plot_resid1"),
-                                                height = "800px"),
-                                     div(
-                                         style = "margin-top: 10px;",
-                                         htmlOutput(ns("title_resid1"))
-                                     )
-                                 )
-                        ),
-                        column(
-                            6,
-                            tags$div(
-                                     style = "width: 90%; margin: 0 auto; text-align: center;",
-                                     plotOutput(ns("plot_resid2"),
-                                                height = "800px"),
-                                     div(
-                                         style = "margin-top: 10px;",
-                                         htmlOutput(ns("title_resid2"))
-                                     )
-                                 )
                         )
-                    ),
-
-                    br(),br()
-
                     )
             )
             )
-
-
 }

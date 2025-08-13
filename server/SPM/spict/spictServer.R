@@ -27,6 +27,7 @@ spictModule <- function(input, output, session) {
     )
 
     spictAcknowledged <- reactiveVal(FALSE)
+    spictPendingRun   <- reactiveVal(FALSE)
 
 
     ## Definition of functions
@@ -63,7 +64,11 @@ spictModule <- function(input, output, session) {
             ))
             return (NULL)
         } else {
-            spict_dat$colNamesORI <- colnames(dataset$inputData)
+            if (dataset$check$format == "wide") {
+                spict_dat$colNamesORI <- colnames(dataset$inputData)
+            } else {
+                spict_dat$colNamesORI <- unique(dataset$inputData[,1])
+            }
             names(spict_dat$colNamesORI) <- spict_dat$colNamesORI
             return(dataset)
         }
@@ -88,7 +93,7 @@ spictModule <- function(input, output, session) {
            all(sapply(colNames$obsI, function(x) x != "")) &&
            all(sapply(colNames$obsI, function(x) x != "NA"))) {
 
-            dat_checked <- checkDat(inputSpictData$inputData, colNames)
+            dat_checked <- checkDat(inputSpictData, colNames)
             inpORI <- dat2inp(dat_checked)
             inp <- check.inp(inpORI)
 
@@ -287,6 +292,82 @@ spictModule <- function(input, output, session) {
         shinyjs::disable("createSpictzip")
     }
 
+    run_spict_server <- function() {
+
+        res <- tryCatch({
+
+            inp <- spict_dat$dataExplo$inp
+
+            ## TODO checks
+
+            ## Estimation
+            flog.info("Starting spict computation")
+            show_modal_spinner(
+                text = "Running SPiCT",
+                spin = "circle", ## or any from https://glin.github.io/shinybusy/articles/custom_spinner.html
+                color = "#112446"
+            )
+            res <- run_spict(inp)
+            remove_modal_spinner()
+
+            js$hideComputing()
+            js$enableAllButtons()
+
+            spict_dat$results <- res$res
+
+            if (!is.null(session$userData$sessionMode()) &&
+                session$userData$sessionMode() == "GCUBE") {
+                flog.info("Uploading spict report to i-Marine workspace")
+                reportFileName <- paste(tempdir(),"/","ElefanGA_report_",
+                                        format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",
+                                        sep="")
+                                        #createElefanGaPDFReport(reportFileName,spict_dat,input)
+                createSpictPDFReport(reportFileName, spict_dat, input, output)
+                spictUploadVreResult$res <- FALSE
+
+                basePath <- paste0("/Home/",session$userData$sessionUsername(),"/Workspace/")
+
+                SH_MANAGER <- session$userData$storagehubManager()
+
+                tryCatch({
+                    uploadToIMarineFolder(SH_MANAGER, reportFileName, basePath, uploadFolderName)
+                    spictUploadVreResult$res <- TRUE
+                }, error = function(err) {
+                    flog.error("Error uploading the spict report to the i-Marine Workspace: %s", err)
+                    spictUploadVreResult$res <- FALSE
+                }, finally = {})
+            }
+
+        }, error = function(cond) {
+            flog.error("Error in SPiCT: %s ",cond)
+            showModal(modalDialog(
+                title = "Error",
+                cond$message,
+                easyClose = TRUE,
+                footer = NULL
+            ))
+            return(NULL)
+        },
+        ## warning = function(cond) {
+        ##     showModal(modalDialog(
+        ##         title = "Warning",
+        ##         cond$message,
+        ##         easyClose = TRUE,
+        ##         footer = NULL
+        ##     ))
+        ##     return(NULL)
+        ## },
+        finally = {
+            js$hideComputing()
+            js$enableAllButtons()
+            if (!is.null(spict_dat$results)) {
+                shinyjs::enable("createSpictReport")
+                shinyjs::enable("createSpictzip")
+            }
+        })
+    }
+
+
     indexColumns <- reactive({
         req(input$n_indices)
         n <- input$n_indices
@@ -377,9 +458,9 @@ spictModule <- function(input, output, session) {
         selectInput(ns("timeC_lab"),
                     tagList("Time (catch)",
                             actionButton(ns("info_timeC_lab"),
-                                   tags$i(class = "fas fa-info",
-                                          style="font-size: 8px"),
-                                   class="infoBubbleButton")),
+                                         tags$i(class = "fas fa-info",
+                                                style="font-size: 8px"),
+                                         class="infoBubbleButton")),
                     choices = c("Choose one" = "",
                                 spict_dat$colNamesORI),
                     selected = selected)
@@ -394,12 +475,12 @@ spictModule <- function(input, output, session) {
         selectInput(ns("obsC_lab"),
                     tagList("Observations (catch)",
                             actionButton(ns("info_obsC_lab"),
-                                 tags$i(class = "fas fa-info",
-                                        style="font-size: 8px"),
-                                 class="infoBubbleButton")),
-        choices = c("Choose one" = "",
-                    spict_dat$colNamesORI),
-        selected = selected)
+                                         tags$i(class = "fas fa-info",
+                                                style="font-size: 8px"),
+                                         class="infoBubbleButton")),
+                    choices = c("Choose one" = "",
+                                spict_dat$colNamesORI),
+                    selected = selected)
     })
 
     output$stdevC_lab <- renderUI({
@@ -415,9 +496,9 @@ spictModule <- function(input, output, session) {
         selectInput(ns("stdevC_lab"),
                     tagList("Rel uncertainty (catch; optional)",
                             actionButton(ns("info_stdevC_lab"),
-                                   tags$i(class = "fas fa-info",
-                                          style="font-size: 8px"),
-                                   class="infoBubbleButton")),
+                                         tags$i(class = "fas fa-info",
+                                                style="font-size: 8px"),
+                                         class="infoBubbleButton")),
                     choices = choices,
                     selected = selected)
     })
@@ -805,8 +886,8 @@ spictModule <- function(input, output, session) {
     observeEvent(input$check_spict, {
         req(spict_dat$dataExplo$inp)
 
-        removeModal()
-        spictAcknowledged(TRUE)
+        ## removeModal()
+        ## spictAcknowledged(TRUE)
 
         js$showComputing()
         js$disableAllButtons()
@@ -821,7 +902,7 @@ spictModule <- function(input, output, session) {
             flog.info("check for spit fit")
             show_modal_spinner(
                 text = "Checking SPiCT",
-                spin = "circle",            # or any from https://glin.github.io/shinybusy/articles/custom_spinner.html
+                spin = "circle",
                 color = "#112446"
             )
             inp$dteuler <- 1/2
@@ -854,6 +935,14 @@ spictModule <- function(input, output, session) {
             js$hideComputing()
             js$enableAllButtons()
         })
+
+        showNotification(
+            "No errors during check run, ready to run assessment!",
+            type = "message",
+            duration = 60,
+            closeButton = TRUE
+        )
+
     })
 
     observeEvent(input$go_spict, {
@@ -863,21 +952,31 @@ spictModule <- function(input, output, session) {
 
         res <- tryCatch({
 
-            spictAcknowledged(FALSE)
+            ## run_check() ## TODO
 
-            showModal(modalDialog(
-                title = "Acknowledge model assumptions",
-                bsCollapse(id = ns("assumptions"), open = NULL,
-                           bsCollapsePanel("▶ Click to show/hide",
-                                           HTML(spictAssumptionsHTML()))
-                           ),
-                tags$p(HTML("See the <a href='https://elearning.fao.org/course/view.php?id=502' target='_blank'>FAO eLearning module</a> for more information.")),
-                footer = tagList(
-                    modalButton("Cancel"),
-                    actionButton(ns("spict_ack"), "I Acknowledge", class = "btn-success")
-                ),
-                easyClose = FALSE
-            ))
+            if(!spictAcknowledged()) {
+
+                spictPendingRun(TRUE)
+
+
+                showModal(modalDialog(
+                    title = "Acknowledge model assumptions",
+                    bsCollapse(id = ns("assumptions"), open = NULL,
+                               bsCollapsePanel("▶ Click to show/hide",
+                                               HTML(spictAssumptionsHTML()))
+                               ),
+                    tags$p(HTML("See the <a href='https://elearning.fao.org/course/view.php?id=502' target='_blank'>FAO eLearning module</a> for more information.")),
+                    footer = tagList(
+                        modalButton("Cancel"),
+                        actionButton(ns("spict_ack"), "I Acknowledge", class = "btn-success")
+                    ),
+                    easyClose = FALSE
+                ))
+
+                return(invisible(NULL))
+            }
+
+            run_spict_server()
 
         }, error = function(cond) {
             flog.error("Error in SPiCT: %s ",cond)
@@ -898,78 +997,10 @@ spictModule <- function(input, output, session) {
         js$showComputing()
         js$disableAllButtons()
 
-        res <- tryCatch({
-
-            inp <- spict_dat$dataExplo$inp
-
-            ## TODO checks
-
-            ## Estimation
-            flog.info("Starting spict computation")
-            show_modal_spinner(
-                text = "Running SPiCT",
-                spin = "circle",            # or any from https://glin.github.io/shinybusy/articles/custom_spinner.html
-                color = "#112446"
-            )
-            res <- run_spict(inp)
-            remove_modal_spinner()
-
-            js$hideComputing()
-            js$enableAllButtons()
-
-            spict_dat$results <- res$res
-
-            if (!is.null(session$userData$sessionMode()) &&
-                session$userData$sessionMode() == "GCUBE") {
-                flog.info("Uploading spict report to i-Marine workspace")
-                reportFileName <- paste(tempdir(),"/","ElefanGA_report_",
-                                        format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",
-                                        sep="")
-                                        #createElefanGaPDFReport(reportFileName,spict_dat,input)
-                createSpictPDFReport(reportFileName, spict_dat, input, output)
-                spictUploadVreResult$res <- FALSE
-
-                basePath <- paste0("/Home/",session$userData$sessionUsername(),"/Workspace/")
-
-                SH_MANAGER <- session$userData$storagehubManager()
-
-                tryCatch({
-                    uploadToIMarineFolder(SH_MANAGER, reportFileName, basePath, uploadFolderName)
-                    spictUploadVreResult$res <- TRUE
-                }, error = function(err) {
-                    flog.error("Error uploading the spict report to the i-Marine Workspace: %s", err)
-                    spictUploadVreResult$res <- FALSE
-                }, finally = {})
-            }
-
-        }, error = function(cond) {
-            flog.error("Error in SPiCT: %s ",cond)
-            showModal(modalDialog(
-                title = "Error",
-                cond$message,
-                easyClose = TRUE,
-                footer = NULL
-            ))
-            return(NULL)
-        },
-        ## warning = function(cond) {
-        ##     showModal(modalDialog(
-        ##         title = "Warning",
-        ##         cond$message,
-        ##         easyClose = TRUE,
-        ##         footer = NULL
-        ##     ))
-        ##     return(NULL)
-        ## },
-        finally = {
-            js$hideComputing()
-            js$enableAllButtons()
-            if (!is.null(spict_dat$results)) {
-                shinyjs::enable("createSpictReport")
-                shinyjs::enable("createSpictzip")
-            }
-        })
-
+        if (isTRUE(spictPendingRun())) {
+            spictPendingRun(FALSE)
+            run_spict_server()
+        }
     })
 
     observeEvent(input$reset_spict, {
@@ -1037,6 +1068,24 @@ spictModule <- function(input, output, session) {
         showModal(modalDialog(
             title = "Results Considerations - SPiCT",
             HTML(getResultConsiderationTextForSpict()),
+            easyClose = TRUE,
+            size = "l"
+        ))
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$info_csv_sep, {
+        showModal(modalDialog(
+            title = "CSV file field separator",
+            HTML("<p>Choose the csv file field separator. By default, the app will try to guess the field separator automatically by trying various options. This field allows you to select a specific field separator or to enter your own. In order to enter your own separator, just press backspace to delete the current value in the input field and type the separator code, e.g. '.' for a point, or '\t' for tab separated fields (the single quotation marks are not needed in the input field).</p>"),
+            easyClose = TRUE,
+            size = "l"
+        ))
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$info_csv_dec, {
+        showModal(modalDialog(
+            title = "CSV file decimal separator",
+            HTML("<p>Choose the csv file decimal separator. By default, the app will try to guess the decimal separator automatically by trying various options. This field allows you to select a specific decimal separator or to enter your own. In order to enter your own separator, just press backspace to delete the current value in the input field and type the separator code, e.g. '.' for a point, or ' ' for a whitespace as decimal separator (the single quotation marks are not needed in the input field).</p>"),
             easyClose = TRUE,
             size = "l"
         ))
@@ -1219,10 +1268,6 @@ spictModule <- function(input, output, session) {
 
     ## Plots
     ## --------------------------
-
-    ## Data exploration
-    ## --------------------------
-
     plot_explo_height <- reactive({
         req(spict_dat$dataExplo$inp)
         noi <- spict_dat$nIndices + 1
@@ -1448,7 +1493,6 @@ spictModule <- function(input, output, session) {
 
     ## Text
     ## --------------------------
-
     output$text_explo1 <- renderUI({
         req(spict_dat$dataExplo$inp)
         textSpict.explo1(spict_dat, input)
@@ -1465,9 +1509,58 @@ spictModule <- function(input, output, session) {
         textSpict.sum(spict_dat, input)
     })
 
-    output$fit <- renderPrint({
+
+
+    ## Tables
+    ## --------------------------
+    output$table_est <- renderDataTable({
         req(spict_dat$results)
-        summary(spict_dat$results)
+        tableSpict.estimates(spict_dat, input, format = "datatable")
+    })
+    output$title_table_est <- renderText({
+        req(spict_dat$results)
+        captionSpict.tables(spict_dat, input, format = "datatable",
+                            type = "estimates")
+    })
+
+    output$table_refs_s <- renderDataTable({
+        req(spict_dat$results)
+        tableSpict.refs_s(spict_dat, input, format = "datatable")
+    })
+    output$title_table_refs_s <- renderText({
+        req(spict_dat$results)
+        captionSpict.tables(spict_dat, input, format = "datatable",
+                            type = "refs_s")
+    })
+
+    output$table_refs_d <- renderDataTable({
+        req(spict_dat$results)
+        tableSpict.refs_d(spict_dat, input, format = "datatable")
+    })
+    output$title_table_refs_d <- renderText({
+        req(spict_dat$results)
+        captionSpict.tables(spict_dat, input, format = "datatable",
+                            type = "refs_d")
+    })
+
+    output$table_states <- renderDataTable({
+        req(spict_dat$results)
+        tableSpict.states(spict_dat, input, format = "datatable")
+    })
+    output$title_table_states <- renderText({
+        req(spict_dat$results)
+        captionSpict.tables(spict_dat, input, format = "datatable",
+                            type = "states")
+    })
+
+    output$table_pred <- renderDataTable({
+        req(spict_dat$results)
+        tableSpict.pred(spict_dat, input, format = "datatable")
+    })
+    output$title_table_pred <- renderText({
+        req(spict_dat$results)
+        captionSpict.tables(spict_dat, input, format = "datatable",
+                            type = "pred")
     })
 
 
