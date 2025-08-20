@@ -76,14 +76,6 @@ spictModule <- function(input, output, session) {
 
     spictDataExplo1 <- function(inputData, colNames) {
 
-        ## TODO check for multiple surveys
-        ## TODO informative errors if multiple surveys but only 1 time and 2 obs selected or something similar!
-        ## TODO check that times are increasing?!
-        ## TODO option to provide time as dates?
-
-        ## TODO account for colNames$stdevfacC can be ""
-        ## TODO account for colNames$stdevfacI can be list("","")
-
         if(!is.null(colNames$timeC) &&
            !is.null(colNames$obsC) &&
            all(sapply(colNames$timeI, function(x) !is.null(x))) &&
@@ -298,8 +290,6 @@ spictModule <- function(input, output, session) {
 
             inp <- spict_dat$dataExplo$inp
 
-            ## TODO checks
-
             ## Estimation
             flog.info("Starting spict computation")
             show_modal_spinner(
@@ -307,8 +297,39 @@ spictModule <- function(input, output, session) {
                 spin = "circle", ## or any from https://glin.github.io/shinybusy/articles/custom_spinner.html
                 color = "#112446"
             )
+
             res <- run_spict(inp)
             remove_modal_spinner()
+
+            if (isFALSE(res$checks$convergence)) {
+                showModal(modalDialog(
+                    title = "Warning",
+                    "The model did not converge and one-step-ahead residuals could not be estimated! Please interpret the results with caution and try to tune the model. Guidelines for model tuning can be found in the good practice paper by Kokkalis et al. (2024).",
+                    easyClose = TRUE,
+                    footer = NULL
+                    ))
+            } else if (isFALSE(res$checks$sd_not_na)) {
+                showModal(modalDialog(
+                    title = "Warning",
+                    "Some of the variance parameters could not be estimated (NaN). This usually indicates problems with model convergence. Please interpret the results with caution and try to tune the model so that all parameters and their uncertainties can be estimated. Guidelines for model tuning can be found in the good practice paper by Kokkalis et al. (2024).",
+                    easyClose = TRUE,
+                    footer = NULL
+                ))
+            } else if (isFALSE(res$checks$cv_m)) {
+                showModal(modalDialog(
+                    title = "Warning",
+                    "The coefficient of variation of the parameter m is larger than 10. This large uncertainty for this key parameter might indicate to a lack of contract in the data. Please interpret the results with caution. Guidelines for model tuning can be found in the good practice paper by Kokkalis et al. (2024).",
+                    easyClose = TRUE,
+                    footer = NULL
+                ))
+            } else if (isFALSE(res$checks$cv_k)) {
+                showModal(modalDialog(
+                    title = "Warning",
+                    "The coefficient of variation of the parameter K is larger than 10. This large uncertainty for this key parameter might indicate to a lack of contract in the data. Please interpret the results with caution. Guidelines for model tuning can be found in the good practice paper by Kokkalis et al. (2024).",
+                    easyClose = TRUE,
+                    footer = NULL
+                ))
+            }
 
             js$hideComputing()
             js$enableAllButtons()
@@ -786,42 +807,56 @@ spictModule <- function(input, output, session) {
 
         print(spict_dat$colNamesIndex)
 
-        tryCatch({
-            colNames <- list(
-                timeC = input$timeC_lab,
-                obsC  = input$obsC_lab,
-                stdevfacC = input$stdevC_lab,
-                timeI = spict_dat$colNamesIndex$time,
-                obsI  = spict_dat$colNamesIndex$obs,
-                stdevfacI  = spict_dat$colNamesIndex$stdev
-            )
-
-            tmp1 <- spictDataExplo1(inputSpictData$inputData, colNames)
-
-            if(!is.null(tmp1)) {
-                spict_dat$dataExplo <- list(
-                    dat = tmp1$dat_checked,
-                    inpORI = tmp1$inpORI,
-                    inp = tmp1$inp
+        withCallingHandlers(
+            tryCatch({
+                colNames <- list(
+                    timeC = input$timeC_lab,
+                    obsC  = input$obsC_lab,
+                    stdevfacC = input$stdevC_lab,
+                    timeI = spict_dat$colNamesIndex$time,
+                    obsI  = spict_dat$colNamesIndex$obs,
+                    stdevfacI  = spict_dat$colNamesIndex$stdev
                 )
-                spict_dat$nPriors <- spict::get.no.active.priors(spict_dat$dataExplo$inp)
-                spict_dat$nIndices <- ifelse(inherits(spict_dat$dataExplo$inp$obsI, "list"),
-                                             length(spict_dat$dataExplo$inp$obsI), 1)
-                spict_dat$checks <- inputSpictData$checks
+
+                tmp1 <- spictDataExplo1(inputSpictData$inputData, colNames)
+
+                if (!is.null(tmp1)) {
+                    spict_dat$dataExplo <- list(
+                        dat = tmp1$dat_checked,
+                        inpORI = tmp1$inpORI,
+                        inp = tmp1$inp
+                    )
+                    spict_dat$nPriors <- spict::get.no.active.priors(spict_dat$dataExplo$inp)
+                    spict_dat$nIndices <- ifelse(inherits(spict_dat$dataExplo$inp$obsI, "list"),
+                                                 length(spict_dat$dataExplo$inp$obsI), 1)
+                    spict_dat$checks <- inputSpictData$checks
+                }
+
+                shinyjs::enable("check_spict")
+
+            },
+            error = function(e) {
+                shinyjs::disable("go_spict")
+                shinyjs::disable("check_spict")
+                shinyjs::disable("createSpictReport")
+                shinyjs::disable("createSpictzip")
+                showModal(modalDialog(
+                    title = "Error",
+                    e$message,
+                    easyClose = TRUE,
+                    footer = NULL
+                ))
+            }),
+            warning = function(w) {
+                showModal(modalDialog(
+                    title = "Warning",
+                    w$message,
+                    easyClose = TRUE,
+                    footer = NULL
+                ))
+                invokeRestart("muffleWarning")  ## prevent duplicate console warning
             }
-
-            shinyjs::enable("check_spict")
-
-        }, error = function(e) {
-            shinyjs::disable("go_spict")
-            shinyjs::disable("check_spict")
-            shinyjs::disable("createSpictReport")
-            shinyjs::disable("createSpictzip")
-            showModal(modalDialog(title = "Error",
-                                  e$message,
-                                  easyClose = TRUE,
-                                  footer = NULL))
-        })
+        )
     })
 
 
@@ -862,20 +897,31 @@ spictModule <- function(input, output, session) {
         req(length(spict_dat$timeShifts) >= input$n_indices)
         req(spict_dat$dataExplo$inp, input$timerange)
 
-        tryCatch({
-            tmp2 <- spictDataExplo2(spict_dat, input)
-            spict_dat$dataExplo$inp <- tmp2$inp
-            spict_dat$nPriors <- spict::get.no.active.priors(spict_dat$dataExplo$inp)
-            spict_dat$nIndices <- ifelse(inherits(spict_dat$dataExplo$inp$obsI, "list"),
-                                         length(spict_dat$dataExplo$inp$obsI), 1)
-            shinyjs::enable("go_spict")
-            shinyjs::enable("check_spict")
-        }, error = function(e) {
-            shinyjs::disable("go_spict")
-            shinyjs::disable("createSpictReport")
-            shinyjs::disable("createSpictzip")
-            showModal(modalDialog(title = "Error", e$message, easyClose = TRUE))
-        })
+        withCallingHandlers(
+            tryCatch({
+                tmp2 <- spictDataExplo2(spict_dat, input)
+                spict_dat$dataExplo$inp <- tmp2$inp
+                spict_dat$nPriors <- spict::get.no.active.priors(spict_dat$dataExplo$inp)
+                spict_dat$nIndices <- ifelse(inherits(spict_dat$dataExplo$inp$obsI, "list"),
+                                             length(spict_dat$dataExplo$inp$obsI), 1)
+                shinyjs::enable("go_spict")
+                shinyjs::enable("check_spict")
+            }, error = function(e) {
+                shinyjs::disable("go_spict")
+                shinyjs::disable("createSpictReport")
+                shinyjs::disable("createSpictzip")
+                showModal(modalDialog(title = "Error", e$message, easyClose = TRUE))
+            }),
+            warning = function(w) {
+                showModal(modalDialog(
+                    title = "Warning",
+                    w$message,
+                    easyClose = TRUE,
+                    footer = NULL
+                ))
+                invokeRestart("muffleWarning")  ## prevent duplicate console warning
+            }
+        )
     })
 
 
@@ -892,49 +938,51 @@ spictModule <- function(input, output, session) {
         js$showComputing()
         js$disableAllButtons()
 
-        res <- tryCatch({
+        withCallingHandlers(
+            res <- tryCatch({
 
-            inp <- spict_dat$dataExplo$inp
+                inp <- spict_dat$dataExplo$inp
 
-            ## TODO checks
+                ## TODO checks
 
-            ## Estimation
-            flog.info("check for spit fit")
-            show_modal_spinner(
-                text = "Checking SPiCT",
-                spin = "circle",
-                color = "#112446"
-            )
-            inp$dteuler <- 1/2
-            res <- run_spict(inp)
-            remove_modal_spinner()
+                ## Estimation
+                flog.info("check for spit fit")
+                show_modal_spinner(
+                    text = "Checking SPiCT",
+                    spin = "circle",
+                    color = "#112446"
+                )
+                inp$dteuler <- 1/2
+                res <- run_spict(inp)
+                remove_modal_spinner()
 
-            js$hideComputing()
-            js$enableAllButtons()
+                js$hideComputing()
+                js$enableAllButtons()
 
-        }, error = function(cond) {
-            flog.error("Error in SPiCT: %s ",cond)
-            showModal(modalDialog(
-                title = "Error",
-                cond$message,
-                easyClose = TRUE,
-                footer = NULL
-            ))
-            return(NULL)
-        },
-        ## warning = function(cond) {
-        ##     showModal(modalDialog(
-        ##         title = "Warning",
-        ##         cond$message,
-        ##         easyClose = TRUE,
-        ##         footer = NULL
-        ##     ))
-        ##     return(NULL)
-        ## },
-        finally = {
-            js$hideComputing()
-            js$enableAllButtons()
-        })
+            }, error = function(cond) {
+                flog.error("Error in SPiCT: %s ",cond)
+                showModal(modalDialog(
+                    title = "Error",
+                    cond$message,
+                    easyClose = TRUE,
+                    footer = NULL
+                ))
+                return(NULL)
+            },
+            finally = {
+                js$hideComputing()
+                js$enableAllButtons()
+            }),
+            warning = function(w) {
+                showModal(modalDialog(
+                    title = "Warning",
+                    w$message,
+                    easyClose = TRUE,
+                    footer = NULL
+                ))
+                invokeRestart("muffleWarning")  ## prevent duplicate console warning
+            }
+        )
 
         showNotification(
             "No errors during check run, ready to run assessment!",
@@ -950,43 +998,51 @@ spictModule <- function(input, output, session) {
 
         ## TODO implement tests
 
-        res <- tryCatch({
+        withCallingHandlers(
+            res <- tryCatch({
 
-            ## run_check() ## TODO
+                if(!spictAcknowledged()) {
 
-            if(!spictAcknowledged()) {
+                    spictPendingRun(TRUE)
 
-                spictPendingRun(TRUE)
+                    showModal(modalDialog(
+                        title = "Acknowledge model assumptions",
+                        bsCollapse(id = ns("assumptions"), open = NULL,
+                                   bsCollapsePanel("▶ Click to show/hide",
+                                                   HTML(spictAssumptionsHTML()))
+                                   ),
+                        tags$p(HTML("See the <a href='https://elearning.fao.org/course/view.php?id=502' target='_blank'>FAO eLearning module</a> for more information.")),
+                        footer = tagList(
+                            modalButton("Cancel"),
+                            actionButton(ns("spict_ack"), "I Acknowledge", class = "btn-success")
+                        ),
+                        easyClose = FALSE
+                    ))
 
+                    return(invisible(NULL))
+                }
 
+                run_spict_server()
+
+            }, error = function(cond) {
+                flog.error("Error in SPiCT: %s ",cond)
                 showModal(modalDialog(
-                    title = "Acknowledge model assumptions",
-                    bsCollapse(id = ns("assumptions"), open = NULL,
-                               bsCollapsePanel("▶ Click to show/hide",
-                                               HTML(spictAssumptionsHTML()))
-                               ),
-                    tags$p(HTML("See the <a href='https://elearning.fao.org/course/view.php?id=502' target='_blank'>FAO eLearning module</a> for more information.")),
-                    footer = tagList(
-                        modalButton("Cancel"),
-                        actionButton(ns("spict_ack"), "I Acknowledge", class = "btn-success")
-                    ),
-                    easyClose = FALSE
+                    title = "Error",
+                    cond$message,
+                    easyClose = TRUE,
+                    footer = NULL
                 ))
-
-                return(invisible(NULL))
+            }),
+            warning = function(w) {
+                showModal(modalDialog(
+                    title = "Warning",
+                    w$message,
+                    easyClose = TRUE,
+                    footer = NULL
+                ))
+                invokeRestart("muffleWarning")  ## prevent duplicate console warning
             }
-
-            run_spict_server()
-
-        }, error = function(cond) {
-            flog.error("Error in SPiCT: %s ",cond)
-            showModal(modalDialog(
-                title = "Error",
-                cond$message,
-                easyClose = TRUE,
-                footer = NULL
-            ))
-        })
+        )
     })
 
     observeEvent(input$spict_ack, {
@@ -1094,7 +1150,7 @@ spictModule <- function(input, output, session) {
     observeEvent(input$info_col_auto, {
         showModal(modalDialog(
             title = "Automatically assign columns",
-            HTML("<p>TODO </p>"),
+            HTML("<p>If you click this checkbox, the tool will try to assign the respective columns (or variables in the long format) to the specific input variables automatically. This only works if the uploaded data contains the expected names, e.g. timeC, obsI, etc. This works well for the example data set.</p>"),
             easyClose = TRUE,
             size = "l"
         ))
@@ -1103,7 +1159,7 @@ spictModule <- function(input, output, session) {
     observeEvent(input$info_n_indices, {
         showModal(modalDialog(
             title = "Number of indices",
-            HTML("<p>TODO </p>"),
+            HTML("<p>Select the number of indices in the input data. The number of input fields for information regarding the index / indices will change with the number selected here.</p>"),
             easyClose = TRUE,
             size = "l"
         ))
@@ -1112,7 +1168,7 @@ spictModule <- function(input, output, session) {
     observeEvent(input$info_timeC_lab, {
         showModal(modalDialog(
             title = "Column with times of catch observations",
-            HTML("<p>Please assign the columns of your data to the required SPiCT input data. SPiCT requires a vector with catch observations and their times, as well as either index observations and their times or effort observations and their times. Press 'Update data' when all columns are assigned. It is possible to select multiple columns representing different index observations (e.g. different survey fleets) and their times. </p>"),
+            HTML("<p>Choose the column (or variable in the long format) in your data set that corresponds to the times of the catch observations from the drop-down list. If there is no drop-down list, make sure to upload a data set in one of the two data formats.</p>"),
             easyClose = TRUE,
             size = "l"
         ))
@@ -1121,7 +1177,7 @@ spictModule <- function(input, output, session) {
     observeEvent(input$info_obsC_lab, {
         showModal(modalDialog(
             title = "Column with catch observations",
-            HTML("<p>TODO </p>"),
+            HTML("<p>Choose the column (or variable in the long format) in your data set that corresponds to the catch observations from the drop-down list. If there is no drop-down list, make sure to upload a data set in one of the two data formats.</p>"),
             easyClose = TRUE,
             size = "l"
         ))
@@ -1130,7 +1186,7 @@ spictModule <- function(input, output, session) {
     observeEvent(input$info_stdevC_lab, {
         showModal(modalDialog(
             title = "Optional column with relative uncertainty of catch observations",
-            HTML("<p>TODO </p>"),
+            HTML("<p>Option to choose the column (or variable in the long format) in your data set that corresponds to the relative uncertainty weighting of the catch observations from the drop-down list. If there is no drop-down list, make sure to upload a data set in one of the two data formats. This input field can also be left empty and equal uncertainty weighting is assumed.</p>"),
             easyClose = TRUE,
             size = "l"
         ))
@@ -1139,7 +1195,7 @@ spictModule <- function(input, output, session) {
     observeEvent(input$info_timeI_lab, {
         showModal(modalDialog(
             title = "Column with times of index observations",
-            HTML("<p>TODO </p>"),
+            HTML("<p>Choose the column (or variable in the long format) in your data set that corresponds to the times of the index observations from the drop-down list. If there is no drop-down list, make sure to upload a data set in one of the two data formats.</p>"),
             easyClose = TRUE,
             size = "l"
         ))
@@ -1148,7 +1204,7 @@ spictModule <- function(input, output, session) {
     observeEvent(input$info_obsI_lab, {
         showModal(modalDialog(
             title = "Column with index observations",
-            HTML("<p>TODO </p>"),
+            HTML("<p>Choose the column (or variable in the long format) in your data set that corresponds to the index observations from the drop-down list. If there is no drop-down list, make sure to upload a data set in one of the two data formats.</p>"),
             easyClose = TRUE,
             size = "l"
         ))
@@ -1157,7 +1213,7 @@ spictModule <- function(input, output, session) {
     observeEvent(input$info_stdevI_lab, {
         showModal(modalDialog(
             title = "Optional column with relative uncertainty of index observations",
-            HTML("<p>TODO </p>"),
+            HTML("<p>Option to choose the column (or variable in the long format) in your data set that corresponds to the relative uncertainty weighting of the index observations from the drop-down list. If there is no drop-down list, make sure to upload a data set in one of the two data formats. This input field can also be left empty and equal uncertainty weighting is assumed. </p>"),
             easyClose = TRUE,
             size = "l"
         ))
@@ -1166,7 +1222,7 @@ spictModule <- function(input, output, session) {
     observeEvent(input$info_timerange, {
         showModal(modalDialog(
             title = "Time range for assessment",
-            HTML("<p>TODO </p>"),
+            HTML("<p>Select start and end time of period that should be considered for the assessment. Observations outside of the selected period will be omitted from further analysis.</p>"),
             easyClose = TRUE,
             size = "l"
         ))
@@ -1175,7 +1231,7 @@ spictModule <- function(input, output, session) {
     observeEvent(input$info_timeI_shift, {
         showModal(modalDialog(
             title = "Time of the year as fraction of index time series",
-            HTML("<p>TODO </p>"),
+            HTML("<p>The index observations are assumed to correspond to specific points in time, such as 1. April 2020, 2021, etc. rather than intervals. This field allows to define the time of year which correspond to the index as a fraction. For example, 0.25 would correspond to the 1st of April of every year. Note, that this option only allows consistent time of the years which are the same every year. If the time of the year varies between years, the column with the index time in the input data can be modified to include the time of the year information, e.g. 2020.21, 2021.5, etc. </p>"),
             easyClose = TRUE,
             size = "l"
         ))
@@ -1184,7 +1240,7 @@ spictModule <- function(input, output, session) {
     observeEvent(input$info_dteuler, {
         showModal(modalDialog(
             title = "Time step of the Euler discretization",
-            HTML("<p>Euler discretisation time step, i.e. how many time steps per year should be used. </p>"),
+            HTML("<p>Euler discretisation time step, i.e. how many time steps per year should be used. The default and recommendation is at least 16 time steps per year. However the finer the time step, the longer the computation time and memory requirements, thus lower time steps of 4 or 8 can be considered for assessment explorations.</p>"),
             easyClose = TRUE,
             size = "l"
         ))
@@ -1202,7 +1258,7 @@ spictModule <- function(input, output, session) {
     observeEvent(input$info_robflagi, {
         showModal(modalDialog(
             title = "Robust flag for Index",
-            HTML("<p>TODO </p>"),
+            HTML("<p>Option to use the robust estimation for the index. <br> The presence of extreme observations may inflate estimates of observation noise and increase the general uncertainty of the fit. To reduce this effect it is possible to apply a robust estimation scheme, which is less sensitive to extreme observations. <br> Robust estimation is implemented using a mixture of light-tailed and a heavy-tailed Gaussian distribution as described in Pedersen and Berg (2017). This entails two additional parameters (pp and robfac) that require estimation. This may not always be possible given the increased model complexity.</p>"),
             easyClose = TRUE,
             size = "l"
         ))
@@ -1211,7 +1267,7 @@ spictModule <- function(input, output, session) {
     observeEvent(input$info_robflagc, {
         showModal(modalDialog(
             title = "Robust flag for catches",
-            HTML("<p>Should the robust estimation for catches be used? </p>"),
+            HTML("<p>Option to use the robust estimation for the catches. <br> The presence of extreme observations may inflate estimates of observation noise and increase the general uncertainty of the fit. To reduce this effect it is possible to apply a robust estimation scheme, which is less sensitive to extreme observations. <br> Robust estimation is implemented using a mixture of light-tailed and a heavy-tailed Gaussian distribution as described in Pedersen and Berg (2017). This entails two additional parameters (pp and robfac) that require estimation. This may not always be possible given the increased model complexity.</p>"),
             easyClose = TRUE,
             size = "l"
         ))
@@ -1220,7 +1276,7 @@ spictModule <- function(input, output, session) {
     observeEvent(input$info_fig_format, {
         showModal(modalDialog(
             title = "Format of archived figures",
-            HTML("<p>TODO </p>"),
+            HTML("<p>Choose the format of the figures in the zip archive that can be downloaded from the drop-down list.</p>"),
             easyClose = TRUE,
             size = "l"
         ))
@@ -1229,7 +1285,7 @@ spictModule <- function(input, output, session) {
     observeEvent(input$info_tab_format, {
         showModal(modalDialog(
             title = "Format of archived tables",
-            HTML("<p>TODO </p>"),
+            HTML("<p>Choose the format of the tables in the zip archive that can be downloaded from the drop-down list.</p>"),
             easyClose = TRUE,
             size = "l"
         ))
@@ -1239,7 +1295,7 @@ spictModule <- function(input, output, session) {
     observeEvent(input$info_config_priors, {
         showModal(modalDialog(
             title = "Configure priors",
-            HTML("<p>TODO </p>"),
+            HTML("<p>By default 3 vague priors are activated in SPiCT, for the shape of the production curve (logn) and for the nosie ratios logalpha = logsdi - logsdb and logbeta = logsdc - logsdf. These priors can be de-activated by unclicking the box in the 'Activate' column below. Their mean and standard deviation (SD) can be changed in the columns below. <br> In addition, a range of other priors can be defined. In order to define a prior, the respective prior has to be activated and a mean value (on normal or log scale, dependent if the checkbox in the column 'Mean on log scale' is ticked and SD has to be provided in the respective columns. Once all information is provided and the prior is activated, a plot with the prior should appear in the right panel.<br> Priors should only be used if auxiliary information is available and can affect assessment results and uncertainty.</p>"),
             easyClose = TRUE,
             size = "l"
         ))
@@ -1248,20 +1304,172 @@ spictModule <- function(input, output, session) {
     observeEvent(input$infoAssessment, {
         showModal(modalDialog(
             title = "Check, Assessment, Reset & Report",
-            HTML("<p>It is recommended to run a quick check by pressing <b>'Run Check'</b> before running the main assessment.
-                             While the main assessment can take a few minutes to run, depending on the settings of the ELEFAN optimation routine and the sample size of the dataset,
-                             the check is performed in a matter of seconds and can identify issues in the data or settings. The check does not produce results (figures or tables),
-                             but a notification in the middle of the screen will inform you whether the check was successful. <br> <br>
-
-                             <b>'Run Assessment'</b> performs the main assessment and should yield plenty of figures and tables in the result section upon successful completion.
-                             The run may take several minutes and depends on the size of the dataset, aggregation, bin size, and parameter search space. Run time with the sample
-                             dataset and default settings is 2-4 minutes. <br> <br> <b>'Reset'</b> removes all results, the uploaded dataset, and resets all settings to default values. <br> <br>
-
-                             After successful completion of the main assessment, an additional button <b>'Download Report'</b> allows you to download a pdf document with all results.
-                             This report is also automatically uploaded to your private workspace.</p>"),
+            HTML("<p>The <b>'Run Check'</b> allows to check if the uploaded data and provided information corresponds the expectations before running the main assessment. While the main assessment can take a few minutes to run, depending on the input data and settings, the check is performed quicker and can identify issues in the data or settings. The check does not produce results (figures or tables), but a notification in the middle of the screen will inform you whether the check was successful. <br> <br> <b>'Run Assessment'</b> performs the main assessment and should yield plenty of figures and tables in the result section upon successful completion. The run may take several minutes and depends on the uploaded data and settings. Run time with the sample dataset and default settings is 1-2 minutes. <br> <br> <b>'Reset'</b> removes all results, the uploaded dataset, and resets all settings to default values. <br> <br> After successful completion of the main assessment, the button <b>'Download Report'</b> allows you to download a pdf document with all results. This report is also automatically uploaded to your private workspace. The button <b>'Download Results (zip)'</b> allows you download all figures and tables as a zip archive.</p>"),
             easyClose = TRUE,
             size = "l"
         ))
+    }, ignoreInit = TRUE)
+
+
+    ## Tour --------------------------------
+    observeEvent(input$tour_general, {
+
+        steps <- list(
+            list(element = NA,
+                 intro = paste0("This tour takes you through the main steps of the data-limited stock assessment with SPiCT.<br><br>",
+                                "Click 'Next' to continue.")),
+            list(element = paste0("#", ns("file_wrapper")),
+                 intro = "As a first step, you need to upload data. You can do that by clicking on 'Browse' and select a csv file on your computer."),
+            list(element = paste0("#", ns("dataConsiderations2")),
+                 intro = "If you do not have your own file and want to use an example fiel or if you are interested in more information about the data type and format, click on the small the information button here. <br><br>Note these information buttons (indicated by 'i') throughout the whole app."),
+            list(element = paste0("#", ns("spictCSVsep"),
+                                  " + .selectize-control"),
+                 intro = "By default, the app will try to recognize the field separator, but you can also specify it here by either choosing from the list or by pressing backspace and enter any separator."),
+            list(element = paste0("#", ns("spictCSVdec"),
+                                  " + .selectize-control"),
+                 intro = "Similarly, by default, the app will try to recognize the decimal separator, but you can also specify it here by either choosing from the list or by pressing backspace and enter any separator."),
+            list(element = paste0("#", ns("n_indices")),
+                 intro = "TODO"),
+            list(element = paste0("#", ns("timeC_lab"),
+                                  " + .selectize-control"),
+                 intro = "TODO"),
+            list(element = paste0("#", ns("obsC_lab"),
+                                  " + .selectize-control"),
+                 intro = "TODO"),
+            ## TODO other fields
+            list(element = paste0("#", ns("box_settings")),
+                 intro = "After you chose your data set and it was uploaded successfully (no error messages), you can explore your data and adjust settings in this box."),
+            list(element = "#settings_spict ul.nav.nav-tabs",
+                 intro = "There are multiple tabs that allow you to adjust various aspects of the assessment method."),
+            list(element = paste0("#", ns("tab1")),
+                 intro = "For example, the first tab allows you to visually inspect the uploaded data and set the time range for the assessment or time of year for the index/indices.<br><br> Remember the small information buttons ('i') next to the labels, if you need more information about these settings.")
+        )
+
+        current_tab <- input$settings
+        ## If tab 1 selected
+        if (!is.null(current_tab) && current_tab == "data") {
+            steps <- append(steps,
+                            list(
+                                list(element = paste0("#", ns("plot_explo1_ui")),
+                                     intro = paste0("A time series plot will be shown here when the data was uploaded successfully."))
+                            ))
+        }
+
+        steps <- append(steps,
+                        list(
+                            list(element = paste0("#", ns("tab2")),
+                                 intro = "TODO"),
+                            list(element = paste0("#", ns("tab3")),
+                                 intro = "The last tab contains summary statistics and diagnostics of the uploaded data."),
+                            list(element = paste0("#", ns("check_spict")),
+                                 intro = "As running SPiCT can take one minute or longer depending on the size of the data set, you can first run a check. This would inform you if the required information is available and in the required format."),
+                            list(element = paste0("#", ns("go_spict")),
+                                 intro = "If the check is successful, you can run the data-limited stock assessment by clicking here.<br><br>Note, that a pop-up window will ask you if you are aware of and acknowledge the model assumptions."),
+                            list(element = paste0("#", ns("reset_spict")),
+                                 intro = "This button allows you to reset all settings.<br><br>Note, that this also removes your input data."),
+                            list(element = paste0("#", ns("createSpictReport")),
+                                 intro = "This button creates and downloads an automatic assessment report with information about your data, settings and results."),
+                            list(element = paste0("#", ns("createSpictzip")),
+                                 intro = "You can also download all graphs and tables in a zip archive by clicking here.")))
+
+        if (!is.null(current_tab) && current_tab == "data") {
+            steps <- append(steps,
+                            list(
+                                list(element = paste0("#", ns("fig_format"),
+                                                      " + .selectize-control"),
+                                     intro = paste0("You can select the format of the figures in the zip archive here.")),
+                                list(element = paste0("#", ns("tab_format"),
+                                                      " + .selectize-control"),
+                                     intro = paste0("And the format of the tables here."))
+                            ))
+        }
+
+        steps <- append(steps,
+                        list(
+                            list(element = paste0("#", ns("tour_res")),
+                                 intro = "The results tour might be helpful to get an overview over the results.<br><br> Note, that the tour only makes sense after SPiCT was run successfully."),
+                            list(element = NA,
+                                 intro = "This concludes the SPiCT tour.<br><br>Remember the information buttons ('i') that might be helpful when uploading data, adjusting settings or interpreting results."),
+                            list(element = paste0("#", ns("info_wrapper")),
+                                 intro = "These buttons offer another helpful option to get detailed information on the workflow, data, methods, and results."),
+                            list(element = NA,
+                                 intro = "For more information, you might also consider to visit the <a href='https://elearning.fao.org/course/view.php?id=502' target='_blank'>FAO e-learning course</a>.")))
+
+
+        later::later(function() {
+            introjs(session, options = list(steps = steps))
+        }, delay = 0.5)
+    }, ignoreInit = TRUE)
+
+
+    ## Results tour
+    observeEvent(input$tour_res, {
+
+        steps <- list(
+            list(element = NA,
+                 intro = "This is a tour that takes you through the results of the data-limited stock assessment with SPiCT.")
+        )
+
+        if(is.null(spict_dat$results)) {
+
+            steps <- append(steps,
+                            list(
+                                list(element = NA,
+                                     intro = "No results found. This tour only works if you run the assessment."),
+                                list(element = paste0("#", ns("go_spict")),
+                                     intro = "Make sure you uploaded your data and run the assessment by clicking here."),
+                                list(element = NA,
+                                     intro = "Start this tour again after you see some tables and graphs below.")))
+
+        } else {
+
+            steps <- append(steps,
+                            list(
+                                list(element = "#results_spict ul.nav.nav-tabs",
+                                     intro = "Note that there are multiple tabs that contain different results and this tour takes you to the selected tab. If you want information about plots and tables in another tab, please select that tab and restart this tour.")))
+
+            current_tab <- input$results
+
+            if (!is.null(current_tab) && current_tab == "res1") {
+                steps <- append(steps,
+                                list(
+                                    list(element = paste0("#", ns("plot_sum")),
+                                         intro = "TODO"),
+                                    list(element = paste0("#", ns("table_est")),
+                                         intro = "TODO"),
+                                    list(element = paste0("#", ns("table_refs_s")),
+                                         intro = "TODO"),
+                                    list(element = paste0("#", ns("table_states")),
+                                         intro = "TODO"),
+                                    list(element = paste0("#", ns("plot_prod")),
+                                         intro = "TODO")
+                                ))
+            } else if (!is.null(current_tab) && current_tab == "res2") {
+                steps <- append(steps,
+                                list(
+                                    list(element = paste0("#", ns("plot_abs")),
+                                         intro = "TODO"),
+                                    list(element = paste0("#", ns("table_refs_d")),
+                                         intro = "TODO"),
+                                    list(element = paste0("#", ns("table_pred")),
+                                         intro = "TODO"),
+                                    list(element = paste0("#", ns("plot_priors2_ui")),
+                                         intro = "TODO")
+                                ))
+            } else if (!is.null(current_tab) && current_tab == "res3") {
+                steps <- append(steps,
+                                list(
+                                    list(element = paste0("#", ns("plot_resid1")),
+                                         intro = "TODO"),
+                                    list(element = paste0("#", ns("plot_resid2")),
+                                         intro = "TODO")))
+            }
+
+        }
+
+        later::later(function() {
+            introjs(session, options = list(steps = steps))
+        }, delay = 0.5)
     }, ignoreInit = TRUE)
 
 

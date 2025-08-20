@@ -187,7 +187,7 @@ tabSPICT <- function(id) {
 
                                     fluidRow(
                                         div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
-                                            HTML("<b>Select years for analysis</b>")
+                                            HTML("<b>Time range for assessment</b>")
                                             ),
                                         div(style = "display: inline-block; vertical-align:center; margin-left: 3px;",
                                             actionButton(ns("info_timerange"),
@@ -616,7 +616,7 @@ tabSPICT <- function(id) {
                                                     style = "margin-left: 10%; margin-right: 10%; text-align: center;",
                                                     plotOutput(ns("plot_diag1"),
                                                                width = "90%",
-                                                               height = "800px"),
+                                                               height = "900px"),
                                                     div(
                                                         style = "margin-top: 15px;",
                                                         htmlOutput(ns("title_diag1"))
@@ -729,9 +729,25 @@ tabSPICT <- function(id) {
                                         style = "padding-right: 15px;padding-left: 5px;",
                                         tags$div(
                                                  style = "width: 100%; margin: 0 auto; text-align: center;",
-                                                 plotOutput(ns("plot_sum"), width = "100%", height = "700px"),
+                                                 plotOutput(ns("plot_sum"), width = "100%",
+                                                            height = "800px"),
                                                  div(style = "margin-top: 10px;", htmlOutput(ns("title_sum")))
-                                             )
+                                             ),
+                                        br(),
+                                        br(),
+                                        fluidRow(
+                                            column(3),
+                                            column(6,
+                                                   plotOutput(ns("plot_prod"),
+                                                              width = "100%",
+                                                              height = "500px"),
+                                                   div(
+                                                       style = "margin-top: 10px;",
+                                                       htmlOutput(ns("title_prod"))
+                                                   )
+                                                   ),
+                                            column(3)
+                                        )
                                     ),
                                     column(
                                         5,
@@ -743,6 +759,8 @@ tabSPICT <- function(id) {
                                                  style = "margin-left: 5%; margin-right: 30%;"
                                              ),
                                         br(),
+                                        br(),
+                                        br(),
                                         tags$div(
                                                  div(style = "margin-bottom:0px; margin-left: 0%; margin-right: 0%;",
                                                      htmlOutput(ns("title_table_refs_s"))
@@ -750,6 +768,8 @@ tabSPICT <- function(id) {
                                                  dataTableOutput(ns("table_refs_s")),
                                                  style = "margin-left: 5%; margin-right: 30%;"
                                              ),
+                                        br(),
+                                        br(),
                                         br(),
                                         tags$div(
                                                  div(style = "margin-bottom:0px; margin-left: 0%; margin-right: 0%;",
@@ -769,49 +789,49 @@ tabSPICT <- function(id) {
 
                                 fluidRow(
                                     column(
-                                        4,
-                                        plotOutput(ns("plot_prod"),
-                                                   width = "100%",
-                                                   height = "500px"),
-                                        div(
-                                            style = "margin-top: 10px;",
-                                            htmlOutput(ns("title_prod"))
+                                        7,
+                                        style = "padding-right: 15px;padding-left: 5px;",
+                                        tags$div(
+                                                 style = "width: 100%; margin: 0 auto; text-align: center;",
+                                                 plotOutput(ns("plot_abs"), width = "100%",
+                                                            height = "500px"),
+                                                 div(style = "margin-top: 10px;", htmlOutput(ns("title_abs")))
+                                             ),
+                                        br(),
+                                        br(),
+                                        fluidRow(
+                                            column(1),
+                                            column(10,
+                                                   uiOutput(ns("plot_priors2_ui")),
+                                                   div(
+                                                       style = "margin-top: 15px;",
+                                                       htmlOutput(ns("title_priors2"))
+                                                   )
+                                                   ),
+                                            column(1)
                                         )
                                     ),
                                     column(
-                                        8,
+                                        5,
                                         tags$div(
-                                                 style = "margin-left: 10%; margin-right: 10%; text-align: center;",
-                                                 uiOutput(ns("plot_priors2_ui")),
-                                                 div(
-                                                     style = "margin-top: 15px;",
-                                                     htmlOutput(ns("title_priors2"))
-                                                 )
+                                                 div(style = "margin-bottom:0px; margin-left: 0%; margin-right: 0%;",
+                                                     htmlOutput(ns("title_table_refs_d"))
+                                                     ),
+                                                 dataTableOutput(ns("table_refs_d")),
+                                                 style = "margin-left: 5%; margin-right: 30%;"
+                                             ),
+                                        br(),
+                                        br(),
+                                        br(),
+                                        tags$div(
+                                                 div(style = "margin-bottom:0px; margin-left: 0%; margin-right: 0%;",
+                                                     htmlOutput(ns("title_table_pred"))
+                                                     ),
+                                                 dataTableOutput(ns("table_pred")),
+                                                 style = "margin-left: 5%; margin-right: 30%;"
                                              )
                                     )
-                                ),
-
-                                br(),
-
-                                plotOutput(ns("plot_abs"), width = "100%", height = "400px"),
-                                div(style = "margin-top: 10px;", htmlOutput(ns("title_abs"))),
-                                br(),
-
-                                tags$div(
-                                         div(style = "margin-bottom:0px; margin-left: 0%; margin-right: 0%;",
-                                             htmlOutput(ns("title_table_refs_d"))
-                                             ),
-                                         dataTableOutput(ns("table_refs_d")),
-                                         style = "margin-left: 5%; margin-right: 30%;"
-                                     ),
-                                br(),
-                                tags$div(
-                                         div(style = "margin-bottom:0px; margin-left: 0%; margin-right: 0%;",
-                                             htmlOutput(ns("title_table_pred"))
-                                             ),
-                                         dataTableOutput(ns("table_pred")),
-                                         style = "margin-left: 5%; margin-right: 30%;"
-                                     )
+                                )
                             ),
                             tabPanel(
                                 title = div(id = ns("tab_res3"),
@@ -824,7 +844,7 @@ tabSPICT <- function(id) {
                                         tags$div(
                                                  style = "width: 90%; margin: 0 auto; text-align: center;",
                                                  plotOutput(ns("plot_resid1"),
-                                                            height = "800px"),
+                                                            height = "1000px"),
                                                  div(
                                                      style = "margin-top: 10px;",
                                                      htmlOutput(ns("title_resid1"))
@@ -836,7 +856,7 @@ tabSPICT <- function(id) {
                                         tags$div(
                                                  style = "width: 90%; margin: 0 auto; text-align: center;",
                                                  plotOutput(ns("plot_resid2"),
-                                                            height = "800px"),
+                                                            height = "1000px"),
                                                  div(
                                                      style = "margin-top: 10px;",
                                                      htmlOutput(ns("title_resid2"))

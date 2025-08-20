@@ -62,12 +62,14 @@ textSpict.diag1 <- function(spict_dat, input){
     HTML(paste0(
         "<h4>Data set information</h4>",
         "File name: ", file.name, "<br>",
+        "<br>",
 
         "<h4>Catch time series</h4>",
         "Number of observations: ", nobsC, "<br>",
         "Time range: ", range.timeC[1], "-", range.timeC[2], "<br>",
         "Catch range: ", range.obsC[1], "-", range.obsC[2], "<br>",
         "Catch unit: ", catchunit, "<br>",
+        "<br>",
 
         "<h4>Rel abundance time series</h4>",
         "Number of indices: ", nindex, "<br>",
@@ -75,7 +77,7 @@ textSpict.diag1 <- function(spict_dat, input){
         paste0(
             sapply(1:nindex, function(i) {
                 paste0(
-                    "Index ", i, "<br>",
+                    "<b>Index ", i, "</b><br>",
                     "Number of observations: ", nobsI[i], "<br>",
                     "Time range: ", range.timeI[[i]][1], "-", range.timeI[[i]][2], "<br>",
                     "Abundance range: ", range.obsI[[i]][1], "-", range.obsI[[i]][2], "<br><br>"

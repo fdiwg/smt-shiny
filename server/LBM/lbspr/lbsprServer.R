@@ -1109,7 +1109,7 @@ lbsprModule <- function(input, output, session) {
             list(element = "#settings_lbspr ul.nav.nav-tabs",
                  intro = "There are multiple tabs that allow you to adjust various aspects of the assessment method."),
             list(element = paste0("#", ns("tab1")),
-                 intro = "For example, the first tab allows you to visually inspect the uploaded data and set important parameters, such as the bin size or moving average.<br><br> Remeber the small information buttons ('i') next to the labels, if you need more information about these parameters.")
+                 intro = "For example, the first tab allows you to visually inspect the uploaded data and set important parameters, such as the bin size or moving average.<br><br> Remember the small information buttons ('i') next to the labels, if you need more information about these parameters.")
         )
 
         current_tab <- input$settings
@@ -1152,7 +1152,7 @@ lbsprModule <- function(input, output, session) {
                             list(element = paste0("#", ns("tour_res")),
                                  intro = "The results tour might be helpful to get an overview over the results.<br><br> Note, that the tour only makes sense after LBSPR was run successfully."),
                             list(element = NA,
-                                 intro = "This concludes the LBSPR tour.<br><br>Remeber the information buttons ('i') that might be helpful when uploading data, adjusting settings or interpreting results."),
+                                 intro = "This concludes the LBSPR tour.<br><br>Remember the information buttons ('i') that might be helpful when uploading data, adjusting settings or interpreting results."),
                             list(element = paste0("#", ns("info_wrapper")),
                                  intro = "These buttons offer another helpful option to get detailed information on the workflow, data, methods, and results."),
                             list(element = NA,

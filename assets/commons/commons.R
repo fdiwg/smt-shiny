@@ -536,43 +536,48 @@ makeContentSpictzip <- function(file, spict_dat, input, output) {
     plotSpict.resid2(spict_dat, input)
     dev.off()
 
-    ## TODO do tables
 
-    ## ## Table with length data
-    ## path <- file.path(tempDir, paste0("spict_data.", input$tab_format))
-    ## allfiles <- c(allfiles, path)
-    ## save.table(tableSpict.data(spict_dat, input, format = "dataframe"),
-    ##            path, input$tab_format)
+    ## Table with data
+    path <- file.path(tempDir, paste0("spict_data.", input$tab_format))
+    allfiles <- c(allfiles, path)
+    save.table(tableSpict.data(spict_dat, input, format = "dataframe"),
+               path, input$tab_format)
 
-    ## ## Table with input parameters
-    ## path <- file.path(tempDir, paste0("spict_input.", input$tab_format))
-    ## allfiles <- c(allfiles, path)
-    ## save.table(tableSpict.input(spict_dat, input, format = "dataframe"),
-    ##            path, input$tab_format)
+    ## Table with priors
+    path <- file.path(tempDir, paste0("spict_priors.", input$tab_format))
+    allfiles <- c(allfiles, path)
+    save.table(tableSpict.priors(spict_dat, input, format = "dataframe"),
+               path, input$tab_format)
 
-    ## ## Growth table
-    ## path <- file.path(tempDir, paste0("spict_growth.", input$tab_format))
-    ## allfiles <- c(allfiles, path)
-    ## save.table(tableSpict.growth(spict_dat, input, format = "dataframe"),
-    ##            path, input$tab_format)
+    ## Table with Estimates
+    path <- file.path(tempDir, paste0("spict_estimates.", input$tab_format))
+    allfiles <- c(allfiles, path)
+    save.table(tableSpict.estimates(spict_dat, input, format = "dataframe"),
+               path, input$tab_format)
 
-    ## ## Mort table
-    ## path <- file.path(tempDir, paste0("spict_mort.", input$tab_format))
-    ## allfiles <- c(allfiles, path)
-    ## save.table(tableSpict.mort(spict_dat, input, format = "dataframe"),
-    ##            path, input$tab_format)
+    ## Table with Stochastic refs
+    path <- file.path(tempDir, paste0("spict_refs_s.", input$tab_format))
+    allfiles <- c(allfiles, path)
+    save.table(tableSpict.refs_s(spict_dat, input, format = "dataframe"),
+               path, input$tab_format)
 
-    ## ## Refs table
-    ## path <- file.path(tempDir, paste0("spict_refs.", input$tab_format))
-    ## allfiles <- c(allfiles, path)
-    ## save.table(tableSpict.refs(spict_dat, input, format = "dataframe"),
-    ##            path, input$tab_format)
+    ## Table with Deterministic refs
+    path <- file.path(tempDir, paste0("spict_refs_d.", input$tab_format))
+    allfiles <- c(allfiles, path)
+    save.table(tableSpict.refs_d(spict_dat, input, format = "dataframe"),
+               path, input$tab_format)
 
-    ## ## Stock status table
-    ## path <- file.path(tempDir, paste0("spict_status.", input$tab_format))
-    ## allfiles <- c(allfiles, path)
-    ## save.table(tableSpict.status(spict_dat, input, format = "dataframe"),
-    ##            path, input$tab_format)
+    ## Table with States
+    path <- file.path(tempDir, paste0("spict_states.", input$tab_format))
+    allfiles <- c(allfiles, path)
+    save.table(tableSpict.states(spict_dat, input, format = "dataframe"),
+               path, input$tab_format)
+
+    ## Table with Forecast
+    path <- file.path(tempDir, paste0("spict_forecast.", input$tab_format))
+    allfiles <- c(allfiles, path)
+    save.table(tableSpict.pred(spict_dat, input, format = "dataframe"),
+               path, input$tab_format)
 
     return(zip(zipfile = file, files = allfiles, flags = "-j"))
 }

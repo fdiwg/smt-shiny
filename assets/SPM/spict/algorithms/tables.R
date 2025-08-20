@@ -1,14 +1,48 @@
 tableSpict.data <- function(dat, input, format = "dataframe"){
 
-    browser()
+    padNA <- function(x, n) {
+        length(x) <- n
+        x
+    }
 
-    tmp <- cbind(dat$dataExplo$inp$timeC,
-                 dat$dataExplo$inp$obsC)
+    tmp <- data.frame(
+        timeC = dat$dataExplo$inp$timeC,
+        obsC  = dat$dataExplo$inp$obsC,
+        stdevfacC = dat$dataExplo$inp$stdevfacC
+    )
 
-    labs <- c("timeC", "obsC")
+    maxlen <- max(
+        length(dat$dataExplo$inp$timeC),
+        sapply(dat$dataExplo$inp$timeI, length)
+    )
 
-    ## Rounding
-    tmp <- signif(tmp, digits = 3)
+
+    tmp$timeC <- padNA(tmp$timeC, maxlen)
+    tmp$obsC  <- padNA(tmp$obsC, maxlen)
+
+    for (i in seq_along(dat$dataExplo$inp$timeI)) {
+        tmp[[paste0("timeI", i)]] <- padNA(dat$dataExplo$inp$timeI[[i]], maxlen)
+        tmp[[paste0("obsI",  i)]] <- padNA(dat$dataExplo$inp$obsI[[i]], maxlen)
+        tmp[[paste0("stdevfacI",  i)]] <- padNA(dat$dataExplo$inp$stdevfacI[[i]], maxlen)
+    }
+
+    ## Return
+    rownames(tmp) <- NULL
+    return(tmp)
+}
+
+
+tableSpict.priors <- function(dat, input, format = "dataframe"){
+
+    inp <- dat$dataExplo$inp
+
+    active.priors <- names(which(sapply(inp$priors, function(x) if(is.list(x)) any(sapply(x, function(x) x[3] == 1)) else x[3] == 1)))
+
+    priors <- cbind(active.priors, round(do.call(rbind, inp$priors[active.priors]),3)[,1:2])
+
+    tmp <- priors
+
+    labs <- c("Prior","Mean","SD")
 
     ## Return
     colnames(tmp) <- labs
@@ -21,8 +55,12 @@ tableSpict.estimates <- function(dat, input, format = "datatable"){
 
     ## Table
     tmp <- spict:::sumspict.parest(dat$results)[,1:3]
-    pars <- gsub(" ", "", rownames(tmp))
+    pars <- rownames(tmp) <- gsub(" ", "", rownames(tmp))
     tmp <- tmp[!(pars %in% c("rc","rold")),]
+    qs <- grep("^q", rownames(tmp), value = TRUE)
+    sdis <- grep("^sdi", rownames(tmp), value = TRUE)
+    wanted <- c("r","K","m","n", qs, "sdb","sdf",sdis,"sdc","alpha","beta")
+    tmp <- tmp[intersect(wanted, rownames(tmp)), , drop = FALSE]
     tmp <- signif(tmp, digits = 3)
     tmp <- data.frame(par = rownames(tmp), tmp)
     rownames(tmp) <- NULL

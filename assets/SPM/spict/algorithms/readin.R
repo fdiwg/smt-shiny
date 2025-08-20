@@ -341,8 +341,8 @@ dat2inp <- function(dat){
 
     ## spict input list
     inp <- list()
-    inp$timeC <- dat$timeC
-    inp$obsC <- dat$obsC
+    inp$timeC <- as.numeric(dat$timeC)
+    inp$obsC <- as.numeric(dat$obsC)
 
     if(any(colnames(dat) == "timeI1")){
         nsurv <- length(which(sapply(strsplit(colna,"timeI"),function(x) length(x) > 1)))
@@ -352,7 +352,7 @@ dat2inp <- function(dat){
                 inp$timeI[[i]] <- as.numeric(na.omit(dat[,which(colnames(dat) == paste0("timeI",i))]))
             }
         }else{
-            inp$timeI <- dat$timeI1
+            inp$timeI <- as.numeric(dat$timeI1)
         }
     }
 
@@ -364,20 +364,20 @@ dat2inp <- function(dat){
                 inp$obsI[[i]] <- as.numeric(na.omit(dat[,which(colnames(dat) == paste0("obsI",i))]))
             }
         }else{
-            inp$obsI <- dat$obsI1
+            inp$obsI <- as.numeric(dat$obsI1)
         }
     }
 
     if(any(colnames(dat) == "timeE")){
-        inp$timeE <- dat$timeE
+        inp$timeE <- as.numeric(dat$timeE)
     }
     if(any(colnames(dat) == "obsE")){
-        inp$obsE <- dat$obsE
+        inp$obsE <- as.numeric(dat$obsE)
     }
 
     ## uncertainty scaling
     if(any(colnames(dat) == "stdevfacC")){
-        inp$stdevfacC <- dat$stdevfacC
+        inp$stdevfacC <- as.numeric(dat$stdevfacC)
     }
     if(length(grep("stdevfacI", colnames(dat))) > 0){
         survi <- which(sapply(strsplit(colna,"stdevfacI"),function(x) length(x) > 1))
@@ -396,7 +396,7 @@ dat2inp <- function(dat){
         }
     }
     if(any(colnames(dat) == "stdevfacE")){
-        inp$stdevfacE <- dat$stdevfacE
+        inp$stdevfacE <- as.numeric(dat$stdevfacE)
     }
 
     inp <- try(check.inp(inp))
