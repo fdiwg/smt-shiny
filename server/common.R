@@ -857,8 +857,8 @@ getMethodConsiderationTextForSpict <- function() {
                    "<li><b>Stock status</b>: The current stock status is expressed relative to these reference points ",
                    "(e.g. ratios <i>B</i>/<i>B</i><sub>MSY</sub> and <i>F</i>/<i>F</i><sub>MSY</sub>), with confidence intervals obtained via the covariance matrix or parametric bootstrapping.</li>",
 
-                   "<li><b>Forecasts and advice</b>: Short-term projections under alternative catch scenarios can be generated to evaluate the risk of exceeding reference points, ",
-                   "informing catch advice in line with precautionary management frameworks.</li>",
+                   ## "<li><b>Forecasts and advice</b>: Short-term projections under alternative catch scenarios can be generated to evaluate the risk of exceeding reference points, ",
+                   ## "informing catch advice in line with precautionary management frameworks.</li>",
                    "</ol><br>")
 
     text <- paste0(text,
@@ -887,39 +887,65 @@ getMethodConsiderationTextForSpict <- function() {
                        "Directly after the successful upload of your data set and assignment of required columns, <b>Figure 1</b> shows catch and index (indices) data over time; <b>Figure 2</b> shows the relative uncertainty scaling for the different time series. If this information is not included in the uploaded data set, equal relative uncertainty over time is assumed (equal to 1).")
         text <- paste0(text, "<br><br>")
         text <- paste0(text, "After adjusting assessment settings and running the assessment successfully (click 'Run Assessment'),
-  one figure and several tables summarise the main results. Additional results and diagnostic tests are also produced.")
+  two figures and three tables summarise the main results. Additional results and diagnostic tests are also produced and can be seen in extra tabs.")
         text <- paste0(text, "<br>")
         text <- paste0(text, "<br>")
         text <- paste0(text,"<b>Main results:</b>")
         text <- paste0(text, "<br>")
         text <- paste0(text, "<br>")
         text <- paste0(text, "<ul>")
-        text <- paste0(text, "<li><b>Figure 3</b> shows ...",
-                       "</li>")
+        text <- paste0(text, "<li><b>Figure 6</b> shows an overview of the main assessment results across four panels: time series of estimated ", withMathJax("\\(B/B_{\\mathrm{MSY}}\\)"), " and ", withMathJax("\\(F/F_{\\mathrm{MSY}}\\)")," with 95% confidence intervals (blue), including relative abundance observations (colour indicates in-year timing; symbols distinguish index series), estimated and observed catches with the MSY reference line and its 95% confidence interval (grey), and a Kobe plot summarizing status with uncertainty around ", withMathJax("\\(B_{\\mathrm{MSY}}\\)")," and ", withMathJax("\\(F_{\\mathrm{MSY}}\\)"), "</li>")
+        text <- paste0(text, "<li><b>Figure 7</b> shows the estimated production curve showing the theoretical surplus production (y axis) as a function of biomass relative to carrying capacity (B/K, x axis). The vertical dotted line indicates the the relative biomass where surplus production is maximized (MSY). The observed annual surplus production is plotted as blue circles conected by a line.", "</li>")
         text <- paste0(text, "<br>")
-        text <- paste0(text, "<li><b>Table 1</b> includes the estimated model parameters (e.g. r,m,K,n) with 95% confidence intervals.</li><br>")
-        text <- paste0(text, "<li><b>Table 2</b> includes the estimated stochastic reference points with 95% confidence intervals.</li><br>")
-        text <- paste0(text, "<li><b>Table 3</b> includes the estimated states with 95% confidence intervals.</li><br>")
-        text <- paste0(text, "<li><b>Table 4</b> includes the forecasted states with 95% confidence intervals.</li><br>")
+        text <- paste0(text,
+                       "<li><b>Table 1</b> includes the estimated parameter values with 95% confidence intervals. Key parameters include the intrinsic growth rate (r), carrying capacity (K), maximum sustainable yield (MSY, m), and the shape parameter of the production curve (n). Additional parameters are catchability (q), process error standard deviations for biomass (sdb) and fishing mortality (sdf), and observation error standard deviations for indices (sdi) and catches (sdc). Hyper-parameters α (sdb/sdi) and β (sdf/sdc) are also reported. When multiple indices are used, separate q and sdi estimates are provided.</li><br>")
+        text <- paste0(text, "<li><b>Table 2</b> includes the estimated stochastic reference points with 95% confidence intervals: ",
+                       "biomass at maximum sustainable yield ", withMathJax("\\(B_{\\mathrm{MSY}}\\)"),
+                       "fishing mortality at maximum sustainable yield ", withMathJax("\\(F_{\\mathrm{MSY}}\\)"),
+                       "and the maximum sustainable yield (MSY).</li><br>")
+        text <- paste0(text, "<li><b>Table 3</b> includes the estimated biomass (B) and fishing mortality (F) at the end of the time series, ",
+                       "together with stock status indicators: relative biomass ", withMathJax("\\(B/B_{\\mathrm{MSY}}\\)"),
+                       "and relative fishing mortality ", withMathJax("\\(F/F_{\\mathrm{MSY}}\\)"),".", "</li><br>")
         text <- paste0(text, "</ul>")
-        text <- paste0(text, "<br>")
         text <- paste0(text, "<br>")
         text <- paste0(text, "<br>")
         text <- paste0(text,"<b>Additional results:</b>")
         text <- paste0(text, "<br>")
         text <- paste0(text, "<br>")
         text <- paste0(text, "<ul>")
-        text <- paste0(text, "<li><b>Table 5</b> includes the estimated deterministic reference points with 95% confidence intervals.</li><br>")
-        text <- paste0(text, "</ul>")
+        text <- paste0(text, "<li><b>Figure 8</b> shows ",
+                       "estimated absolute (first y axis) and relative (second y axis) biomass (", withMathJax("\\(B\\)"), " and ", withMathJax("\\(B/B_{\\mathrm{MSY}}\\)"), ", left) and fishing mortality (", withMathJax("\\(F\\)"), " and ", withMathJax("\\(F/F_{\\mathrm{MSY}}\\)"), ", right). The blue shaded areas display the 95% confidence intervals of the relative states (",withMathJax("\\(B/B_{\\mathrm{MSY}}\\)")," and ",withMathJax("\\(F/F_{\\mathrm{MSY}}\\)"),"). The dashed lines indicate the 95% confidence intervals of the absolute states (",withMathJax("\\(B\\)"),"and",withMathJax("\\(F\\)"),"). The horizontal lines show the reference points (",withMathJax("\\(B_{\\mathrm{MSY}}\\)"), " and ", withMathJax("\\(F_{\\mathrm{MSY}}\\)"),") and the gray shaded area the associated 95% confidence interval.", "</li>")
         text <- paste0(text, "<br>")
+        text <- paste0(text, "<li><b>Table 4</b> includes the estimated deterministic reference points with 95% confidence intervals: ",
+                       "biomass at maximum sustainable yield ", withMathJax("\\(B_{\\mathrm{MSY}}\\)"),
+                       "fishing mortality at maximum sustainable yield ", withMathJax("\\(F_{\\mathrm{MSY}}\\)"),
+                       "and the maximum sustainable yield (MSY).</li><br>")
+        text <- paste0(text, "<li><b>Table 5</b> includes the estimated biomass (B) and fishing mortality (F) states, and stock status ",
+                       "in terms of relative biomass ", withMathJax("\\(B/B_{\\mathrm{MSY}}\\)"),
+                       "and relative fishing mortality ", withMathJax("\\(F/F_{\\mathrm{MSY}}\\)"),".",
+                       "Results are forecasted one year beyond the end of the observed time series, ",
+                       "including predicted catch for the forecast year and the equilibrium biomass ",
+                       "expected if fishing were to continue indefinitely. ",
+                       "During the forecast, fishing mortality is assumed constant at the level estimated ",
+                       "for the final year of the time series.","</li><br>")
+        text <- paste0(text, "</ul>")
         text <- paste0(text, "<br>")
         text <- paste0(text, "<br>")
         text <- paste0(text,"<b>Diagnostics:</b>")
         text <- paste0(text, "<br>")
         text <- paste0(text, "<br>")
         text <- paste0(text, "<ul>")
-        text <- paste0(text, "<li><b>Figure 6</b> shows the observation residuals.</li><br>")
-        text <- paste0(text, "<li><b>Figure 7</b> shows the process residuals.</li><br>")
+        text <- paste0(text, "<li><b>Figure 9</b> shows the prior density distributions and estimated posterior distributions for the activated priors.", "</li>")
+        text <- paste0(text, "<li><b>Figure 10</b> shows the residual diagnostics for the catch time series (first column) and index time series (remaining columns): ",
+                             "Row 1: log-transformed observations; ",
+                             "Row 2: one-step-ahead (OSA) residuals; ",
+                             "Row 3: autocorrelation function (ACF) of residuals; ",
+                             "Row 4: quantile-quantile (Q–Q) plot of residuals.</li><br>")
+        text <- paste0(text, "<li><b>Figure 11</b> shows the residual diagnostics for the predicted biomass process (first column) and fishing mortality process (second column): ",
+                             "Row 1: log-transformed observations; ",
+                             "Row 2: one-step-ahead (OSA) residuals; ",
+                             "Row 3: autocorrelation function (ACF) of residuals; ",
+                             "Row 4: quantile-quantile (Q–Q) plot of residuals.</li><br>")
         text <- paste0(text, "</ul>")
         return (text)
     }

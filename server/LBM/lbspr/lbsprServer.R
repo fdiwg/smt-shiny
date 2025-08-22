@@ -162,7 +162,7 @@ lbsprModule <- function(input, output, session) {
         inputLBSPRData$data <- NULL
         fileLBSPRState$upload <- NULL
         ## lbsprUploadVreResult ?
-        lbsprAcknowledged(FALSE)
+        ## lbsprAcknowledged(FALSE)
     }
 
 

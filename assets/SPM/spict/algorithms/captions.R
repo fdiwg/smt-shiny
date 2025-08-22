@@ -1,11 +1,37 @@
 
 captionSpict.tables <- function(dat, input, format = "datatable", type){
 
+    if(format == "datatable"){
+        f <- withMathJax("\\(F\\)")
+        fmsy <- withMathJax("\\(F_{\\mathrm{MSY}}\\)")
+        ffmsy <- withMathJax("\\(F/F_{\\mathrm{MSY}}\\)")
+        b <- withMathJax("\\(B\\)")
+        bmsy <- withMathJax("\\(B_{\\mathrm{MSY}}\\)")
+        bbmsy <- withMathJax("\\(B/B_{\\mathrm{MSY}}\\)")
+        perc <- "%"
+    }else if(format == "kable"){
+        f <- paste0("\\(F\\)")
+        fmsy <- paste0("\\(F_{MSY}\\)")
+        ffmsy <- paste0("\\(F/F_{MSY}\\)")
+        b <- paste0("\\(B\\)")
+        bmsy <- paste0("\\(B_{MSY}\\)")
+        bbmsy <- paste0("\\(B/B_{MSY}\\)")
+        perc <- "\\%"
+    }else{
+        f <- paste0("F")
+        fmsy <- paste0("Fmsy")
+        ffmsy <- paste0("F/Fmsy")
+        b <- paste0("B")
+        bmsy <- paste0("Bmsy")
+        bbmsy <- paste0("B/Bmsy")
+        perc <- "%"
+    }
+
     switch(type,
            "estimates" = {
                tab.num <- 1
                txt <- paste0(
-                   "Estimated values and 95% confidence intervals for the main model parameters: ",
+                   "Estimated values and 95",perc," confidence intervals for the main model parameters: ",
                    "r = intrinsic growth rate, K = carrying capacity, m = maximum sustainable yield (MSY), ",
                    "n = shape parameter of the production curve, q = catchability, ",
                    "sdb = standard deviation of biomass process errors, ",
@@ -19,18 +45,18 @@ captionSpict.tables <- function(dat, input, format = "datatable", type){
            "refs_s" = {
                tab.num <- 2
                txt <- paste0(
-                   "Estimated stochastic reference points with 95% confidence intervals: ",
-                   "biomass at maximum sustainable yield (", withMathJax("\\(B_{\\mathrm{MSY}}\\)"), "), ",
-                   "fishing mortality at maximum sustainable yield (", withMathJax("\\(F_{\\mathrm{MSY}}\\)"), "), ",
+                   "Estimated stochastic reference points with 95",perc," confidence intervals: ",
+                   "biomass at maximum sustainable yield (", bmsy, "), ",
+                   "fishing mortality at maximum sustainable yield (", fmsy, "), ",
                    "and the maximum sustainable yield (MSY)."
                )
            },
            "refs_d" = {
                tab.num <- 4
                txt <- paste0(
-                   "Estimated deterministic reference points with 95% confidence intervals: ",
-                   "biomass at maximum sustainable yield (", withMathJax("\\(B_{\\mathrm{MSY}}\\)"), "), ",
-                   "fishing mortality at maximum sustainable yield (", withMathJax("\\(F_{\\mathrm{MSY}}\\)"), "), ",
+                   "Estimated deterministic reference points with 95",perc," confidence intervals: ",
+                   "biomass at maximum sustainable yield (", bmsy, "), ",
+                   "fishing mortality at maximum sustainable yield (", fmsy, "), ",
                    "and the maximum sustainable yield (MSY)."
                )
            },
@@ -38,16 +64,16 @@ captionSpict.tables <- function(dat, input, format = "datatable", type){
                tab.num <- 3
                txt <- paste0(
                    "Estimated biomass (B) and fishing mortality (F) at the end of the time series, ",
-                   "together with stock status indicators: relative biomass (", withMathJax("\\(B/B_{\\mathrm{MSY}}\\)"),
-                   ") and relative fishing mortality (", withMathJax("\\(F/F_{\\mathrm{MSY}}\\)"), ")."
+                   "together with stock status indicators: relative biomass (", bbmsy,
+                   ") and relative fishing mortality (", ffmsy, ")."
                )
            },
            "pred" = {
                tab.num <- 5
                txt <- paste0(
                    "Estimated biomass (B) and fishing mortality (F) states, and stock status ",
-                   "in terms of relative biomass (", withMathJax("\\(B/B_{\\mathrm{MSY}}\\)"), ") ",
-                   "and relative fishing mortality (", withMathJax("\\(F/F_{\\mathrm{MSY}}\\)"), "). ",
+                   "in terms of relative biomass (", bbmsy, ") ",
+                   "and relative fishing mortality (", ffmsy, "). ",
                    "Results are forecasted one year beyond the end of the observed time series, ",
                    "including predicted catch for the forecast year and the equilibrium biomass ",
                    "expected if fishing were to continue indefinitely. ",
@@ -66,6 +92,32 @@ captionSpict.tables <- function(dat, input, format = "datatable", type){
 
 
 captionSpict.plots <- function(dat, input, format = "withFig", type){
+
+    if(format == "withFig"){
+        f <- withMathJax("\\(F\\)")
+        fmsy <- withMathJax("\\(F_{\\mathrm{MSY}}\\)")
+        ffmsy <- withMathJax("\\(F/F_{\\mathrm{MSY}}\\)")
+        b <- withMathJax("\\(B\\)")
+        bmsy <- withMathJax("\\(B_{\\mathrm{MSY}}\\)")
+        bbmsy <- withMathJax("\\(B/B_{\\mathrm{MSY}}\\)")
+        perc <- "%"
+    }else if(format == "withFigLatex"){
+        f <- paste0("\\(F\\)")
+        fmsy <- paste0("\\(F_{MSY}\\)")
+        ffmsy <- paste0("\\(F/F_{MSY}\\)")
+        b <- paste0("\\(B\\)")
+        bmsy <- paste0("\\(B_{MSY}\\)")
+        bbmsy <- paste0("\\(B/B_{MSY}\\)")
+        perc <- "\\%"
+    }else{
+        f <- paste0("F")
+        fmsy <- paste0("Fmsy")
+        ffmsy <- paste0("F/Fmsy")
+        b <- paste0("B")
+        bmsy <- paste0("Bmsy")
+        bbmsy <- paste0("B/Bmsy")
+        perc <- "%"
+    }
 
     switch(type,
            "explo1" = {
@@ -86,15 +138,15 @@ captionSpict.plots <- function(dat, input, format = "withFig", type){
            },
            "diag1" = {
                plot.num <- 4
-               txt <- paste0("Advanced spict data plot.")
+               txt <- paste0("Advanced spict data plot: The top row shows the observations where the horizontal dashed line in the catch plot indicates a guess of MSY. This guess comes from a linear regression between the index and the catch divided by the index (middle row, left). This regression is expected to have a negative slope. A similar plot can be made showing catch versus catch/index (middle row, right) to approximately find the optimal effort (or effort proxy). The proportional increase in the index as a function of catch (bottom row, right) should show primarily positive increases in index at low catches and vice versa. Positive increases in index at large catches could indicate model violations.")
            },
            "diag2" = {
                plot.num <- 5
-               txt <- paste0("Histogram of catches and indices.")
+               txt <- paste0("Histogram of all catch and index observations.")
            },
            "sum" = {
                plot.num <- 6
-               txt <- paste0("Estimated relative biomass (", withMathJax("\\(B/B_{\\mathrm{MSY}}\\)"), ", upper left), relative fishing mortality (", withMathJax("\\(F/F_{\\mathrm{MSY}}\\)"), ", upper right), catches (lower left), and stock status in terms of ", withMathJax("\\(B/B_{\\mathrm{MSY}}\\)"), " and ", withMathJax("\\(F/F_{\\mathrm{MSY}}\\)"), " (Kobe plot, lower right). The blue shaded areas in the relative biomass and fishing mortality plot display the 95% confidence intervals. The circles show the index and catch observations, where the colour indicates the in-year timing and different plotting symbols are used for different index time series. The horizontal line in the catch plot shows the maximum sustainable yield (MSY) and the gray shaded area the associated 95% confidence interval. The grayish shaded area in the Kobe plot indicates the 95% confidence interval of the reference points ", withMathJax("\\(B_{\\mathrm{MSY}}\\)")," and ",withMathJax("\\(F_{\\mathrm{MSY}}\\)"),".")
+               txt <- paste0("Estimated relative biomass (", bbmsy, ", upper left), relative fishing mortality (", ffmsy, ", upper right), catches (lower left), and stock status in terms of ", bbmsy, " and ", ffmsy, " (Kobe plot, lower right). The blue shaded areas in the relative biomass and fishing mortality plot display the 95",perc," confidence intervals. The circles show the index and catch observations, where the colour indicates the in-year timing and different plotting symbols are used for different index time series. The horizontal line in the catch plot shows the maximum sustainable yield (MSY) and the gray shaded area the associated 95",perc," confidence interval. The grayish shaded area in the Kobe plot indicates the 95",perc," confidence interval of the reference points ", bmsy," and ", fmsy,".")
            },
            "prod" = {
                plot.num <- 7
@@ -102,7 +154,7 @@ captionSpict.plots <- function(dat, input, format = "withFig", type){
            },
            "abs" = {
                plot.num <- 8
-               txt <- paste0("Estimated absolute (first y axis) and relative (second y axis) biomass (", withMathJax("\\(B\\)"), " and ", withMathJax("\\(B/B_{\\mathrm{MSY}}\\)"), ", left) and fishing mortality (", withMathJax("\\(F\\)"), " and ", withMathJax("\\(F/F_{\\mathrm{MSY}}\\)"), ", right). The blue shaded areas display the 95% confidence intervals of the relative states (",withMathJax("\\(B/B_{\\mathrm{MSY}}\\)")," and ",withMathJax("\\(F/F_{\\mathrm{MSY}}\\)"),"). The dashed lines indicate the 95% confidence intervals of the absolute states (",withMathJax("\\(B\\)"),"and",withMathJax("\\(F\\)"),"). The horizontal linesshows the reference points (",withMathJax("\\(B_{\\mathrm{MSY}}\\)"), " and ", withMathJax("\\(F_{\\mathrm{MSY}}\\)"),") and the gray shaded area the associated 95% confidence interval.")
+               txt <- paste0("Estimated absolute (first y axis) and relative (second y axis) biomass (", b, " and ", bbmsy, ", left) and fishing mortality (", f, " and ", ffmsy, ", right). The blue shaded areas display the 95",perc," confidence intervals of the relative states (",bbmsy," and ",ffmsy,"). The dashed lines indicate the 95",perc," confidence intervals of the absolute states (",b," and ",f,"). The horizontal lines show the reference points (",bmsy, " and ", fmsy,") and the gray shaded area the associated 95",perc," confidence interval.")
            },
            "priors2" = {
                plot.num <- 9

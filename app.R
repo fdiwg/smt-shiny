@@ -199,12 +199,11 @@ ui <- tagList(
           useShinyjs(),
           extendShinyjs(text = jscode, functions =  c("showBox", "removeBox","showBox2", "removeBox2", "disableAllButtons", "enableAllButtons", "showComputing", "hideComputing", "expandBox","collapseBox")),
           introjsUI(),
-          ## add_busy_spinner(spin = "fading-circle", color = "#112446"),
           add_busy_spinner(
               spin = "fading-circle",
               color = "#112446",
-              position = "full-page",  # centers the spinner
-              onstart = FALSE,         # only when busy (not at app load)
+              position = "full-page",
+              onstart = FALSE,
               height = "60px",
               width  = "60px"
           ),
@@ -246,7 +245,7 @@ ui <- tagList(
               tabSeasonalVonBertalannfy("seasonalVonBertalannfyModule"),
               tabNaturalMortality("naturalMortalityModule"),
               tabItem("glossaryTab",htmlOutput("glossary"))
-          )
+)
       )
   ), tags$footer(footer(SMT_VERSION, SMT_DATE), align = "center")
 )

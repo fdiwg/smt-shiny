@@ -246,6 +246,8 @@ output$lbmIntroOut <- renderText({
     linkEA <- "<a href='https://data.d4science.org/shub/E_Snp1NzhlUHlFOWg0M3lUL3lZWU0yMVVTVFY5NDhaYkI1ODY4blFtSi9NYlFiMVAyamxMNGc2QXh0TlpRNmdNdQ==' target='_blank'>click to download</a>"
     linkSE <- "<a href='https://data.d4science.org/shub/E_ZEhvM2ZpSVFZd0ZOSXl5MjlGZC90eC9vOUI1NG1hQ0NEMERtRGVHR2hqbThBZGxBYS9QWG5kc1BaWTluVHNvQw==' target='_blank'>click to download</a>"
     linkOSG <- "<a href='https://data.d4science.org/shub/E_SHJJRUJ5S1lxOGhLOW1zVWpKbUJFQzE1c2wzbnltRlVBUmYrUEphbDRkN1BxQzlYOUtwQWRzZ0JMdnJrSmRhZA==' target='_blank'>click to download</a>"
+    linkAL <- "<a href='https://data.d4science.org/shub/E_SHNLeTNvQklyYVljWlpVRUhaYWhKREUrakd3QisxSGc4T0kvZnI1OEdmVlJLTjRhM1dSajFSWVBXR3VHaG56Mg==' target='_blank'>click to download</a>"
+    linkLO <- "<a href='https://data.d4science.org/shub/E_VWxLOG5rUXBpVEo3bUh0b3NkQUhoZTVUOG1ZVm1aU09PTVNyd3M3U25CdTJvRXl4bmpXcitVQXUyU1ZBbjBXWg==' target='_blank'>click to download</a>"
 
     text <- paste0(text, "<br>")
     text <- paste0(text, "<b> Example data sets </b>")
@@ -674,18 +676,19 @@ output$spmIntroOut <- renderText({
         "<p>Guidance on converting between formats is provided in the tutorial linked from the method pages.</p>",
         "<br>",
         "<b>Example datasets</b>",
-        "<p>Three examples illustrate both formats and a range of life histories:</p>",
+        "<p>Two examples illustrate both formats and different species:</p>",
         "<ul>",
-        "<li>Short-lived species (long format): European anchovy (link)</li>",
-        "<li>Medium-lived species (wide format): Spangled emperor (link)</li>",
-        "<li>Long-lived species (wide format): Orange‑spotted grouper (link)</li>",
+        "<li>South Atlantic albacore (wide format): (",linkAL,")</li>",
+        "<li>New Zealand rock lobster (long format): (",linkLO,")</li>",
         "</ul>",
+        "<p>Both data sets are taken from and are described in more detail in </p>",
+        "<a href='https://cdnsciencepub.com/doi/10.1139/f93-284' target='_blank'>Polacheck et al. (1993).</a>",
         "<br>",
         "<b>Import tips</b>",
         "<ul>",
         "<li>Save your dataset as <code>.csv</code>.</li>",
         "<li>Common field separators are comma <code>,</code>, semicolon <code>;</code>, or tab, but any separator can be used and specified in the app.</li>",
-        "<li>Use a dot <code>.</code> as the decimal separator (or set the decimal option accordingly).</li>",
+        "<li>Most methods on the SMT now automatically detect the decimal separator and also allow it to be specified. The default decimal separator might differ depending on the language settings of your spreadsheet manipulation program (e.g. Excel).</li>",
         "</ul>"
     ), collapse = "")
 
@@ -764,7 +767,7 @@ output$spictIntroOut <- renderText({
                    "<h4>Run time</h4>",
                    "<p>Run time depends on the length of the time series, the number of abundance indices, and the Euler time-step setting. ",
                    "These influences are explained in the corresponding information buttons. ",
-                   "For the example datasets, run time is typically <b>under 1 minute</b>.</p><br>"
+                   "For the example datasets, run time is typically <b>between 1-5 minutes</b>.</p><br>"
                    )
 
     ## References

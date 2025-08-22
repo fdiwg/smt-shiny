@@ -127,7 +127,7 @@ plotSpict.data <- function(x, do.plot=NULL,
                          cex = 0.6, add = TRUE, add.legend = FALSE)
         box(lwd = 1.5)
     }
-    txt.stamp(stamp, do.flag = TRUE)
+    spict:::txt.stamp(stamp, do.flag = TRUE)
 }
 
 
@@ -214,7 +214,7 @@ plotSpict.data.unc <- function(x, do.plot=NULL,
         }
         box(lwd = 1.5)
     }
-    txt.stamp(stamp, do.flag = TRUE)
+    spict:::txt.stamp(stamp, do.flag = TRUE)
 }
 
 
@@ -335,16 +335,16 @@ plotSpict.priors <- function(x, do.plot=NULL,
                 }
                 box(lwd=1.5)
                 if (isRep && rep$opt$convergence != 0){
-                    warning.stamp()
+                    spict:::warning.stamp()
                 }
                 counter <- counter + 1
                 if(!is.null(do.plot) && counter >= do.plot) {
-                    txt.stamp(stamp)
+                    spict:::txt.stamp(stamp)
                     return()
                 }
             }
         }
-        txt.stamp(stamp)
+        spict:::txt.stamp(stamp)
     }
 }
 

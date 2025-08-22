@@ -276,7 +276,7 @@ elefanGaModule <- function(input, output, session) {
         inputElefanGaData$data <- NULL
         fileGaState$upload <- NULL
         ## elefanGaUploadVreResult ?
-        elefanAcknowledged(FALSE)
+        ## elefanAcknowledged(FALSE)
     }
 
 

@@ -180,7 +180,7 @@ createLBSPRPDFReport <- function(file, lbspr_dat, input, output) {
 createSpictPDFReport <- function(file, spict_dat, input, output) {
     print(paste0("Input file", input$file))
     tempReport <- file.path(tempdir(), "spict.Rmd")
-    file.copy("assets/spict/markdown/spict.Rmd", tempReport, overwrite = TRUE)
+    file.copy("assets/SPM/spict/markdown/spict.Rmd", tempReport, overwrite = TRUE)
     return (rmarkdown::render(tempReport, output_file = file))
 }
 

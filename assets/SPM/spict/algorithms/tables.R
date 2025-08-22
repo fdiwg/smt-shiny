@@ -81,8 +81,8 @@ tableSpict.estimates <- function(dat, input, format = "datatable"){
         labs <- replace(labs, ind,
                         c("Parameter",
                           "Est",
-                          "lower CI\\textsubscript{95%}",
-                          "upper CI\\textsubscript{95%}")[ind2])
+                          "lower CI\\textsubscript{95\\%}",
+                          "upper CI\\textsubscript{95\\%}")[ind2])
     }
 
     ## Output
@@ -99,7 +99,7 @@ tableSpict.estimates <- function(dat, input, format = "datatable"){
                             caption = capti) %>%
                kable_styling(font_size = 11,
                              latex_options = "HOLD_position") %>%
-               column_spec(1:ncol(tmp), width = "1.2cm"))
+               column_spec(1:ncol(tmp), width = "2.3cm"))
     } else if(format == "datatable") {
         return(DT::datatable(tmp, colnames = labs,
                              escape = FALSE, rownames = FALSE,
@@ -136,8 +136,8 @@ tableSpict.states <- function(dat, input, format = "datatable"){
         labs <- replace(labs, ind,
                         c("Parameter",
                           "Est",
-                          "lower CI\\textsubscript{95%}",
-                          "upper CI\\textsubscript{95%}")[ind2])
+                          "lower CI\\textsubscript{95\\%}",
+                          "upper CI\\textsubscript{95\\%}")[ind2])
     }
 
     pars <- as.character(tmp[,1])
@@ -168,7 +168,7 @@ tableSpict.states <- function(dat, input, format = "datatable"){
                             caption = capti) %>%
                kable_styling(font_size = 11,
                              latex_options = "HOLD_position") %>%
-               column_spec(1:ncol(tmp), width = "1.2cm"))
+               column_spec(1:ncol(tmp), width = "2.3cm"))
     } else if(format == "datatable") {
         return(DT::datatable(tmp, colnames = labs,
                              escape = FALSE, rownames = FALSE,
@@ -204,8 +204,8 @@ tableSpict.refs_s <- function(dat, input, format = "datatable"){
         labs <- replace(labs, ind,
                         c("Parameter",
                           "Est",
-                          "lower CI\\textsubscript{95%}",
-                          "upper CI\\textsubscript{95%}")[ind2])
+                          "lower CI\\textsubscript{95\\%}",
+                          "upper CI\\textsubscript{95\\%}")[ind2])
     }
     pars <- as.character(tmp[,1])
     if (format == "datatable") {
@@ -231,7 +231,7 @@ tableSpict.refs_s <- function(dat, input, format = "datatable"){
                             caption = capti) %>%
                kable_styling(font_size = 11,
                              latex_options = "HOLD_position") %>%
-               column_spec(1:ncol(tmp), width = "1.2cm"))
+               column_spec(1:ncol(tmp), width = "2.3cm"))
     } else if(format == "datatable") {
         return(DT::datatable(tmp, colnames = labs,
                              escape = FALSE, rownames = FALSE,
@@ -267,8 +267,8 @@ tableSpict.refs_d <- function(dat, input, format = "datatable"){
         labs <- replace(labs, ind,
                         c("Parameter",
                           "Est",
-                          "lower CI\\textsubscript{95%}",
-                          "upper CI\\textsubscript{95%}")[ind2])
+                          "lower CI\\textsubscript{95\\%}",
+                          "upper CI\\textsubscript{95\\%}")[ind2])
     }
     pars <- as.character(tmp[,1])
     if (format == "datatable") {
@@ -294,7 +294,7 @@ tableSpict.refs_d <- function(dat, input, format = "datatable"){
                             caption = capti) %>%
                kable_styling(font_size = 11,
                              latex_options = "HOLD_position") %>%
-               column_spec(1:ncol(tmp), width = "1.2cm"))
+               column_spec(1:ncol(tmp), width = "2.3cm"))
     } else if(format == "datatable") {
         return(DT::datatable(tmp, colnames = labs,
                              escape = FALSE, rownames = FALSE,
@@ -332,8 +332,8 @@ tableSpict.pred <- function(dat, input, format = "datatable"){
         labs <- replace(labs, ind,
                         c("Parameter",
                           "Est",
-                          "lower CI\\textsubscript{95%}",
-                          "upper CI\\textsubscript{95%}")[ind2])
+                          "lower CI\\textsubscript{95\\%}",
+                          "upper CI\\textsubscript{95\\%}")[ind2])
     }
     pars <- as.character(tmp[,1])
     if (format == "datatable") {
@@ -365,7 +365,7 @@ tableSpict.pred <- function(dat, input, format = "datatable"){
                             caption = capti) %>%
                kable_styling(font_size = 11,
                              latex_options = "HOLD_position") %>%
-               column_spec(1:ncol(tmp), width = "1.2cm"))
+               column_spec(1:ncol(tmp), width = "2.3cm"))
     } else if(format == "datatable") {
         return(DT::datatable(tmp, colnames = labs,
                              escape = FALSE, rownames = FALSE,

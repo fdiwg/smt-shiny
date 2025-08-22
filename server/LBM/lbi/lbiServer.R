@@ -144,7 +144,7 @@ lbiModule <- function(input, output, session) {
         inputLBIData$data <- NULL
         fileLBIState$upload <- NULL
         ## lbiUploadVreResult ?
-        lbiAcknowledged(FALSE)
+        ## lbiAcknowledged(FALSE)
     }
 
 

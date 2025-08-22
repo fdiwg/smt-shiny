@@ -264,7 +264,7 @@ spictModule <- function(input, output, session) {
         inputSpictData$data <- NULL
         fileSpictState$upload <- NULL
         ## spictUploadVreResult ?
-        spictAcknowledged(FALSE)
+        ## spictAcknowledged(FALSE)
 
         ## resetting UIs
         shinyjs::reset("file")
@@ -286,56 +286,71 @@ spictModule <- function(input, output, session) {
 
     run_spict_server <- function(check = FALSE) {
 
+        show_single_modal <- function(...) {
+            removeModal()
+            showModal(modalDialog(...))
+        }
+
         withCallingHandlers(
             res <- tryCatch({
 
                 inp <- spict_dat$dataExplo$inp
 
-                ## Estimation
                 flog.info("Starting spict computation / checking")
-                shinybusy::hide_spinner()
-                shinybusy::show_modal_spinner(
-                               text = ifelse(check, "Checking data and settings",
-                                             "Running SPiCT"),
-                               spin = "circle",
-                               color = "#112446"
+                if (check) inp$dteuler <- 1/2
+                captured_warnings <- character(0)
+                res <- withCallingHandlers(
+                    run_spict(inp),
+                    warning = function(w) {
+                        captured_warnings <<- c(captured_warnings, conditionMessage(w))
+                        invokeRestart("muffleWarning")
+                    }
                 )
-                ## speed-up for check
-                if(check) inp$dteuler <- 1/2
-
-                ## run spict
-                res <- run_spict(inp)
-                remove_modal_spinner()
-                shinybusy::show_spinner()
 
                 if (isFALSE(res$checks$convergence)) {
-                    showModal(modalDialog(
+                    wtxt <- ""
+                    if (length(captured_warnings)) {
+                        uw <- unique(captured_warnings)
+                        if (length(uw) > 6) uw <- c(uw[1:5], "... (more warnings truncated)")
+                        wtxt <- paste0(
+                            "<br><br>Warnings captured during fitting:<br>• ",
+                            paste(uw, collapse = "<br>• ")
+                        )
+                    }
+                    show_single_modal(
                         title = "Warning",
-                        "The model did not converge and one-step-ahead residuals could not be estimated! Please interpret the results with caution and try to tune the model. Guidelines for model tuning can be found in the good practice paper by Kokkalis et al. (2024).",
+                        HTML(paste0(
+                            "The model did not converge and one-step-ahead residuals could not be estimated! ",
+                            "Please interpret the results with caution and try to tune the model. ",
+                            "Guidelines for model tuning can be found in the good practice paper by Kokkalis et al. (2024).",
+                            wtxt
+                        )),
                         easyClose = TRUE,
-                        footer = NULL
-                    ))
+                        footer = modalButton("Close")
+                    )
                 } else if (isFALSE(res$checks$sd_not_na)) {
-                    showModal(modalDialog(
+                    show_single_modal(
                         title = "Warning",
                         "Some of the variance parameters could not be estimated (NaN). This usually indicates problems with model convergence. Please interpret the results with caution and try to tune the model so that all parameters and their uncertainties can be estimated. Guidelines for model tuning can be found in the good practice paper by Kokkalis et al. (2024).",
                         easyClose = TRUE,
-                        footer = NULL
-                    ))
+                        footer = modalButton("Close")
+                    )
                 } else if (isFALSE(res$checks$cv_m)) {
-                    showModal(modalDialog(
+                    show_single_modal(
                         title = "Warning",
-                        "The coefficient of variation of the parameter m is larger than 10. This large uncertainty for this key parameter might indicate to a lack of contract in the data. Please interpret the results with caution. Guidelines for model tuning can be found in the good practice paper by Kokkalis et al. (2024).",
+                        "The coefficient of variation of the parameter m is larger than 10. This large uncertainty for this key parameter might indicate a lack of contrast in the data. Please interpret the results with caution. Guidelines for model tuning can be found in the good practice paper by Kokkalis et al. (2024).",
                         easyClose = TRUE,
-                        footer = NULL
-                    ))
+                        footer = modalButton("Close")
+                    )
                 } else if (isFALSE(res$checks$cv_k)) {
-                    showModal(modalDialog(
+                    show_single_modal(
                         title = "Warning",
-                        "The coefficient of variation of the parameter K is larger than 10. This large uncertainty for this key parameter might indicate to a lack of contract in the data. Please interpret the results with caution. Guidelines for model tuning can be found in the good practice paper by Kokkalis et al. (2024).",
+                        "The coefficient of variation of the parameter K is larger than 10. This large uncertainty for this key parameter might indicate a lack of contrast in the data. Please interpret the results with caution. Guidelines for model tuning can be found in the good practice paper by Kokkalis et al. (2024).",
                         easyClose = TRUE,
-                        footer = NULL
-                    ))
+                        footer = modalButton("Close")
+                    )
+                } else if (length(captured_warnings)) {
+                    shiny::showNotification("Model fit completed with warnings; check logs.", type = "warning", duration = 10)
                 }
 
                 js$hideComputing(); js$enableAllButtons()
@@ -345,15 +360,13 @@ spictModule <- function(input, output, session) {
                 if (!is.null(session$userData$sessionMode()) &&
                     session$userData$sessionMode() == "GCUBE") {
                     flog.info("Uploading spict report to i-Marine workspace")
-                    reportFileName <- paste(tempdir(),"/","ElefanGA_report_",
+                    reportFileName <- paste(tempdir(),"/","spict_report_",
                                             format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",
                                             sep="")
-                                        #createElefanGaPDFReport(reportFileName,spict_dat,input)
                     createSpictPDFReport(reportFileName, spict_dat, input, output)
                     spictUploadVreResult$res <- FALSE
 
                     basePath <- paste0("/Home/",session$userData$sessionUsername(),"/Workspace/")
-
                     SH_MANAGER <- session$userData$storagehubManager()
 
                     tryCatch({
@@ -362,21 +375,22 @@ spictModule <- function(input, output, session) {
                     }, error = function(err) {
                         flog.error("Error uploading the spict report to the i-Marine Workspace: %s", err)
                         spictUploadVreResult$res <- FALSE
-                    }, finally = {})
+                    })
                 }
-                return(TRUE)
+
+                TRUE
 
             }, error = function(cond) {
-                flog.error("Error in SPiCT: %s ",cond)
+                flog.error("Error in SPiCT: %s ", cond)
+                removeModal()
                 showModal(modalDialog(
                     title = "Error",
                     cond$message,
                     easyClose = TRUE,
-                    footer = NULL
+                    footer = modalButton("Close")
                 ))
-                return(FALSE)
-            },
-            finally = {
+                FALSE
+            }, finally = {
                 js$hideComputing()
                 js$enableAllButtons()
                 if (!is.null(spict_dat$results)) {
@@ -385,12 +399,6 @@ spictModule <- function(input, output, session) {
                 }
             }),
             warning = function(w) {
-                showModal(modalDialog(
-                    title = "Warning",
-                    w$message,
-                    easyClose = TRUE,
-                    footer = NULL
-                ))
                 invokeRestart("muffleWarning")
             }
         )
@@ -398,8 +406,6 @@ spictModule <- function(input, output, session) {
 
 
     check_spict_server <- function() {
-
-        Sys.sleep(3)
 
         is_bad <- function(x) {
             is.null(x) || (is.character(x) && (identical(x, "") || identical(toupper(x), "NA"))) || (length(x) == 1 && is.na(x))
@@ -874,7 +880,7 @@ spictModule <- function(input, output, session) {
         spict_dat$colNames <- NULL
         spict_dat$colNamesORI <- NULL
         spict_dat$colNamesIndex <- NULL
-        spictAcknowledged(FALSE)
+        ## spictAcknowledged(FALSE)
         shinyjs::reset("timerange")
         shinyjs::disable("createSpictReport")
         shinyjs::disable("createSpictzip")
@@ -966,12 +972,12 @@ spictModule <- function(input, output, session) {
             }),
             warning = function(w) {
                 showModal(modalDialog(
-                    title = "Warning",
+                    title = "Information",
                     w$message,
                     easyClose = TRUE,
                     footer = NULL
                 ))
-                invokeRestart("muffleWarning")  ## prevent duplicate console warning
+                invokeRestart("muffleWarning")
             }
         )
     })
@@ -1382,15 +1388,19 @@ size = "l"
             list(element = paste0("#", ns("spictCSVdec"),
                                   " + .selectize-control"),
                  intro = "Similarly, by default, the app will try to recognize the decimal separator, but you can also specify it here by either choosing from the list or by pressing backspace and enter any separator."),
-            list(element = paste0("#", ns("n_indices")),
-                 intro = "TODO"),
+            list(element = paste0("#", ns("guess_cols")),
+                 intro = "If you tick this checkbox, the SMT tool will try to assign the columns (or variables in the long data format) to the input variables automatically. This only works if the column (or variable) names are the same as in the example data files: timeC, obsC, timeI and obsI (or timeI1, timeI2, and obsI1, and obsI2, for multiple indices)."),
             list(element = paste0("#", ns("timeC_lab"),
                                   " + .selectize-control"),
-                 intro = "TODO"),
-            list(element = paste0("#", ns("obsC_lab"),
+                 intro = "If the autmatic assignment does not work or if manual assignment is preferred, these input fields allow to select the columns (or variables for the long data format) for the specific input time series from a drop-down list.<br><br> This field asks you for example to select the column that contains the information about the times of the catch observations."),
+            list(element = paste0("#", ns("stdevC_lab"),
                                   " + .selectize-control"),
-                 intro = "TODO"),
-            ## TODO other fields
+                 intro = "If information about the relative uncertainty scaling of the catch observations is available and included in the input data, the respective column (or variable) can be selected here.<br><br> If for example the uncertainty of the catches were likely more uncertain before a specific sampling program, this information could be provided in this variable.<br><br> For an example, see column 'stdevfacC' in the albacore example data set."),
+            list(element = paste0("#", ns("obsI_lab"),
+                                  " + .selectize-control"),
+                 intro = "This field asks you to select the column for the index observations.<br><br> Note, that by default only one index can be selected, but another settings allows you to provide multiple indices."),
+            list(element = paste0("#", ns("n_indices")),
+                 intro = "The number of indices can be changed here."),
             list(element = paste0("#", ns("box_settings")),
                  intro = "After you chose your data set and it was uploaded successfully (no error messages), you can explore your data and adjust settings in this box."),
             list(element = "#settings_spict ul.nav.nav-tabs",
@@ -1412,7 +1422,7 @@ size = "l"
         steps <- append(steps,
                         list(
                             list(element = paste0("#", ns("tab2")),
-                                 intro = "TODO"),
+                                 intro = "The second tab contains information about priors and allows you to change default priors and add additional priors."),
                             list(element = paste0("#", ns("tab3")),
                                  intro = "The last tab contains summary statistics and diagnostics of the uploaded data."),
                             list(element = paste0("#", ns("check_spict")),
@@ -1477,53 +1487,86 @@ size = "l"
 
         } else {
 
-            steps <- append(steps,
-                            list(
-                                list(element = "#results_spict ul.nav.nav-tabs",
-                                     intro = "Note that there are multiple tabs that contain different results and this tour takes you to the selected tab. If you want information about plots and tables in another tab, please select that tab and restart this tour.")))
-
             current_tab <- input$results
 
             if (!is.null(current_tab) && current_tab == "res1") {
                 steps <- append(steps,
-                                list(
-                                    list(element = paste0("#", ns("plot_sum")),
-                                         intro = "TODO"),
-                                    list(element = paste0("#", ns("table_est")),
-                                         intro = "TODO"),
-                                    list(element = paste0("#", ns("table_refs_s")),
-                                         intro = "TODO"),
-                                    list(element = paste0("#", ns("table_states")),
-                                         intro = "TODO"),
-                                    list(element = paste0("#", ns("plot_prod")),
-                                         intro = "TODO")
-                                ))
+                                list(list(element = paste0("#", ns("plot_sum")),
+                                          intro = paste0("This figure shows an overview of the main assessment results across four panels: time series of estimated ", withMathJax("\\(B/B_{\\mathrm{MSY}}\\)"), " and ", withMathJax("\\(F/F_{\\mathrm{MSY}}\\)")," with 95% confidence intervals (blue), including relative abundance observations (colour indicates in-year timing; symbols distinguish index series), estimated and observed catches with the MSY reference line and its 95% confidence interval (grey), and a Kobe plot summarizing status with uncertainty around ", withMathJax("\\(B_{\\mathrm{MSY}}\\)")," and ", withMathJax("\\(F_{\\mathrm{MSY}}\\)"),".")),
+                                     list(element = paste0("#", ns("table_est")),
+                                          intro = paste("This table includes the estimated parameter values with 95% confidence intervals. Key parameters include the intrinsic growth rate (r), carrying capacity (K), maximum sustainable yield (MSY, m), and the shape parameter of the production curve (n). Additional parameters are catchability (q), process error standard deviations for biomass (sdb) and fishing mortality (sdf), and observation error standard deviations for indices (sdi) and catches (sdc). Hyper-parameters α (sdb/sdi) and β (sdf/sdc) are also reported. When multiple indices are used, separate q and sdi estimates are provided.")),
+                                     list(element = paste0("#", ns("table_refs_s")),
+                                          intro = paste("includes the estimated stochastic reference ",
+                                                        "points with 95% confidence intervals: ",
+                                                        "biomass at maximum sustainable yield ",
+                                                        withMathJax("\\(B_{\\mathrm{MSY}}\\)"),
+                                                        "fishing mortality at maximum sustainable yield ",
+                                                        withMathJax("\\(F_{\\mathrm{MSY}}\\)"),
+                                                        "and the maximum sustainable yield (MSY).")),
+                                     list(element = paste0("#", ns("table_states")),
+                                          intro = paste("This table includes the estimated biomass (B) and ",
+                                                        "fishing mortality (F) at the end of the time series, ",
+                                                        "together with stock status indicators: ",
+                                                        "relative biomass ",
+                                                        withMathJax("\\(B/B_{\\mathrm{MSY}}\\)"),
+                                                        "and relative fishing mortality ",
+                                                        withMathJax("\\(F/F_{\\mathrm{MSY}}\\)"),".")),
+                                     list(element = paste0("#", ns("plot_prod")),
+                                          intro = paste("This figure shows the estimated production curve showing the theoretical surplus production (y axis) as a function of biomass relative to carrying capacity (B/K, x axis). The vertical dotted line indicates the the relative biomass where surplus production is maximized (MSY). The observed annual surplus production is plotted as blue circles conected by a line."))))
             } else if (!is.null(current_tab) && current_tab == "res2") {
                 steps <- append(steps,
                                 list(
                                     list(element = paste0("#", ns("plot_abs")),
-                                         intro = "TODO"),
+                                         intro = paste0("This figure estimated absolute (first y axis) and relative (second y axis) biomass (", withMathJax("\\(B\\)"), " and ", withMathJax("\\(B/B_{\\mathrm{MSY}}\\)"), ", left) and fishing mortality (", withMathJax("\\(F\\)"), " and ", withMathJax("\\(F/F_{\\mathrm{MSY}}\\)"), ", right). The blue shaded areas display the 95% confidence intervals of the relative states (",withMathJax("\\(B/B_{\\mathrm{MSY}}\\)")," and ",withMathJax("\\(F/F_{\\mathrm{MSY}}\\)"),"). The dashed lines indicate the 95% confidence intervals of the absolute states (",withMathJax("\\(B\\)"),"and",withMathJax("\\(F\\)"),"). The horizontal lines show the reference points (",withMathJax("\\(B_{\\mathrm{MSY}}\\)"), " and ", withMathJax("\\(F_{\\mathrm{MSY}}\\)"),") and the gray shaded area the associated 95% confidence interval.")),
                                     list(element = paste0("#", ns("table_refs_d")),
-                                         intro = "TODO"),
+                                         intro = paste0("This table includes the estimated ",
+                                                        " deterministic reference points with ",
+                                                        " 95% confidence intervals: ",
+                                                        "biomass at maximum sustainable yield ",
+                                                        withMathJax("\\(B_{\\mathrm{MSY}}\\)"),
+                                                        "fishing mortality at maximum sustainable yield ",
+                                                        withMathJax("\\(F_{\\mathrm{MSY}}\\)"),
+                                                        "and the maximum sustainable yield (MSY).")),
                                     list(element = paste0("#", ns("table_pred")),
-                                         intro = "TODO"),
-                                    list(element = paste0("#", ns("plot_priors2_ui")),
-                                         intro = "TODO")
-                                ))
-            } else if (!is.null(current_tab) && current_tab == "res3") {
+                                         intro = paste0("This table includes the estimated biomass (B) and fishing mortality (F) states, and stock status ",
+                       "in terms of relative biomass ", withMathJax("\\(B/B_{\\mathrm{MSY}}\\)"),
+                       "and relative fishing mortality ", withMathJax("\\(F/F_{\\mathrm{MSY}}\\)"),".",
+                       "Results are forecasted one year beyond the end of the observed time series, ",
+                       "including predicted catch for the forecast year and the equilibrium biomass ",
+                       "expected if fishing were to continue indefinitely. ",
+                       "During the forecast, fishing mortality is assumed constant at the level estimated ",
+                       "for the final year of the time series."))
+                       ))
+                } else if (!is.null(current_tab) && current_tab == "res3") {
                 steps <- append(steps,
                                 list(
+                                    list(element = paste0("#", ns("plot_priors2_ui")),
+                                         intro = paste0("This figure shows the prior density distributions and estimated posterior distributions for the activated priors.")),
                                     list(element = paste0("#", ns("plot_resid1")),
-                                         intro = "TODO"),
+                                         intro = paste0("This figure shows the residual diagnostics for the catch time series (first column) and index time series (remaining columns): ",
+                                                        "Row 1: log-transformed observations; ",
+                                                        "Row 2: one-step-ahead (OSA) residuals; ",
+                                                        "Row 3: autocorrelation function (ACF) of residuals; ",
+                                                        "Row 4: quantile-quantile (Q–Q) plot of residuals.")),
                                     list(element = paste0("#", ns("plot_resid2")),
-                                         intro = "TODO")))
-            }
+                                         intro = paste0("This figure shows the residual diagnostics for the predicted biomass process (first column) and fishing mortality process (second column): ",
+                                                        "Row 1: log-transformed observations; ",
+                                                        "Row 2: one-step-ahead (OSA) residuals; ",
+                                                        "Row 3: autocorrelation function (ACF) of residuals; ",
+                                                        "Row 4: quantile-quantile (Q–Q) plot of residuals."))))
+                }
+
+            steps <- append(steps,
+                            list(
+                                list(element = "#results_spict ul.nav.nav-tabs",
+                                     intro = "This concludes the results tour for this tab.<br><br>Note that there are multiple tabs that contain different results and the tour only takes you through the open tab. So, if you want information about plots and tables in another tab, please select that tab and restart this tour.")))
+
 
         }
 
-        later::later(function() {
-            introjs(session, options = list(steps = steps))
-        }, delay = 0.5)
+                            later::later(function() {
+                                introjs(session, options = list(steps = steps))
+                            }, delay = 0.5)
     }, ignoreInit = TRUE)
 
 
@@ -1765,6 +1808,10 @@ size = "l"
         textSpict.diag1(spict_dat, input)
     })
 
+    output$text_diag_res <- renderUI({
+        req(spict_dat$results)
+        textSpict.diag_res(spict_dat, input)
+    })
 
     output$text_sum <- renderUI({
         req(spict_dat$results)

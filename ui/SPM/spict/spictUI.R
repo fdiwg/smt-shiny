@@ -604,9 +604,7 @@ tabSPICT <- function(id) {
 
                                 fluidRow(
                                     column(3,
-
                                            uiOutput(ns("text_diag1")),
-
                                            br()
                                            ),
 
@@ -796,20 +794,7 @@ tabSPICT <- function(id) {
                                                  plotOutput(ns("plot_abs"), width = "100%",
                                                             height = "500px"),
                                                  div(style = "margin-top: 10px;", htmlOutput(ns("title_abs")))
-                                             ),
-                                        br(),
-                                        br(),
-                                        fluidRow(
-                                            column(1),
-                                            column(10,
-                                                   uiOutput(ns("plot_priors2_ui")),
-                                                   div(
-                                                       style = "margin-top: 15px;",
-                                                       htmlOutput(ns("title_priors2"))
-                                                   )
-                                                   ),
-                                            column(1)
-                                        )
+                                             )
                                     ),
                                     column(
                                         5,
@@ -838,6 +823,21 @@ tabSPICT <- function(id) {
                                             "3. Diagnostics"),
                                 value = "res3",
 
+                                fluidRow(
+                                    column(4,
+                                           br(),
+                                           uiOutput(ns("text_diag_res")),
+                                           ),
+                                    column(8,
+                                           uiOutput(ns("plot_priors2_ui")),
+                                           div(
+                                               style = "margin-top: 15px;",
+                                               htmlOutput(ns("title_priors2"))
+                                           )
+                                           )
+                                ),
+                                br(),
+                                br(),
                                 fluidRow(
                                     column(
                                         6,

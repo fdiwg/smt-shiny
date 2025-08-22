@@ -96,3 +96,59 @@ textSpict.sum <- function(dat, input){
 
     HTML(paste(res, collapse = "<br>"))
 }
+
+
+textSpict.diag_res <- function(dat, input){
+
+    rep <- dat$results
+    ndigits <- 7
+
+    res <- capture.output({
+        cat(paste("Convergence: ", rep$opt$convergence, "\t  MSG: ",
+                  rep$opt$message, "\n", sep = ""))
+
+        if (rep$opt$convergence > 0) {
+            cat("WARNING: Model did not obtain proper convergence! Estimates and uncertainties are most likely invalid and cannot be trusted.\n")
+        }
+
+        if (rep$opt$convergence > 0 | rep$inp$optim.method == "SANN") {
+            grad <- rep$obj$gr()
+            names(grad) <- names(rep$par.fixed)
+            cat("Gradient at current parameter vector\t")
+            cat("", paste(capture.output(grad), " \n"))
+        }
+
+        if (rep$opt$convergence > 0) {
+            txtobj <- "Objective function: "
+        }else {
+            txtobj <- "Objective function at optimum: "
+        }
+        cat(paste0(txtobj, round(rep$obj$fn(), ndigits), "\n"))
+
+
+        if ("sderr" %in% names(rep))
+            cat("WARNING: Could not calculate standard deviations. The optimum found may be invalid. Proceed with caution.\n")
+
+        ## cat(paste0("Euler time step (years):  1/", round(1/rep$inp$dteuler,
+        ##                                                  2), " or ", round(rep$inp$dteuler, 5), "\n"))
+
+        ## str <- paste0("Nobs C: ", rep$inp$nobsC, "\t")
+        ## if (rep$inp$nindex > 0) {
+        ##     str <- paste0(str, paste0(paste0(",  Nobs I", 1:rep$inp$nindex),
+        ##                               ": ", rep$inp$nobsI, collapse = ""),
+        ##                   "\t")
+        ## }
+        ## if (rep$inp$nobsE > 0)
+        ##     str <- paste0(str, paste0(",  Nobs E: ", rep$inp$nobsE))
+        ## cat(paste0(str, "\n"))
+
+        ## if (rep$inp$catchunit != "") {
+        ##     cat(paste("Catch/biomass unit:", rep$inp$catchunit, "\n"))
+        ## }
+
+        resout <- sumspict.fixedpars(rep, ndigits = ndigits)
+        resout <- sumspict.priors(rep, ndigits)
+    })
+
+    HTML(paste(res, collapse = "<br>"))
+}
