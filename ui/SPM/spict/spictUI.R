@@ -203,7 +203,7 @@ tabSPICT <- function(id) {
                                                 max = 2025,
                                                 value = c(1900, 2025),
                                                 step = 1,
-                                                dragRange = TRUE,
+                                                dragRange = FALSE,
                                                 sep = ""),
                                     br(),
                                     fluidRow(

@@ -354,7 +354,7 @@ plotSpict.sum <- function(dat, input){
 }
 
 plotSpict.abs <- function(dat, input){
-    par(mfrow = c(1,2))
+    par(mfrow = c(1,2), mar = c(5,5,4,4))
     spict::plotspict.biomass(dat$results)
     spict::plotspict.f(dat$results, qlegend = FALSE)
 }

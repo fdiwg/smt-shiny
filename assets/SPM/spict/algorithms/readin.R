@@ -399,7 +399,10 @@ dat2inp <- function(dat){
         inp$stdevfacE <- as.numeric(dat$stdevfacE)
     }
 
-    inp <- try(check.inp(inp))
+    out <- capture.output({
+        inp <- check.inp(inp)
+    })
+    if (length(out) > 0) warning(paste(out, collapse = "\n"), call. = FALSE)
 
     return(inp)
 }

@@ -105,7 +105,7 @@ source("server/support/SeasonalVonBertalannfyServer.R")
 source("server/support/NaturalMortalityServer.R")
 ## Functions
 source("assets/commons/commons.R")
-source("~/Documents/consulting/FAO/2025/glossary/glossary.R") ## TODO: add to assets/commons/ or somewhere else
+source("assets/commons/glossary.R")
 source("assets/commons/labels.R")
 ## LBM
 source("assets/LBM/commons.R")
@@ -164,65 +164,91 @@ sidebar <- dashboardSidebar(uiOutput("sidebar"))
 ui <- tagList(
     use_waiter(),
     waiter_show_on_load(app_load_spinner("Initializing R session. This process may take a while...")),
-    dashboardPage(
-        dashboardHeader(title = 'Stock Monitoring Tool'),
-        sidebar,
-        dashboardBody(
-            tags$div(
-                     tags$div(
-                              tags$span("Please wait while your request is being processed. This may take some time..."),
-                              class="loadingCustomInner"
-                          ),
-                     tags$div(
-                              tags$img(src = 'loading-circle.gif', height="20px"),
-                              class="loadingCustomInner"
-                          ),
-                     class="loadingCustom"),
-            useShinyjs(),
-            extendShinyjs(text = jscode, functions =  c("showBox", "removeBox","showBox2", "removeBox2", "disableAllButtons", "enableAllButtons", "showComputing", "hideComputing", "expandBox","collapseBox")),
-            introjsUI(),
-            add_busy_spinner(spin = "fading-circle", color = "#112446"),
-            tags$head(
-                     tags$link(rel = "stylesheet", type = "text/css", href = "custom.css")
-                 ),
-            tags$head(tags$script(src="https://cdnjs.cloudflare.com/ajax/libs/eqcss/1.7.0/EQCSS.min.js")),
-            tags$head(tags$script(type="text/eqcss", src="styles.eqcss")),
-            tags$head(tags$script(type="text/javascript", src="custom.js")),
+    tags$head(
+             tags$style(HTML("
+    /* Make the full-page overlay transparent and on top */
+    .shinybusy-overlay {
+      background: transparent !important;
+      z-index: 9999 !important;
+      /* keep the page clickable; remove this line if you want to block UI */
+      pointer-events: none !important;
+    }
+    /* Center the spinner inside the overlay (robust selector) */
+    .shinybusy-overlay > * {
+      position: fixed !important;
+      top: 50% !important;
+      left: 50% !important;
+      transform: translate(-50%, -50%) !important;
+    }
+  "))
+  ),
+  dashboardPage(
+      dashboardHeader(title = 'Stock Monitoring Tool'),
+      sidebar,
+      dashboardBody(
+          tags$div(
+                   tags$div(
+                            tags$span("Please wait while your request is being processed. This may take some time..."),
+                            class="loadingCustomInner"
+                        ),
+                   tags$div(
+                            tags$img(src = 'loading-circle.gif', height="20px"),
+                            class="loadingCustomInner"
+                        ),
+                   class="loadingCustom"),
+          useShinyjs(),
+          extendShinyjs(text = jscode, functions =  c("showBox", "removeBox","showBox2", "removeBox2", "disableAllButtons", "enableAllButtons", "showComputing", "hideComputing", "expandBox","collapseBox")),
+          introjsUI(),
+          ## add_busy_spinner(spin = "fading-circle", color = "#112446"),
+          add_busy_spinner(
+              spin = "fading-circle",
+              color = "#112446",
+              position = "full-page",  # centers the spinner
+              onstart = FALSE,         # only when busy (not at app load)
+              height = "60px",
+              width  = "60px"
+          ),
+          tags$head(
+                   tags$link(rel = "stylesheet", type = "text/css", href = "custom.css")
+               ),
+          tags$head(tags$script(src="https://cdnjs.cloudflare.com/ajax/libs/eqcss/1.7.0/EQCSS.min.js")),
+          tags$head(tags$script(type="text/eqcss", src="styles.eqcss")),
+          tags$head(tags$script(type="text/javascript", src="custom.js")),
                                         #busyIndicator(wait = 7000),
-            tabItems(
-                tabItem("homeTab",htmlOutput("homeInfo"), selected=T),
-                tabLBMIntro,
-                tabElefanIntro,
-                ## tabElefanSampleDataset,
-                tabLBIIntro,
-                ## tabLBISampleDataset,
-                tabLBSPRIntro,
-                ## tabLBSPRSampleDataset,
-                ## tabFishMethodsIntro,
-                ## tabFishMethodsSampleDataset,
-                tabElefanGa("elefanGaModule"),
-                ## tabElefanSa("elefanSaModule"),
-                ## tabElefan("elefanModule"),
-                ## tabSbpr("sbprModule"),
-                ## tabYpr("yprModule"),
-                tabLBI("lbiModule"),
-                tabLBSPR("lbsprModule"),
-                tabSPMIntro,
-                tabSPICTIntro,
-                tabSPICT("spictModule"),
-                tabJABBAIntro,
-                tabJABBA("jabbaModule"),
-                tabCmsyIntro,
-                tabCmsySampleDataset,
-                tabCmsy("cmsyModule"),
-                tabBasicSchaefer("basicShaeferModule"),
-                tabBasicVonBertalannfy("vonBertalannfyModule"),
-                tabSeasonalVonBertalannfy("seasonalVonBertalannfyModule"),
-                tabNaturalMortality("naturalMortalityModule"),
-                tabItem("glossaryTab",htmlOutput("glossary"))
-            )
-        )
-    ), tags$footer(footer(SMT_VERSION, SMT_DATE), align = "center")
+          tabItems(
+              tabItem("homeTab",htmlOutput("homeInfo"), selected=T),
+              tabLBMIntro,
+              tabElefanIntro,
+              ## tabElefanSampleDataset,
+              tabLBIIntro,
+              ## tabLBISampleDataset,
+              tabLBSPRIntro,
+              ## tabLBSPRSampleDataset,
+              ## tabFishMethodsIntro,
+              ## tabFishMethodsSampleDataset,
+              tabElefanGa("elefanGaModule"),
+              ## tabElefanSa("elefanSaModule"),
+              ## tabElefan("elefanModule"),
+              ## tabSbpr("sbprModule"),
+              ## tabYpr("yprModule"),
+              tabLBI("lbiModule"),
+              tabLBSPR("lbsprModule"),
+              tabSPMIntro,
+              tabSPICTIntro,
+              tabSPICT("spictModule"),
+              tabJABBAIntro,
+              tabJABBA("jabbaModule"),
+              tabCmsyIntro,
+              tabCmsySampleDataset,
+              tabCmsy("cmsyModule"),
+              tabBasicSchaefer("basicShaeferModule"),
+              tabBasicVonBertalannfy("vonBertalannfyModule"),
+              tabSeasonalVonBertalannfy("seasonalVonBertalannfyModule"),
+              tabNaturalMortality("naturalMortalityModule"),
+              tabItem("glossaryTab",htmlOutput("glossary"))
+          )
+      )
+  ), tags$footer(footer(SMT_VERSION, SMT_DATE), align = "center")
 )
 
 

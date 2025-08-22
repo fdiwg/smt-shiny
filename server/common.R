@@ -141,10 +141,8 @@ getResultConsiderationTextForCmsy <- function() {
 linkEA <- "<a href='https://data.d4science.org/shub/E_Snp1NzhlUHlFOWg0M3lUL3lZWU0yMVVTVFY5NDhaYkI1ODY4blFtSi9NYlFiMVAyamxMNGc2QXh0TlpRNmdNdQ==' target='_blank'>click to download</a>"
 linkSE <- "<a href='https://data.d4science.org/shub/E_ZEhvM2ZpSVFZd0ZOSXl5MjlGZC90eC9vOUI1NG1hQ0NEMERtRGVHR2hqbThBZGxBYS9QWG5kc1BaWTluVHNvQw==' target='_blank'>click to download</a>"
 linkOSG <- "<a href='https://data.d4science.org/shub/E_SHJJRUJ5S1lxOGhLOW1zVWpKbUJFQzE1c2wzbnltRlVBUmYrUEphbDRkN1BxQzlYOUtwQWRzZ0JMdnJrSmRhZA==' target='_blank'>click to download</a>"
-## TODO upload albacore data
-linkAL <- "<a href='https://data.d4science.org/shub/E_ZEhvM2ZpSVFZd0ZOSXl5MjlGZC90eC9vOUI1NG1hQ0NEMERtRGVHR2hqbThBZGxBYS9QWG5kc1BaWTluVHNvQw==' target='_blank'>click to download</a>"
-## TODO upload lobster data
-linkLO <- "<a href='https://data.d4science.org/shub/E_ZEhvM2ZpSVFZd0ZOSXl5MjlGZC90eC9vOUI1NG1hQ0NEMERtRGVHR2hqbThBZGxBYS9QWG5kc1BaWTluVHNvQw==' target='_blank'>click to download</a>"
+linkAL <- "<a href='https://data.d4science.org/shub/E_SHNLeTNvQklyYVljWlpVRUhaYWhKREUrakd3QisxSGc4T0kvZnI1OEdmVlJLTjRhM1dSajFSWVBXR3VHaG56Mg==' target='_blank'>click to download</a>"
+linkLO <- "<a href='https://data.d4science.org/shub/E_VWxLOG5rUXBpVEo3bUh0b3NkQUhoZTVUOG1ZVm1aU09PTVNyd3M3U25CdTJvRXl4bmpXcitVQXUyU1ZBbjBXWg==' target='_blank'>click to download</a>"
 
 
 
@@ -791,7 +789,7 @@ getDataConsiderationTextForSpict <- function() {
     text <- "<b>Two data formats are accepted:</b><br>"
     text <- paste0(text, "<br>")
     text <- paste0(text, "<b>1. Wide Format:</b>")
-    text <- paste0(text, "One row per time step (e.g., year), with separate columns for <i>Catch</i> and each <i>Index</i> series (e.g., <code>Index1</code>, <code>Index2</code>). Dates/years are in a dedicated columns. Columns with the relative uncertainty scaling over time for the catch and each index time series are optional.")
+    text <- paste0(text, "One row per time step (e.g., year), with separate columns for <i>Catch</i> and each <i>Index</i> series (e.g., <code>Index1</code>, <code>Index2</code>). Dates/years are in a dedicated column. Columns with the relative uncertainty scaling over time for the catch and each index time series are optional.")
     text <- paste0(text, "<br>")
     text <- paste0(text, "<p> An example dataset in this format can be downloaded here (",linkAL,"). </p>")
     text <- paste0(text, "<br>")
@@ -805,10 +803,10 @@ getDataConsiderationTextForSpict <- function() {
     text <- paste0(text, "<ul>")
     text <- paste0(text, "<li>", "Save your dataset in 'csv' format.", "</li>")
     text <- paste0(text, "<li>", "The separator for the .csv file should be a comma ‘,’ semicolon ';' or tab. The default might differ depending on the language settings of your spreadsheet manipulation program (e.g. Excel).", "</li>")
-    text <- paste0(text, "<li>", "Use a '.' to separate decimals in the data. The default might differ depending on the language settings of your spreadsheet manipulation program (e.g. Excel).", "</li>")
+    text <- paste0(text, "<li>", "Most methods on the SMT now automatically detect the decimal separator and also allow it to be specified. The default decimal separator might differ depending on the language settings of your spreadsheet manipulation program (e.g. Excel).", "</li>")
     text <- paste0(text, "<li>The catch is usually assumed to be representative of a calendar year, but could also span shorter periods, such as semesters, quarters or months. The corresponding time information should reflect the beginning of the catch interval. For example, for the catch in the period from 2020 to 2021, the corresponding time should be 2020.</li>")
-    text <- paste0(text, "<li>By contrast, the relative abundance index observations correspond to a specific time of the year, such as 2020.25 for the first of April in 2020. Dates in various formats (e.g., 2020/04/01) or numeric times can be defined (e.g., 2020.25). If the timing is the same every year, also the input field 'Time of year (index)' can be used to specify the time of year.</li>")
-    text <- paste0(text, "<li>The date format of your data file should be automatically detected, or select the date format used in your data file under <b>'Choose CSV date format'</b>, e.g. DD/MM/YYYY format to select 'Day Month Year'.</li>")
+    text <- paste0(text, "<li>By contrast, the relative abundance index observations correspond to a specific time of the year, such as 2020.25 for the first of April in 2020. Dates have to be defined in the numeric format (e.g., 2020.25 or 2021.75). If the timing is the same every year, also the input field 'Time of year (index)' can be used to specify the time of year.</li>")
+    ## text <- paste0(text, "<li>The date format of your data file should be automatically detected, or select the date format used in your data file under <b>'Choose CSV date format'</b>, e.g. DD/MM/YYYY format to select 'Day Month Year'.</li>")
     text <- paste0(text, "</ul>")
     text <- paste0(text, "<br>")
     return (text)
