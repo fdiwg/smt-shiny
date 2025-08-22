@@ -66,20 +66,54 @@ tabElefanGa <- function(id) {
                                       )
                             )
                         ),
-                    box(width = 3,
-                        selectInput(ns("elefanGaDateFormat"),
-                                    "Choose CSV date format",
-                                    choices = c("Automatic guess" = "auto",
-                                                "Year Month Day" = "ymd",
-                                                "Year Day Month" = "ydm",
-                                                "Day Month Year" = "dmy",
-                                                "Month Day Year" = "mdy" ))
+                    box(width = 2,
+                        selectizeInput(
+                            ns("elefanGaCSVsep"),
+                            tagList("CSV field separator",
+                                    actionButton(ns("info_csv_sep"),
+                                                 tags$i(class = "fas fa-info",
+                                                        style="font-size: 8px"),
+                                                 class="infoBubbleButton")),
+                            choices = c("Automatic guess" = "auto",
+                                        "Comma (,)" = ",",
+                                        "Semicolon (;)" = ";",
+                                        "Space ( )" = " ",
+                                        "Tab (\\t)" = "\t"),
+                            selected = "auto",
+                            options = list(create = TRUE)
+                        )
                         ),
-                    box(width = 3,
-                        selectInput(ns("elefan_lengthUnit"),
-                                    "Choose length unit",
-                                    choices = c("cm", "mm", "in"))
-                    )
+                    box(width = 2,
+                        selectizeInput(
+                            ns("elefanGaCSVdec"),
+                            tagList("CSV decimal separator",
+                                    actionButton(ns("info_csv_dec"),
+                                                 tags$i(class = "fas fa-info",
+                                                        style="font-size: 8px"),
+                                                 class="infoBubbleButton")),
+                            choices = c("Automatic guess" = "auto",
+                                        "Point (.)" = ".",
+                                        "Comma (,)" = ","),
+                            selected = "auto",
+                            options = list(create = TRUE)
+                        )
+                        ),
+                    box(width = 2,
+                        selectizeInput(ns("elefanGaDateFormat"),
+                                       tagList("CSV date format",
+                                               actionButton(ns("info_csv_date"),
+                                                            tags$i(class = "fas fa-info",
+                                                                   style="font-size: 8px"),
+                                                            class="infoBubbleButton")),
+                                       choices = c("Automatic guess" = "auto",
+                                                   "Year Month Day" = "ymd",
+                                                   "Year Day Month" = "ydm",
+                                                   "Day Month Year" = "dmy",
+                                                   "Month Day Year" = "mdy" ),
+                                       selected = "auto" ## ,
+                                       ## options = list(create = TRUE)
+                                       )
+                        )
                     ),
 
 
@@ -147,6 +181,12 @@ tabElefanGa <- function(id) {
                                                             c("none","month","quarter","year")),
                                                 selected = "none",
                                                 width ='100%'),
+                                    br(),
+
+                                    selectInput(ns("elefan_lengthUnit"),
+                                                "Length unit",
+                                                choices = c("cm", "mm", "in")),
+
                                     br(),
 
                                     fluidRow(

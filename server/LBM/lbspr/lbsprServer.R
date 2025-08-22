@@ -20,6 +20,8 @@ lbsprModule <- function(input, output, session) {
     )
 
     lbsprAcknowledged <- reactiveVal(FALSE)
+    lbsprPendingRun   <- reactiveVal(FALSE)
+
 
     ## Definition of functions
     ## ----------------------------
@@ -28,7 +30,10 @@ lbsprModule <- function(input, output, session) {
             return(NULL)
         }
 
-        dataset <- read_lbm_csv(input$fileLBSPR$datapath, input$lbsprDateFormat)
+        dataset <- read_lbm_csv(input$fileLBSPR$datapath,
+                                input$lbsprDateFormat,
+                                input$lbsprCSVsep,
+                                input$lbsprCSVdec)
         dataset$checks$fileName <- input$fileLBSPR$name
         checks <- dataset$checks
 
@@ -129,6 +134,8 @@ lbsprModule <- function(input, output, session) {
     resetLBSPRInputValues <- function() {
         ## resetting UIs
         shinyjs::reset("fileLBSPR")
+        shinyjs::reset("lbsprCSVsep")
+        shinyjs::reset("lbsprCSVdec")
         shinyjs::reset("lbsprDateFormat")
         shinyjs::reset("LBSPR_years_selected")
         shinyjs::reset("LBSPR_binSize")
@@ -155,9 +162,180 @@ lbsprModule <- function(input, output, session) {
         inputLBSPRData$data <- NULL
         fileLBSPRState$upload <- NULL
         ## lbsprUploadVreResult ?
-        lbsprAcknowledged(FALSE)
+        ## lbsprAcknowledged(FALSE)
     }
 
+
+    run_lbspr_server <- function() {
+
+        result = tryCatch({
+
+            if(input$LBSPR_split_mk){
+                mk <- input$LBSPR_M / input$LBSPR_K
+                m <- input$LBSPR_M
+                k <- input$LBSPR_K
+            }else{
+                mk <- input$LBSPR_MK
+                m <- -999
+                k <- -999
+            }
+
+            ## Warnings
+            years <- as.numeric(format(lbspr_dat$dataExplo[['lfq']]$dates, "%Y"))
+            if(any(duplicated(years))){
+                showModal(modalDialog(
+                    title = "Warning",
+                    HTML("The length frequency data is not aggregated by year. This method should be used with yearly aggregated data!<hr/>")))
+            }
+
+            ## Parameter/Input checks
+            check.numeric.and.min(c(binSize = input$LBSPR_binSize,
+                                    linf = input$LBSPR_Linf,
+                                    lm50 = input$LBSPR_Lm50,
+                                    lm95 = input$LBSPR_Lm95,
+                                    mk = mk,
+                                    a = input$LBSPR_LWa,
+                                    b = input$LBSPR_LWb
+                                    ),
+                                  can.be.zero = FALSE)
+
+            ## if(input$LBSPR_Linf > max(lbspr_dat$dataExplo[['lfq']]$midLengths)){
+            ##     stop(paste0("The specified asymptotic length (Linf = ",input$LBSPR_Linf,") is smaller than the largest length class (",max(lbspr_dat$dataExplo[['lfq']]$midLengths),"). This is not possible for LBSPR! Please consider using another Linf value."))
+            ## }
+
+            flog.info("Starting LBSPR computation")
+
+
+            ## COMMENT: this could be removed, but allows to run LBSPR without WPS
+            ## if(!session$userData$withtoken){
+            ## if(withtoken){
+
+            ## browser()
+
+            ## res <- run_lbspr(data = lbspr_dat$dataExplo[['lfq']],
+            ##                  bin.size = input$LBSPR_binSize,
+            ##                  linf = input$LBSPR_Linf,
+            ##                  lm50 = input$LBSPR_Lm50,
+            ##                  lm95 = input$LBSPR_Lm95,
+            ##                  mk = mk,
+            ##                  lwa = input$LBSPR_LWa,
+            ##                  lwb = input$LBSPR_LWb,
+            ##                  lunit = input$lbspr_lengthUnit
+            ##                  )
+
+            ## }else{
+
+            temp.dir <- tempdir()
+            dffile <- paste(temp.dir,"/","lbspr_data_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".csv",sep="")
+            dffile <- gsub(" ", "_", dffile)
+            tmp <- lbspr_dat$dataExplo$lfq$catch
+            tmp <- cbind(lbspr_dat$dataExplo$lfq$midLengths, tmp)
+            colnames(tmp) <- c("midLengths", as.character(lbspr_dat$dataExplo$lfq$dates))
+            write.csv(tmp, file = dffile, quote = FALSE,
+                      eol = "\n", row.names = FALSE,  fileEncoding = "UTF-8")
+            ## Convert input file to string
+            body <- readChar(dffile, file.info(dffile)$size)
+            body <- gsub("\r\n", "\n", body)
+            body <- gsub("\n$", "", body)
+
+            ## Start WPS session
+            WPS <- session$userData$sessionWps()
+
+            ## Send the request
+            exec <- WPS$execute(
+                            identifier ="org.gcube.dataanalysis.wps.statisticalmanager.synchserver.mappedclasses.transducerers.LBSPR",
+                            status=TRUE,
+                            dataInputs = list(
+                                binSize = WPSLiteralData$new(value = as.double(input$LBSPR_binSize)),
+                                linf = WPSLiteralData$new(value = as.double(input$LBSPR_Linf)),
+                                mk = WPSLiteralData$new(value = as.double(mk)),
+                                m = WPSLiteralData$new(value = as.double(m)),
+                                k = WPSLiteralData$new(value = as.double(k)),
+                                lm50 = WPSLiteralData$new(value = as.double(input$LBSPR_Lm50)),
+                                lm95 = WPSLiteralData$new(value = as.double(input$LBSPR_Lm95)),
+                                lwa = WPSLiteralData$new(value = as.double(input$LBSPR_LWa)),
+                                lwb = WPSLiteralData$new(value = as.double(input$LBSPR_LWb)),
+                                sprLim = WPSLiteralData$new(value = as.double(input$LBSPR_sprLim)),
+                                sprTarg = WPSLiteralData$new(value = as.double(input$LBSPR_sprTarg)),
+                                lengthUnit = WPSLiteralData$new(value = as.character(input$lbspr_lengthUnit)),
+                                fig_format = WPSLiteralData$new(value = as.character(input$fig_format_lbspr)),
+                                tab_format = WPSLiteralData$new(value = as.character(input$tab_format_lbspr)),
+                                inputFile = WPSComplexData$new(value = body, mimeType = "application/d4science")
+                            )
+                        )
+
+            Status <- exec$getStatus()$getValue()
+            print(Status)
+
+            out <- exec$getProcessOutputs()[[1]]$getData()$getFeatures()
+
+            res.dir <- paste(temp.dir,"/","lbspr_res_",format(Sys.time(), "%Y%m%d_%H%M_%s"),sep="")
+
+            ## log of run: out$Data[1] (txt)
+
+            temp <- tempfile()
+            download.file(out$Data[2], temp)
+            load(unz(temp,"res/LBSPR_res.RData"))
+            unlink(temp)
+
+            file.remove(dffile)
+            options(warn=0)
+
+            if(Status == "ProcessSucceeded"){
+                flog.warn("LBSPR SUCCESS")
+                print("LBSPR SUCCESS")
+            }else{
+                flog.warn("LBSPR FAIL")
+                print("LBSPR FAIL")
+                stop("WPS call failed.")
+            }
+            ## } ## HERE:
+
+            js$hideComputing()
+            js$enableAllButtons()
+
+            lbspr_dat$results <- res$res
+
+            if (!is.null(session$userData$sessionMode()) && session$userData$sessionMode()=="GCUBE") {
+                flog.info("Uploading LBSPR report to i-Marine workspace")
+                reportFileName <- paste(tempdir(),"/","LBSPR_report_",
+                                        format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
+                                        #createLBSPRPDFReport(reportFileName,lbspr_dat,input)
+                createLBSPRPDFReport(reportFileName, lbspr_dat, input, output)
+                lbsprUploadVreResult$res <- FALSE
+
+                basePath <- paste0("/Home/",session$userData$sessionUsername(),"/Workspace/")
+
+                SH_MANAGER <- session$userData$storagehubManager()
+
+                tryCatch({
+                    uploadToIMarineFolder(SH_MANAGER, reportFileName, basePath, uploadFolderName)
+                    lbsprUploadVreResult$res <- TRUE
+                }, error = function(err) {
+                    flog.error("Error uploading LBSPR report to the i-Marine Workspace: %s", err)
+                    lbsprUploadVreResult$res <- FALSE
+                }, finally = {})
+            }
+
+        }, error = function(cond) {
+            flog.error("Error in LBSPR: %s ",cond)
+            showModal(modalDialog(
+                title = "Error",
+                cond$message,
+                easyClose = TRUE,
+                footer = NULL
+            ))
+            return(NULL)
+        },
+        finally = {
+            js$hideComputing()
+            js$enableAllButtons()
+            if (!is.null(lbspr_dat$results)) {
+                shinyjs::enable("createLBSPRReport")
+                shinyjs::enable("createLBSPRzip")
+            }
+        })
+    }
 
 
     ## Input-dependent UIs
@@ -347,6 +525,68 @@ lbsprModule <- function(input, output, session) {
         lbspr_dat$years_selected <- allyears
     })
 
+    observeEvent(input$lbsprCSVsep, {
+        tmp <- lbsprFileData()
+        inputLBSPRData$data <- tmp$lfq
+        inputLBSPRData$raw <- tmp$raw
+        inputLBSPRData$checks <- tmp$checks
+        ## bin size
+        if(is.null(inputLBSPRData$data)){
+            binSize <- 2
+            maxL <- 10
+        }else{
+            binSize <- try(min(diff(inputLBSPRData$data$midLengths)),silent=TRUE)
+            maxL <- try(max(inputLBSPRData$data$midLengths),silent=TRUE)
+            if(inherits(binSize,"try-error")){
+                binSize <- 2
+                maxL <- 10
+            }else{
+                binSize <- round(0.23 * maxL^0.6, 1)
+                if(binSize == 0) binSize <- 0.1
+            }
+        }
+        lbspr_dat$binSize <- binSize
+        ## years selected
+        if(is.null(inputLBSPRData$data)){
+            allyears <- NULL
+        }else{
+            allyears <- try(unique(format(inputLBSPRData$data$dates,"%Y")),silent=TRUE)
+            if(inherits(allyears,"try-error")) allyears <- NULL
+        }
+        lbspr_dat$years_selected <- allyears
+    })
+
+    observeEvent(input$lbsprCSVdec, {
+        tmp <- lbsprFileData()
+        inputLBSPRData$data <- tmp$lfq
+        inputLBSPRData$raw <- tmp$raw
+        inputLBSPRData$checks <- tmp$checks
+        ## bin size
+        if(is.null(inputLBSPRData$data)){
+            binSize <- 2
+            maxL <- 10
+        }else{
+            binSize <- try(min(diff(inputLBSPRData$data$midLengths)),silent=TRUE)
+            maxL <- try(max(inputLBSPRData$data$midLengths),silent=TRUE)
+            if(inherits(binSize,"try-error")){
+                binSize <- 2
+                maxL <- 10
+            }else{
+                binSize <- round(0.23 * maxL^0.6, 1)
+                if(binSize == 0) binSize <- 0.1
+            }
+        }
+        lbspr_dat$binSize <- binSize
+        ## years selected
+        if(is.null(inputLBSPRData$data)){
+            allyears <- NULL
+        }else{
+            allyears <- try(unique(format(inputLBSPRData$data$dates,"%Y")),silent=TRUE)
+            if(inherits(allyears,"try-error")) allyears <- NULL
+        }
+        lbspr_dat$years_selected <- allyears
+    })
+
 
 
     ## Action buttons
@@ -370,21 +610,28 @@ lbsprModule <- function(input, output, session) {
                 b = input$LBSPR_LWb
             ), can.be.zero = FALSE)
 
-            lbsprAcknowledged(FALSE)
+            if(!lbsprAcknowledged()) {
 
-            showModal(modalDialog(
-                title = "Acknowledge model assumptions",
-                bsCollapse(id = ns("assumptions"), open = NULL,
-                           bsCollapsePanel("▶ Click to show/hide",
-                                           HTML(lbsprAssumptionsHTML()))
-                           ),
-                tags$p(HTML("See the <a href='https://elearning.fao.org/course/view.php?id=502' target='_blank'>FAO eLearning module</a> for more information.")),
-                footer = tagList(
-                    modalButton("Cancel"),
-                    actionButton(ns("lbspr_ack"), "I Acknowledge", class = "btn-success")
-                ),
-                easyClose = FALSE
-            ))
+                lbsprPendingRun(TRUE)
+
+                showModal(modalDialog(
+                    title = "Acknowledge model assumptions",
+                    bsCollapse(id = ns("assumptions"), open = NULL,
+                               bsCollapsePanel("▶ Click to show/hide",
+                                               HTML(lbsprAssumptionsHTML()))
+                               ),
+                    tags$p(HTML("See the <a href='https://elearning.fao.org/course/view.php?id=502' target='_blank'>FAO eLearning module</a> for more information.")),
+                    footer = tagList(
+                        modalButton("Cancel"),
+                        actionButton(ns("lbspr_ack"), "I Acknowledge", class = "btn-success")
+                    ),
+                    easyClose = FALSE
+                ))
+
+                return(invisible(NULL))
+            }
+
+            run_lbspr_server()
 
         }, error = function(e) {
             showModal(modalDialog(
@@ -405,170 +652,10 @@ lbsprModule <- function(input, output, session) {
         js$showComputing()
         js$disableAllButtons()
 
-        result = tryCatch({
-
-            if(input$LBSPR_split_mk){
-                mk <- input$LBSPR_M / input$LBSPR_K
-                m <- input$LBSPR_M
-                k <- input$LBSPR_K
-            }else{
-                mk <- input$LBSPR_MK
-                m <- -999
-                k <- -999
-            }
-
-            ## Warnings
-            years <- as.numeric(format(lbspr_dat$dataExplo[['lfq']]$dates, "%Y"))
-            if(any(duplicated(years))){
-                showModal(modalDialog(
-                    title = "Warning",
-                    HTML("The length frequency data is not aggregated by year. This method should be used with yearly aggregated data!<hr/>")))
-            }
-
-            ## Parameter/Input checks
-            check.numeric.and.min(c(binSize = input$LBSPR_binSize,
-                                    linf = input$LBSPR_Linf,
-                                    lm50 = input$LBSPR_Lm50,
-                                    lm95 = input$LBSPR_Lm95,
-                                    mk = mk,
-                                    a = input$LBSPR_LWa,
-                                    b = input$LBSPR_LWb
-                                    ),
-                                  can.be.zero = FALSE)
-
-            ## if(input$LBSPR_Linf > max(lbspr_dat$dataExplo[['lfq']]$midLengths)){
-            ##     stop(paste0("The specified asymptotic length (Linf = ",input$LBSPR_Linf,") is smaller than the largest length class (",max(lbspr_dat$dataExplo[['lfq']]$midLengths),"). This is not possible for LBSPR! Please consider using another Linf value."))
-            ## }
-
-            flog.info("Starting LBSPR computation")
-
-
-            ## COMMENT: this could be removed, but allows to run LBSPR without WPS
-            ## if(!session$userData$withtoken){
-
-            ##     res <- run_lbspr(data = lbspr_dat$dataExplo[['lfq']],
-            ##                    bin.size = input$LBSPR_binSize,
-            ##                    linf = input$LBSPR_Linf,
-            ##                    lm50 = input$LBSPR_Lm50,
-            ##                    lm95 = input$LBSPR_Lm95,
-            ##                    mk = mk,
-            ##                    lwa = input$LBSPR_LWa,
-            ##                    lwb = input$LBSPR_LWb,
-            ##                    lunit = input$lbspr_lengthUnit
-            ##                    )
-
-            ## }else{
-
-            temp.dir <- tempdir()
-            dffile <- paste(temp.dir,"/","lbspr_data_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".csv",sep="")
-            dffile <- gsub(" ", "_", dffile)
-            tmp <- lbspr_dat$dataExplo$lfq$catch
-            tmp <- cbind(lbspr_dat$dataExplo$lfq$midLengths, tmp)
-            colnames(tmp) <- c("midLengths", as.character(lbspr_dat$dataExplo$lfq$dates))
-            write.csv(tmp, file = dffile, quote = FALSE,
-                      eol = "\n", row.names = FALSE,  fileEncoding = "UTF-8")
-            ## Convert input file to string
-            body <- readChar(dffile, file.info(dffile)$size)
-            body <- gsub("\r\n", "\n", body)
-            body <- gsub("\n$", "", body)
-
-            ## Start WPS session
-            WPS <- session$userData$sessionWps()
-
-            ## Send the request
-            exec <- WPS$execute(
-                            identifier ="org.gcube.dataanalysis.wps.statisticalmanager.synchserver.mappedclasses.transducerers.LBSPR",
-                            status=TRUE,
-                            dataInputs = list(
-                                binSize = WPSLiteralData$new(value = as.double(input$LBSPR_binSize)),
-                                linf = WPSLiteralData$new(value = as.double(input$LBSPR_Linf)),
-                                mk = WPSLiteralData$new(value = as.double(mk)),
-                                m = WPSLiteralData$new(value = as.double(m)),
-                                k = WPSLiteralData$new(value = as.double(k)),
-                                lm50 = WPSLiteralData$new(value = as.double(input$LBSPR_Lm50)),
-                                lm95 = WPSLiteralData$new(value = as.double(input$LBSPR_Lm95)),
-                                lwa = WPSLiteralData$new(value = as.double(input$LBSPR_LWa)),
-                                lwb = WPSLiteralData$new(value = as.double(input$LBSPR_LWb)),
-                                sprLim = WPSLiteralData$new(value = as.double(input$LBSPR_sprLim)),
-                                sprTarg = WPSLiteralData$new(value = as.double(input$LBSPR_sprTarg)),
-                                lengthUnit = WPSLiteralData$new(value = as.character(input$lbspr_lengthUnit)),
-                                fig_format = WPSLiteralData$new(value = as.character(input$fig_format_lbspr)),
-                                tab_format = WPSLiteralData$new(value = as.character(input$tab_format_lbspr)),
-                                inputFile = WPSComplexData$new(value = body, mimeType = "application/d4science")
-                            )
-                        )
-
-            Status <- exec$getStatus()$getValue()
-            print(Status)
-
-            out <- exec$getProcessOutputs()[[1]]$getData()$getFeatures()
-
-            res.dir <- paste(temp.dir,"/","lbspr_res_",format(Sys.time(), "%Y%m%d_%H%M_%s"),sep="")
-
-            ## log of run: out$Data[1] (txt)
-
-            temp <- tempfile()
-            download.file(out$Data[2], temp)
-            load(unz(temp,"res/LBSPR_res.RData"))
-            unlink(temp)
-
-            file.remove(dffile)
-            options(warn=0)
-
-            if(Status == "ProcessSucceeded"){
-                flog.warn("LBSPR SUCCESS")
-                print("LBSPR SUCCESS")
-            }else{
-                flog.warn("LBSPR FAIL")
-                print("LBSPR FAIL")
-                stop("WPS call failed.")
-            }
-            ## } ## HERE:
-
-            js$hideComputing()
-            js$enableAllButtons()
-
-            lbspr_dat$results <- res$res
-
-            if (!is.null(session$userData$sessionMode()) && session$userData$sessionMode()=="GCUBE") {
-                flog.info("Uploading LBSPR report to i-Marine workspace")
-                reportFileName <- paste(tempdir(),"/","LBSPR_report_",
-                                        format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep="")
-                                        #createLBSPRPDFReport(reportFileName,lbspr_dat,input)
-                createLBSPRPDFReport(reportFileName, lbspr_dat, input, output)
-                lbsprUploadVreResult$res <- FALSE
-
-                basePath <- paste0("/Home/",session$userData$sessionUsername(),"/Workspace/")
-
-                SH_MANAGER <- session$userData$storagehubManager()
-
-                tryCatch({
-                    uploadToIMarineFolder(SH_MANAGER, reportFileName, basePath, uploadFolderName)
-                    lbsprUploadVreResult$res <- TRUE
-                }, error = function(err) {
-                    flog.error("Error uploading LBSPR report to the i-Marine Workspace: %s", err)
-                    lbsprUploadVreResult$res <- FALSE
-                }, finally = {})
-            }
-
-        }, error = function(cond) {
-            flog.error("Error in LBSPR: %s ",cond)
-            showModal(modalDialog(
-                title = "Error",
-                cond$message,
-                easyClose = TRUE,
-                footer = NULL
-            ))
-            return(NULL)
-        },
-        finally = {
-            js$hideComputing()
-            js$enableAllButtons()
-            if (!is.null(lbspr_dat$results)) {
-                shinyjs::enable("createLBSPRReport")
-                shinyjs::enable("createLBSPRzip")
-            }
-        })
+        if (isTRUE(lbsprPendingRun())) {
+            lbsprPendingRun(FALSE)
+            run_lbspr_server()
+        }
     })
 
     observeEvent(input$reset_lbspr, {
@@ -776,6 +863,33 @@ lbsprModule <- function(input, output, session) {
         ))
     }, ignoreInit = TRUE)
 
+    observeEvent(input$info_csv_sep, {
+        showModal(modalDialog(
+            title = "CSV file field separator",
+            HTML("<p>Choose the csv file field separator. By default, the app will try to guess the field separator automatically by trying various options. This field allows you to select a specific field separator or to enter your own. In order to enter your own separator, just press backspace to delete the current value in the input field and type the separator code, e.g. '.' for a point, or '\t' for tab separated fields (the single quotation marks are not needed in the input field).</p>"),
+            easyClose = TRUE,
+            size = "l"
+        ))
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$info_csv_dec, {
+        showModal(modalDialog(
+            title = "CSV file decimal separator",
+            HTML("<p>Choose the csv file decimal separator. By default, the app will try to guess the decimal separator automatically by trying various options. This field allows you to select a specific decimal separator or to enter your own. In order to enter your own separator, just press backspace to delete the current value in the input field and type the separator code, e.g. '.' for a point, or ' ' for a whitespace as decimal separator (the single quotation marks are not needed in the input field).</p>"),
+            easyClose = TRUE,
+            size = "l"
+        ))
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$info_csv_date, {
+        showModal(modalDialog(
+            title = "CSV date format",
+            HTML("<p>Choose the csv file date format. By default, the app will try to guess the date format automatically by trying various combinations. This field allows you to select a specific decimal separator or to enter your own. In order to enter your own separator, just press backspace to delete the current value in the input field and type the date format in the required format, e.g. '%Y-%m-%d' for year-month-day separated by hyphen or '%d.%m.%y' by day.month.year separated by dots and where the year is given as the two last digits (e.g. 99 for 1999).</p>"),
+            easyClose = TRUE,
+            size = "l"
+        ))
+    }, ignoreInit = TRUE)
+
     observeEvent(input$infoYearSel, {
         showModal(modalDialog(
             title = "Selected years",
@@ -978,6 +1092,12 @@ lbsprModule <- function(input, output, session) {
                  intro = "As a first step, you need to upload data. You can do that by clicking on 'Browse' and select a csv file on your computer."),
             list(element = paste0("#", ns("dataConsiderations2")),
                  intro = "If you do not have your own file and want to use an example fiel or if you are interested in more information about the data type and format, click on the small the information button here. <br><br>Note these information buttons (indicated by 'i') throughout the whole app."),
+            list(element = paste0("#", ns("lbsprCSVsep"),
+                                  " + .selectize-control"),
+                 intro = "By default, the app will try to recognize the field separator, but you can also specify it here by either choosing from the list or by pressing backspace and enter any separator."),
+            list(element = paste0("#", ns("lbsprCSVdec"),
+                                  " + .selectize-control"),
+                 intro = "Similarly, by default, the app will try to recognize the decimal separator, but you can also specify it here by either choosing from the list or by pressing backspace and enter any separator."),
             list(element = paste0("#", ns("lbsprDateFormat"),
                                   " + .selectize-control"),
                  intro = "By default, the app will try to recognize the date format, but you can also specify it here."),
@@ -989,7 +1109,7 @@ lbsprModule <- function(input, output, session) {
             list(element = "#settings_lbspr ul.nav.nav-tabs",
                  intro = "There are multiple tabs that allow you to adjust various aspects of the assessment method."),
             list(element = paste0("#", ns("tab1")),
-                 intro = "For example, the first tab allows you to visually inspect the uploaded data and set important parameters, such as the bin size or moving average.<br><br> Remeber the small information buttons ('i') next to the labels, if you need more information about these parameters.")
+                 intro = "For example, the first tab allows you to visually inspect the uploaded data and set important parameters, such as the bin size or moving average.<br><br> Remember the small information buttons ('i') next to the labels, if you need more information about these parameters.")
         )
 
         current_tab <- input$settings
@@ -1032,7 +1152,7 @@ lbsprModule <- function(input, output, session) {
                             list(element = paste0("#", ns("tour_res")),
                                  intro = "The results tour might be helpful to get an overview over the results.<br><br> Note, that the tour only makes sense after LBSPR was run successfully."),
                             list(element = NA,
-                                 intro = "This concludes the LBSPR tour.<br><br>Remeber the information buttons ('i') that might be helpful when uploading data, adjusting settings or interpreting results."),
+                                 intro = "This concludes the LBSPR tour.<br><br>Remember the information buttons ('i') that might be helpful when uploading data, adjusting settings or interpreting results."),
                             list(element = paste0("#", ns("info_wrapper")),
                                  intro = "These buttons offer another helpful option to get detailed information on the workflow, data, methods, and results."),
                             list(element = NA,

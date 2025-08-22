@@ -177,6 +177,13 @@ createLBSPRPDFReport <- function(file, lbspr_dat, input, output) {
   return (rmarkdown::render(tempReport, output_file = file))
 }
 
+createSpictPDFReport <- function(file, spict_dat, input, output) {
+    print(paste0("Input file", input$file))
+    tempReport <- file.path(tempdir(), "spict.Rmd")
+    file.copy("assets/SPM/spict/markdown/spict.Rmd", tempReport, overwrite = TRUE)
+    return (rmarkdown::render(tempReport, output_file = file))
+}
+
 createSbprPDFReport <- function(file, sbprExec, input) {
   print(paste(sep=" ", file))
   tempReport <- file.path(tempdir(), "sbpr.Rmd")
@@ -436,4 +443,141 @@ makeContentLBSPRzip <- function(file, lbspr_dat, input, output) {
   dev.off()
 
   return(zip(zipfile = file, files = allfiles, flags = "-j"))
+}
+
+makeContentSpictzip <- function(file, spict_dat, input, output) {
+    print(paste0("Input file", input$file))
+    tempDir <- tempdir()
+    allfiles <- c()
+
+    ## all data
+    path <- file.path(tempDir, paste0("spict_data.RData"))
+    allfiles <- c(allfiles, path)
+    tmp <- shiny::reactiveValuesToList(spict_dat)
+    save(tmp, file = path, version = 2)
+
+    ## Data plot
+    path <- file.path(tempDir,paste0("spict_data.", input$fig_format))
+    allfiles <- c(allfiles, path)
+    dev.on(path, input$fig_format, width = 11, height = 10)
+    plotSpict.data(spict_dat$dataExplo$inp, input)
+    dev.off()
+
+    ## Data unc plot
+    path <- file.path(tempDir,paste0("spict_data_unc.", input$fig_format))
+    allfiles <- c(allfiles, path)
+    dev.on(path, input$fig_format, width = 11, height = 10)
+    plotSpict.data.unc(spict_dat$dataExplo$inp, input)
+    dev.off()
+
+    ## Diag 1 plot
+    path <- file.path(tempDir,paste0("spict_diag1.", input$fig_format))
+    allfiles <- c(allfiles, path)
+    dev.on(path, input$fig_format, width = 11, height = 10)
+    plotSpict.diag1(spict_dat, input)
+    dev.off()
+
+    ## Diag 2 plot
+    path <- file.path(tempDir,paste0("spict_diag2.", input$fig_format))
+    allfiles <- c(allfiles, path)
+    dev.on(path, input$fig_format, width = 11, height = 10)
+    plotSpict.diag2(spict_dat, input)
+    dev.off()
+
+    ## Priors plot
+    path <- file.path(tempDir,paste0("spict_priors.", input$fig_format))
+    allfiles <- c(allfiles, path)
+    dev.on(path, input$fig_format, width = 11, height = 10)
+    inp <- spict_dat$dataExplo$inp
+    nopriors <- spict::get.no.active.priors(inp)
+    par(mfrow = preferred_mfrow(nopriors))
+    plotSpict.priors(inp, automfrow = FALSE, do.plot=nopriors)
+    dev.off()
+
+    ## Summary plot
+    path <- file.path(tempDir,paste0("spict_res.", input$fig_format))
+    allfiles <- c(allfiles, path)
+    dev.on(path, input$fig_format, width = 11, height = 10)
+    plotSpict.sum(spict_dat, input)
+    dev.off()
+
+    ## Absolute plot
+    path <- file.path(tempDir,paste0("spict_res_abs.", input$fig_format))
+    allfiles <- c(allfiles, path)
+    dev.on(path, input$fig_format, width = 11, height = 10)
+    plotSpict.abs(spict_dat, input)
+    dev.off()
+
+    ## Production curve plot
+    path <- file.path(tempDir,paste0("spict_prod.", input$fig_format))
+    allfiles <- c(allfiles, path)
+    dev.on(path, input$fig_format, width = 11, height = 10)
+    plotSpict.prod(spict_dat, input)
+    dev.off()
+
+    ## Priors2 plot
+    path <- file.path(tempDir,paste0("spict_prior_posterior.", input$fig_format))
+    allfiles <- c(allfiles, path)
+    dev.on(path, input$fig_format, width = 11, height = 10)
+    plotSpict.priors(spict_dat$results, automfrow = FALSE, do.plot=nopriors)
+    dev.off()
+
+    ## Residuals1 plot
+    path <- file.path(tempDir,paste0("spict_resid_obs.", input$fig_format))
+    allfiles <- c(allfiles, path)
+    dev.on(path, input$fig_format, width = 11, height = 10)
+    plotSpict.resid1(spict_dat, input)
+    dev.off()
+
+    ## Residuals2 plot
+    path <- file.path(tempDir,paste0("spict_resid_process.", input$fig_format))
+    allfiles <- c(allfiles, path)
+    dev.on(path, input$fig_format, width = 11, height = 10)
+    plotSpict.resid2(spict_dat, input)
+    dev.off()
+
+
+    ## Table with data
+    path <- file.path(tempDir, paste0("spict_data.", input$tab_format))
+    allfiles <- c(allfiles, path)
+    save.table(tableSpict.data(spict_dat, input, format = "dataframe"),
+               path, input$tab_format)
+
+    ## Table with priors
+    path <- file.path(tempDir, paste0("spict_priors.", input$tab_format))
+    allfiles <- c(allfiles, path)
+    save.table(tableSpict.priors(spict_dat, input, format = "dataframe"),
+               path, input$tab_format)
+
+    ## Table with Estimates
+    path <- file.path(tempDir, paste0("spict_estimates.", input$tab_format))
+    allfiles <- c(allfiles, path)
+    save.table(tableSpict.estimates(spict_dat, input, format = "dataframe"),
+               path, input$tab_format)
+
+    ## Table with Stochastic refs
+    path <- file.path(tempDir, paste0("spict_refs_s.", input$tab_format))
+    allfiles <- c(allfiles, path)
+    save.table(tableSpict.refs_s(spict_dat, input, format = "dataframe"),
+               path, input$tab_format)
+
+    ## Table with Deterministic refs
+    path <- file.path(tempDir, paste0("spict_refs_d.", input$tab_format))
+    allfiles <- c(allfiles, path)
+    save.table(tableSpict.refs_d(spict_dat, input, format = "dataframe"),
+               path, input$tab_format)
+
+    ## Table with States
+    path <- file.path(tempDir, paste0("spict_states.", input$tab_format))
+    allfiles <- c(allfiles, path)
+    save.table(tableSpict.states(spict_dat, input, format = "dataframe"),
+               path, input$tab_format)
+
+    ## Table with Forecast
+    path <- file.path(tempDir, paste0("spict_forecast.", input$tab_format))
+    allfiles <- c(allfiles, path)
+    save.table(tableSpict.pred(spict_dat, input, format = "dataframe"),
+               path, input$tab_format)
+
+    return(zip(zipfile = file, files = allfiles, flags = "-j"))
 }

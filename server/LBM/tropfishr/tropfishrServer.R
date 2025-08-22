@@ -20,6 +20,7 @@ elefanGaModule <- function(input, output, session) {
     )
 
     elefanAcknowledged <- reactiveVal(FALSE)
+    elefanPendingRun   <- reactiveVal(FALSE)
 
 
     ## Definition of functions
@@ -29,7 +30,10 @@ elefanGaModule <- function(input, output, session) {
             return(NULL)
         }
 
-        dataset <- read_lbm_csv(input$fileGa$datapath, input$elefanGaDateFormat)
+        dataset <- read_lbm_csv(input$fileGa$datapath,
+                                input$elefanGaDateFormat,
+                                input$elefanGaCSVsep,
+                                input$elefanGaCSVdec)
         dataset$checks$fileName <- input$fileGa$name
         checks <- dataset$checks
 
@@ -43,7 +47,7 @@ elefanGaModule <- function(input, output, session) {
             showModal(modalDialog(
                 title = "Error",
                 if(!checks$csv){
-                    "Something went wrong when reading in your data set. Did you select a CSV file (i.e. file with ending '.csv')? Click on the info icon for more information."
+                    "Something went wrong when reading in your data set. Did you select a CSV file (i.e. file with ending '.csv')? Click on the info icon for more information about data formats."
                 }else if(!checks$delimiter){
                     "Something went wrong when reading in your data set. Please ensure that your CSV file delimiter is a comma ',' or semicolon ';'. Click on the info icon for more information."
                 }else if(!checks$lengths){
@@ -207,6 +211,8 @@ elefanGaModule <- function(input, output, session) {
     resetElefanGaInputValues <- function() {
         ## resetting UIs
         shinyjs::reset("fileGa")
+        shinyjs::reset("elefanGaCSVsep")
+        shinyjs::reset("elefanGaCSVdec")
         shinyjs::reset("elefanGaDateFormat")
         shinyjs::reset("ELEFAN_years_selected")
         shinyjs::reset("ELEFAN_agg")
@@ -270,461 +276,14 @@ elefanGaModule <- function(input, output, session) {
         inputElefanGaData$data <- NULL
         fileGaState$upload <- NULL
         ## elefanGaUploadVreResult ?
-        elefanAcknowledged(FALSE)
+        ## elefanAcknowledged(FALSE)
     }
 
 
-    ## Input-dependent UIs
-    ## ----------------------------
-    output$ELEFAN_years_selected_out <- renderUI({
-        if(is.null(inputElefanGaData$data)){
-            allyears <- NULL
-        }else{
-            allyears <- try(unique(format(inputElefanGaData$data$dates,"%Y")),silent=TRUE)
-            if(inherits(allyears,"try-error")) allyears <- NULL
-        }
-        selectInput(ns("ELEFAN_years_selected"), "",
-                    choices = allyears, selected = allyears,
-                    multiple = TRUE,
-                    width = "100%")
-    })
-
-    output$ELEFAN_binSize_out <- renderUI({
-        if(is.null(inputElefanGaData$data)){
-            binSize <- 2
-            maxL <- 10
-        }else{
-            binSize <- try(min(diff(inputElefanGaData$data$midLengths)),silent=TRUE)
-            maxL <- try(max(inputElefanGaData$data$midLengths),silent=TRUE)
-            if(inherits(binSize,"try-error")){
-                binSize <- 2
-                maxL <- 10
-            }else{
-                binSize <- round(0.23 * maxL^0.6, 1)
-                if(binSize == 0) binSize <- 0.1
-            }
-        }
-        numericInput(ns("ELEFAN_GA_binSize"), "",
-                     binSize, min = 0.1, max = maxL, step=0.1,
-                     width ='100%')
-    })
-
-    output$ELEFAN_GA_Linf_out <- renderUI({
-        if(is.null(inputElefanGaData$data)){
-            maxL <- 100
-        }else{
-            maxL <- try(round(max(inputElefanGaData$data$midLengths)/0.95),silent=TRUE)
-            if(inherits(maxL,"try-error")){
-                maxL <- 100
-            }
-        }
-        min <- 0.25 * maxL
-        max <- 1.75 * maxL
-        sel <- c(0.8,1.2) * maxL
-        sliderInput(ns("ELEFAN_GA_Linf"),"",
-                    value=sel, min = min, max = max, step=1)
-    })
-
-    output$ELEFAN_years_selected_cc_out <- renderUI({
-        if(is.null(inputElefanGaData$data)){
-            allyears <- NULL
-        }else{
-            allyears <- try(unique(format(inputElefanGaData$data$dates,"%Y")),silent=TRUE)
-            if(inherits(allyears,"try-error")) allyears <- NULL
-        }
-        selectInput(ns("ELEFAN_years_selected_cc"), "",
-                    choices = allyears, selected = allyears,
-                    multiple = TRUE,
-                    width = "70%")
-    })
-
-
-    ## Interactive UIs & Reactive values
-    ## ----------------------------
-
-    observe({
-        if(!input$ELEFAN_GA_seasonalised){
-            js$removeBox2("box_elefan_ga_seasonPar")
-            js$removeBox2("box_provide_gp_sea")
-        }else{
-            js$showBox2("box_elefan_ga_seasonPar")
-            js$showBox2("box_provide_gp_sea")
-        }
-    })
-
-    observe({
-        if(!input$provideGP){
-            js$removeBox2("box_provide_gp")
-            js$removeBox2("box_provide_gp_sea")
-        }else{
-            js$showBox2("box_provide_gp")
-        }
-    })
-
-    observeEvent(input$ELEFAN_years_selected, {
-        elefan_ga$years_selected <- input$ELEFAN_years_selected
-    })
-
-    observeEvent(input$ELEFAN_GA_binSize, {
-        elefan_ga$binSize <- input$ELEFAN_GA_binSize
-    })
-
-    observe({
-        if(input$natM %in% c("Then's growth formula",
-                             "Gislason's length-based formula",
-                             "Lorenzen's length-based formula")){
-            shinyjs::hide("ui_natM_pauly", asis = TRUE)
-            shinyjs::hide("ui_natM_then_tmax", asis = TRUE)
-        }else if(input$natM == "Then's max. age formula"){
-            shinyjs::show("ui_natM_then_tmax", asis = TRUE)
-            shinyjs::hide("ui_natM_pauly", asis = TRUE)
-        }else if(input$natM == "Pauly's growth & temp. formula"){
-            shinyjs::show("ui_natM_pauly", asis = TRUE)
-            shinyjs::hide("ui_natM_then_tmax", asis = TRUE)
-        }
-    })
-
-    observe({
-        if(input$selectMat == "No maturity"){
-            shinyjs::hide("ui_lm50", asis = TRUE)
-            shinyjs::hide("ui_lm75", asis = TRUE)
-            shinyjs::hide("ui_wqsm", asis = TRUE)
-            shinyjs::hide("ui_per_lm1", asis = TRUE)
-            shinyjs::hide("ui_lm1", asis = TRUE)
-            shinyjs::hide("ui_per_lm2", asis = TRUE)
-            shinyjs::hide("ui_lm2", asis = TRUE)
-        }else if(input$selectMat == "Define Lm50 & Lm75"){
-            shinyjs::show("ui_lm50", asis = TRUE)
-            shinyjs::show("ui_lm75", asis = TRUE)
-            shinyjs::hide("ui_wqsm", asis = TRUE)
-            shinyjs::hide("ui_per_lm1", asis = TRUE)
-            shinyjs::hide("ui_lm1", asis = TRUE)
-            shinyjs::hide("ui_per_lm2", asis = TRUE)
-            shinyjs::hide("ui_lm2", asis = TRUE)
-        }else if(input$selectMat == "Define Lm50 & (Lm75-Lm25)"){
-            shinyjs::show("ui_lm50", asis = TRUE)
-            shinyjs::hide("ui_lm75", asis = TRUE)
-            shinyjs::show("ui_wqsm", asis = TRUE)
-            shinyjs::hide("ui_per_lm1", asis = TRUE)
-            shinyjs::hide("ui_lm1", asis = TRUE)
-            shinyjs::hide("ui_per_lm2", asis = TRUE)
-            shinyjs::hide("ui_lm2", asis = TRUE)
-        }else if(input$selectMat == "Other"){
-            shinyjs::hide("ui_lm50", asis = TRUE)
-            shinyjs::hide("ui_lm75", asis = TRUE)
-            shinyjs::hide("ui_wqsm", asis = TRUE)
-            shinyjs::show("ui_per_lm1", asis = TRUE)
-            shinyjs::show("ui_lm1", asis = TRUE)
-            shinyjs::show("ui_per_lm2", asis = TRUE)
-            shinyjs::show("ui_lm2", asis = TRUE)
-        }
-    })
-
-    observe({
-        if(input$select == "Estimate"){
-            shinyjs::hide("ui_l50", asis = TRUE)
-            shinyjs::hide("ui_l75", asis = TRUE)
-            shinyjs::hide("ui_wqs", asis = TRUE)
-            shinyjs::hide("ui_lcMin", asis=TRUE)
-            shinyjs::hide("ui_lcMax", asis=TRUE)
-            shinyjs::hide("ui_per_l1", asis = TRUE)
-            shinyjs::hide("ui_l1", asis = TRUE)
-            shinyjs::hide("ui_per_l2", asis = TRUE)
-            shinyjs::hide("ui_l2", asis = TRUE)
-        }else if(input$select == "Define L50 & L75"){
-            shinyjs::show("ui_l50", asis = TRUE)
-            shinyjs::hide("ui_wqs", asis = TRUE)
-            shinyjs::show("ui_l75", asis = TRUE)
-            shinyjs::show("ui_lcMin", asis=TRUE)
-            shinyjs::show("ui_lcMax", asis=TRUE)
-            shinyjs::hide("ui_per_l1", asis = TRUE)
-            shinyjs::hide("ui_l1", asis = TRUE)
-            shinyjs::hide("ui_per_l2", asis = TRUE)
-            shinyjs::hide("ui_l2", asis = TRUE)
-        }else if(input$select == "Define L50 & (L75-L25)"){
-            shinyjs::show("ui_l50", asis = TRUE)
-            shinyjs::hide("ui_l75", asis = TRUE)
-            shinyjs::show("ui_wqs", asis = TRUE)
-            shinyjs::show("ui_lcMin", asis=TRUE)
-            shinyjs::show("ui_lcMax", asis=TRUE)
-            shinyjs::hide("ui_per_l1", asis = TRUE)
-            shinyjs::hide("ui_l1", asis = TRUE)
-            shinyjs::hide("ui_per_l2", asis = TRUE)
-            shinyjs::hide("ui_l2", asis = TRUE)
-        }else if(input$select == "Other"){
-            shinyjs::hide("ui_l50", asis = TRUE)
-            shinyjs::hide("ui_l75", asis = TRUE)
-            shinyjs::hide("ui_wqs", asis = TRUE)
-            shinyjs::show("ui_lcMin", asis=TRUE)
-            shinyjs::show("ui_lcMax", asis=TRUE)
-            shinyjs::show("ui_per_l1", asis = TRUE)
-            shinyjs::show("ui_l1", asis = TRUE)
-            shinyjs::show("ui_per_l2", asis = TRUE)
-            shinyjs::show("ui_l2", asis = TRUE)
-        }
-    })
-
-    observeEvent(input$fileGa, {
-        fileGaState$upload <- 'uploaded'
-        tmp <- elefanGaFileData()
-        inputElefanGaData$data <- tmp$lfq
-        inputElefanGaData$raw <- tmp$raw
-        inputElefanGaData$checks <- tmp$checks
-        ## bin size
-        if(is.null(inputElefanGaData$data)){
-            binSize <- 2
-            maxL <- 10
-        }else{
-            binSize <- try(min(diff(inputElefanGaData$data$midLengths)),silent=TRUE)
-            maxL <- try(max(inputElefanGaData$data$midLengths),silent=TRUE)
-            if(inherits(binSize,"try-error")){
-                binSize <- 2
-                maxL <- 10
-            }else{
-                binSize <- round(0.23 * maxL^0.6, 1)
-                if(binSize == 0) binSize <- 0.1
-            }
-        }
-        elefan_ga$binSize <- binSize
-        ## years selected
-        if(is.null(inputElefanGaData$data)){
-            allyears <- NULL
-        }else{
-            allyears <- try(unique(format(inputElefanGaData$data$dates,"%Y")),silent=TRUE)
-            if(inherits(allyears,"try-error")) allyears <- NULL
-        }
-        elefan_ga$years_selected <- allyears
-    })
-
-    observeEvent(input$elefanGaDateFormat, {
-        tmp <- elefanGaFileData()
-        inputElefanGaData$data <- tmp$lfq
-        inputElefanGaData$raw <- tmp$raw
-        inputElefanGaData$checks <- tmp$checks
-        ## bin size
-        if(is.null(inputElefanGaData$data)){
-            binSize <- 2
-            maxL <- 10
-        }else{
-            binSize <- try(min(diff(inputElefanGaData$data$midLengths)),silent=TRUE)
-            maxL <- try(max(inputElefanGaData$data$midLengths),silent=TRUE)
-            if(inherits(binSize,"try-error")){
-                binSize <- 2
-                maxL <- 10
-            }else{
-                binSize <- round(0.23 * maxL^0.6, 1)
-                if(binSize == 0) binSize <- 0.1
-            }
-        }
-        elefan_ga$binSize <- binSize
-        ## years selected
-        if(is.null(inputElefanGaData$data)){
-            allyears <- NULL
-        }else{
-            allyears <- try(unique(format(inputElefanGaData$data$dates,"%Y")),silent=TRUE)
-        if(inherits(allyears,"try-error")) allyears <- NULL
-        }
-        elefan_ga$years_selected <- allyears
-    })
-
-
-
-
-    ## Action buttons
-    ## ----------------------------
-    observeEvent(input$check_ga, {
-
-        js$showComputing()
-        js$disableAllButtons()
+    run_check <- function() {
 
         res <- tryCatch({
 
-            ## needed because of renderUI in hidden tabs
-            if(is.null(input$ELEFAN_GA_Linf)){
-                linf_range <- c(0.8,1.2) * round(max(inputElefanGaData$data$midLengths)/0.95)
-            }else{
-                linf_range <- range(input$ELEFAN_GA_Linf)
-            }
-            k_range <- c(min(input$ELEFAN_GA_K), max(input$ELEFAN_GA_K))
-            ta_range <- c(min(input$ELEFAN_GA_t_anchor),
-                          max(input$ELEFAN_GA_t_anchor))
-            c_range <- c(min(input$ELEFAN_GA_C), max(input$ELEFAN_GA_C))
-            ts_range <- c(min(input$ELEFAN_GA_ts), max(input$ELEFAN_GA_ts))
-
-            if(is.null(input$yearsCC)){
-                yearsCC <- unique(format(inputElefanGaData$data$dates,"%Y"))
-            }else{
-                yearsCC <- input$ELEFAN_years_selected_cc
-            }
-
-            ## Fix parameters
-            if(!is.na(input$provide_Linf)){
-                linf_range <- c(input$provide_Linf,input$provide_Linf)
-            }
-            if(!is.na(input$provide_K)){
-                k_range <- c(input$provide_K,input$provide_K)
-            }
-            if(!is.na(input$provide_t_anchor)){
-                ta_range <- c(input$provide_t_anchor,input$provide_t_anchor)
-            }
-            if(!is.na(input$provide_C)){
-                c_range <- c(input$provide_C,input$provide_C)
-            }
-            if(!is.na(input$provide_ts)){
-                ts_range <- c(input$provide_ts,input$provide_ts)
-            }
-
-            ## Speed up
-            popSize <- input$ELEFAN_GA_popSize
-            if(popSize > 10) popSize <- 10
-            maxiter <- input$ELEFAN_GA_maxiter
-            if(maxiter > 5) maxiter <- 5
-            run <- input$ELEFAN_GA_run
-            if(run > 5) run <- 5
-
-            ## Parameter/Input checks
-            check.numeric.and.min(c(popSize = popSize,
-                                    maxiter = maxiter,
-                                    run = run,
-                                    pmut = input$ELEFAN_GA_pmutation,
-                                    pcross = input$ELEFAN_GA_pcrossover,
-                                    elite = input$ELEFAN_GA_elitism,
-                                    ma = input$ELEFAN_GA_MA,
-                                    binSize = input$ELEFAN_GA_binSize,
-                                    a = input$LWa,
-                                    b = input$LWb,
-                                    fRangeMax = input$fRangeMax),
-                                  can.be.zero = FALSE)
-            check.numeric.and.min(c(fRangeMin = input$fRangeMin),
-                                  can.be.zero = TRUE)
-            if(!is.na(input$provide_Linf)){
-                if(!is.numeric(linf_range)){
-                    stop(paste0("The provided Linf value is not numeric! Please check your input!"))
-                }
-                if(linf_range <= 0){
-                    stop(paste0("The provided Linf value has to be larger than 0!"))
-                }
-            }
-            if(!is.na(input$provide_K)){
-                if(!is.numeric(k_range)){
-                    stop(paste0("The provided K value is not numeric! Please check your input!"))
-                }
-                if(k_range <= 0){
-                    stop(paste0("The provided K value has to be larger than 0!"))
-                }
-            }
-            if(!is.na(input$provide_t_anchor)){
-                if(!is.numeric(ta_range)){
-                    stop(paste0("The provided time anchor (ta) is not numeric! Please check your input!"))
-                }
-                if(ta_range <= 0){
-                    stop(paste0("The provided time anchor (ta) has to be larger than 0!"))
-                }
-            }
-
-            ## Estimation check
-            flog.info("Starting Elegan GA computation (check)")
-            res <- run_tropfishr(x = inputElefanGaData$data,
-                                 binSize = input$ELEFAN_GA_binSize,
-                                 seasonalised = input$ELEFAN_GA_seasonalised,
-                                 low_par = list(Linf = linf_range[1], K = k_range[1],
-                                                t_anchor = ta_range[1],
-                                                C = c_range[1],
-                                                ts = ts_range[1]),
-                                 up_par = list(Linf = linf_range[2], K = k_range[2],
-                                               t_anchor = ta_range[2],
-                                               C = c_range[2],
-                                               ts = ts_range[2]),
-                                 pmutation = input$ELEFAN_GA_pmutation,
-                                 pcrossover = input$ELEFAN_GA_pcrossover,
-                                 elitism = input$ELEFAN_GA_elitism,
-                                 MA = input$ELEFAN_GA_MA,
-                                 addl.sqrt = input$ELEFAN_GA_addlsqrt,
-                                 years = input$ELEFAN_years_selected,
-                                 agg = input$ELEFAN_agg,
-                                 binSizeCC = input$ELEFAN_GA_binSize,
-                                 yearsCC = yearsCC,
-                                 LWa = input$LWa,
-                                 LWb = input$LWb,
-                                 natM_method = input$natM,
-                                 temp = input$temp,
-                                 cor_schooling = input$schooling,
-                                 tmax = input$tmax,
-                                 select_method = input$select,
-                                 l50_user = input$l50_user,
-                                 l75_user = input$l75_user,
-                                 wqs_user = input$wqs_user,
-                                 per_l1 = input$per_l1_user,
-                                 l1 = input$l1_user,
-                                 per_l2 = input$per_l2_user,
-                                 l2 = input$l2_user,
-                                 fRangeMin = input$fRangeMin,
-                                 fRangeMax = input$fRangeMax,
-                                 lcRangeMin = input$lcRangeMin,
-                                 lcRangeMax = input$lcRangeMax,
-                                 mat_method = input$selectMat,
-                                 Lm50 = input$lm50_user,
-                                 Lm75 = input$lm75_user,
-                                 wqsm = input$wqsm_user,
-                                 per_lm1 = input$per_lm1_user,
-                                 lm1 = input$lm1_user,
-                                 per_lm2 = input$per_lm2_user,
-                                 lm2 = input$lm2_user,
-                                 ## speed up for checking:
-                                 popSize = popSize,
-                                 maxiter = maxiter,
-                                 run = run,
-                                 fRangeSteps = 5,
-                                 lcRangeSteps = 5,
-                                 progressMessages = c("Checking ELEFAN","Checking YPR"),
-                                 skip_elefan = input$provideGP,
-                                 provide_linf = input$provide_Linf,
-                                 provide_k = input$provide_K,
-                                 provide_ta = input$provide_t_anchor
-                                 )
-
-            js$hideComputing()
-            js$enableAllButtons()
-
-        }, error = function(cond) {
-            shinyjs::disable("go_ga")
-            shinyjs::disable("createElefanGAReport")
-            shinyjs::disable("createElefanGAzip")
-            showModal(modalDialog(
-                title = "Error",
-                cond$message,
-                easyClose = TRUE,
-                footer = NULL
-            ))
-            return(NULL)
-        },
-      ##  warning = function(cond) {
-      ##       showModal(modalDialog(
-      ##           title = "Warning",
-      ##           cond$message,
-      ##           easyClose = TRUE,
-      ##           footer = NULL
-      ##       ))
-      ##       return(NULL)
-      ##   },
-        finally = {
-            js$hideComputing()
-            js$enableAllButtons()
-        })
-
-        showNotification(
-            "No errors during check run, ready to run assessment!",
-            type = "message",
-            duration = 60,
-            closeButton = TRUE
-        )
-    })
-
-
-    observeEvent(input$go_ga, {
-        req(inputElefanGaData$data)
-
-        res <- tryCatch({
             ## needed because of renderUI in hidden tabs
             if(is.null(input$ELEFAN_GA_Linf)){
                 linf_range <- c(0.8,1.2) * round(max(inputElefanGaData$data$midLengths)/0.95)
@@ -815,22 +374,6 @@ elefanGaModule <- function(input, output, session) {
                 }
             }
 
-            elefanAcknowledged(FALSE)
-
-            showModal(modalDialog(
-                title = "Acknowledge model assumptions",
-                bsCollapse(id = ns("assumptions"), open = NULL,
-                           bsCollapsePanel("▶ Click to show/hide",
-                                           HTML(tropfishrAssumptionsHTML()))
-                           ),
-                tags$p(HTML("See the <a href='https://elearning.fao.org/course/view.php?id=502' target='_blank'>FAO eLearning module</a> for more information.")),
-                footer = tagList(
-                    modalButton("Cancel"),
-                    actionButton(ns("elefan_ack"), "I Acknowledge", class = "btn-success")
-                ),
-                easyClose = FALSE
-            ))
-
         }, error = function(cond) {
             flog.error("Error in TropFishR: %s ",cond)
             showModal(modalDialog(
@@ -839,16 +382,11 @@ elefanGaModule <- function(input, output, session) {
                 easyClose = TRUE,
                 footer = NULL
             ))
+            return(invisible(NULL))
         })
-    })
+    }
 
-    observeEvent(input$elefan_ack, {
-        req(inputElefanGaData$data)
-        removeModal()
-        elefanAcknowledged(TRUE)
-
-        js$showComputing()
-        js$disableAllButtons()
+    run_elefan_server <- function() {
 
         res <- tryCatch({
 
@@ -1056,7 +594,571 @@ elefanGaModule <- function(input, output, session) {
                 shinyjs::enable("createElefanGAzip")
             }
         })
+    }
 
+
+    ## Input-dependent UIs
+    ## ----------------------------
+    output$ELEFAN_years_selected_out <- renderUI({
+        if(is.null(inputElefanGaData$data)){
+            allyears <- NULL
+    }else{
+        allyears <- try(unique(format(inputElefanGaData$data$dates,"%Y")),silent=TRUE)
+        if(inherits(allyears,"try-error")) allyears <- NULL
+    }
+    selectInput(ns("ELEFAN_years_selected"), "",
+                choices = allyears, selected = allyears,
+                multiple = TRUE,
+                width = "100%")
+})
+
+output$ELEFAN_binSize_out <- renderUI({
+    if(is.null(inputElefanGaData$data)){
+        binSize <- 2
+        maxL <- 10
+    }else{
+        binSize <- try(min(diff(inputElefanGaData$data$midLengths)),silent=TRUE)
+        maxL <- try(max(inputElefanGaData$data$midLengths),silent=TRUE)
+        if(inherits(binSize,"try-error")){
+            binSize <- 2
+            maxL <- 10
+        }else{
+            binSize <- round(0.23 * maxL^0.6, 1)
+            if(binSize == 0) binSize <- 0.1
+        }
+    }
+    numericInput(ns("ELEFAN_GA_binSize"), "",
+                 binSize, min = 0.1, max = maxL, step=0.1,
+                 width ='100%')
+})
+
+output$ELEFAN_GA_Linf_out <- renderUI({
+    if(is.null(inputElefanGaData$data)){
+        maxL <- 100
+    }else{
+        maxL <- try(round(max(inputElefanGaData$data$midLengths)/0.95),silent=TRUE)
+        if(inherits(maxL,"try-error")){
+            maxL <- 100
+        }
+    }
+    min <- 0.25 * maxL
+    max <- 1.75 * maxL
+    sel <- c(0.8,1.2) * maxL
+    sliderInput(ns("ELEFAN_GA_Linf"),"",
+                value=sel, min = min, max = max, step=1)
+})
+
+output$ELEFAN_years_selected_cc_out <- renderUI({
+    if(is.null(inputElefanGaData$data)){
+        allyears <- NULL
+    }else{
+        allyears <- try(unique(format(inputElefanGaData$data$dates,"%Y")),silent=TRUE)
+        if(inherits(allyears,"try-error")) allyears <- NULL
+    }
+    selectInput(ns("ELEFAN_years_selected_cc"), "",
+                choices = allyears, selected = allyears,
+                multiple = TRUE,
+                width = "70%")
+})
+
+
+## Interactive UIs & Reactive values
+## ----------------------------
+
+observe({
+    if(!input$ELEFAN_GA_seasonalised){
+        js$removeBox2("box_elefan_ga_seasonPar")
+        js$removeBox2("box_provide_gp_sea")
+    }else{
+        js$showBox2("box_elefan_ga_seasonPar")
+        js$showBox2("box_provide_gp_sea")
+    }
+})
+
+observe({
+    if(!input$provideGP){
+        js$removeBox2("box_provide_gp")
+        js$removeBox2("box_provide_gp_sea")
+    }else{
+        js$showBox2("box_provide_gp")
+    }
+})
+
+observeEvent(input$ELEFAN_years_selected, {
+    elefan_ga$years_selected <- input$ELEFAN_years_selected
+})
+
+observeEvent(input$ELEFAN_GA_binSize, {
+    elefan_ga$binSize <- input$ELEFAN_GA_binSize
+})
+
+observe({
+    if(input$natM %in% c("Then's growth formula",
+                         "Gislason's length-based formula",
+                         "Lorenzen's length-based formula")){
+        shinyjs::hide("ui_natM_pauly", asis = TRUE)
+        shinyjs::hide("ui_natM_then_tmax", asis = TRUE)
+    }else if(input$natM == "Then's max. age formula"){
+        shinyjs::show("ui_natM_then_tmax", asis = TRUE)
+        shinyjs::hide("ui_natM_pauly", asis = TRUE)
+    }else if(input$natM == "Pauly's growth & temp. formula"){
+        shinyjs::show("ui_natM_pauly", asis = TRUE)
+        shinyjs::hide("ui_natM_then_tmax", asis = TRUE)
+    }
+})
+
+observe({
+    if(input$selectMat == "No maturity"){
+        shinyjs::hide("ui_lm50", asis = TRUE)
+        shinyjs::hide("ui_lm75", asis = TRUE)
+        shinyjs::hide("ui_wqsm", asis = TRUE)
+        shinyjs::hide("ui_per_lm1", asis = TRUE)
+        shinyjs::hide("ui_lm1", asis = TRUE)
+        shinyjs::hide("ui_per_lm2", asis = TRUE)
+        shinyjs::hide("ui_lm2", asis = TRUE)
+    }else if(input$selectMat == "Define Lm50 & Lm75"){
+        shinyjs::show("ui_lm50", asis = TRUE)
+        shinyjs::show("ui_lm75", asis = TRUE)
+        shinyjs::hide("ui_wqsm", asis = TRUE)
+        shinyjs::hide("ui_per_lm1", asis = TRUE)
+        shinyjs::hide("ui_lm1", asis = TRUE)
+        shinyjs::hide("ui_per_lm2", asis = TRUE)
+        shinyjs::hide("ui_lm2", asis = TRUE)
+    }else if(input$selectMat == "Define Lm50 & (Lm75-Lm25)"){
+        shinyjs::show("ui_lm50", asis = TRUE)
+        shinyjs::hide("ui_lm75", asis = TRUE)
+        shinyjs::show("ui_wqsm", asis = TRUE)
+        shinyjs::hide("ui_per_lm1", asis = TRUE)
+        shinyjs::hide("ui_lm1", asis = TRUE)
+        shinyjs::hide("ui_per_lm2", asis = TRUE)
+        shinyjs::hide("ui_lm2", asis = TRUE)
+    }else if(input$selectMat == "Other"){
+        shinyjs::hide("ui_lm50", asis = TRUE)
+        shinyjs::hide("ui_lm75", asis = TRUE)
+        shinyjs::hide("ui_wqsm", asis = TRUE)
+        shinyjs::show("ui_per_lm1", asis = TRUE)
+        shinyjs::show("ui_lm1", asis = TRUE)
+        shinyjs::show("ui_per_lm2", asis = TRUE)
+        shinyjs::show("ui_lm2", asis = TRUE)
+    }
+})
+
+observe({
+    if(input$select == "Estimate"){
+        shinyjs::hide("ui_l50", asis = TRUE)
+        shinyjs::hide("ui_l75", asis = TRUE)
+        shinyjs::hide("ui_wqs", asis = TRUE)
+        shinyjs::hide("ui_lcMin", asis=TRUE)
+        shinyjs::hide("ui_lcMax", asis=TRUE)
+        shinyjs::hide("ui_per_l1", asis = TRUE)
+        shinyjs::hide("ui_l1", asis = TRUE)
+        shinyjs::hide("ui_per_l2", asis = TRUE)
+        shinyjs::hide("ui_l2", asis = TRUE)
+    }else if(input$select == "Define L50 & L75"){
+        shinyjs::show("ui_l50", asis = TRUE)
+        shinyjs::hide("ui_wqs", asis = TRUE)
+        shinyjs::show("ui_l75", asis = TRUE)
+        shinyjs::show("ui_lcMin", asis=TRUE)
+        shinyjs::show("ui_lcMax", asis=TRUE)
+        shinyjs::hide("ui_per_l1", asis = TRUE)
+        shinyjs::hide("ui_l1", asis = TRUE)
+        shinyjs::hide("ui_per_l2", asis = TRUE)
+        shinyjs::hide("ui_l2", asis = TRUE)
+    }else if(input$select == "Define L50 & (L75-L25)"){
+        shinyjs::show("ui_l50", asis = TRUE)
+        shinyjs::hide("ui_l75", asis = TRUE)
+        shinyjs::show("ui_wqs", asis = TRUE)
+        shinyjs::show("ui_lcMin", asis=TRUE)
+        shinyjs::show("ui_lcMax", asis=TRUE)
+        shinyjs::hide("ui_per_l1", asis = TRUE)
+        shinyjs::hide("ui_l1", asis = TRUE)
+        shinyjs::hide("ui_per_l2", asis = TRUE)
+        shinyjs::hide("ui_l2", asis = TRUE)
+    }else if(input$select == "Other"){
+        shinyjs::hide("ui_l50", asis = TRUE)
+        shinyjs::hide("ui_l75", asis = TRUE)
+        shinyjs::hide("ui_wqs", asis = TRUE)
+        shinyjs::show("ui_lcMin", asis=TRUE)
+        shinyjs::show("ui_lcMax", asis=TRUE)
+        shinyjs::show("ui_per_l1", asis = TRUE)
+        shinyjs::show("ui_l1", asis = TRUE)
+        shinyjs::show("ui_per_l2", asis = TRUE)
+        shinyjs::show("ui_l2", asis = TRUE)
+    }
+})
+
+observeEvent(input$fileGa, {
+    fileGaState$upload <- 'uploaded'
+    tmp <- elefanGaFileData()
+    inputElefanGaData$data <- tmp$lfq
+    inputElefanGaData$raw <- tmp$raw
+    inputElefanGaData$checks <- tmp$checks
+    ## bin size
+    if(is.null(inputElefanGaData$data)){
+        binSize <- 2
+        maxL <- 10
+    }else{
+        binSize <- try(min(diff(inputElefanGaData$data$midLengths)),silent=TRUE)
+        maxL <- try(max(inputElefanGaData$data$midLengths),silent=TRUE)
+            if(inherits(binSize,"try-error")){
+                binSize <- 2
+                maxL <- 10
+            }else{
+                binSize <- round(0.23 * maxL^0.6, 1)
+                if(binSize == 0) binSize <- 0.1
+            }
+        }
+        elefan_ga$binSize <- binSize
+        ## years selected
+        if(is.null(inputElefanGaData$data)){
+            allyears <- NULL
+        }else{
+            allyears <- try(unique(format(inputElefanGaData$data$dates,"%Y")),silent=TRUE)
+            if(inherits(allyears,"try-error")) allyears <- NULL
+        }
+        elefan_ga$years_selected <- allyears
+    })
+
+    observeEvent(input$elefanGaDateFormat, {
+        tmp <- elefanGaFileData()
+        inputElefanGaData$data <- tmp$lfq
+        inputElefanGaData$raw <- tmp$raw
+        inputElefanGaData$checks <- tmp$checks
+        ## bin size
+        if(is.null(inputElefanGaData$data)){
+            binSize <- 2
+            maxL <- 10
+        }else{
+            binSize <- try(min(diff(inputElefanGaData$data$midLengths)),silent=TRUE)
+            maxL <- try(max(inputElefanGaData$data$midLengths),silent=TRUE)
+            if(inherits(binSize,"try-error")){
+                binSize <- 2
+                maxL <- 10
+            }else{
+                binSize <- round(0.23 * maxL^0.6, 1)
+                if(binSize == 0) binSize <- 0.1
+            }
+        }
+        elefan_ga$binSize <- binSize
+        ## years selected
+        if(is.null(inputElefanGaData$data)){
+            allyears <- NULL
+        }else{
+            allyears <- try(unique(format(inputElefanGaData$data$dates,"%Y")),silent=TRUE)
+        if(inherits(allyears,"try-error")) allyears <- NULL
+        }
+        elefan_ga$years_selected <- allyears
+    })
+
+    observeEvent(input$elefanGaCSVdec, {
+        tmp <- elefanGaFileData()
+        inputElefanGaData$data <- tmp$lfq
+        inputElefanGaData$raw <- tmp$raw
+        inputElefanGaData$checks <- tmp$checks
+        ## bin size
+        if(is.null(inputElefanGaData$data)){
+            binSize <- 2
+            maxL <- 10
+        }else{
+            binSize <- try(min(diff(inputElefanGaData$data$midLengths)),silent=TRUE)
+            maxL <- try(max(inputElefanGaData$data$midLengths),silent=TRUE)
+            if(inherits(binSize,"try-error")){
+                binSize <- 2
+                maxL <- 10
+            }else{
+                binSize <- round(0.23 * maxL^0.6, 1)
+                if(binSize == 0) binSize <- 0.1
+            }
+        }
+        elefan_ga$binSize <- binSize
+        ## years selected
+        if(is.null(inputElefanGaData$data)){
+            allyears <- NULL
+        }else{
+            allyears <- try(unique(format(inputElefanGaData$data$dates,"%Y")),silent=TRUE)
+            if(inherits(allyears,"try-error")) allyears <- NULL
+        }
+        elefan_ga$years_selected <- allyears
+    })
+
+    observeEvent(input$elefanGaCSVsep, {
+        tmp <- elefanGaFileData()
+        inputElefanGaData$data <- tmp$lfq
+        inputElefanGaData$raw <- tmp$raw
+        inputElefanGaData$checks <- tmp$checks
+        ## bin size
+        if(is.null(inputElefanGaData$data)){
+            binSize <- 2
+            maxL <- 10
+        }else{
+            binSize <- try(min(diff(inputElefanGaData$data$midLengths)),silent=TRUE)
+            maxL <- try(max(inputElefanGaData$data$midLengths),silent=TRUE)
+            if(inherits(binSize,"try-error")){
+                binSize <- 2
+                maxL <- 10
+            }else{
+                binSize <- round(0.23 * maxL^0.6, 1)
+                if(binSize == 0) binSize <- 0.1
+            }
+        }
+        elefan_ga$binSize <- binSize
+        ## years selected
+        if(is.null(inputElefanGaData$data)){
+            allyears <- NULL
+        }else{
+            allyears <- try(unique(format(inputElefanGaData$data$dates,"%Y")),silent=TRUE)
+            if(inherits(allyears,"try-error")) allyears <- NULL
+        }
+        elefan_ga$years_selected <- allyears
+    })
+
+
+
+
+    ## Action buttons
+    ## ----------------------------
+    observeEvent(input$check_ga, {
+
+        js$showComputing()
+        js$disableAllButtons()
+
+        res <- tryCatch({
+
+            ## needed because of renderUI in hidden tabs
+            if(is.null(input$ELEFAN_GA_Linf)){
+                linf_range <- c(0.8,1.2) * round(max(inputElefanGaData$data$midLengths)/0.95)
+            }else{
+                linf_range <- range(input$ELEFAN_GA_Linf)
+            }
+            k_range <- c(min(input$ELEFAN_GA_K), max(input$ELEFAN_GA_K))
+            ta_range <- c(min(input$ELEFAN_GA_t_anchor),
+                          max(input$ELEFAN_GA_t_anchor))
+            c_range <- c(min(input$ELEFAN_GA_C), max(input$ELEFAN_GA_C))
+            ts_range <- c(min(input$ELEFAN_GA_ts), max(input$ELEFAN_GA_ts))
+
+            if(is.null(input$yearsCC)){
+                yearsCC <- unique(format(inputElefanGaData$data$dates,"%Y"))
+            }else{
+                yearsCC <- input$ELEFAN_years_selected_cc
+            }
+
+            ## Fix parameters
+            if(!is.na(input$provide_Linf)){
+                linf_range <- c(input$provide_Linf,input$provide_Linf)
+            }
+            if(!is.na(input$provide_K)){
+                k_range <- c(input$provide_K,input$provide_K)
+            }
+            if(!is.na(input$provide_t_anchor)){
+                ta_range <- c(input$provide_t_anchor,input$provide_t_anchor)
+            }
+            if(!is.na(input$provide_C)){
+                c_range <- c(input$provide_C,input$provide_C)
+            }
+            if(!is.na(input$provide_ts)){
+                ts_range <- c(input$provide_ts,input$provide_ts)
+            }
+
+            ## Speed up
+            popSize <- input$ELEFAN_GA_popSize
+            if(popSize > 10) popSize <- 10
+            maxiter <- input$ELEFAN_GA_maxiter
+            if(maxiter > 5) maxiter <- 5
+            run <- input$ELEFAN_GA_run
+            if(run > 5) run <- 5
+
+            ## Parameter/Input checks
+            check.numeric.and.min(c(popSize = popSize,
+                                    maxiter = maxiter,
+                                    run = run,
+                                    pmut = input$ELEFAN_GA_pmutation,
+                                    pcross = input$ELEFAN_GA_pcrossover,
+                                    elite = input$ELEFAN_GA_elitism,
+                                    ma = input$ELEFAN_GA_MA,
+                                    binSize = input$ELEFAN_GA_binSize,
+                                    a = input$LWa,
+                                    b = input$LWb,
+                                    fRangeMax = input$fRangeMax),
+                                  can.be.zero = FALSE)
+            check.numeric.and.min(c(fRangeMin = input$fRangeMin),
+                                  can.be.zero = TRUE)
+            if(!is.na(input$provide_Linf)){
+                if(!is.numeric(linf_range)){
+                    stop(paste0("The provided Linf value is not numeric! Please check your input!"))
+                }
+                if(linf_range <= 0){
+                    stop(paste0("The provided Linf value has to be larger than 0!"))
+                }
+            }
+            if(!is.na(input$provide_K)){
+                if(!is.numeric(k_range)){
+                    stop(paste0("The provided K value is not numeric! Please check your input!"))
+                }
+                if(k_range <= 0){
+                    stop(paste0("The provided K value has to be larger than 0!"))
+                }
+            }
+            if(!is.na(input$provide_t_anchor)){
+                if(!is.numeric(ta_range)){
+                    stop(paste0("The provided time anchor (ta) is not numeric! Please check your input!"))
+                }
+                if(ta_range <= 0){
+                    stop(paste0("The provided time anchor (ta) has to be larger than 0!"))
+                }
+            }
+
+            ## Estimation check
+            flog.info("Starting Elegan GA computation (check)")
+            res <- run_tropfishr(x = inputElefanGaData$data,
+                                 binSize = input$ELEFAN_GA_binSize,
+                                 seasonalised = input$ELEFAN_GA_seasonalised,
+                                 low_par = list(Linf = linf_range[1], K = k_range[1],
+                                                t_anchor = ta_range[1],
+                                                C = c_range[1],
+                                                ts = ts_range[1]),
+                                 up_par = list(Linf = linf_range[2], K = k_range[2],
+                                               t_anchor = ta_range[2],
+                                               C = c_range[2],
+                                               ts = ts_range[2]),
+                                 pmutation = input$ELEFAN_GA_pmutation,
+                                 pcrossover = input$ELEFAN_GA_pcrossover,
+                                 elitism = input$ELEFAN_GA_elitism,
+                                 MA = input$ELEFAN_GA_MA,
+                                 addl.sqrt = input$ELEFAN_GA_addlsqrt,
+                                 years = input$ELEFAN_years_selected,
+                                 agg = input$ELEFAN_agg,
+                                 binSizeCC = input$ELEFAN_GA_binSize,
+                                 yearsCC = yearsCC,
+                                 LWa = input$LWa,
+                                 LWb = input$LWb,
+                                 natM_method = input$natM,
+                                 temp = input$temp,
+                                 cor_schooling = input$schooling,
+                                 tmax = input$tmax,
+                                 select_method = input$select,
+                                 l50_user = input$l50_user,
+                                 l75_user = input$l75_user,
+                                 wqs_user = input$wqs_user,
+                                 per_l1 = input$per_l1_user,
+                                 l1 = input$l1_user,
+                                 per_l2 = input$per_l2_user,
+                                 l2 = input$l2_user,
+                                 fRangeMin = input$fRangeMin,
+                                 fRangeMax = input$fRangeMax,
+                                 lcRangeMin = input$lcRangeMin,
+                                 lcRangeMax = input$lcRangeMax,
+                                 mat_method = input$selectMat,
+                                 Lm50 = input$lm50_user,
+                                 Lm75 = input$lm75_user,
+                                 wqsm = input$wqsm_user,
+                                 per_lm1 = input$per_lm1_user,
+                                 lm1 = input$lm1_user,
+                                 per_lm2 = input$per_lm2_user,
+                                 lm2 = input$lm2_user,
+                                 ## speed up for checking:
+                                 popSize = popSize,
+                                 maxiter = maxiter,
+                                 run = run,
+                                 fRangeSteps = 5,
+                                 lcRangeSteps = 5,
+                                 progressMessages = c("Checking ELEFAN","Checking YPR"),
+                                 skip_elefan = input$provideGP,
+                                 provide_linf = input$provide_Linf,
+                                 provide_k = input$provide_K,
+                                 provide_ta = input$provide_t_anchor
+                                 )
+
+            js$hideComputing()
+            js$enableAllButtons()
+
+        }, error = function(cond) {
+            shinyjs::disable("go_ga")
+            shinyjs::disable("createElefanGAReport")
+            shinyjs::disable("createElefanGAzip")
+            showModal(modalDialog(
+                title = "Error",
+                cond$message,
+                easyClose = TRUE,
+                footer = NULL
+            ))
+            return(NULL)
+        },
+      ##  warning = function(cond) {
+      ##       showModal(modalDialog(
+      ##           title = "Warning",
+      ##           cond$message,
+      ##           easyClose = TRUE,
+      ##           footer = NULL
+      ##       ))
+      ##       return(NULL)
+      ##   },
+        finally = {
+            js$hideComputing()
+            js$enableAllButtons()
+        })
+
+        showNotification(
+            "No errors during check run, ready to run assessment!",
+            type = "message",
+            duration = 60,
+            closeButton = TRUE
+        )
+    })
+
+
+    observeEvent(input$go_ga, {
+        req(inputElefanGaData$data)
+
+        res <- tryCatch({
+
+            run_check()
+
+            if(!elefanAcknowledged()) {
+
+                elefanPendingRun(TRUE)
+
+                showModal(modalDialog(
+                    title = "Acknowledge model assumptions",
+                    bsCollapse(id = ns("assumptions"), open = NULL,
+                               bsCollapsePanel("▶ Click to show/hide",
+                                               HTML(tropfishrAssumptionsHTML()))
+                               ),
+                    tags$p(HTML("See the <a href='https://elearning.fao.org/course/view.php?id=502' target='_blank'>FAO eLearning module</a> for more information.")),
+                    footer = tagList(
+                        modalButton("Cancel"),
+                        actionButton(ns("elefan_ack"), "I Acknowledge", class = "btn-success")
+                    ),
+                    easyClose = FALSE
+                ))
+
+                return(invisible(NULL))
+            }
+
+            run_elefan_server()
+
+        }, error = function(cond) {
+            flog.error("Error in TropFishR: %s ",cond)
+            showModal(modalDialog(
+                title = "Error",
+                cond$message,
+                easyClose = TRUE,
+                footer = NULL
+            ))
+        })
+    })
+
+    observeEvent(input$elefan_ack, {
+        req(inputElefanGaData$data)
+        removeModal()
+        elefanAcknowledged(TRUE)
+
+        js$showComputing()
+        js$disableAllButtons()
+
+        if (isTRUE(elefanPendingRun())) {
+            elefanPendingRun(FALSE)
+            run_elefan_server()
+        }
     })
 
     observeEvent(input$reset_ga, {
@@ -1130,6 +1232,33 @@ elefanGaModule <- function(input, output, session) {
             title = "Results Considerations - TropFishR",
             HTML(gsub("%%ELEFAN%%", "ELEFAN_GA",
                       getResultConsiderationTextForElefan())),
+            easyClose = TRUE,
+            size = "l"
+        ))
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$info_csv_sep, {
+        showModal(modalDialog(
+            title = "CSV file field separator",
+            HTML("<p>Choose the csv file field separator. By default, the app will try to guess the field separator automatically by trying various options. This field allows you to select a specific field separator or to enter your own. In order to enter your own separator, just press backspace to delete the current value in the input field and type the separator code, e.g. '.' for a point, or '\t' for tab separated fields (the single quotation marks are not needed in the input field).</p>"),
+            easyClose = TRUE,
+            size = "l"
+        ))
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$info_csv_dec, {
+        showModal(modalDialog(
+            title = "CSV file decimal separator",
+            HTML("<p>Choose the csv file decimal separator. By default, the app will try to guess the decimal separator automatically by trying various options. This field allows you to select a specific decimal separator or to enter your own. In order to enter your own separator, just press backspace to delete the current value in the input field and type the separator code, e.g. '.' for a point, or ' ' for a whitespace as decimal separator (the single quotation marks are not needed in the input field).</p>"),
+            easyClose = TRUE,
+            size = "l"
+        ))
+    }, ignoreInit = TRUE)
+
+    observeEvent(input$info_csv_date, {
+        showModal(modalDialog(
+            title = "CSV date format",
+            HTML("<p>Choose the csv file date format. By default, the app will try to guess the date format automatically by trying various combinations. This field allows you to select a specific decimal separator or to enter your own. In order to enter your own separator, just press backspace to delete the current value in the input field and type the date format in the required format, e.g. '%Y-%m-%d' for year-month-day separated by hyphen or '%d.%m.%y' by day.month.year separated by dots and where the year is given as the two last digits (e.g. 99 for 1999).</p>"),
             easyClose = TRUE,
             size = "l"
         ))
@@ -1423,6 +1552,12 @@ elefanGaModule <- function(input, output, session) {
                  intro = "As a first step, you need to upload data. You can do that by clicking on 'Browse' and select a csv file on your computer."),
             list(element = paste0("#", ns("dataConsiderations2")),
                  intro = "If you do not have your own file and want to use an example fiel or if you are interested in more information about the data type and format, click on the small the information button here. <br><br>Note these information buttons (indicated by 'i') throughout the whole app."),
+            list(element = paste0("#", ns("elefanGaCSVsep"),
+                                  " + .selectize-control"),
+                 intro = "By default, the app will try to recognize the field separator, but you can also specify it here by either choosing from the list or by pressing backspace and enter any separator."),
+            list(element = paste0("#", ns("elefanGaCSVdec"),
+                                  " + .selectize-control"),
+                 intro = "Similarly, by default, the app will try to recognize the decimal separator, but you can also specify it here by either choosing from the list or by pressing backspace and enter any separator."),
             list(element = paste0("#", ns("elefanGaDateFormat"),
                                   " + .selectize-control"),
                  intro = "By default, the app will try to recognize the date format, but you can also specify it here."),
@@ -1434,7 +1569,7 @@ elefanGaModule <- function(input, output, session) {
             list(element = "#settings_elefan ul.nav.nav-tabs",
                  intro = "There are multiple tabs that allow you to adjust various aspects of the assessment method."),
             list(element = paste0("#", ns("tab1")),
-                 intro = "For example, the first tab allows you to visually inspect the uploaded data and set important parameters, such as the bin size or moving average.<br><br> Remeber the small information buttons ('i') next to the labels, if you need more information about these parameters.")
+                 intro = "For example, the first tab allows you to visually inspect the uploaded data and set important parameters, such as the bin size or moving average.<br><br> Remember the small information buttons ('i') next to the labels, if you need more information about these parameters.")
         )
 
         current_tab <- input$settings
@@ -1481,7 +1616,7 @@ elefanGaModule <- function(input, output, session) {
                             list(element = paste0("#", ns("tour_res")),
                                  intro = "The results tour might be helpful to get an overview over the results.<br><br> Note, that the tour only makes sense after TropFishR was run successfully."),
                             list(element = NA,
-                                 intro = "This concludes the TropFishR tour.<br><br>Remeber the information buttons ('i') that might be helpful when uploading data, adjusting settings or interpreting results."),
+                                 intro = "This concludes the TropFishR tour.<br><br>Remember the information buttons ('i') that might be helpful when uploading data, adjusting settings or interpreting results."),
                             list(element = paste0("#", ns("info_wrapper")),
                                  intro = "These buttons offer another helpful option to get detailed information on the workflow, data, methods, and results."),
                             list(element = NA,
