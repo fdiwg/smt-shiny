@@ -78,6 +78,11 @@ understanding their limitations.
 
 ## Data
 
+The uploaded data set (\verb|`r input$file$name`|) contains a catch time series
+spanning from `r min(spict_dat$dataExplo$inp$timeC)` to `r max(spict_dat$dataExplo$inp$timeC)` and `r ifelse(spict_dat$dataExplo$inp$nindex
+       == 1, "a relative abundance index", paste0(spict_dat$dataExplo$inp$nindex, " relative abundance indices"))`
+       spanning from `r min(unlist(spict_dat$dataExplo$inp$timeI))` to `r max(unlist(spict_dat$dataExplo$inp$timeI))` (Figure 1).
+
 ```{r echo=FALSE, fig.align="center", dpi=300, fig.width=9}
 inp <- spict_dat$dataExplo$inp
 if(any(!sapply(spict_dat$dataExplo$inp$obsI,is.null))) {

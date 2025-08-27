@@ -73,15 +73,30 @@ captionLBI.plots <- function(lbi_dat, input, format = "withFig", type){
            },
            "diag1" = {
                plot.num <- 2
-               txt <- paste0("Number of samples by month.")
+               txt <- paste0(
+                   "Number of samples by month. This plot shows how samples are distributed within and across years. ",
+                   "For LBI, the critical requirement is that the sampled length composition is representative of the overall fishery. ",
+                   "While uniform coverage of all months is not strictly necessary, sampling should reflect the seasonal and annual exploitation pattern, ",
+                   "and avoid strong biases from only targeting a narrow time window."
+               )
            },
            "diag2" = {
                plot.num <- 3
-               txt <- paste0("Length frequency distributions by month.")
+               txt <- paste0(
+                   "Length frequency distributions by month. ",
+                   "This plot shows the monthly size composition of the samples. ",
+                   "Pronounced shifts in the distributions may reflect true population dynamics (e.g. strong recruitment events or growth of cohorts), ",
+                   "changes in fleet selectivity, or biases from uneven or unrepresentative sampling across months or years."
+               )
            },
            "diag3" = {
                plot.num <- 4
-               txt <- paste0("Length frequency distributions by year.")
+               txt <- paste0(
+                   "Length frequency distributions by year. ",
+                   "This plot can help evaluate whether the chosen bin size is appropriate: ",
+                   "large variability between neighbouring bins may suggest that a wider bin size is needed. ",
+                   "A strongly right-skewed distribution may indicate dome-shaped gear selectivity or sampling bias."
+               )
            },
            "fit" = {
                plot.num <- 5

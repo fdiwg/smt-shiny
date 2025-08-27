@@ -355,6 +355,8 @@ spictModule <- function(input, output, session) {
 
                 js$hideComputing(); js$enableAllButtons()
 
+                if(check) return(TRUE)
+
                 spict_dat$results <- res$res
 
                 if (!is.null(session$userData$sessionMode()) &&
@@ -378,7 +380,7 @@ spictModule <- function(input, output, session) {
                     })
                 }
 
-                TRUE
+                return(TRUE)
 
             }, error = function(cond) {
                 flog.error("Error in SPiCT: %s ", cond)
