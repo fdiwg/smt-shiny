@@ -25,26 +25,27 @@ lbsprModule <- function(input, output, session) {
 
     ## Definition of functions
     ## ----------------------------
-    lbsprFileData <- function(){
+    lbsprFileData <- function() {
+        if (is.null(input$fileLBSPR) || is.null(fileLBSPRState$upload)) return(NULL)
 
-        if (is.null(input$fileLBSPR) || is.null(fileLBSPRState$upload)) {
-            return(NULL)
-        }
-
-        withCallingHandlers(
-            dataset <- tryCatch({
-                read_lbm_csv(input$fileLBSPR$datapath,
-                             input$lbsprDateFormat,
-                                        input$lbsprCSVsep,
-                                        input$lbsprCSVdec)
-                dataset$checks$fileName <- input$fileLBSPR$name
-
+        ds <- withCallingHandlers(
+            tryCatch({
+                x <- read_lbm_csv(
+                    input$fileLBSPR$datapath,
+                    input$lbsprDateFormat,
+                    input$lbsprCSVsep,
+                    input$lbsprCSVdec
+                )
+                x$checks$fileName <- input$fileLBSPR$name
+                x
             }, error = function(e) {
-                shinyjs::disable("go_ga")
-                shinyjs::disable("check_ga")
-                shinyjs::disable("createElefanGAReport")
-                shinyjs::disable("createElefanGAzip")
-                showModal(modalDialog(title = "Error", e$message, easyClose = TRUE))
+                shinyjs::disable("go_lbspr")
+                shinyjs::disable("createLBSPRReport")
+                shinyjs::disable("createLBSPRzip")
+                showModal(modalDialog(title = "Error",
+                                      HTML(paste0("There was an unexpected error when reading in your data set. <br><br>Did you upload the correct data set? Does your data set fulfill the data and format requirements of this method? Please double-check your data set, have a look at the example data sets, and refer to the info button for more help.<br><br> The specific error message was: <br>", e$message)),
+                                      easyClose = TRUE))
+                NULL
             }),
             warning = function(w) {
                 showModal(modalDialog(
@@ -57,40 +58,58 @@ lbsprModule <- function(input, output, session) {
             }
         )
 
-        checks <- dataset$checks
+        if (is.null(ds)) return(NULL)
 
-        if (is.null(dataset$lfq)) {
+        if (is.null(ds$inputData)){
             shinyjs::disable("go_lbspr")
             shinyjs::disable("createLBSPRReport")
             shinyjs::disable("createLBSPRzip")
-            errMessage <- if(!is.null(checks) && !checks$csv){
-                              "Something went wrong when reading in your data set. Did you select a CSV file (i.e. file with ending '.csv')? Click on the info icon for more information."
-                          }else if(!is.null(checks) && !checks$delimiter){
-                              "Something went wrong when reading in your data set. Please ensure that your CSV file delimiter is a comma ',' or semicolon ';'. Click on the info icon for more information."
-                          }else if(!is.null(checks) && !checks$lengths){
-                              "The column with length classes is not in the right format or not numeric. Please ensure that the first column of uploaded data set includes the length classes and is numeric. Furthermore, please make sure that the decimal separator is a dot '.', by selecting '.' when saving the csv file or by changing your language settings in your program (e.g. Excel). Click on the info icon for more information."
-                          }else if(!is.null(checks) && !checks$dates){
-                              "Does your data set include colums with the number of individuals per length class for a given sampling date? The name of these columns need to indicate the sampling date (e.g. '21.08.2020' or '2020-08-21'). The dates might start with the letter 'X' (e.g. 'X2020-08-21'). Click on the info icon for more information."
-                          }else if(!is.null(checks) && !checks$ncols){
-                              "Uploaded data set does not include enough numeric samples. Does your data set include at least two columns with numeric values representing the catches per length class for a given sampling date? Click on the info icon for more information."
-                          }else{
-                              "There was an unexpected error when reading in your data set. Did you upload the correct data set? Does your data set fulfill the data and format requirements of this method? Please double-check your data set, have a look at the example data sets, and refer to the info button for more help."
-                          }
-            print(errMessage)
-            showModal(modalDialog(
-                title = "Error",
-                errMessage,
-                easyClose = TRUE,
-                footer = NULL
-            ))
-            return (NULL)
-        } else {
-            shinyjs::enable("go_lbspr")
-            res <- list(lfq = dataset$lfq,
-                        raw = dataset$raw,
-                        checks = dataset$checks)
-            return(res)
+            showModal(modalDialog(title = "Error",
+                                  HTML(paste0("There was an unexpected error when reading in your data set. <br><br>Did you upload the correct data set? Does your data set fulfill the data and format requirements of this method? Please double-check your data set, have a look at the example data sets, and refer to the info button for more help.")),
+                                  easyClose = TRUE))
+            return(NULL)
         }
+
+        checks <- if (is.null(ds$checks)) list() else ds$checks
+
+        ok <- TRUE
+        msg <- NULL
+
+        if (!isTRUE(checks$csv)) {
+            ok <- FALSE
+            msg <- "Something went wrong when reading your dataset. Did you select a CSV file ('.csv')? Click the info icon for more details on data formats."
+        } else if (!isTRUE(checks$delimiter)) {
+            ok <- FALSE
+            msg <- "The CSV delimiter wasn’t recognized. Please ensure the separator is a comma ',' or a semicolon ';'."
+        } else if (is.null(ds$lfq)) {
+            ok <- FALSE
+            msg <- "No valid length–frequency table detected. Ensure the first column contains numeric length classes and that the decimal separator is a dot '.'."
+        } else if (!isTRUE(checks$lengths)) {
+            ok <- FALSE
+            msg <- "The length-class column is not numeric or improperly formatted. Please verify the first column and decimal separator."
+        } else if (!isTRUE(checks$dates)) {
+            ok <- FALSE
+            msg <- "Date columns not detected. Column names must indicate sampling dates (e.g. '2020-08-21' or '21.08.2020'); R may prefix with 'X'."
+        } else if (!isTRUE(checks$ncols)) {
+            ok <- FALSE
+            msg <- "Insufficient numeric sampling columns. Provide at least two columns of counts per length class for given sampling dates."
+        }
+
+        if (!ok) {
+            shinyjs::disable("go_lbspr")
+            shinyjs::disable("createLBSPRReport")
+            shinyjs::disable("createLBSPRzip")
+            showModal(modalDialog(title = "Error",
+                                  msg, easyClose = TRUE, footer = NULL))
+            return(NULL)
+        }
+
+        shinyjs::enable("go_lbspr")
+        return(list(
+            lfq    = ds$lfq,
+            raw    = ds$raw,
+            checks = ds$checks
+        ))
     }
 
     lbsprDataExplo1 <- reactive({

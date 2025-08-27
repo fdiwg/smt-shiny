@@ -138,7 +138,7 @@ captionSpict.plots <- function(dat, input, format = "withFig", type){
            },
            "diag1" = {
                plot.num <- 4
-               txt <- paste0("Advanced spict data plot: The top row shows the observations where the horizontal dashed line in the catch plot indicates a guess of MSY. This guess comes from a linear regression between the index and the catch divided by the index (middle row, left). This regression is expected to have a negative slope. A similar plot can be made showing catch versus catch/index (middle row, right) to approximately find the optimal effort (or effort proxy). The proportional increase in the index as a function of catch (bottom row, right) should show primarily positive increases in index at low catches and vice versa. Positive increases in index at large catches could indicate model violations.")
+               txt <- paste0("Advanced spict data plot: The top row shows the observations where the horizontal dashed line in the catch plot indicates a guess of MSY. This guess comes from a linear regression between the index and the catch divided by the index (middle row, left). This regression is expected to have a negative slope. A similar plot can be made showing catch versus catch/index (middle row, right) to approximately find the optimal effort (or effort proxy). The catch vs. index observations are shown in the left panel in the bottom row, where the horizontal dashed line indicates a guess of MSY. The proportional increase in the index as a function of catch (bottom row, right) should show primarily positive increases in index at low catches and vice versa. Positive increases in index at large catches could indicate model violations.")
            },
            "diag2" = {
                plot.num <- 5
@@ -165,20 +165,23 @@ captionSpict.plots <- function(dat, input, format = "withFig", type){
            },
            "resid1" = {
                plot.num <- 10
-               txt <- paste0("Residual diagnostics for the catch time series (first column) and index time series (remaining columns): ",
-                             "Row 1: log-transformed observations; ",
-                             "Row 2: one-step-ahead (OSA) residuals; ",
-                             "Row 3: autocorrelation function (ACF) of residuals; ",
-                             "Row 4: quantile-quantile (Q–Q) plot of residuals.")
-
+               txt <- paste0(
+                   "Residual diagnostics for the catch time series (first column) and index time series (remaining columns): ",
+                   "Row 1: log-transformed observations; ",
+                   "Row 2: one-step-ahead (OSA) residuals with a test for bias — a p-value < 5% indicates that the mean residual differs significantly from zero; ",
+                   "Row 3: autocorrelation function (ACF) of residuals with a Ljung–Box test — a p-value < 5% indicates significant autocorrelation; ",
+                   "Row 4: quantile–quantile (Q–Q) plot of residuals with a Shapiro–Wilk test — a p-value < 5% indicates deviation from normality. ",
+                   "Panel headers (and associated p-values) are colour-coded: red highlights violations of the assumptions."
+               )
            },
            "resid2" = {
                plot.num <- 11
-               txt <- paste0("Residual diagnostics for the predicted biomass process (first column) and fishing mortality process (second column): ",
+               txt <- paste0("Residual diagnostics for the biomass process (first column) and fishing mortality process (second column): ",
                              "Row 1: log-transformed observations; ",
-                             "Row 2: one-step-ahead (OSA) residuals; ",
-                             "Row 3: autocorrelation function (ACF) of residuals; ",
-                             "Row 4: quantile-quantile (Q–Q) plot of residuals.")
+                             "Row 2: one-step-ahead (OSA) residuals with a test for bias — a p-value < 5% indicates that the mean residual differs significantly from zero; ",
+                             "Row 3: autocorrelation function (ACF) of residuals with a Ljung–Box test — a p-value < 5% indicates significant autocorrelation; ",
+                             "Row 4: quantile–quantile (Q–Q) plot of residuals with a Shapiro–Wilk test — a p-value < 5% indicates deviation from normality. ",
+                             "Panel headers (and associated p-values) are colour-coded: red highlights violations of the assumptions.")
            }
            )
 
