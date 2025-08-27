@@ -25,40 +25,61 @@ elefanGaModule <- function(input, output, session) {
 
     ## Definition of functions
     ## ----------------------------
-    elefanGaFileData <- reactive({
+    elefanGaFileData <- function(){
+
         if (is.null(input$fileGa) || is.null(fileGaState$upload)) {
             return(NULL)
         }
 
-        dataset <- read_lbm_csv(input$fileGa$datapath,
-                                input$elefanGaDateFormat,
-                                input$elefanGaCSVsep,
-                                input$elefanGaCSVdec)
-        dataset$checks$fileName <- input$fileGa$name
+        withCallingHandlers(
+            dataset <- tryCatch({
+                read_lbm_csv(input$fileGa$datapath,
+                             input$elefanGaDateFormat,
+                             input$elefanGaCSVsep,
+                             input$elefanGaCSVdec)
+                dataset$checks$fileName <- input$fileGa$name
+
+            }, error = function(e) {
+                shinyjs::disable("go_ga")
+                shinyjs::disable("check_ga")
+                shinyjs::disable("createElefanGAReport")
+                shinyjs::disable("createElefanGAzip")
+                showModal(modalDialog(title = "Error", e$message, easyClose = TRUE))
+            }),
+            warning = function(w) {
+                showModal(modalDialog(
+                    title = "Warning",
+                    w$message,
+                    easyClose = TRUE,
+                    footer = NULL
+                ))
+                invokeRestart("muffleWarning")
+            }
+        )
+
         checks <- dataset$checks
 
-        print(input$fileGa)
-
-        if (is.null(dataset$lfq)) {
+        if (is.null(dataset) || is.null(dataset$lfq)) {
             shinyjs::disable("go_ga")
             shinyjs::disable("check_ga")
             shinyjs::disable("createElefanGAReport")
             shinyjs::disable("createElefanGAzip")
+            errMessage <- if(!is.null(checks) && !checks$csv){
+                              "Something went wrong when reading in your data set. Did you select a CSV file (i.e. file with ending '.csv')? Click on the info icon for more information about data formats."
+                          }else if(!is.null(checks) && !checks$delimiter){
+                              "Something went wrong when reading in your data set. Please ensure that your CSV file delimiter is a comma ',' or semicolon ';'. Click on the info icon for more information."
+                          }else if(!is.null(checks) && !checks$lengths){
+                              "The column with length classes is not in the right format or not numeric. Please ensure that the first column of uploaded data set includes the length classes and is numeric. Furthermore, please make sure that the decimal separator is a dot '.', by selecting '.' when saving the csv file or by changing your language settings in your program (e.g. Excel). Click on the info icon for more information."
+                          }else if(!is.null(checks) && !checks$dates){
+                              "Does your data set include colums with the number of individuals per length class for a given sampling date? The name of these columns need to indicate the sampling date (e.g. '21.08.2020' or '2020-08-21'). The dates might start with the letter 'X' (e.g. 'X2020-08-21'). Click on the info icon for more information."
+                          }else if(!is.null(checks) && !checks$ncols){
+                              "Uploaded data set does not include enough numeric samples. Does your data set include at least two columns with numeric values representing the catches per length class for a given sampling date? Click on the info icon for more information."
+                          }else{
+                              "There was an unexpected error when reading in your data set. Did you upload the correct data set? Does your data set fulfill the data and format requirements of this method? Please double-check your data set, have a look at the example data sets, and refer to the info button for more help."
+                          }
             showModal(modalDialog(
                 title = "Error",
-                if(!checks$csv){
-                    "Something went wrong when reading in your data set. Did you select a CSV file (i.e. file with ending '.csv')? Click on the info icon for more information about data formats."
-                }else if(!checks$delimiter){
-                    "Something went wrong when reading in your data set. Please ensure that your CSV file delimiter is a comma ',' or semicolon ';'. Click on the info icon for more information."
-                }else if(!checks$lengths){
-                    "The column with length classes is not in the right format or not numeric. Please ensure that the first column of uploaded data set includes the length classes and is numeric. Furthermore, please make sure that the decimal separator is a dot '.', by selecting '.' when saving the csv file or by changing your language settings in your program (e.g. Excel). Click on the info icon for more information."
-                }else if(!checks$dates){
-                    "Does your data set include colums with the number of individuals per length class for a given sampling date? The name of these columns need to indicate the sampling date (e.g. '21.08.2020' or '2020-08-21'). The dates might start with the letter 'X' (e.g. 'X2020-08-21'). Click on the info icon for more information."
-                }else if(!checks$ncols){
-                    "Uploaded data set does not include enough numeric samples. Does your data set include at least two columns with numeric values representing the catches per length class for a given sampling date? Click on the info icon for more information."
-                }else{
-                    "There was an unexpected error when reading in your data set. Please double-check your data set and refer to the info button for more help. "
-                },
+                errMessage,
                 easyClose = TRUE,
                 footer = NULL
             ))
@@ -71,7 +92,7 @@ elefanGaModule <- function(input, output, session) {
                         checks = dataset$checks)
             return(res)
         }
-    })
+    }
 
     elefanGaDataExplo1 <- reactive({
         req(inputElefanGaData$data)
@@ -665,118 +686,118 @@ output$ELEFAN_years_selected_cc_out <- renderUI({
 ## Interactive UIs & Reactive values
 ## ----------------------------
 
-observe({
-    if(!input$ELEFAN_GA_seasonalised){
-        js$removeBox2("box_elefan_ga_seasonPar")
-        js$removeBox2("box_provide_gp_sea")
-    }else{
-        js$showBox2("box_elefan_ga_seasonPar")
-        js$showBox2("box_provide_gp_sea")
-    }
-})
+    observe({
+        if(!input$ELEFAN_GA_seasonalised){
+            js$removeBox2("box_elefan_ga_seasonPar")
+            js$removeBox2("box_provide_gp_sea")
+        }else{
+            js$showBox2("box_elefan_ga_seasonPar")
+            js$showBox2("box_provide_gp_sea")
+        }
+    })
 
-observe({
-    if(!input$provideGP){
-        js$removeBox2("box_provide_gp")
-        js$removeBox2("box_provide_gp_sea")
-    }else{
-        js$showBox2("box_provide_gp")
-    }
-})
+    observe({
+        if(!input$provideGP){
+            js$removeBox2("box_provide_gp")
+            js$removeBox2("box_provide_gp_sea")
+        }else{
+            js$showBox2("box_provide_gp")
+        }
+    })
 
-observeEvent(input$ELEFAN_years_selected, {
-    elefan_ga$years_selected <- input$ELEFAN_years_selected
-})
+    observeEvent(input$ELEFAN_years_selected, {
+        elefan_ga$years_selected <- input$ELEFAN_years_selected
+    })
 
-observeEvent(input$ELEFAN_GA_binSize, {
-    elefan_ga$binSize <- input$ELEFAN_GA_binSize
-})
+    observeEvent(input$ELEFAN_GA_binSize, {
+        elefan_ga$binSize <- input$ELEFAN_GA_binSize
+    })
 
-observe({
-    if(input$natM %in% c("Then's growth formula",
-                         "Gislason's length-based formula",
-                         "Lorenzen's length-based formula")){
-        shinyjs::hide("ui_natM_pauly", asis = TRUE)
-        shinyjs::hide("ui_natM_then_tmax", asis = TRUE)
-    }else if(input$natM == "Then's max. age formula"){
-        shinyjs::show("ui_natM_then_tmax", asis = TRUE)
-        shinyjs::hide("ui_natM_pauly", asis = TRUE)
-    }else if(input$natM == "Pauly's growth & temp. formula"){
-        shinyjs::show("ui_natM_pauly", asis = TRUE)
-        shinyjs::hide("ui_natM_then_tmax", asis = TRUE)
-    }
-})
+    observe({
+        if(input$natM %in% c("Then's growth formula",
+                             "Gislason's length-based formula",
+                             "Lorenzen's length-based formula")){
+            shinyjs::hide("ui_natM_pauly", asis = TRUE)
+            shinyjs::hide("ui_natM_then_tmax", asis = TRUE)
+        }else if(input$natM == "Then's max. age formula"){
+            shinyjs::show("ui_natM_then_tmax", asis = TRUE)
+            shinyjs::hide("ui_natM_pauly", asis = TRUE)
+        }else if(input$natM == "Pauly's growth & temp. formula"){
+            shinyjs::show("ui_natM_pauly", asis = TRUE)
+            shinyjs::hide("ui_natM_then_tmax", asis = TRUE)
+        }
+    })
 
-observe({
-    if(input$selectMat == "No maturity"){
-        shinyjs::hide("ui_lm50", asis = TRUE)
-        shinyjs::hide("ui_lm75", asis = TRUE)
-        shinyjs::hide("ui_wqsm", asis = TRUE)
-        shinyjs::hide("ui_per_lm1", asis = TRUE)
-        shinyjs::hide("ui_lm1", asis = TRUE)
-        shinyjs::hide("ui_per_lm2", asis = TRUE)
-        shinyjs::hide("ui_lm2", asis = TRUE)
-    }else if(input$selectMat == "Define Lm50 & Lm75"){
-        shinyjs::show("ui_lm50", asis = TRUE)
-        shinyjs::show("ui_lm75", asis = TRUE)
-        shinyjs::hide("ui_wqsm", asis = TRUE)
-        shinyjs::hide("ui_per_lm1", asis = TRUE)
-        shinyjs::hide("ui_lm1", asis = TRUE)
-        shinyjs::hide("ui_per_lm2", asis = TRUE)
-        shinyjs::hide("ui_lm2", asis = TRUE)
-    }else if(input$selectMat == "Define Lm50 & (Lm75-Lm25)"){
-        shinyjs::show("ui_lm50", asis = TRUE)
-        shinyjs::hide("ui_lm75", asis = TRUE)
-        shinyjs::show("ui_wqsm", asis = TRUE)
-        shinyjs::hide("ui_per_lm1", asis = TRUE)
-        shinyjs::hide("ui_lm1", asis = TRUE)
-        shinyjs::hide("ui_per_lm2", asis = TRUE)
-        shinyjs::hide("ui_lm2", asis = TRUE)
-    }else if(input$selectMat == "Other"){
-        shinyjs::hide("ui_lm50", asis = TRUE)
-        shinyjs::hide("ui_lm75", asis = TRUE)
-        shinyjs::hide("ui_wqsm", asis = TRUE)
-        shinyjs::show("ui_per_lm1", asis = TRUE)
-        shinyjs::show("ui_lm1", asis = TRUE)
-        shinyjs::show("ui_per_lm2", asis = TRUE)
-        shinyjs::show("ui_lm2", asis = TRUE)
-    }
-})
+    observe({
+        if(input$selectMat == "No maturity"){
+            shinyjs::hide("ui_lm50", asis = TRUE)
+            shinyjs::hide("ui_lm75", asis = TRUE)
+            shinyjs::hide("ui_wqsm", asis = TRUE)
+            shinyjs::hide("ui_per_lm1", asis = TRUE)
+            shinyjs::hide("ui_lm1", asis = TRUE)
+            shinyjs::hide("ui_per_lm2", asis = TRUE)
+            shinyjs::hide("ui_lm2", asis = TRUE)
+        }else if(input$selectMat == "Define Lm50 & Lm75"){
+            shinyjs::show("ui_lm50", asis = TRUE)
+            shinyjs::show("ui_lm75", asis = TRUE)
+            shinyjs::hide("ui_wqsm", asis = TRUE)
+            shinyjs::hide("ui_per_lm1", asis = TRUE)
+            shinyjs::hide("ui_lm1", asis = TRUE)
+            shinyjs::hide("ui_per_lm2", asis = TRUE)
+            shinyjs::hide("ui_lm2", asis = TRUE)
+        }else if(input$selectMat == "Define Lm50 & (Lm75-Lm25)"){
+            shinyjs::show("ui_lm50", asis = TRUE)
+            shinyjs::hide("ui_lm75", asis = TRUE)
+            shinyjs::show("ui_wqsm", asis = TRUE)
+            shinyjs::hide("ui_per_lm1", asis = TRUE)
+            shinyjs::hide("ui_lm1", asis = TRUE)
+            shinyjs::hide("ui_per_lm2", asis = TRUE)
+            shinyjs::hide("ui_lm2", asis = TRUE)
+        }else if(input$selectMat == "Other"){
+            shinyjs::hide("ui_lm50", asis = TRUE)
+            shinyjs::hide("ui_lm75", asis = TRUE)
+            shinyjs::hide("ui_wqsm", asis = TRUE)
+            shinyjs::show("ui_per_lm1", asis = TRUE)
+            shinyjs::show("ui_lm1", asis = TRUE)
+            shinyjs::show("ui_per_lm2", asis = TRUE)
+            shinyjs::show("ui_lm2", asis = TRUE)
+        }
+    })
 
-observe({
-    if(input$select == "Estimate"){
-        shinyjs::hide("ui_l50", asis = TRUE)
-        shinyjs::hide("ui_l75", asis = TRUE)
-        shinyjs::hide("ui_wqs", asis = TRUE)
-        shinyjs::hide("ui_lcMin", asis=TRUE)
-        shinyjs::hide("ui_lcMax", asis=TRUE)
-        shinyjs::hide("ui_per_l1", asis = TRUE)
-        shinyjs::hide("ui_l1", asis = TRUE)
-        shinyjs::hide("ui_per_l2", asis = TRUE)
-        shinyjs::hide("ui_l2", asis = TRUE)
-    }else if(input$select == "Define L50 & L75"){
-        shinyjs::show("ui_l50", asis = TRUE)
-        shinyjs::hide("ui_wqs", asis = TRUE)
-        shinyjs::show("ui_l75", asis = TRUE)
-        shinyjs::show("ui_lcMin", asis=TRUE)
-        shinyjs::show("ui_lcMax", asis=TRUE)
-        shinyjs::hide("ui_per_l1", asis = TRUE)
-        shinyjs::hide("ui_l1", asis = TRUE)
-        shinyjs::hide("ui_per_l2", asis = TRUE)
-        shinyjs::hide("ui_l2", asis = TRUE)
-    }else if(input$select == "Define L50 & (L75-L25)"){
-        shinyjs::show("ui_l50", asis = TRUE)
-        shinyjs::hide("ui_l75", asis = TRUE)
-        shinyjs::show("ui_wqs", asis = TRUE)
-        shinyjs::show("ui_lcMin", asis=TRUE)
-        shinyjs::show("ui_lcMax", asis=TRUE)
-        shinyjs::hide("ui_per_l1", asis = TRUE)
-        shinyjs::hide("ui_l1", asis = TRUE)
-        shinyjs::hide("ui_per_l2", asis = TRUE)
-        shinyjs::hide("ui_l2", asis = TRUE)
-    }else if(input$select == "Other"){
-        shinyjs::hide("ui_l50", asis = TRUE)
-        shinyjs::hide("ui_l75", asis = TRUE)
+    observe({
+        if(input$select == "Estimate"){
+            shinyjs::hide("ui_l50", asis = TRUE)
+            shinyjs::hide("ui_l75", asis = TRUE)
+            shinyjs::hide("ui_wqs", asis = TRUE)
+            shinyjs::hide("ui_lcMin", asis=TRUE)
+            shinyjs::hide("ui_lcMax", asis=TRUE)
+            shinyjs::hide("ui_per_l1", asis = TRUE)
+            shinyjs::hide("ui_l1", asis = TRUE)
+            shinyjs::hide("ui_per_l2", asis = TRUE)
+            shinyjs::hide("ui_l2", asis = TRUE)
+        }else if(input$select == "Define Ls50 & Ls75"){
+            shinyjs::show("ui_l50", asis = TRUE)
+            shinyjs::hide("ui_wqs", asis = TRUE)
+            shinyjs::show("ui_l75", asis = TRUE)
+            shinyjs::show("ui_lcMin", asis=TRUE)
+            shinyjs::show("ui_lcMax", asis=TRUE)
+            shinyjs::hide("ui_per_l1", asis = TRUE)
+            shinyjs::hide("ui_l1", asis = TRUE)
+            shinyjs::hide("ui_per_l2", asis = TRUE)
+            shinyjs::hide("ui_l2", asis = TRUE)
+        }else if(input$select == "Define Ls50 & (Ls75 - Ls25)"){
+            shinyjs::show("ui_l50", asis = TRUE)
+            shinyjs::hide("ui_l75", asis = TRUE)
+            shinyjs::show("ui_wqs", asis = TRUE)
+            shinyjs::show("ui_lcMin", asis=TRUE)
+            shinyjs::show("ui_lcMax", asis=TRUE)
+            shinyjs::hide("ui_per_l1", asis = TRUE)
+            shinyjs::hide("ui_l1", asis = TRUE)
+            shinyjs::hide("ui_per_l2", asis = TRUE)
+            shinyjs::hide("ui_l2", asis = TRUE)
+        }else if(input$select == "Other"){
+            shinyjs::hide("ui_l50", asis = TRUE)
+            shinyjs::hide("ui_l75", asis = TRUE)
         shinyjs::hide("ui_wqs", asis = TRUE)
         shinyjs::show("ui_lcMin", asis=TRUE)
         shinyjs::show("ui_lcMax", asis=TRUE)
@@ -800,26 +821,46 @@ observeEvent(input$fileGa, {
     }else{
         binSize <- try(min(diff(inputElefanGaData$data$midLengths)),silent=TRUE)
         maxL <- try(max(inputElefanGaData$data$midLengths),silent=TRUE)
-            if(inherits(binSize,"try-error")){
-                binSize <- 2
-                maxL <- 10
-            }else{
-                binSize <- round(0.23 * maxL^0.6, 1)
-                if(binSize == 0) binSize <- 0.1
-            }
-        }
-        elefan_ga$binSize <- binSize
-        ## years selected
-        if(is.null(inputElefanGaData$data)){
-            allyears <- NULL
+        if(inherits(binSize,"try-error")){
+            binSize <- 2
+            maxL <- 10
         }else{
-            allyears <- try(unique(format(inputElefanGaData$data$dates,"%Y")),silent=TRUE)
-            if(inherits(allyears,"try-error")) allyears <- NULL
+            binSize <- round(0.23 * maxL^0.6, 1)
+            if(binSize == 0) binSize <- 0.1
         }
-        elefan_ga$years_selected <- allyears
-    })
+    }
+    elefan_ga$binSize <- binSize
+    ## years selected
+    if(is.null(inputElefanGaData$data)){
+        allyears <- NULL
+    }else{
+        allyears <- try(unique(format(inputElefanGaData$data$dates,"%Y")),silent=TRUE)
+        if(inherits(allyears,"try-error")) allyears <- NULL
+    }
+    elefan_ga$years_selected <- allyears
+    ## linf
+    if(is.null(inputElefanGaData$data)){
+        maxL <- 100
+    }else{
+        maxL <- try(round(max(inputElefanGaData$data$midLengths)/0.95),silent=TRUE)
+        if(inherits(maxL,"try-error")){
+            maxL <- 100
+        }
+    }
+    min <- 0.25 * maxL
+    max <- 1.75 * maxL
+    sel <- c(0.8,1.2) * maxL
+    updateSliderInput(session,
+                      inputId = "ELEFAN_GA_Linf",
+                      min = min,
+                      max = max,
+                      value = sel,
+                      step = 1)
+})
 
     observeEvent(input$elefanGaDateFormat, {
+        req(input$fileGa)
+
         tmp <- elefanGaFileData()
         inputElefanGaData$data <- tmp$lfq
         inputElefanGaData$raw <- tmp$raw
@@ -845,12 +886,31 @@ observeEvent(input$fileGa, {
             allyears <- NULL
         }else{
             allyears <- try(unique(format(inputElefanGaData$data$dates,"%Y")),silent=TRUE)
-        if(inherits(allyears,"try-error")) allyears <- NULL
+            if(inherits(allyears,"try-error")) allyears <- NULL
         }
         elefan_ga$years_selected <- allyears
+        ## linf
+        if(is.null(inputElefanGaData$data)){
+            maxL <- 100
+        }else{
+            maxL <- try(round(max(inputElefanGaData$data$midLengths)/0.95),silent=TRUE)
+            if(inherits(maxL,"try-error")){
+                maxL <- 100
+            }
+        }
+        min <- 0.25 * maxL
+        max <- 1.75 * maxL
+        sel <- c(0.8,1.2) * maxL
+        updateSliderInput(session,
+                          inputId = "ELEFAN_GA_Linf",
+                          min = min,
+                          max = max,
+                          value = sel,
+                          step = 1)
     })
 
     observeEvent(input$elefanGaCSVdec, {
+        req(input$fileGa)
         tmp <- elefanGaFileData()
         inputElefanGaData$data <- tmp$lfq
         inputElefanGaData$raw <- tmp$raw
@@ -879,9 +939,28 @@ observeEvent(input$fileGa, {
             if(inherits(allyears,"try-error")) allyears <- NULL
         }
         elefan_ga$years_selected <- allyears
+        ## linf
+        if(is.null(inputElefanGaData$data)){
+            maxL <- 100
+        }else{
+            maxL <- try(round(max(inputElefanGaData$data$midLengths)/0.95),silent=TRUE)
+            if(inherits(maxL,"try-error")){
+                maxL <- 100
+            }
+        }
+        min <- 0.25 * maxL
+        max <- 1.75 * maxL
+        sel <- c(0.8,1.2) * maxL
+        updateSliderInput(session,
+                          inputId = "ELEFAN_GA_Linf",
+                          min = min,
+                          max = max,
+                          value = sel,
+                          step = 1)
     })
 
     observeEvent(input$elefanGaCSVsep, {
+        req(input$fileGa)
         tmp <- elefanGaFileData()
         inputElefanGaData$data <- tmp$lfq
         inputElefanGaData$raw <- tmp$raw
@@ -910,6 +989,24 @@ observeEvent(input$fileGa, {
             if(inherits(allyears,"try-error")) allyears <- NULL
         }
         elefan_ga$years_selected <- allyears
+        ## linf
+        if(is.null(inputElefanGaData$data)){
+            maxL <- 100
+        }else{
+            maxL <- try(round(max(inputElefanGaData$data$midLengths)/0.95),silent=TRUE)
+            if(inherits(maxL,"try-error")){
+                maxL <- 100
+            }
+        }
+        min <- 0.25 * maxL
+        max <- 1.75 * maxL
+        sel <- c(0.8,1.2) * maxL
+        updateSliderInput(session,
+                          inputId = "ELEFAN_GA_Linf",
+                          min = min,
+                          max = max,
+                          value = sel,
+                          step = 1)
     })
 
 
@@ -1563,7 +1660,7 @@ observeEvent(input$fileGa, {
                  intro = "By default, the app will try to recognize the date format, but you can also specify it here."),
             list(element = paste0("#", ns("elefan_lengthUnit"),
                                   " + .selectize-control"),
-                 intro = "By default, the app assumes that your length measurements are in centimeter (cm), but you can choose other length unit here. Currently, millimeter (mm) and inces (in) are implemented."),
+                 intro = "By default, the app assumes that your length measurements are in centimeter (cm), but you can choose other length unit here. Currently, millimeter (mm) and inches (in) are implemented."),
             list(element = paste0("#", ns("box_settings")),
                  intro = "After you chose your data set and it was uploaded successfully (no error messages), you can explore your data and adjust settings in this box."),
             list(element = "#settings_elefan ul.nav.nav-tabs",

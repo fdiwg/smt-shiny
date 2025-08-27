@@ -505,7 +505,6 @@ tabElefanGa <- function(id) {
                                                                       style="font-size: 8px"),
                                                                class="infoBubbleButton")),
 
-                                        br(),
                                         width = 4,
                                         height = "200px",
                                         fluidRow(
@@ -535,7 +534,6 @@ tabElefanGa <- function(id) {
                                                                class="infoBubbleButton")),
                                         width = 8,
                                         height = "200px",
-                                        br(),
                                         fluidRow(
                                             column(5,
                                                    selectInput(ns("natM"),
@@ -593,7 +591,6 @@ tabElefanGa <- function(id) {
                                                                class="infoBubbleButton")),
                                         width=12,
                                         height = "200px",
-                                        br(),
                                         fluidRow(
                                             column(3,
                                                    selectInput(ns("selectMat"),
@@ -697,7 +694,6 @@ tabElefanGa <- function(id) {
                                                                class="infoBubbleButton")),
                                         width = 2,
                                         height = "200px",
-                                        br(),
                                         fluidRow(
                                             column(12,
                                                    fluidRow(
@@ -720,17 +716,20 @@ tabElefanGa <- function(id) {
                                                                class="infoBubbleButton")),
                                         width=10,
                                         height = "200px",
-                                        br(),
                                         fluidRow(
                                             column(3,
-                                                   selectInput(ns("select"),
-                                                               p("Selectivity"),
-                                                               choices = c("Estimate",
-                                                                           p("Define ",withMathJax("\\(L_{s50}\\)")," & ",withMathJax("\\(L_{s75}\\)")),
-                                                                           p("Define ",withMathJax("\\(L_{s50}\\)")," & (",withMathJax("\\(L_{s75}\\)"),"-",withMathJax("\\(L_{s25}\\)"),")"),
-                                                                           "Other"),
-                                                               selected = "Estimate",
-                                                               width = "100%")
+                                                   selectInput(
+                                                       ns("select"),
+                                                       "Selectivity",
+                                                       choices = c(
+                                                           "Estimate",
+                                                           "Define Ls50 & Ls75",
+                                                           "Define Ls50 & (Ls75 - Ls25)",
+                                                           "Other"
+                                                       ),
+                                                       selected = "Estimate",
+                                                       width = "100%"
+                                                   ),
                                                    ),
                                             column(1),
                                             column(4,
@@ -815,7 +814,6 @@ tabElefanGa <- function(id) {
                                                            class="infoBubbleButton")),
                                     width=12,
                                     height = "200px",
-                                    br(),
                                     fluidRow(
                                         ##                                         column(1),
                                         column(2,

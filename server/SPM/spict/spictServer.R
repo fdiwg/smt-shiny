@@ -1299,8 +1299,7 @@ spictModule <- function(input, output, session) {
     observeEvent(input$info_dteuler, {
         showModal(modalDialog(
             title = "Time step of the Euler discretization",
-            HTML("<p>Euler discretization time step, i.e. the number of time steps per year used to approximate the solution of the differential equations.<br><
-br> The default and recommended setting is at least 16 time steps per year (1/16). Finer steps (1/16–1/64) improve accuracy but can substantially increase computation time and memory use. For exploratory assessments, coarser steps such as 1/4 or 1/8 may be sufficient.</p>"),
+            HTML("<p>Euler discretization time step, i.e. the number of time steps per year used to approximate the solution of the differential equations.<br><br> The default and recommended setting is at least 16 time steps per year (1/16). Finer steps (1/16–1/64) improve accuracy but can substantially increase computation time and memory use. For exploratory assessments, coarser steps such as 1/4 or 1/8 may be sufficient.</p>"),
 easyClose = TRUE,
 size = "l"
 ))
@@ -1396,7 +1395,7 @@ size = "l"
             list(element = paste0("#", ns("stdevC_lab"),
                                   " + .selectize-control"),
                  intro = "If information about the relative uncertainty scaling of the catch observations is available and included in the input data, the respective column (or variable) can be selected here.<br><br> If for example the uncertainty of the catches were likely more uncertain before a specific sampling program, this information could be provided in this variable.<br><br> For an example, see column 'stdevfacC' in the albacore example data set."),
-            list(element = paste0("#", ns("obsI_lab"),
+            list(element = paste0("#", ns("obsI1"),
                                   " + .selectize-control"),
                  intro = "This field asks you to select the column for the index observations.<br><br> Note, that by default only one index can be selected, but another settings allows you to provide multiple indices."),
             list(element = paste0("#", ns("n_indices")),

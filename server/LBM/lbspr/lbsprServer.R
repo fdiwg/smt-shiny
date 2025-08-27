@@ -25,39 +25,61 @@ lbsprModule <- function(input, output, session) {
 
     ## Definition of functions
     ## ----------------------------
-    lbsprFileData <- reactive({
+    lbsprFileData <- function(){
+
         if (is.null(input$fileLBSPR) || is.null(fileLBSPRState$upload)) {
             return(NULL)
         }
 
-        dataset <- read_lbm_csv(input$fileLBSPR$datapath,
-                                input$lbsprDateFormat,
-                                input$lbsprCSVsep,
-                                input$lbsprCSVdec)
-        dataset$checks$fileName <- input$fileLBSPR$name
-        checks <- dataset$checks
+        withCallingHandlers(
+            dataset <- tryCatch({
+                read_lbm_csv(input$fileLBSPR$datapath,
+                             input$lbsprDateFormat,
+                                        input$lbsprCSVsep,
+                                        input$lbsprCSVdec)
+                dataset$checks$fileName <- input$fileLBSPR$name
 
-        print(input$fileLBSPR)
+            }, error = function(e) {
+                shinyjs::disable("go_ga")
+                shinyjs::disable("check_ga")
+                shinyjs::disable("createElefanGAReport")
+                shinyjs::disable("createElefanGAzip")
+                showModal(modalDialog(title = "Error", e$message, easyClose = TRUE))
+            }),
+            warning = function(w) {
+                showModal(modalDialog(
+                    title = "Warning",
+                    w$message,
+                    easyClose = TRUE,
+                    footer = NULL
+                ))
+                invokeRestart("muffleWarning")
+            }
+        )
+
+        checks <- dataset$checks
 
         if (is.null(dataset$lfq)) {
             shinyjs::disable("go_lbspr")
             shinyjs::disable("createLBSPRReport")
             shinyjs::disable("createLBSPRzip")
+            errMessage <- if(!is.null(checks) && !checks$csv){
+                              "Something went wrong when reading in your data set. Did you select a CSV file (i.e. file with ending '.csv')? Click on the info icon for more information."
+                          }else if(!is.null(checks) && !checks$delimiter){
+                              "Something went wrong when reading in your data set. Please ensure that your CSV file delimiter is a comma ',' or semicolon ';'. Click on the info icon for more information."
+                          }else if(!is.null(checks) && !checks$lengths){
+                              "The column with length classes is not in the right format or not numeric. Please ensure that the first column of uploaded data set includes the length classes and is numeric. Furthermore, please make sure that the decimal separator is a dot '.', by selecting '.' when saving the csv file or by changing your language settings in your program (e.g. Excel). Click on the info icon for more information."
+                          }else if(!is.null(checks) && !checks$dates){
+                              "Does your data set include colums with the number of individuals per length class for a given sampling date? The name of these columns need to indicate the sampling date (e.g. '21.08.2020' or '2020-08-21'). The dates might start with the letter 'X' (e.g. 'X2020-08-21'). Click on the info icon for more information."
+                          }else if(!is.null(checks) && !checks$ncols){
+                              "Uploaded data set does not include enough numeric samples. Does your data set include at least two columns with numeric values representing the catches per length class for a given sampling date? Click on the info icon for more information."
+                          }else{
+                              "There was an unexpected error when reading in your data set. Did you upload the correct data set? Does your data set fulfill the data and format requirements of this method? Please double-check your data set, have a look at the example data sets, and refer to the info button for more help."
+                          }
+            print(errMessage)
             showModal(modalDialog(
                 title = "Error",
-                if(!checks$csv){
-                    "Something went wrong when reading in your data set. Did you select a CSV file (i.e. file with ending '.csv')? Click on the info icon for more information."
-                }else if(!checks$delimiter){
-                    "Something went wrong when reading in your data set. Please ensure that your CSV file delimiter is a comma ',' or semicolon ';'. Click on the info icon for more information."
-                }else if(!checks$lengths){
-                    "The column with length classes is not in the right format or not numeric. Please ensure that the first column of uploaded data set includes the length classes and is numeric. Furthermore, please make sure that the decimal separator is a dot '.', by selecting '.' when saving the csv file or by changing your language settings in your program (e.g. Excel). Click on the info icon for more information."
-                }else if(!checks$dates){
-                    "Does your data set include colums with the number of individuals per length class for a given sampling date? The name of these columns need to indicate the sampling date (e.g. '21.08.2020' or '2020-08-21'). The dates might start with the letter 'X' (e.g. 'X2020-08-21'). Click on the info icon for more information."
-                }else if(!checks$ncols){
-                    "Uploaded data set does not include enough numeric samples. Does your data set include at least two columns with numeric values representing the catches per length class for a given sampling date? Click on the info icon for more information."
-                }else{
-                    "There was an unexpected error when reading in your data set. Please double-check your data set and refer to the info button for more help. "
-                },
+                errMessage,
                 easyClose = TRUE,
                 footer = NULL
             ))
@@ -69,7 +91,7 @@ lbsprModule <- function(input, output, session) {
                         checks = dataset$checks)
             return(res)
         }
-    })
+    }
 
     lbsprDataExplo1 <- reactive({
         req(inputLBSPRData$data)
@@ -498,6 +520,7 @@ lbsprModule <- function(input, output, session) {
     })
 
     observeEvent(input$lbsprDateFormat, {
+        req(input$fileLBSPR)
         tmp <- lbsprFileData()
         inputLBSPRData$data <- tmp$lfq
         inputLBSPRData$raw <- tmp$raw
@@ -529,6 +552,7 @@ lbsprModule <- function(input, output, session) {
     })
 
     observeEvent(input$lbsprCSVsep, {
+        req(input$fileLBSPR)
         tmp <- lbsprFileData()
         inputLBSPRData$data <- tmp$lfq
         inputLBSPRData$raw <- tmp$raw
@@ -560,6 +584,7 @@ lbsprModule <- function(input, output, session) {
     })
 
     observeEvent(input$lbsprCSVdec, {
+        req(input$fileLBSPR)
         tmp <- lbsprFileData()
         inputLBSPRData$data <- tmp$lfq
         inputLBSPRData$raw <- tmp$raw
@@ -1106,7 +1131,7 @@ lbsprModule <- function(input, output, session) {
                  intro = "By default, the app will try to recognize the date format, but you can also specify it here."),
             list(element = paste0("#", ns("lbspr_lengthUnit"),
                                   " + .selectize-control"),
-                 intro = "By default, the app assumes that your length measurements are in centimeter (cm), but you can choose other length unit here. Currently, millimeter (mm) and inces (in) are implemented."),
+                 intro = "By default, the app assumes that your length measurements are in centimeter (cm), but you can choose other length unit here. Currently, millimeter (mm) and inches (in) are implemented."),
             list(element = paste0("#", ns("box_settings")),
                  intro = "After you chose your data set and it was uploaded successfully (no error messages), you can explore your data and adjust settings in this box."),
             list(element = "#settings_lbspr ul.nav.nav-tabs",
@@ -1176,7 +1201,7 @@ lbsprModule <- function(input, output, session) {
                  intro = "This is a tour that takes you through the results of the length-based spawning potential ratio method (LBSPR).")
         )
 
-        if(is.null(lbi_dat$results)) {
+        if(is.null(lbspr_dat$results)) {
 
             steps <- append(steps,
                             list(
@@ -1202,7 +1227,7 @@ lbsprModule <- function(input, output, session) {
                                 list(
                                     element = paste0("#",ns("resultConsiderations")),
                                     intro = paste0(
-                                        "This concludes the tour through the LBI results.<br><br> For more and detailed information, click on this button and refer to the figure and table captions."))))
+                                        "This concludes the tour through the LBSPR results.<br><br> For more and detailed information, click on this button and refer to the figure and table captions."))))
 
         }
 
