@@ -533,9 +533,15 @@ makeContentSpictzip <- function(file, spict_dat, input, output) {
     path <- file.path(tempDir,paste0("spict_resid_process.", input$fig_format))
     allfiles <- c(allfiles, path)
     dev.on(path, input$fig_format, width = 11, height = 10)
-    plotSpict.resid2(spict_dat, input)
+    if(spict_dat$results$opt$convergence == 0) {
+        plotSpict.resid2(spict_dat, input)
+    } else {
+        plot.new()
+        legend("center",
+               legend = "The process residuals could not be estimated, because the model did not converge.",
+               pch = NA)
+    }
     dev.off()
-
 
     ## Table with data
     path <- file.path(tempDir, paste0("spict_data.", input$tab_format))
