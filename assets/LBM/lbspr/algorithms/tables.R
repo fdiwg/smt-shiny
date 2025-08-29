@@ -24,7 +24,7 @@ tableLBSPR.inputPars <- function(lbspr_dat, input, format = "datatable"){
     }
 
     tab <- data.frame(binSize = input$LBSPR_binSize,
-                      lengthUnit = input$lbspr_lengthUnit,
+                      lengthUnit = input$LBSPR_lengthUnit,
                       MK = mk,
                       M = input$LBSPR_M,
                       K = input$LBSPR_K,

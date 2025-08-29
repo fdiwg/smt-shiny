@@ -324,39 +324,39 @@ tabSPICT <- function(id) {
                                                                         style="font-size: 8px"),
                                                                  class="infoBubbleButton")),
                                     width = 4,
-                                    wellPanel(
+                                    ## wellPanel(
                                         # Header row
                                         fluidRow(
                                             column(2, tags$b("Prior")),
                                             column(2, tags$b("Activate")),
-                                            column(2, tags$b("Mean")),
-                                            column(2, tags$b("SD")),
-                                            column(4, tags$b("Mean on log scale"))
+                                            column(3, tags$b("Mean")),
+                                            column(3, tags$b("SD")),
+                                            column(2, tags$b("Mean on log scale"))
                                         ),
                                             br(),
                                         # log(n)
                                             fluidRow(
                                                 column(2, "log(n)"),
                                                 column(2, checkboxInput(ns("lognPrior"), NULL, TRUE)),
-                                                column(2, numericInput(ns("lognMu"), NULL, 2)),
-                                                column(2, numericInput(ns("lognSd"), NULL, 2)),
-                                                column(4, checkboxInput(ns("lognLog"), NULL, TRUE))
+                                                column(3, numericInput(ns("lognMu"), NULL, 2)),
+                                                column(3, numericInput(ns("lognSd"), NULL, 2)),
+                                                column(2, checkboxInput(ns("lognLog"), NULL, TRUE))
                                             ),
                                         # log(alpha)
                                             fluidRow(
                                                 column(2, "log(alpha)"),
                                                 column(2, checkboxInput(ns("logAlphaPrior"), NULL, TRUE)),
-                                                column(2, numericInput(ns("logAlphaMu"), NULL, 1)),
-                                                column(2, numericInput(ns("logAlphaSd"), NULL, 2)),
-                                                column(4, checkboxInput(ns("logAlphaLog"), NULL, TRUE))
+                                                column(3, numericInput(ns("logAlphaMu"), NULL, 1)),
+                                                column(3, numericInput(ns("logAlphaSd"), NULL, 2)),
+                                                column(2, checkboxInput(ns("logAlphaLog"), NULL, TRUE))
                                             ),
                                         # log(beta)
                                             fluidRow(
                                                 column(2, "log(beta)"),
                                                 column(2, checkboxInput(ns("logBetaPrior"), NULL, TRUE)),
-                                                column(2, numericInput(ns("logBetaMu"), NULL, 1)),
-                                                column(2, numericInput(ns("logBetaSd"), NULL, 2)),
-                                                column(4, checkboxInput(ns("logBetaLog"), NULL, TRUE))
+                                                column(3, numericInput(ns("logBetaMu"), NULL, 1)),
+                                                column(3, numericInput(ns("logBetaSd"), NULL, 2)),
+                                                column(2, checkboxInput(ns("logBetaLog"), NULL, TRUE))
                                             ),
                                             fluidRow(
                                                 column(2,"log(B0/K)"),
@@ -368,21 +368,21 @@ tabSPICT <- function(id) {
                                                         FALSE),
                                                     ),
                                                 column(
-                                                    2,
+                                                    3,
                                                     numericInput(
                                                         ns("logbkfracMu"),
                                                         NULL,
                                                         NA)
                                                 ),
                                                 column(
-                                                    2,
+                                                    3,
                                                     numericInput(
                                                         ns("logbkfracSd"),
                                                         NULL,
                                                         NA)
                                                 ),
                                                 column(
-                                                    4,
+                                                    2,
                                                     checkboxInput(
                                                         ns("logbkfracLog"),
                                                         NULL,
@@ -399,21 +399,21 @@ tabSPICT <- function(id) {
                                                                FALSE),
                                                            ),
                                                        column(
-                                                           2,
+                                                           3,
                                                            numericInput(
                                                                ns("logKMu"),
                                                                NULL,
                                                                NA)
                                                        ),
                                                        column(
-                                                           2,
+                                                           3,
                                                            numericInput(
                                                                ns("logKSd"),
                                                                NULL,
                                                                NA)
                                                        ),
                                                        column(
-                                                           4,
+                                                           2,
                                                            checkboxInput(
                                                                ns("logKLog"),
                                                                NULL,
@@ -430,21 +430,21 @@ tabSPICT <- function(id) {
                                                                FALSE),
                                                            ),
                                                        column(
-                                                           2,
+                                                           3,
                                                            numericInput(
                                                                ns("logrMu"),
                                                                NULL,
                                                                NA)
                                                        ),
                                                        column(
-                                                           2,
+                                                           3,
                                                            numericInput(
                                                                ns("logrSd"),
                                                                NULL,
                                                                NA)
                                                        ),
                                                        column(
-                                                           4,
+                                                           2,
                                                            checkboxInput(
                                                                ns("logrLog"),
                                                                NULL,
@@ -461,21 +461,21 @@ tabSPICT <- function(id) {
                                                                FALSE),
                                                            ),
                                                        column(
-                                                           2,
+                                                           3,
                                                            numericInput(
                                                                ns("logmMu"),
                                                                NULL,
                                                                NA)
                                                        ),
                                                        column(
-                                                           2,
+                                                           3,
                                                            numericInput(
                                                                ns("logmSd"),
                                                                NULL,
                                                                NA)
                                                        ),
                                                        column(
-                                                           4,
+                                                           2,
                                                            checkboxInput(
                                                                ns("logmLog"),
                                                                NULL,
@@ -495,21 +495,21 @@ tabSPICT <- function(id) {
                                                                FALSE),
                                                     ),
                                                 column(
-                                                    2,
+                                                    3,
                                                     numericInput(
                                                         ns("logsdbMu"),
                                                         NULL,
                                                         NA)
                                                 ),
                                                 column(
-                                                    2,
+                                                    3,
                                                     numericInput(
                                                         ns("logsdbSd"),
                                                         NULL,
                                                         NA)
                                                 ),
                                                 column(
-                                                    4,
+                                                    2,
                                                     checkboxInput(
                                                         ns("logsdbLog"),
                                                         NULL,
@@ -529,21 +529,21 @@ tabSPICT <- function(id) {
                                                         FALSE),
                                                     ),
                                                 column(
-                                                    2,
+                                                    3,
                                                     numericInput(
                                                         ns("logsdfMu"),
                                                         NULL,
                                                         NA)
                                                 ),
                                                 column(
-                                                    2,
+                                                    3,
                                                     numericInput(
                                                         ns("logsdfSd"),
                                                         NULL,
                                                         NA)
                                                 ),
                                                 column(
-                                                    4,
+                                                    2,
                                                     checkboxInput(
                                                         ns("logsdfLog"),
                                                         NULL,
@@ -560,28 +560,28 @@ tabSPICT <- function(id) {
                                                         FALSE),
                                                     ),
                                                 column(
-                                                    2,
+                                                    3,
                                                     numericInput(
                                                         ns("logsdcMu"),
                                                         NULL,
                                                         NA)
                                                 ),
                                                 column(
-                                                    2,
+                                                    3,
                                                     numericInput(
                                                         ns("logsdcSd"),
                                                         NULL,
                                                         NA)
                                                 ),
                                                 column(
-                                                    4,
+                                                    2,
                                                     checkboxInput(
                                                         ns("logsdcLog"),
                                                         NULL,
                                                         FALSE)
                                                 )
                                             )
-                                    )
+                                        ## )
                                     ),
                                 box(title = "Prior distributions",
                                     id = "box_priorsPlots",

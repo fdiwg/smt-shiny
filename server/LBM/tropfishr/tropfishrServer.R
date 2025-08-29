@@ -829,54 +829,54 @@ output$ELEFAN_years_selected_cc_out <- renderUI({
     }
 })
 
-observeEvent(input$fileGa, {
-    fileGaState$upload <- 'uploaded'
-    tmp <- elefanGaFileData()
-    inputElefanGaData$data <- tmp$lfq
-    inputElefanGaData$raw <- tmp$raw
-    inputElefanGaData$checks <- tmp$checks
-    ## bin size
-    if(is.null(inputElefanGaData$data)){
-        binSize <- 2
-        maxL <- 10
-    }else{
-        binSize <- try(min(diff(inputElefanGaData$data$midLengths)),silent=TRUE)
-        maxL <- try(max(inputElefanGaData$data$midLengths),silent=TRUE)
-        if(inherits(binSize,"try-error")){
+    observeEvent(input$fileGa, {
+        fileGaState$upload <- 'uploaded'
+        tmp <- elefanGaFileData()
+        inputElefanGaData$data <- tmp$lfq
+        inputElefanGaData$raw <- tmp$raw
+        inputElefanGaData$checks <- tmp$checks
+        ## bin size
+        if(is.null(inputElefanGaData$data)){
             binSize <- 2
             maxL <- 10
         }else{
-            binSize <- round(0.23 * maxL^0.6, 1)
-            if(binSize == 0) binSize <- 0.1
+            binSize <- try(min(diff(inputElefanGaData$data$midLengths)),silent=TRUE)
+            maxL <- try(max(inputElefanGaData$data$midLengths),silent=TRUE)
+            if(inherits(binSize,"try-error")){
+                binSize <- 2
+                maxL <- 10
+            }else{
+                binSize <- round(0.23 * maxL^0.6, 1)
+                if(binSize == 0) binSize <- 0.1
+            }
         }
-    }
-    elefan_ga$binSize <- binSize
-    ## years selected
-    if(is.null(inputElefanGaData$data)){
-        allyears <- NULL
-    }else{
-        allyears <- try(unique(format(inputElefanGaData$data$dates,"%Y")),silent=TRUE)
-        if(inherits(allyears,"try-error")) allyears <- NULL
-    }
-    elefan_ga$years_selected <- allyears
-    ## linf
-    if(is.null(inputElefanGaData$data)){
-        maxL <- 100
-    }else{
-        maxL <- try(round(max(inputElefanGaData$data$midLengths)/0.95),silent=TRUE)
-        if(inherits(maxL,"try-error")){
+        elefan_ga$binSize <- binSize
+        ## years selected
+        if(is.null(inputElefanGaData$data)){
+            allyears <- NULL
+        }else{
+            allyears <- try(unique(format(inputElefanGaData$data$dates,"%Y")),silent=TRUE)
+            if(inherits(allyears,"try-error")) allyears <- NULL
+        }
+        elefan_ga$years_selected <- allyears
+        ## linf
+        if(is.null(inputElefanGaData$data)){
             maxL <- 100
+        }else{
+            maxL <- try(round(max(inputElefanGaData$data$midLengths)/0.95),silent=TRUE)
+            if(inherits(maxL,"try-error")){
+                maxL <- 100
+            }
         }
-    }
-    min <- 0.25 * maxL
-    max <- 1.75 * maxL
-    sel <- c(0.8,1.2) * maxL
-    updateSliderInput(session,
-                      inputId = "ELEFAN_GA_Linf",
-                      min = min,
-                      max = max,
-                      value = sel,
-                      step = 1)
+        min <- 0.25 * maxL
+        max <- 1.75 * maxL
+        sel <- c(0.8,1.2) * maxL
+        updateSliderInput(session,
+                          inputId = "ELEFAN_GA_Linf",
+                          min = min,
+                          max = max,
+                          value = sel,
+                          step = 1)
 })
 
     observeEvent(input$elefanGaDateFormat, {
@@ -1280,7 +1280,6 @@ observeEvent(input$fileGa, {
     })
 
     observeEvent(input$reset_ga, {
-        fileGaState$upload <- NULL
         resetElefanGaInputValues()
     })
 
@@ -1789,7 +1788,7 @@ observeEvent(input$fileGa, {
                                 list(element = paste0("#", ns("plot_ypr")),
                                      intro = "This graph contains the yield per recruit (A) and biomass per recruit (B) for different fishing mortality rates.<br><br>If maturity parameters are provided panel C contains the spawning potential ratio (SPR) for the fishing mortality values."),
                                 list(element = paste0("#", ns("plot_ypr_iso")),
-                                     intro = "This plot shows the yield per recriut (A) and biomass per recruit (B) for different fishing mortality values (x axis) and and gear selectivity(y axis) combinations. The current value is indicated by the dashed lines and a circle."),
+                                     intro = HTML("This plot shows the yield per recriut (A) and biomass per recruit (B) for different fishing mortality values (x axis) and and gear selectivity(y axis) combinations. The current value is indicated by the dashed lines and a circle.<br><br>Note that the black circle is not shown if the current value is outside the plotting region. Consider adjusting the F prediction range in the 'Other settings' tab.")),
                                 list(element = paste0("#", ns("table_stockstatus")),
                                      intro = "This table summarizes the current stock status in terms of fishing mortality (F) relative to reference points.<br><br> If the maturity parameters are specified, it also includes SPR-related reference points and the current spawning potential ratio (SPR)."),
                                 list(element = paste0("#", ns("table_forOtherMethods")),

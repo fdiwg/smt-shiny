@@ -165,7 +165,7 @@ tabLBI <- function(id) {
 
                                     br(),
 
-                                    selectInput(ns("lbi_lengthUnit"),
+                                    selectInput(ns("LBI_lengthUnit"),
                                                 "Choose length unit",
                                                 choices = c("cm", "mm", "in")),
 

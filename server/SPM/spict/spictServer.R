@@ -52,12 +52,14 @@ spictModule <- function(input, output, session) {
             shinyjs::disable("createSpictzip")
             showModal(modalDialog(
                 title = "Error",
-                if(!checks$csv){
+                if(!checks$csv && !checks$delimiter){
+                    HTML("Several checks of the uploaded data did not pass. Are you sure that you uploaded the correct file containing a catch and index time series in either the wide or long format?<br><br> Please double-check your data set and refer to the 'Data Upload' info button (i) for more help!")
+                } else if(!checks$csv){
                     "Something went wrong when reading in your data set. Did you select a CSV file (i.e. file with ending '.csv')? Click on the info icon for more information."
                 }else if(!checks$delimiter){
                     "Something went wrong when reading in your data set. Please ensure that your CSV file delimiter is a comma ',' or semicolon ';'. Click on the info icon for more information."
                 }else{
-                    "There was an unexpected error when reading in your data set. Please double-check your data set and refer to the info button for more help. "
+                    HTML("There was an unexpected error when reading in your data set. Are you sure that you uploaded the correct file containing a catch and index time series in either the wide or long format?<br><br> Please double-check your data set and refer to the 'Data Upload' info button (i) for more help!")
                 },
                 easyClose = TRUE,
                 footer = NULL
@@ -86,6 +88,10 @@ spictModule <- function(input, output, session) {
            all(sapply(colNames$obsI, function(x) x != "NA"))) {
 
             dat_checked <- checkDat(inputSpictData, colNames)
+
+            if (!all(apply(dat_checked, 2, is.numeric))) {
+                stop("The columns are not numeric, is the decimal delimiter correct? Consider trying another decimal delimiter or check your input data and refer to the 'Data Upload' info button (i) for more help!.")
+            }
             inpORI <- dat2inp(dat_checked)
             inp <- check.inp(inpORI)
 
@@ -249,6 +255,7 @@ spictModule <- function(input, output, session) {
     }
 
     resetSpictInputValues <- function() {
+
         ## resetting reactive values
         spict_dat$dataExplo <- NULL
         spict_dat$results <- NULL
@@ -268,14 +275,77 @@ spictModule <- function(input, output, session) {
 
         ## resetting UIs
         shinyjs::reset("file")
+        shinyjs::reset("spictCSVsep")
+        shinyjs::reset("spictCSVdec")
+        shinyjs::reset("guess_cols")
+        shinyjs::reset("n_indices")
         ## shinyjs::reset("dateFormat")
         shinyjs::reset("timeC_lab")
         shinyjs::reset("obsC_lab")
+        shinyjs::reset("stdevC_lab")
         shinyjs::reset("timeI_selectors")
         shinyjs::reset("obsI_selectors")
         shinyjs::reset("stdevI_selectors")
         shinyjs::reset("timerange")
         shinyjs::reset("dteuler")
+        shinyjs::reset("timeIshift_ui")
+        shinyjs::reset("robflagi_ui")
+        shinyjs::reset("logq_priors_ui")
+        shinyjs::reset("logsdi_priors_ui")
+        shinyjs::reset("catchUnit")
+        shinyjs::reset("robflagc")
+        shinyjs::reset("fig_format")
+        shinyjs::reset("tab_format")
+
+        shinyjs::reset("lognPrior")
+        shinyjs::reset("lognMu")
+        shinyjs::reset("lognSd")
+        shinyjs::reset("lognLog")
+
+        shinyjs::reset("logAlphaPrior")
+        shinyjs::reset("logAlphaMu")
+        shinyjs::reset("logAlphaSd")
+        shinyjs::reset("logAlphaLog")
+
+        shinyjs::reset("logBetaPrior")
+        shinyjs::reset("logBetaMu")
+        shinyjs::reset("logBetaSd")
+        shinyjs::reset("logBetaLog")
+
+        shinyjs::reset("logbkfracPrior")
+        shinyjs::reset("logbkfracMu")
+        shinyjs::reset("logbkfracSd")
+        shinyjs::reset("logbkfracLog")
+
+        shinyjs::reset("logKPrior")
+        shinyjs::reset("logKMu")
+        shinyjs::reset("logKSd")
+        shinyjs::reset("logKLog")
+
+        shinyjs::reset("logrPrior")
+        shinyjs::reset("logrMu")
+        shinyjs::reset("logrSd")
+        shinyjs::reset("logrLog")
+
+        shinyjs::reset("logmPrior")
+        shinyjs::reset("logmMu")
+        shinyjs::reset("logmSd")
+        shinyjs::reset("logmLog")
+
+        shinyjs::reset("logsdbPrior")
+        shinyjs::reset("logsdbMu")
+        shinyjs::reset("logsdbSd")
+        shinyjs::reset("logsdbLog")
+
+        shinyjs::reset("logsdfPrior")
+        shinyjs::reset("logsdfMu")
+        shinyjs::reset("logsdfSd")
+        shinyjs::reset("logsdfLog")
+
+        shinyjs::reset("logsdcPrior")
+        shinyjs::reset("logsdcMu")
+        shinyjs::reset("logsdcSd")
+        shinyjs::reset("logsdcLog")
 
         ## disable buttons
         shinyjs::disable("go_spict")
@@ -581,7 +651,19 @@ spictModule <- function(input, output, session) {
     output$timeC_lab <- renderUI({
         ind <- which("timeC" == spict_dat$colNamesORI)
         if(input$guess_cols) {
-            selected <- if (length(ind) == 1) spict_dat$colNamesORI[ind] else ""
+            if (length(ind) == 1) {
+                selected <- spict_dat$colNamesORI[ind]
+            }else {
+                selected <- ""
+                if (!is.null(input$file) && !is.null(fileSpictState$upload)) {
+                    showNotification(
+                        "Times of catches ('timeC') not found! Please assign manually!",
+                        type = "error",
+                        duration = 20,
+                        closeButton = TRUE
+                    )
+                }
+            }
         } else {
             selected <- NULL
         }
@@ -598,7 +680,19 @@ spictModule <- function(input, output, session) {
     output$obsC_lab <- renderUI({
         ind <- which("obsC" == spict_dat$colNamesORI)
         if(input$guess_cols) {
-            selected <- if (length(ind) == 1) spict_dat$colNamesORI[ind] else ""
+            if (length(ind) == 1) {
+                selected <- spict_dat$colNamesORI[ind]
+            }else {
+                selected <- ""
+                if (!is.null(input$file) && !is.null(fileSpictState$upload)) {
+                    showNotification(
+                        "Catches ('obsC') not found! Please assign manually!",
+                        type = "error",
+                        duration = 20,
+                        closeButton = TRUE
+                    )
+                }
+            }
         } else {
             selected <- NULL
         }
@@ -616,7 +710,11 @@ spictModule <- function(input, output, session) {
     output$stdevC_lab <- renderUI({
         ind <- which("stdevfacC" == spict_dat$colNamesORI)
         if(input$guess_cols) {
-            selected <- if (length(ind) == 1) spict_dat$colNamesORI[ind] else ""
+            if (length(ind) == 1) {
+                selected <- spict_dat$colNamesORI[ind]
+            }else {
+                selected <- ""
+            }
         } else {
             selected <- NULL
         }
@@ -643,7 +741,28 @@ spictModule <- function(input, output, session) {
             if (input$guess_cols) {
                 ind <- c(which(paste0("timeI", i) == spict_dat$colNamesORI),
                          which("timeI" == spict_dat$colNamesORI))[1]
-                selected <- if (length(ind) == 1) spict_dat$colNamesORI[ind] else ""
+                if (length(ind) == 1 && !is.na(ind)) {
+                    selected <- spict_dat$colNamesORI[ind]
+                } else {
+                    selected <- ""
+                    if (!is.null(input$file) && !is.null(fileSpictState$upload)) {
+                        if(n > 1) {
+                            showNotification(
+                                paste0("Times of index ",i," ('timeI",i,"') not found! Please assign manually!"),
+                                type = "error",
+                                duration = 20,
+                                closeButton = TRUE
+                            )
+                        } else {
+                            showNotification(
+                                paste0("Times of index ('timeI') not found! Please assign manually!"),
+                                type = "error",
+                                duration = 20,
+                                closeButton = TRUE
+                            )
+                        }
+                    }
+                }
             } else {
                 selected <- NULL
             }
@@ -679,7 +798,28 @@ spictModule <- function(input, output, session) {
             if (input$guess_cols) {
                 ind <- c(which(paste0("obsI", i) == spict_dat$colNamesORI),
                          which("obsI" == spict_dat$colNamesORI))[1]
-                selected <- if (length(ind) == 1) spict_dat$colNamesORI[ind] else ""
+                if (length(ind) == 1 && !is.na(ind)) {
+                    selected <- spict_dat$colNamesORI[ind]
+                } else {
+                    selected <- ""
+                    if (!is.null(input$file) && !is.null(fileSpictState$upload)) {
+                        if(n > 1) {
+                            showNotification(
+                                paste0("Index ",i," ('obsI",i,"') not found! Please assign manually!"),
+                                type = "error",
+                                duration = 20,
+                                closeButton = TRUE
+                            )
+                        } else {
+                            showNotification(
+                                paste0("Index ('obsI') not found! Please assign manually!"),
+                                type = "error",
+                                duration = 20,
+                                closeButton = TRUE
+                            )
+                        }
+                    }
+                }
             } else {
                 selected <- NULL
             }
@@ -713,7 +853,11 @@ spictModule <- function(input, output, session) {
             if (input$guess_cols) {
                 ind <- c(which(paste0("stdevfacI", i) == spict_dat$colNamesORI),
                          which("stdevfacI" == spict_dat$colNamesORI))[1]
-                selected <- if (length(ind) == 1) spict_dat$colNamesORI[ind] else ""
+                if (length(ind) == 1) {
+                    selected <- spict_dat$colNamesORI[ind]
+                } else {
+                    selected <- ""
+                }
             } else {
                 selected <- NULL
             }
@@ -818,9 +962,9 @@ spictModule <- function(input, output, session) {
             fluidRow(
                 column(2, paste0("log(q", if (n > 1) suffix else "", ")")),
                 column(2, checkboxInput(ns(paste0("logqPrior", suffix)), label = NULL, value = checkbox)),
-                column(2, numericInput(ns(paste0("logqMu", suffix)), label = NULL, value = mu)),
-                column(2, numericInput(ns(paste0("logqSd", suffix)), label = NULL, value = sd)),
-                column(4, checkboxInput(ns(paste0("logqLog", suffix)), label = NULL, value = log))
+                column(3, numericInput(ns(paste0("logqMu", suffix)), label = NULL, value = mu)),
+                column(3, numericInput(ns(paste0("logqSd", suffix)), label = NULL, value = sd)),
+                column(2, checkboxInput(ns(paste0("logqLog", suffix)), label = NULL, value = log))
             )
         })
     })
@@ -844,9 +988,9 @@ spictModule <- function(input, output, session) {
             fluidRow(
                 column(2, paste0("log(sdi", if (n > 1) suffix else "", ")")),
                 column(2, checkboxInput(ns(paste0("logsdiPrior", suffix)), label = NULL, value = checkbox)),
-                column(2, numericInput(ns(paste0("logsdiMu", suffix)), label = NULL, value = mu)),
-                column(2, numericInput(ns(paste0("logsdiSd", suffix)), label = NULL, value = sd)),
-                column(4, checkboxInput(ns(paste0("logsdiLog", suffix)), label = NULL, value = log))
+                column(3, numericInput(ns(paste0("logsdiMu", suffix)), label = NULL, value = mu)),
+                column(3, numericInput(ns(paste0("logsdiSd", suffix)), label = NULL, value = sd)),
+                column(2, checkboxInput(ns(paste0("logsdiLog", suffix)), label = NULL, value = log))
             )
         })
     })
@@ -874,7 +1018,9 @@ spictModule <- function(input, output, session) {
         spict_dat$robflagi <- robflags()
     })
 
-    observeEvent(input$file, {
+    observeEvent(
+        list(input$file, input$spictCSVsep, input$spictCSVdec),
+        {
         fileSpictState$upload <- 'uploaded'
         ## reset a few things
         spict_dat$dataExplo <- NULL
@@ -894,7 +1040,9 @@ spictModule <- function(input, output, session) {
     })
 
     observeEvent({
+        inputSpictData
         inputSpictData$inputData
+        inputSpictData$checks
         input$timeC_lab
         input$obsC_lab
         input$stdevC_lab
@@ -974,11 +1122,17 @@ spictModule <- function(input, output, session) {
             }),
             warning = function(w) {
                 showModal(modalDialog(
-                    title = "Information",
+                    title = "Warning",
                     w$message,
                     easyClose = TRUE,
                     footer = NULL
                 ))
+                ## showNotification(
+                ##     w$message,
+                ##     type = "error",
+                ##     duration = 20,
+                ##     closeButton = TRUE
+                ## )
                 invokeRestart("muffleWarning")
             }
         )
@@ -1470,27 +1624,25 @@ size = "l"
     ## Results tour
     observeEvent(input$tour_res, {
 
-        steps <- list(
-            list(element = NA,
-                 intro = "This is a tour that takes you through the results of the data-limited stock assessment with SPiCT.")
-        )
-
         if(is.null(spict_dat$results)) {
 
-            steps <- append(steps,
-                            list(
-                                list(element = NA,
-                                     intro = "No results found. This tour only works if you run the assessment."),
-                                list(element = paste0("#", ns("go_spict")),
-                                     intro = "Make sure you uploaded your data and run the assessment by clicking here."),
-                                list(element = NA,
-                                     intro = "Start this tour again after you see some tables and graphs below.")))
+            steps <- list(
+                list(element = NA,
+                     intro = "No results found. This tour only works if you run the assessment."),
+                list(element = paste0("#", ns("go_spict")),
+                     intro = "Make sure you uploaded your data and run the assessment by clicking here."),
+                list(element = NA,
+                     intro = "Start this tour again after you see some tables and graphs below."))
 
         } else {
 
             current_tab <- input$results
 
             if (!is.null(current_tab) && current_tab == "res1") {
+                steps <- list(
+                    list(element = NA,
+                         intro = "This is a tour that takes you through the main results of the data-limited stock assessment with SPiCT.")
+                )
                 steps <- append(steps,
                                 list(list(element = paste0("#", ns("plot_sum")),
                                           intro = paste0("This figure shows an overview of the main assessment results across four panels: time series of estimated ", withMathJax("\\(B/B_{\\mathrm{MSY}}\\)"), " and ", withMathJax("\\(F/F_{\\mathrm{MSY}}\\)")," with 95% confidence intervals (blue), including relative abundance observations (colour indicates in-year timing; symbols distinguish index series), estimated and observed catches with the MSY reference line and its 95% confidence interval (grey), and a Kobe plot summarizing status with uncertainty around ", withMathJax("\\(B_{\\mathrm{MSY}}\\)")," and ", withMathJax("\\(F_{\\mathrm{MSY}}\\)"),".")),
@@ -1515,6 +1667,10 @@ size = "l"
                                      list(element = paste0("#", ns("plot_prod")),
                                           intro = paste("This figure shows the estimated production curve showing the theoretical surplus production (y axis) as a function of biomass relative to carrying capacity (B/K, x axis). The vertical dotted line indicates the the relative biomass where surplus production is maximized (MSY). The observed annual surplus production is plotted as blue circles conected by a line."))))
             } else if (!is.null(current_tab) && current_tab == "res2") {
+                steps <- list(
+                    list(element = NA,
+                         intro = "This is a tour that takes you through the additional results of the data-limited stock assessment with SPiCT.")
+                )
                 steps <- append(steps,
                                 list(
                                     list(element = paste0("#", ns("plot_abs")),
@@ -1538,7 +1694,11 @@ size = "l"
                        "During the forecast, fishing mortality is assumed constant at the level estimated ",
                        "for the final year of the time series."))
                        ))
-                } else if (!is.null(current_tab) && current_tab == "res3") {
+            } else if (!is.null(current_tab) && current_tab == "res3") {
+                steps <- list(
+                    list(element = NA,
+                         intro = "This is a tour that takes you through the diagnostics of the data-limited stock assessment with SPiCT.")
+                )
                 steps <- append(steps,
                                 list(
                                     list(element = paste0("#", ns("plot_priors2_ui")),

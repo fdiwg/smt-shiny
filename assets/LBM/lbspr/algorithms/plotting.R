@@ -38,7 +38,7 @@ plotLBSPR.data <- function(lbspr_dat, input){
                 border = "grey20", lwd = 1)
         }
         mtext(format(dat$dates[i], "%Y"), 3, 0.5, font = 2)
-        mtext(paste0("Mid lengths [", input$lbspr_lengthUnit,"]"), 1, 1, outer = TRUE)
+        mtext(paste0("Mid lengths [", input$LBSPR_lengthUnit,"]"), 1, 1, outer = TRUE)
         mtext("Frequency", 2, 1, outer = TRUE)
         box(lwd = 1.5)
     }
@@ -116,7 +116,7 @@ plotLBSPR.diag2 <- function(lbspr_dat, input){
           col = color_palette,
           breaks = breaks,
           xlab = "",
-          ylab = paste0("Mid length [", input$lbspr_lengthUnit, "]"),
+          ylab = paste0("Mid length [", input$LBSPR_lengthUnit, "]"),
           main = "")
     box(lwd = 1.5)
     par(mar = c(5, 1, 4, 4))
@@ -161,7 +161,7 @@ plotLBSPR.diag3 <- function(lbspr_dat, input){
                      xaxt = "n")
         axis(1, at = p, labels = new.lfq$midLengths)
     }
-    mtext(paste0("Mid length [", input$lbspr_lengthUnit, "]"), 1, -1, outer = TRUE)
+    mtext(paste0("Mid length [", input$LBSPR_lengthUnit, "]"), 1, -1, outer = TRUE)
     mtext("Frequency", 2, -1, outer = TRUE)
 
 }

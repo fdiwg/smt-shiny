@@ -259,7 +259,7 @@ lbsprModule <- function(input, output, session) {
                              mk = mk,
                              lwa = input$LBSPR_LWa,
                              lwb = input$LBSPR_LWb,
-                             lunit = input$lbspr_lengthUnit
+                             lunit = input$LBSPR_lengthUnit
                              )
 
             ## }else{
@@ -299,7 +299,7 @@ lbsprModule <- function(input, output, session) {
                                     lwb = WPSLiteralData$new(value = as.double(input$LBSPR_LWb)),
                                     sprLim = WPSLiteralData$new(value = as.double(input$LBSPR_sprLim)),
                                     sprTarg = WPSLiteralData$new(value = as.double(input$LBSPR_sprTarg)),
-                                    lengthUnit = WPSLiteralData$new(value = as.character(input$lbspr_lengthUnit)),
+                                    lengthUnit = WPSLiteralData$new(value = as.character(input$LBSPR_lengthUnit)),
                                     fig_format = WPSLiteralData$new(value = as.character(input$fig_format_lbspr)),
                                     tab_format = WPSLiteralData$new(value = as.character(input$tab_format_lbspr)),
                                     inputFile = WPSComplexData$new(value = body, mimeType = "application/d4science")
@@ -1148,7 +1148,7 @@ lbsprModule <- function(input, output, session) {
             list(element = paste0("#", ns("lbsprDateFormat"),
                                   " + .selectize-control"),
                  intro = "By default, the app will try to recognize the date format, but you can also specify it here."),
-            list(element = paste0("#", ns("lbspr_lengthUnit"),
+            list(element = paste0("#", ns("LBSPR_lengthUnit"),
                                   " + .selectize-control"),
                  intro = "By default, the app assumes that your length measurements are in centimeter (cm), but you can choose other length unit here. Currently, millimeter (mm) and inches (in) are implemented."),
             list(element = paste0("#", ns("box_settings")),

@@ -146,9 +146,9 @@ lbiModule <- function(input, output, session) {
 
         ## Leave in original unit!
         ## Account for length unit
-        ## if(input$lbi_lengthUnit == "mm"){
+        ## if(input$LBI_lengthUnit == "mm"){
         ##     lfq$midLengths <- lfq$midLengths * 10
-        ## }else if(input$lbi_lengthUnit == "in"){
+        ## }else if(input$LBI_lengthUnit == "in"){
         ##     lfq$midLengths <- lfq$midLengths * 2.54
         ## }
 
@@ -1016,7 +1016,7 @@ size = "l"
             list(element = paste0("#", ns("lbiDateFormat"),
                                   " + .selectize-control"),
                  intro = "By default, the app will try to recognize the date format, but you can also specify it here."),
-            list(element = paste0("#", ns("lbi_lengthUnit"),
+            list(element = paste0("#", ns("LBI_lengthUnit"),
                                   " + .selectize-control"),
                  intro = "By default, the app assumes that your length measurements are in centimeter (cm), but you can choose other length unit here. Currently, millimeter (mm) and inches (in) are implemented."),
             list(element = paste0("#", ns("box_settings")),

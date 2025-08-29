@@ -170,6 +170,8 @@ invisible(writeLines(captionSpict.plots(spict_dat, input, format = "withFigLatex
 
 # Results
 
+The model `r if(spict_dat$results$opt$convergence == 0) "converged" else "did not converge, subsequent results should be interpreted with caution"`.
+
 ## Main results
 
 ```{r echo=FALSE, fig.align="center", dpi=300, fig.width=9, fig.height=8, results='hide'}
@@ -263,7 +265,14 @@ invisible(writeLines(captionSpict.plots(spict_dat, input, format = "withFigLatex
 
 
 ```{r echo=FALSE, fig.align="center", dpi=300, fig.width=9, fig.height=9, results='hide'}
-plotSpict.resid2(spict_dat, input)
+if(spict_dat$results$opt$convergence == 0) {
+    plotSpict.resid2(spict_dat, input)
+} else {
+    plot.new()
+    legend("center",
+           legend = "The process residuals could not be estimated, because the model did not converge.",
+           pch = NA)
+}
 ```
 ```{r echo=FALSE,results='asis'}
 invisible(writeLines(captionSpict.plots(spict_dat, input, format = "withFigLatex", type = "resid2")))

@@ -16,7 +16,7 @@ captionLBSPR.tables <- function(lbspr_dat, input, format = "datatable", type){
                }else{
                    vals <- paste0("Ls50% and Ls95%")
                }
-               txt <- paste0("Estimated Spawning potential ratio (SPR) in percent, estimated selectivity parameters (",vals," in ",input$lbspr_lengthUnit,") in the same length unit as uploaded length measurements, and the fishing mortality relative to the natural mortality (F/M) for each year included in the assessment. The uncertainty of estimated parameters is provided as the 95% confidence limits in brackets.")
+               txt <- paste0("Estimated Spawning potential ratio (SPR) in percent, estimated selectivity parameters (",vals," in ",input$LBSPR_lengthUnit,") in the same length unit as uploaded length measurements, and the fishing mortality relative to the natural mortality (F/M) for each year included in the assessment. The uncertainty of estimated parameters is provided as the 95% confidence limits in brackets.")
            }
            )
 
@@ -73,7 +73,7 @@ captionLBSPR.plots <- function(lbspr_dat, input, format = "withFig", type){
            },
            "ts" = {
                plot.num <- 7
-               txt <- paste0("Time series plot of the estimated selectivity parameters in ",input$lbspr_lengthUnit,", fishing mortality relative to natural mortality, and spawning potential ratio (SPR) with 95% confidence intervals. The lines correspond to the smoothed estimates over time. Note, that the graphs only show single points when the assessment spans a single year.")
+               txt <- paste0("Time series plot of the estimated selectivity parameters in ",input$LBSPR_lengthUnit,", fishing mortality relative to natural mortality, and spawning potential ratio (SPR) with 95% confidence intervals. The lines correspond to the smoothed estimates over time. Note, that the graphs only show single points when the assessment spans a single year.")
            }
            )
 

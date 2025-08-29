@@ -164,7 +164,7 @@ tabLBSPR <- function(id) {
 
                                     br(),
 
-                                    selectInput(ns("lbspr_lengthUnit"),
+                                    selectInput(ns("LBSPR_lengthUnit"),
                                                 "Choose length unit",
                                                 choices = c("cm", "mm", "in")),
 

@@ -63,9 +63,9 @@ textLBSPR.diag1 <- function(lbspr_dat, input){
         table_html, "<br>", "<br>",
         "<h4>Length measurements</h4>",
         "Length range: ", paste0(round(l.min,2), " - ", round(l.max,2), " ",
-                                 input$lbi_lengthUnit), "<br>",
+                                 input$LBSPR_lengthUnit), "<br>",
         "Length diff range: ", paste0(round(l.diff.min,2), " - ",
                                       round(l.diff.max,2), " ",
-                                      input$lbi_lengthUnit), "<br>"
+                                      input$LBSPR_lengthUnit), "<br>"
     ))
 }
