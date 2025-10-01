@@ -104,29 +104,31 @@ tableTropFishR.input <- function(elefan_ga, input, format = "datatable"){
     }
 
     if(input$select =="Define L50 & (L75-L25)"){
-        tab <- as.data.frame(rbind(tab,
-                                   l50user = input$l50_user,
-                                   wqsuser = input$wqs_user))
-    }
+            tab <- as.data.frame(rbind(tab,
+                                       l50user = input$l50_user,
+                                       wqsuser = input$wqs_user))
+        }
 
-    ## tab <- as.data.frame(rbind(tab,
-    ##                            fSteps = input$fRangeSteps,
-    ##                            fRange = paste0(input$fRangeMin, "-", input$fRangeMax),
-    ##                            l50Steps = input$lcRangeSteps))
+        ## tab <- as.data.frame(rbind(tab,
+        ##                            fSteps = input$fRangeSteps,
+        ##                            fRange = paste0(input$fRangeMin, "-", input$fRangeMax),
+        ##                            l50Steps = input$lcRangeSteps))
 
-    ## if(input$select!="Estimate"){
-    ##     tab <- as.data.frame(rbind(tab,
-    ##                                l50Range = paste0(input$lcRangeMin, "-", input$lcRangeMax)))
-    ## }
+        ## if(input$select!="Estimate"){
+        ##     tab <- as.data.frame(rbind(tab,
+        ##                                l50Range = paste0(input$lcRangeMin, "-", input$lcRangeMax)))
+        ## }
 
-    ## Lables
-    clabs <- c("Parameter/setting","Value")
-    labs <- rownames(tab)
-    labtmp <- c("fileName", "yearRange", "lengthUnit",
-                "binSize", "ma", "addlsqrt", "ga_linf", "ga_k",
-                "ga_ta", "C", "ts", "popSize", "maxiter", "run", "pmut",
-                "pcross", "elitism", "a", "b", "natM",
-                "select")
+        ## Lables
+        clabs <- c("Parameter/setting","Value")
+        labs <- rownames(tab)
+        labtmp <- c("fileName", "yearRange", "lengthUnit",
+                    "binSize", "ma", "addlsqrt", "ga_linf", "ga_k",
+                    "ga_ta", "C", "ts", "popSize", "maxiter", "run", "pmut",
+                    "pcross", "elitism", "sel_years_cc", "a", "b", "natM",
+                    "temp","school","tmax",
+                    "lm50","lm75", "select",
+                    "l50user","l75user","wqsuser")
     ind <- which(labs %in% labtmp)
     ind2 <- which(labtmp %in% labs)
     if(format == "datatable"){
@@ -149,8 +151,14 @@ tableTropFishR.input <- function(elefan_ga, input, format = "datatable"){
         }
         tmp <- c(tmp, "C", "t<sub>s</sub> seach space", "Pop. size (GA)",
                  "Max. iter (GA)", "Run (GA)", "Prob. mutation (GA)",
-                 "Prob. Crossover (GA)", "Elitism (GA)", "a", "b",
-                 "M method", "Selectivity")
+                 "Prob. Crossover (GA)", "Elitism (GA)",
+                 "Year range (catch curve)",
+                 "a", "b", "M method", "Temperature",
+                 "Schooling", "Maximum age",
+                 "L<sub>m50</sub>", "L<sub>m75</sub>",
+                 "Selectivity",
+                 "L<sub>s50</sub>", "L<sub>s75</sub>",
+                 "Width of selection range")
         labs <- replace(labs,
                         ind,
                         tmp[ind2])
@@ -174,8 +182,14 @@ tableTropFishR.input <- function(elefan_ga, input, format = "datatable"){
         }
         tmp <- c(tmp, "C", "t\\textsubscript{s}  seach space", "Pop. size (GA)",
                  "Max. iter (GA)", "Run (GA)", "Prob. mutation (GA)",
-                 "Prob. Crossover (GA)", "Elitism (GA)", "a", "b",
-                 "M method", "Selectivity")
+                 "Prob. Crossover (GA)", "Elitism (GA)",
+                 "Year range (catch curve)", "a", "b",
+                 "M method", "Temperature",
+                 "Schooling", "Maximum age",
+                 "L\\textsubscript{m50}", "L\\textsubscript{m75}",
+                 "Selectivity",
+                 "L\\textsubscript{s50}", "L\\textsubscript{s75}",
+                 "Width of selection range")
         labs <- replace(labs,
                         ind,
                         tmp[ind2])
@@ -199,8 +213,14 @@ tableTropFishR.input <- function(elefan_ga, input, format = "datatable"){
         }
         tmp <- c(tmp, "C", "ts  seach space", "Pop. size (GA)",
                  "Max. iter (GA)", "Run (GA)", "Prob. mutation (GA)",
-                 "Prob. Crossover (GA)", "Elitism (GA)", "a", "b",
-                 "M method", "Selectivity")
+                 "Prob. Crossover (GA)", "Elitism (GA)",
+                 "Year range (catch curve)", "a", "b",
+                 "M method", "Temperature",
+                 "Schooling", "Maximum age",
+                 "Lm50", "Lm75",
+                 "Selectivity",
+                 "Ls50", "Ls75",
+                 "Width of selection range")
         labs <- replace(labs,
                         ind,
                         tmp[ind2])

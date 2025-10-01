@@ -1,6 +1,4 @@
 
-library(lubridate)
-
 
 check.numeric.and.min <- function(pars, can.be.zero = FALSE){
 
@@ -137,13 +135,127 @@ validateLBMInputFile <- function(file, type = "freq"){
 
     ## return checks
     checks <- list(csv=check_csv, delimiter=check_delimiter, lengths=check_lengths,
-                   dates=check_dates, ncols=check_ncols)
+                   dates=check_dates, ncols=check_ncols,
+                   format = NULL)
+    return(list(inputData=inputData, checks=checks))
+}
+
+
+validateLBMInputFile2 <- function(file, type = "freq", sep = "auto", dec = "auto"){
+
+    is_mostly_numeric <- function(df) {
+        numeric_cols <- sapply(df, is.numeric)
+        if (type == "freq") {
+            ## all have to be numeric
+            return(mean(numeric_cols) == 1)
+        } else {
+            ## assuming one date, one length, and one optional freq column at least 50% have to be numeric
+            return(mean(numeric_cols) >= 0.5)
+        }
+    }
+
+    if(sep == "auto") {
+        separators <- c(",", ";", "\t", " ")
+    } else {
+        separators <- sep
+    }
+    if(dec == "auto") {
+        decimals <- c(".", ",")
+    } else {
+        decimals <- dec
+    }
+    inputData <- NULL
+    check_csv <- FALSE
+    check_delimiter <- FALSE
+
+    for (sep_try in separators) {
+        for (dec_try in decimals) {
+            tmp <- try(read.csv(file, sep = sep_try, dec = dec_try), silent = TRUE)
+            if (!inherits(tmp, "try-error") && is.data.frame(tmp) && ncol(tmp) > 1 && is_mostly_numeric(tmp)) {
+                inputData <- tmp
+                check_csv <- TRUE
+                check_delimiter <- TRUE
+                break
+            }
+        }
+        if (check_csv) break
+    }
+
+    message(sprintf("Detected sep='%s', dec='%s'", sep_try, dec_try))
+
+    if(check_csv){
+
+        ## Can date be read from column names?
+        if(type == "freq"){
+            ## Is the first column numeric? -> length classes
+            check_lengths <- ifelse(is.numeric(inputData[,1]), TRUE, FALSE)
+            colnams <- as.vector(colnames(inputData))
+            dates <- sapply(colnams[2:length(colnams)], function(x){
+                x <- ifelse(startsWith(x, 'X'), substring(x, 2), x)
+                formatTimestamp(parse_date_time(x, c('ymd', 'dmy', 'mdy')))
+            })
+            inputData <- cbind(inputData[,1], inputData[,which(!is.na(dates))+1])
+            colnames(inputData) <- colnams
+        }else if(type == "raw"){
+            if(ncol(inputData) >= 2){
+                suppressWarnings(tmp <- try(sapply(head(inputData[,1]), function(x)
+                    formatTimestamp(parse_date_time(x, c('ymd', 'dmy', 'mdy')))),
+                    silent = TRUE))
+                if(inherits(tmp, "try-error") || all(is.na(tmp))){
+                    suppressWarnings(tmp <- try(sapply(head(inputData[,2]), function(x)
+                        formatTimestamp(parse_date_time(x, c('ymd', 'dmy', 'mdy')))),
+                        silent = TRUE))
+                    if(inherits(tmp, "try-error") || all(is.na(tmp))){
+                        ## stop("Neither first nor second one recognised as Date!")
+                    }else{
+                        dates <- tmp
+                        lengths <- inputData[,1]
+                    }
+                }else{
+                    dates <- tmp
+                    lengths <- inputData[,2]
+                }
+                dates <- inputData[,1]  ## assumes that second column is always date (if provided)
+
+                ## try to read first column as lengths
+                if(all(is.na(dates))){
+                    dates <- as.Date(format(Sys.time(),"%Y-%m-%d"))
+                    warning("No date found, maybe just length provided, using system date as placeholder for missing date.")
+                    lengths <- inputData[,1]
+                }
+            }else{
+                dates <- as.Date(format(Sys.time(),"%Y-%m-%d"))
+                warning("No date found, maybe just length provided, using system date as placeholder for missing date.")
+                lengths <- inputData[,1]
+            }
+            check_lengths <- ifelse(is.numeric(lengths), TRUE, FALSE)
+        }
+        check_dates <- ifelse(any(!is.na(dates)), TRUE, FALSE)
+
+        ## Only use numeric columns + Are there sufficient numeric samples?
+        if(type == "freq"){
+            inputData <- inputData[,apply(inputData, 2, is.numeric)]
+        }
+        check_ncols <- ifelse((!is.null(ncol(inputData)) &&
+                               ncol(inputData) >= 2) || type == "raw", TRUE, FALSE)
+
+    }else{
+        check_delimiter <- FALSE
+        check_lengths <- FALSE
+        check_dates <- FALSE
+        check_ncols <- FALSE
+    }
+
+    ## return checks
+    checks <- list(csv=check_csv, delimiter=check_delimiter, lengths=check_lengths,
+                   dates=check_dates, ncols=check_ncols,
+                   format = NULL)
     return(list(inputData=inputData, checks=checks))
 }
 
 
 
-read_lbm_csv <- function(csvFile, format=""){
+read_lbm_csv <- function(csvFile, format="auto", sep = "auto", dec = "auto"){
 
     Sys.setlocale("LC_TIME", "C")
 
@@ -163,9 +275,22 @@ read_lbm_csv <- function(csvFile, format=""){
         order <- c('ymd', 'ydm', 'dmy', 'mdy')
     }
 
+    print (paste0("Separator is: ", sep))
+
+    if (is.null(sep) || is.na(sep)) {
+        sep <- "auto"
+    }
+
+    print (paste0("Decimal delimiter is: ", dec))
+
+    if (is.null(dec) || is.na(dec)) {
+        dec <- "auto"
+    }
+
     ## read in and validate csv file
-    dataset <- validateLBMInputFile(csvFile, type = "freq")
-    if(all(unlist(dataset$checks))){
+    dataset <- validateLBMInputFile2(csvFile, type = "freq", sep = sep, dec = dec)
+    if(all(unlist(dataset$checks[c("csv","delimiter","lengths","dates","ncols")]))){
+        dataset$checks$format <- "wide"
         inputData <- dataset$inputData
         ## lfq list
         dataset$lfq <- list()
@@ -186,12 +311,30 @@ read_lbm_csv <- function(csvFile, format=""){
         dataset$lfq$midLengths <- inputData[,1]
 
         ## catch matrix
-        dataset$lfq$catch <- as.matrix(inputData[,-1])[,order(dates)]
+        tmp <- as.matrix(inputData[,-1])[,order(dates)]
+        if(!is.matrix(tmp)) {
+            dataset$lfq$catch <- matrix(tmp, ncol = 1)
+        } else {
+            dataset$lfq$catch <- tmp
+        }
+
         colnames(dataset$lfq$catch) <- sort(dates)
+
+        ## Raw data format
+        tmp <- dataset$lfq$catch
+        colnames(tmp) <- dataset$lfq$dates
+        rownames(tmp) <- dataset$lfq$midLengths
+        tmp2 <- reshape2::melt(tmp)
+        colnames(tmp2) <- c("Length","Date","Frequency")
+        tmp2 <- tmp2[tmp2$Frequency > 0,]
+        tmp2$Date <- as.Date(tmp2$Date)
+
+        dataset$raw <- tmp2
     }else{
         ## requires that first column contains dates and second length measurements
-        dataset <- validateLBMInputFile(csvFile, type = "raw")
-        if(all(unlist(dataset$checks))){
+        dataset <- validateLBMInputFile2(csvFile, type = "raw")
+        if(all(unlist(dataset$checks[c("csv","delimiter","lengths","dates","ncols")]))){
+            dataset$checks$format <- "long"
             inputData <- dataset$inputData
 
             if(ncol(inputData) == 1){
@@ -239,11 +382,15 @@ read_lbm_csv <- function(csvFile, format=""){
                               min(tmp[tmp > 0], na.rm = TRUE),
                               0.05*0.23*max(newData$Length, na.rm = TRUE)^0.6)),2)
             ## lfq list
-            dataset$lfq <- lfqCreate(newData, Lname = "Length", Dname = "Date", Fname = "Frequency",
+            dataset$lfq <- lfqCreate(newData, Lname = "Length",
+                                     Dname = "Date", Fname = "Frequency",
                                      bin_size = bs, aggregate_dates = TRUE)
+            ## Raw data format
+            dataset$raw <- newData
+
         }else{
             ## If both wrong report errors from freq format
-            dataset <- validateLBMInputFile(csvFile, type = "freq")
+            dataset <- validateLBMInputFile2(csvFile, type = "freq")
         }
     }
 

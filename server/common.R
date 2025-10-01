@@ -141,6 +141,8 @@ getResultConsiderationTextForCmsy <- function() {
 linkEA <- "<a href='https://data.d4science.org/shub/E_Snp1NzhlUHlFOWg0M3lUL3lZWU0yMVVTVFY5NDhaYkI1ODY4blFtSi9NYlFiMVAyamxMNGc2QXh0TlpRNmdNdQ==' target='_blank'>click to download</a>"
 linkSE <- "<a href='https://data.d4science.org/shub/E_ZEhvM2ZpSVFZd0ZOSXl5MjlGZC90eC9vOUI1NG1hQ0NEMERtRGVHR2hqbThBZGxBYS9QWG5kc1BaWTluVHNvQw==' target='_blank'>click to download</a>"
 linkOSG <- "<a href='https://data.d4science.org/shub/E_SHJJRUJ5S1lxOGhLOW1zVWpKbUJFQzE1c2wzbnltRlVBUmYrUEphbDRkN1BxQzlYOUtwQWRzZ0JMdnJrSmRhZA==' target='_blank'>click to download</a>"
+linkAL <- "<a href='https://data.d4science.org/shub/E_SHNLeTNvQklyYVljWlpVRUhaYWhKREUrakd3QisxSGc4T0kvZnI1OEdmVlJLTjRhM1dSajFSWVBXR3VHaG56Mg==' target='_blank'>click to download</a>"
+linkLO <- "<a href='https://data.d4science.org/shub/E_VWxLOG5rUXBpVEo3bUh0b3NkQUhoZTVUOG1ZVm1aU09PTVNyd3M3U25CdTJvRXl4bmpXcitVQXUyU1ZBbjBXWg==' target='_blank'>click to download</a>"
 
 
 
@@ -241,59 +243,8 @@ getMethodConsiderationTextForElefan <- function() {
                  "limitations of the results.</p>")
   text <- paste0(text, "<br>")
   text <- paste0(text, "<br>")
-  text <- paste0(text, "<b>Assumptions of TropFishR:</b>")
-  text <- paste0(text, "<br>")
-  text <- paste0(text, "<br>")
-  text <- paste0(text, "<ul>")
-  text <- paste0(text, "<li><b>Representative length measurements:</b> ",
-                 "The routine assumes that the dataset is representative of the length distributions of the whole catch. ",
-                 "This means that either the length of all individuals in the catch were measured or ",
-                 "a randomised subsample of the catch was measured.", "</li>")
-  text <- paste0(text, "<br>")
-  text <- paste0(text, "<li><b>Gear/fleet selectivity:</b> ",
-                 "The routine assumes sigmoidal selectivity as it is commonly assumed for 'trawl-like' ",
-                 "fishing gear. While the selectivity of gillnets and hook-based methods might correspond ",
-                 "to a bell-shaped curve, the combination of various mesh and hook sizes might lead to ",
-                 "an overall 'trawl-like' fleet selectivity.",
-                 "</li>")
-  text <- paste0(text, "<br>")
-  text <- paste0(text, "<li><b>Equilibrium conditions:</b> ",
-                 "The routine assumes constant recruitment, fishing and natural mortality as well as somatic growth and maturation over time, i.e. within the year and over all years covered by the dataset.",
-                 "</li>")
-  text <- paste0(text, "<br>")
-  text <- paste0(text, "<li><b>Density dependence:</b> ",
-                 "The routine assumes density independent maturity and somatic growth. All reference points ",
-                 "are based on the 'per recruit' model, thus no assumptions are made about the stock recruitment ",
-                 "relationship.",
-                 "</li>")
-  text <- paste0(text, "<br>")
-  text <- paste0(text, "<li><b>Correlation of life-history parameters:</b> ",
-                 "The use of empirical formulae for the estimation of natural mortality assumes that the ",
-                 "growth parameters (",withMathJax("\\(L_\\infty\\)")," and ",withMathJax("\\(K\\)"),") are ",
-                 "reliable predictors of the natural mortality.",
-                 "</li>")
-  text <- paste0(text, "<br>")
-  text <- paste0(text, "<li><b>Length-independent natural mortality:</b> ",
-                 "The current implementation of SMT assumes that the natural mortality is equal for all length ",
-                 "classes. (Note this assumption will be relaxed in the future.)",
-                 "</li>")
-  text <- paste0(text, "<br>")
-  text <- paste0(text, "<li><b>Somatic growth follows VBG:</b> ",
-                 "The estimation of growth parameters with ELEFAN assumes that the growth of individuals in length ",
-                 "follows the logistic von Bertlanffy growth (VBG) function. This is an often made assumption for the ",
-                 "growth of fish, but might not reflect well the growth of species with an exoskeleton, ",
-                 "such as crustaceans, nor the growth of early life stages of fish.",
-                 "</li>")
-  text <- paste0(text, "<br>")
-  text <- paste0(text, "<li><b>Closed population:</b> ",
-                 "The routine assumes that the stock (population) under study ",
-                 "is closed, meaning that there is no immigration or emigration taking place. Immigration and emigration",
-                 " can both bias estimated mortality rates and stock status. Furthermore, fish migrations ",
-                 "often vary for various life stages and might thus affect the representativeness of the length ",
-                 "measurements if the population is not closed.",
-                 "</li>")
-  text <- paste0(text, "</ul>")
-    return (text)
+  text <- paste0(text, tropfishrAssumptionsHTML())
+  return (text)
 }
 
 getResultConsiderationTextForElefan <- function() {
@@ -635,46 +586,8 @@ getMethodConsiderationTextForLBI <- function() {
                  "limitations of the results.</p>")
   text <- paste0(text, "<br>")
   text <- paste0(text, "<br>")
-  text <- paste0(text, "<b>Assumptions of LBI:</b>")
-  text <- paste0(text, "<br>")
-  text <- paste0(text, "<br>")
-  text <- paste0(text, "<ul>")
-  text <- paste0(text, "<li><b>Representative length measurements:</b> ",
-                 "The routine assumes that the dataset is representative of the length distributions of the whole catch. ",
-                 "This means that either the length of all individuals in the catch were measured or ",
-                 "a randomised subsample of the catch was measured.", "</li>")
-  text <- paste0(text, "<br>")
-  text <- paste0(text, "<li><b>Equilibrium conditions:</b> ",
-                 "The routine assumes constant recruitment, fishing and natural mortality as well as somatic growth and maturation over time, i.e. within the year and over all years covered by the dataset.",
-                 "</li>")
-  text <- paste0(text, "<br>")
-  text <- paste0(text, "<li><b>Density dependence:</b> ",
-                 "The routine assumes density independent maturity and somatic growth. All reference points ",
-                 "are based on the 'per recruit' model, thus no assumptions are made about the stock recruitment ",
-                 "relationship.",
-                 "</li>")
-  text <- paste0(text, "<br>")
-  text <- paste0(text, "<li><b>Length-independent natural mortality:</b> ",
-                 "The current implementation of SMT assumes that the natural mortality is equal for all length ",
-                 "classes.",
-                 "</li>")
-  text <- paste0(text, "<br>")
-  text <- paste0(text, "<li><b>Somatic growth follows VBG:</b> ",
-                 "The estimation of growth parameters with ELEFAN assumes that the growth of individuals in length ",
-                 "follows the logistic von Bertlanffy growth (VBG) function. This is an often made assumption for the ",
-                 "growth of fish, but might not reflect well the growth of species with an exoskeleton, ",
-                 "such as crustaceans, nor the growth of early life stages of fish.",
-                 "</li>")
-  text <- paste0(text, "<br>")
-  text <- paste0(text, "<li><b>Closed population:</b> ",
-                 "The routine assumes that the stock (population) under study ",
-                 "is closed, meaning that there is no immigration or emigration taking place. Immigration and emigration",
-                 " can both bias estimated mortality rates and stock status. Furthermore, fish migrations ",
-                 "often vary for various life stages and might thus affect the representativeness of the length ",
-                 "measurements if the population is not closed.",
-                 "</li>")
-  text <- paste0(text, "</ul>")
-    return (text)
+  text <- paste0(text, lbiAssumptionsHTML())
+  return (text)
 }
 
 getResultConsiderationTextForLBI <- function() {
@@ -809,47 +722,8 @@ getMethodConsiderationTextForLBSPR <- function() {
                  "limitations of the results.</p>")
   text <- paste0(text, "<br>")
   text <- paste0(text, "<br>")
-  text <- paste0(text, "<b>Assumptions of LBSPR:</b>")
-  text <- paste0(text, "<br>")
-  text <- paste0(text, "<br>")
-  text <- paste0(text, "<ul>")
-  text <- paste0(text, "<li><b>Representative length measurements:</b> ",
-                 "The routine assumes that the dataset is representative of the length distributions of the whole catch. ",
-                 "This means that either the length of all individuals in the catch were measured or ",
-                 "a randomised subsample of the catch was measured.", "</li>")
-  text <- paste0(text, "<br>")
-  text <- paste0(text, "<li><b>Equilibrium conditions:</b> ",
-                 "The routine assumes constant recruitment, fishing and natural mortality as well as somatic growth and ",
-                 "maturation over time, i.e. within the year and over all years covered by the dataset.",
-                 "</li>")
-  text <- paste0(text, "<br>")
-  text <- paste0(text, "<li><b>Density dependence:</b> ",
-                 "The routine assumes density independent maturity and somatic growth. All reference points ",
-                 "are based on the 'per recruit' model, thus no assumptions are made about the stock recruitment ",
-                 "relationship.",
-                 "</li>")
-  text <- paste0(text, "<br>")
-  text <- paste0(text, "<li><b>Length-independent natural mortality:</b> ",
-                 "The current implementation of SMT assumes that the natural mortality is equal for all length ",
-                 "classes.",
-                 "</li>")
-  text <- paste0(text, "<br>")
-  text <- paste0(text, "<li><b>Somatic growth follows VBG:</b> ",
-                 "The estimation of growth parameters with ELEFAN assumes that the growth of individuals in length ",
-                 "follows the logistic von Bertlanffy growth (VBG) function. This is an often made assumption for the ",
-                 "growth of fish, but might not reflect well the growth of species with an exoskeleton, ",
-                 "such as crustaceans, nor the growth of early life stages of fish.",
-                 "</li>")
-  text <- paste0(text, "<br>")
-  text <- paste0(text, "<li><b>Closed population:</b> ",
-                 "The routine assumes that the stock (population) under study ",
-                 "is closed, meaning that there is no immigration or emigration taking place. Immigration and emigration",
-                 " can both bias estimated mortality rates and stock status. Furthermore, fish migrations ",
-                 "often vary for various life stages and might thus affect the representativeness of the length ",
-                 "measurements if the population is not closed.",
-                 "</li>")
-  text <- paste0(text, "</ul>")
-    return (text)
+  text <- paste0(text, lbsprAssumptionsHTML())
+  return (text)
 }
 
 getResultConsiderationTextForLBSPR <- function() {
@@ -907,6 +781,174 @@ getResultConsiderationTextForLBSPR <- function() {
     return (text)
 }
 
+
+
+## SPiCT
+## ------------------------------------------------------
+getDataConsiderationTextForSpict <- function() {
+    text <- "<b>Two data formats are accepted:</b><br>"
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<b>1. Wide Format:</b>")
+    text <- paste0(text, "One row per time step (e.g., year), with separate columns for <i>Catch</i> and each <i>Index</i> series (e.g., <code>Index1</code>, <code>Index2</code>). Dates/years are in a dedicated column. Columns with the relative uncertainty scaling over time for the catch and each index time series are optional.")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<p> An example dataset in this format can be downloaded here (",linkAL,"). </p>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<b>2. Long format:</b>")
+    text <- paste0(text, "One row per observation with columns such as <i>Time</i>, <i>Series</i> (index name), and <i>Value</i>. This is tidy and convenient when you have many indices or missing years. A variable indicating the relative uncertainty scaling for the catch and each index time series is optional.")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<p> An example dataset in this format can be downloaded here (",linkLO,"). </p>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<br>")
+    text <- paste0(text, "<b>Specific considerations regarding your own dataset:</b>")
+    text <- paste0(text, "<ul>")
+    text <- paste0(text, "<li>", "Save your dataset in 'csv' format.", "</li>")
+    text <- paste0(text, "<li>", "The separator for the .csv file should be a comma ‘,’ semicolon ';' or tab. The default might differ depending on the language settings of your spreadsheet manipulation program (e.g. Excel).", "</li>")
+    text <- paste0(text, "<li>", "Most methods on the SMT now automatically detect the decimal separator and also allow it to be specified. The default decimal separator might differ depending on the language settings of your spreadsheet manipulation program (e.g. Excel).", "</li>")
+    text <- paste0(text, "<li>The catch is usually assumed to be representative of a calendar year, but could also span shorter periods, such as semesters, quarters or months. The corresponding time information should reflect the beginning of the catch interval. For example, for the catch in the period from 2020 to 2021, the corresponding time should be 2020.</li>")
+    text <- paste0(text, "<li>By contrast, the relative abundance index observations correspond to a specific time of the year, such as 2020.25 for the first of April in 2020. Dates have to be defined in the numeric format (e.g., 2020.25 or 2021.75). If the timing is the same every year, also the input field 'Time of year (index)' can be used to specify the time of year.</li>")
+    ## text <- paste0(text, "<li>The date format of your data file should be automatically detected, or select the date format used in your data file under <b>'Choose CSV date format'</b>, e.g. DD/MM/YYYY format to select 'Day Month Year'.</li>")
+    text <- paste0(text, "</ul>")
+    text <- paste0(text, "<br>")
+    return (text)
+}
+
+getWorkflowConsiderationTextForSpict <- function() {
+    text <- "<h4> To run this data-limited workflow in the Stock Monitoring Tool :</h4>"
+    text <- paste0(text, "<ol>")
+    text <- paste0(text, "<li> Upload a data set with the required information (see Data Considerations or one of the sample datasets (e.g., ",linkAL,"))</li>")
+    text <- paste0(text, "<li> Adjust the Assessment Settings")
+    text <- paste0(text, "<ol type='a'>")
+    text <- paste0(text, "<li> Data - select the years of data to include in the analysis, adjust the timing of the index if not already done in the uploaded data set, set the Euler time step, and the catch unit. </li>")
+    text <- paste0(text, "<li> Priors - modify and define priors used in the maximum likelihood estimation </li>")
+    text <- paste0(text, "</ol>")
+    text <- paste0(text, "</li>")
+    text <- paste0(text, "<li> Check and Run the Assessment:")
+    text <- paste0(text, "<ol type='a'>")
+    text <- paste0(text, "<li> At any time you can press the 'Run Check' button and it will inform you if uploaded data and settings are ready for running the assessment or if anything needs to be modified or added.</li>")
+    text <- paste0(text, "<li> Run the assessment ('Run Assessment' button). Note, that the model fitting can take some time (up to some minutes, depending on the time series length and complexity.</li>")
+    text <- paste0(text, "</ol>")
+    text <- paste0(text, "</li>")
+    text <- paste0(text, "<li> Download the report as a pdf (Download Report button). The report should also automatically upload to your private workspace. </li>")
+    text <- paste0(text, "<li> The Reset button removes the uploaded data and resets the settings to default</li>")
+    text <- paste0(text, "</ol>")
+    text <- paste0(text, "Further information can be found in the popup information buttons at each field, and in the Data, Methods, and Results Considerations tabs. Note that error messages may display in the center of the page and in place of any figures where an error has occurred.")
+    text <- paste0(text, "</p>")
+    return (text)
+}
+
+
+getMethodConsiderationTextForSpict <- function() {
+
+    text <- "<b>Consecutive steps of the SPiCT data-limited stock assessment workflow:</b><br>"
+
+    text <- paste0(text, "<ol>",
+                   "<li><b>Data preparation</b>: Compile a time series of total catch (in weight) and at least one relative abundance index (e.g. survey index or CPUE). ",
+                   "Ideally, the time series spans 10 or more years to provide sufficient information for estimation.</li>",
+
+                   "<li><b>Model specification</b>: SPiCT fits a stochastic surplus production model in continuous time using a state–space framework. ",
+                   "Separate process and observation errors are estimated, and priors may be set for key parameters such as intrinsic growth rate (<i>r</i>) and shape parameter (<i>n</i>).</li>",
+
+                   "<li><b>Parameter estimation</b>: The model jointly estimates biological parameters (e.g. carrying capacity <i>K</i>, <i>r</i>, process variance) ",
+                   "and time series of biomass (<i>B</i>) and fishing mortality (<i>F</i>) using maximum likelihood and numerical optimization.</li>",
+
+                   "<li><b>Reference points</b>: From the fitted model, management reference points are derived, including ",
+                   "biomass at MSY (<i>B</i><sub>MSY</sub>) and fishing mortality at MSY (<i>F</i><sub>MSY</sub>).</li>",
+
+                   "<li><b>Stock status</b>: The current stock status is expressed relative to these reference points ",
+                   "(e.g. ratios <i>B</i>/<i>B</i><sub>MSY</sub> and <i>F</i>/<i>F</i><sub>MSY</sub>), with confidence intervals obtained via the covariance matrix or parametric bootstrapping.</li>",
+
+                   ## "<li><b>Forecasts and advice</b>: Short-term projections under alternative catch scenarios can be generated to evaluate the risk of exceeding reference points, ",
+                   ## "informing catch advice in line with precautionary management frameworks.</li>",
+                   "</ol><br>")
+
+    text <- paste0(text,
+                   "<p>SPiCT was developed to improve the estimation of stock status for data-limited situations, ",
+                   "while retaining the core structure of surplus production models. ",
+                   "It is particularly suited to stocks with irregular sampling intervals and noisy data, thanks to its continuous-time formulation.</p>"
+                   )
+
+    text <- paste0(text,
+                   "<p>Further details on the model structure and applications can be found in: ",
+                   "<a href='https://doi.org/10.1111/faf.12174' target='_blank'>Pedersen & Berg (2017)</a> and ",
+                   "<a href='https://doi.org/10.1016/j.fishres.2024.107010' target='_blank'>Kokkalis et al. (2024)</a>.</p><br>"
+                   )
+
+    text <- paste0(text, spictAssumptionsHTML())
+
+    return(text)
+    }
+
+
+    getResultConsiderationTextForSpict <- function() {
+        text <- "<b>Data exploration:</b>"
+        text <- paste0(text, "<br>")
+        text <- paste0(text, "<br>")
+        text <- paste0(text,
+                       "Directly after the successful upload of your data set and assignment of required columns, <b>Figure 1</b> shows catch and index (indices) data over time; <b>Figure 2</b> shows the relative uncertainty scaling for the different time series. If this information is not included in the uploaded data set, equal relative uncertainty over time is assumed (equal to 1).")
+        text <- paste0(text, "<br><br>")
+        text <- paste0(text, "After adjusting assessment settings and running the assessment successfully (click 'Run Assessment'),
+  two figures and three tables summarise the main results. Additional results and diagnostic tests are also produced and can be seen in extra tabs.")
+        text <- paste0(text, "<br>")
+        text <- paste0(text, "<br>")
+        text <- paste0(text,"<b>Main results:</b>")
+        text <- paste0(text, "<br>")
+        text <- paste0(text, "<br>")
+        text <- paste0(text, "<ul>")
+        text <- paste0(text, "<li><b>Figure 6</b> shows an overview of the main assessment results across four panels: time series of estimated ", withMathJax("\\(B/B_{\\mathrm{MSY}}\\)"), " and ", withMathJax("\\(F/F_{\\mathrm{MSY}}\\)")," with 95% confidence intervals (blue), including relative abundance observations (colour indicates in-year timing; symbols distinguish index series), estimated and observed catches with the MSY reference line and its 95% confidence interval (grey), and a Kobe plot summarizing status with uncertainty around ", withMathJax("\\(B_{\\mathrm{MSY}}\\)")," and ", withMathJax("\\(F_{\\mathrm{MSY}}\\)"), "</li>")
+        text <- paste0(text, "<li><b>Figure 7</b> shows the estimated production curve showing the theoretical surplus production (y axis) as a function of biomass relative to carrying capacity (B/K, x axis). The vertical dotted line indicates the the relative biomass where surplus production is maximized (MSY). The observed annual surplus production is plotted as blue circles conected by a line.", "</li>")
+        text <- paste0(text, "<br>")
+        text <- paste0(text,
+                       "<li><b>Table 1</b> includes the estimated parameter values with 95% confidence intervals. Key parameters include the intrinsic growth rate (r), carrying capacity (K), maximum sustainable yield (MSY, m), and the shape parameter of the production curve (n). Additional parameters are catchability (q), process error standard deviations for biomass (sdb) and fishing mortality (sdf), and observation error standard deviations for indices (sdi) and catches (sdc). Hyper-parameters α (sdb/sdi) and β (sdf/sdc) are also reported. When multiple indices are used, separate q and sdi estimates are provided.</li><br>")
+        text <- paste0(text, "<li><b>Table 2</b> includes the estimated stochastic reference points with 95% confidence intervals: ",
+                       "biomass at maximum sustainable yield ", withMathJax("\\(B_{\\mathrm{MSY}}\\)"),
+                       "fishing mortality at maximum sustainable yield ", withMathJax("\\(F_{\\mathrm{MSY}}\\)"),
+                       "and the maximum sustainable yield (MSY).</li><br>")
+        text <- paste0(text, "<li><b>Table 3</b> includes the estimated biomass (B) and fishing mortality (F) at the end of the time series, ",
+                       "together with stock status indicators: relative biomass ", withMathJax("\\(B/B_{\\mathrm{MSY}}\\)"),
+                       "and relative fishing mortality ", withMathJax("\\(F/F_{\\mathrm{MSY}}\\)"),".", "</li><br>")
+        text <- paste0(text, "</ul>")
+        text <- paste0(text, "<br>")
+        text <- paste0(text, "<br>")
+        text <- paste0(text,"<b>Additional results:</b>")
+        text <- paste0(text, "<br>")
+        text <- paste0(text, "<br>")
+        text <- paste0(text, "<ul>")
+        text <- paste0(text, "<li><b>Figure 8</b> shows ",
+                       "estimated absolute (first y axis) and relative (second y axis) biomass (", withMathJax("\\(B\\)"), " and ", withMathJax("\\(B/B_{\\mathrm{MSY}}\\)"), ", left) and fishing mortality (", withMathJax("\\(F\\)"), " and ", withMathJax("\\(F/F_{\\mathrm{MSY}}\\)"), ", right). The blue shaded areas display the 95% confidence intervals of the relative states (",withMathJax("\\(B/B_{\\mathrm{MSY}}\\)")," and ",withMathJax("\\(F/F_{\\mathrm{MSY}}\\)"),"). The dashed lines indicate the 95% confidence intervals of the absolute states (",withMathJax("\\(B\\)"),"and",withMathJax("\\(F\\)"),"). The horizontal lines show the reference points (",withMathJax("\\(B_{\\mathrm{MSY}}\\)"), " and ", withMathJax("\\(F_{\\mathrm{MSY}}\\)"),") and the gray shaded area the associated 95% confidence interval.", "</li>")
+        text <- paste0(text, "<br>")
+        text <- paste0(text, "<li><b>Table 4</b> includes the estimated deterministic reference points with 95% confidence intervals: ",
+                       "biomass at maximum sustainable yield ", withMathJax("\\(B_{\\mathrm{MSY}}\\)"),
+                       "fishing mortality at maximum sustainable yield ", withMathJax("\\(F_{\\mathrm{MSY}}\\)"),
+                       "and the maximum sustainable yield (MSY).</li><br>")
+        text <- paste0(text, "<li><b>Table 5</b> includes the estimated biomass (B) and fishing mortality (F) states, and stock status ",
+                       "in terms of relative biomass ", withMathJax("\\(B/B_{\\mathrm{MSY}}\\)"),
+                       "and relative fishing mortality ", withMathJax("\\(F/F_{\\mathrm{MSY}}\\)"),".",
+                       "Results are forecasted one year beyond the end of the observed time series, ",
+                       "including predicted catch for the forecast year and the equilibrium biomass ",
+                       "expected if fishing were to continue indefinitely. ",
+                       "During the forecast, fishing mortality is assumed constant at the level estimated ",
+                       "for the final year of the time series.","</li><br>")
+        text <- paste0(text, "</ul>")
+        text <- paste0(text, "<br>")
+        text <- paste0(text, "<br>")
+        text <- paste0(text,"<b>Diagnostics:</b>")
+        text <- paste0(text, "<br>")
+        text <- paste0(text, "<br>")
+        text <- paste0(text, "<ul>")
+        text <- paste0(text, "<li><b>Figure 9</b> shows the prior density distributions and estimated posterior distributions for the activated priors.", "</li>")
+        text <- paste0(text, "<li><b>Figure 10</b> shows the residual diagnostics for the catch time series (first column) and index time series (remaining columns): ",
+                             "Row 1: log-transformed observations; ",
+                             "Row 2: one-step-ahead (OSA) residuals; ",
+                             "Row 3: autocorrelation function (ACF) of residuals; ",
+                             "Row 4: quantile-quantile (Q–Q) plot of residuals.</li><br>")
+        text <- paste0(text, "<li><b>Figure 11</b> shows the residual diagnostics for the predicted biomass process (first column) and fishing mortality process (second column): ",
+                             "Row 1: log-transformed observations; ",
+                             "Row 2: one-step-ahead (OSA) residuals; ",
+                             "Row 3: autocorrelation function (ACF) of residuals; ",
+                             "Row 4: quantile-quantile (Q–Q) plot of residuals.</li><br>")
+        text <- paste0(text, "</ul>")
+        return (text)
+    }
 
 
 

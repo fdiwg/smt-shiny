@@ -69,7 +69,7 @@ LBSPR makes the following assumptions:
 
 # Summary of input data and parameters
 
-The uploaded data (*"*`r paste0("*",input$fileLBSPR$name,"*")`*"*) spans `r length(lbspr_dat$dataExplo[['lfq']]$dates)` year(s). Following years were selected for the analysis: `r paste(input$LBSPR_years_selected, collapse = ", ")`. Figure 1 shows the length frequency distributions for each year that were binned with a bin size of `r input$LBSPR_binSize` `r input$LBSPR_lengthUnit`.
+The uploaded data (*"*`r paste0("*",input$fileLBSPR$name,"*")`*"*) spans `r length(lbspr_dat$dataExplo[['lfq']]$dates)` year(s). Following years were selected for the analysis: `r paste(input$LBSPR_years_selected, collapse = ", ")`. Figure 1 shows the length frequency distributions for each year that were binned with a bin size of `r input$LBSPR_binSize` `r input$lbspr_lengthUnit`.
 
 &nbsp;
 &nbsp;
