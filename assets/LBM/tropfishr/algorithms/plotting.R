@@ -14,6 +14,129 @@ plotTropFishR.data <- function(elefan_ga, input){
 }
 
 
+plotTropFishR.diag1 <- function(elefan_ga, input){
+
+    bs <- elefan_ga$binSize
+    lfq <- lfqCreate(elefan_ga$dataExplo$raw,
+                     Lname = "Length",
+                     Dname = "Date",
+                     Fname = "Frequency",
+                     bin_size = bs)
+    ## for now by month, maybe later let user choose
+    new.lfq <- lfqModify(lfq,
+                         years = elefan_ga$years_selected,
+                         aggregate = "month")
+
+    if(!is.matrix(new.lfq$catch)) {
+        tmp <- sum(new.lfq$catch)
+    } else {
+        tmp <- colSums(new.lfq$catch)
+    }
+    dates <- new.lfq$dates
+    all.dates <- seq(min(dates), max(dates), by = "month")
+    if (length(all.dates) == 1) {
+        single.date <- all.dates
+        all.dates <- seq(single.date %m-% months(1), single.date %m+% months(1), by = "month")
+    }
+    samps <- rep(0, length(all.dates))
+    samps[match(dates, all.dates)] <- as.vector(tmp)
+    p <- barplot(samps, ylab = "Number of samples")
+    axis(1, at = p, labels = format(all.dates,"%B"))
+    years <- format(all.dates, "%Y")
+    years[duplicated(years)] <- NA
+    axis(1, at = p, labels = years, tick = FALSE, line = 1)
+
+}
+
+plotTropFishR.diag2 <- function(elefan_ga, input){
+
+    bs <- elefan_ga$binSize
+    lfq <- lfqCreate(elefan_ga$dataExplo$raw,
+                     Lname = "Length",
+                     Dname = "Date",
+                     Fname = "Frequency",
+                     bin_size = bs)
+    new.lfq <- lfqModify(lfq,
+                         years = elefan_ga$years_selected,
+                         aggregate = "month")
+
+    ## dates <- as.Date(paste0(format(new.lfq$dates,"%Y-%m"),"-15"))
+    dates <- new.lfq$dates
+    all.dates <- seq(min(dates), max(dates), by = "month")
+    if (length(all.dates) == 1) {
+        single.date <- all.dates
+        all.dates <- seq(single.date %m-% months(1), single.date %m+% months(1), by = "month")
+    }
+    lengths <- new.lfq$midLengths
+    all.lengths <- seq(min(lengths), max(lengths), min(diff(lengths)))
+    catch <- t(new.lfq$catch)
+    all.catch <- matrix(0, length(all.dates), length(all.lengths))
+    all.catch[as.matrix(expand.grid(match(dates, all.dates),
+                                    match(round(lengths,4), round(all.lengths,4))))] <- as.vector(catch)
+
+    layout(matrix(c(1, 2), nrow = 1), widths = c(6, 1))
+    zlim <- range(all.catch, na.rm = TRUE)
+    n_colors <- 12
+    color_palette <- hcl.colors(n_colors, "YlOrRd", rev = TRUE)
+    breaks <- seq(zlim[1], zlim[2], length.out = n_colors + 1)
+    par(mar = c(5, 4, 4, 1))
+    image(x = all.dates,
+          y = all.lengths,
+          z = all.catch,
+          col = color_palette,
+          breaks = breaks,
+          xlab = "",
+          ylab = paste0("Mid length [", input$elefan_lengthUnit, "]"),
+          main = "")
+    box(lwd = 1.5)
+    par(mar = c(5, 1, 4, 4))
+    legend_y <- seq(zlim[1], zlim[2], length.out = n_colors)
+    legend_z <- matrix(legend_y, nrow = 1)
+    image(x = 1, y = legend_y,
+          z = legend_z,
+          col = color_palette,
+          xaxt = "n", yaxt = "n", xlab = "", ylab = "")
+    axis(4, at = pretty(zlim), labels = pretty(zlim), las = 1)
+    mtext("Frequency", side = 4, line = 2.5)
+
+}
+
+
+plotTropFishR.diag3 <- function(elefan_ga, input){
+
+
+    bs <- elefan_ga$binSize
+    lfq <- lfqCreate(elefan_ga$dataExplo$raw,
+                     Lname = "Length",
+                     Dname = "Date",
+                     Fname = "Frequency",
+                     bin_size = bs)
+    new.lfq <- lfqModify(lfq,
+                         years = elefan_ga$years_selected,
+                         aggregate = "year")
+
+    ## Selected freqs
+    years <- format(new.lfq$dates, "%Y")
+    yearly_catch <- rowsum(t(new.lfq$catch), group = years)
+    yearly_catch <- t(yearly_catch)
+
+    res <- apply(yearly_catch, 2, function(x) rep(new.lfq$midLengths,
+                                                  times = x))
+
+    ## boxplot(res)
+    ny <- ncol(yearly_catch)
+    par(mfrow = n2mfrow(ny, asp = 2))
+    for(i in 1:ny){
+        p <- barplot(yearly_catch[,i], main = colnames(yearly_catch)[i],
+                     xaxt = "n")
+        axis(1, at = p, labels = new.lfq$midLengths)
+    }
+    mtext(paste0("Mid length [", input$elefan_lengthUnit, "]"), 1, -1, outer = TRUE)
+    mtext("Frequency", 2, -1, outer = TRUE)
+
+}
+
+
 plotTropFishR.growth <- function(elefan_ga, input){
     par(mfrow = c(2,1), mar = c(1,4,0,1), oma = c(3,1,1,0))
     TropFishR:::plot.lfq(elefan_ga$dataExplo$lfqbin, Fname = "catch", date.axis = "",
@@ -145,63 +268,63 @@ plotTropFishR.mort <- function(elefan_ga, input){
 
 
 plotTropFishR.catchcurve <- function(elefan_ga, input){
-        resCC <- elefan_ga$results$resCC
-        ind <- resCC$reg_int[1]:resCC$reg_int[2]
-        par(mar=c(5,5,2,1))
-        plot(resCC$t_midL, resCC$lnC_dt, ty = 'n',
-             xlab = "Relative age [years]", ylab = "ln(C/dt)",
-             cex=1.4)
-        points(resCC$t_midL[-ind], resCC$lnC_dt[-ind],
-               col = "black", cex=1.4)
-        points(resCC$t_midL[ind], resCC$lnC_dt[ind],
-               col = "dodgerblue2", pch = 16, cex=1.4)
-        abline(resCC$linear_mod, lwd=2.5, col = "dodgerblue2")
-        graphics::box(lwd = 1.5)
+    resCC <- elefan_ga$results$resCC
+    ind <- resCC$reg_int[1]:resCC$reg_int[2]
+    par(mar=c(5,5,2,1))
+    plot(resCC$t_midL, resCC$lnC_dt, ty = 'n',
+         xlab = "Relative age [years]", ylab = "ln(C/dt)",
+         cex=1.4)
+    points(resCC$t_midL[-ind], resCC$lnC_dt[-ind],
+           col = "black", cex=1.4)
+    points(resCC$t_midL[ind], resCC$lnC_dt[ind],
+           col = "dodgerblue2", pch = 16, cex=1.4)
+    abline(resCC$linear_mod, lwd=2.5, col = "dodgerblue2")
+    graphics::box(lwd = 1.5)
 }
 
 
 
 plotTropFishR.sel <- function(elefan_ga, input){
-        L50 <- elefan_ga$results$L50
-        L75 <- elefan_ga$results$L75
-        slist <- list(selecType = "trawl_ogive",
-                      L50 = L50, L75 = L75)
-        lt <- seq(0, 1.5 * max(elefan_ga$results$lfqbin$midLengths), 0.01)
-        sest <- TropFishR::select_ogive(slist, Lt = lt)
-        par(mar=c(5,5,2,1))
-        plot(lt, sest, ty='n', lwd=2,
-             xlab = "Length", ylab = "Probability of capture")
-        if(input$select == "Other"){
-            tmp <- TropFishR::select_ogive(slist, Lt = input$l1_user)
-            segments(input$l1_user, -1, input$l1_user, tmp, lty = 2, lwd=1.5, col="grey60")
-            segments(-10, tmp, input$l1_user, tmp, lty = 2, lwd=1.5, col="grey60")
-        }else{
-            tmp <- TropFishR::select_ogive(slist, Lt = L50)
-            segments(L50, -1, L50, tmp, lty = 2, lwd=1.5, col="grey60")
-            segments(-10, tmp, L50, tmp, lty = 2, lwd=1.5, col="grey60")
-        }
-        if(input$select == "Other"){
-            tmp <- TropFishR::select_ogive(slist, Lt = input$l2_user)
-            segments(input$l2_user, -1, input$l2_user, tmp, lty = 2, lwd=1.5, col="grey60")
-            segments(-10, tmp, input$l2_user, tmp, lty = 2, lwd=1.5, col="grey60")
-        }else{
-            tmp <- TropFishR::select_ogive(slist, Lt = L75)
-            segments(L75, -1, L75, tmp, lty = 3, lwd=1.5, col="grey60")
-            segments(-10, tmp, L75, tmp, lty = 3, lwd=1.5, col="grey60")
-        }
-        lines(lt, sest, lwd=2.5, col="dodgerblue2")
-        if(input$select == "Other"){
-            legend("bottomright", legend = c("Selection ogive",
-                                             paste0("Ls",input$l1_user),
-                                             paste0("Ls",input$l2_user)),
-                   lty = c(1,2,3), col=c("dodgerblue2","grey60","grey60"),
-                   lwd=c(2,1.5,1.5))
-        }else{
-            legend("bottomright", legend = c("Selection ogive","Ls50","Ls75"),
-                   lty = c(1,2,3), col=c("dodgerblue2","grey60","grey60"),
-                   lwd=c(2,1.5,1.5))
-        }
-        graphics::box(lwd = 1.5)
+    L50 <- elefan_ga$results$L50
+    L75 <- elefan_ga$results$L75
+    slist <- list(selecType = "trawl_ogive",
+                  L50 = L50, L75 = L75)
+    lt <- seq(0, 1.5 * max(elefan_ga$results$lfqbin$midLengths), 0.01)
+    sest <- TropFishR::select_ogive(slist, Lt = lt)
+    par(mar=c(5,5,2,1))
+    plot(lt, sest, ty='n', lwd=2,
+         xlab = "Length", ylab = "Probability of capture")
+    if(input$select == "Other"){
+        tmp <- TropFishR::select_ogive(slist, Lt = input$l1_user)
+        segments(input$l1_user, -1, input$l1_user, tmp, lty = 2, lwd=1.5, col="grey60")
+        segments(-10, tmp, input$l1_user, tmp, lty = 2, lwd=1.5, col="grey60")
+    }else{
+        tmp <- TropFishR::select_ogive(slist, Lt = L50)
+        segments(L50, -1, L50, tmp, lty = 2, lwd=1.5, col="grey60")
+        segments(-10, tmp, L50, tmp, lty = 2, lwd=1.5, col="grey60")
+    }
+    if(input$select == "Other"){
+        tmp <- TropFishR::select_ogive(slist, Lt = input$l2_user)
+        segments(input$l2_user, -1, input$l2_user, tmp, lty = 2, lwd=1.5, col="grey60")
+        segments(-10, tmp, input$l2_user, tmp, lty = 2, lwd=1.5, col="grey60")
+    }else{
+        tmp <- TropFishR::select_ogive(slist, Lt = L75)
+        segments(L75, -1, L75, tmp, lty = 3, lwd=1.5, col="grey60")
+        segments(-10, tmp, L75, tmp, lty = 3, lwd=1.5, col="grey60")
+    }
+    lines(lt, sest, lwd=2.5, col="dodgerblue2")
+    if(input$select == "Other"){
+        legend("bottomright", legend = c("Selection ogive",
+                                         paste0("Ls",input$l1_user),
+                                         paste0("Ls",input$l2_user)),
+               lty = c(1,2,3), col=c("dodgerblue2","grey60","grey60"),
+               lwd=c(2,1.5,1.5))
+    }else{
+        legend("bottomright", legend = c("Selection ogive","Ls50","Ls75"),
+               lty = c(1,2,3), col=c("dodgerblue2","grey60","grey60"),
+               lwd=c(2,1.5,1.5))
+    }
+    graphics::box(lwd = 1.5)
 }
 
 

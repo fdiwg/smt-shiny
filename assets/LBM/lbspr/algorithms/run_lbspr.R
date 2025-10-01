@@ -75,11 +75,29 @@ run_lbspr <- function(data, bin.size, linf, lm50, lm95, mk, lwa, lwb, lunit){
         ## Necessary, because all(diff(LMids) == median(diff(LMids))) in LB_lengths initalisation can cause issue with decimal digits
         dat[,1] <- 1:nrow(dat) ## Later overwritten with original bins
 
-        ## Create new LB length object
-        suppressWarnings({lblengths <- new("LB_lengths",
-                                           file = dat,
-                                           LB_pars = lbpars,
-                                           dataType = "freq")})
+        ## ## Create new LB length object
+        ## suppressWarnings({lblengths <- new("LB_lengths",
+        ##                                    file = dat_df,
+        ##                                    LB_pars = lbpars,
+        ##                                    dataType = "freq")})
+
+        dat_df <- as.data.frame(dat, stringsAsFactors = FALSE)
+        stopifnot(ncol(dat_df) >= 2)
+        stopifnot(names(dat_df)[1] %in% c("LMids","Lmid","Lclass","Length","length"))
+        names(dat_df)[1] <- "LMids"
+
+        dat_df$LMids <- as.numeric(dat_df$LMids)
+        for (j in 2:ncol(dat_df)) dat_df[[j]] <- as.numeric(dat_df[[j]])
+
+        suppressWarnings(lblengths <- methods::new("LB_lengths", LB_pars = lbpars))
+        lblengths@LMids   <- dat_df$LMids
+        lblengths@LData   <- as.matrix(dat_df[-1])
+        lblengths@Years   <- colnames(dat_df)[-1]
+        lblengths@NYears  <- ncol(lblengths@LData)
+        if (length(lblengths@L_units) == 0 || is.na(lblengths@L_units)) {
+            lblengths@L_units <- if (!is.null(lbpars@L_units) && nzchar(lbpars@L_units)) lbpars@L_units else "cm"
+        }
+
         lblengths@Years <- as.numeric(lblengths@Years)
         lblengths@LMids <- dataYearly$midLengths  ## overwrite dummy midlengths
 
@@ -107,19 +125,19 @@ run_lbspr <- function(data, bin.size, linf, lm50, lm95, mk, lwa, lwb, lunit){
         returnResults[['res']] <- res
 
     },
-    error = function(cond) {
-        print("There was an error here")
-        message(paste0("Error!!", cond))
-        errorResult = list()
-        errorResult[['error']] <- gettext(cond)
-        return (errorResult)
-        ## Choose a return value in case of error
-    },
-    finally={
-        print("Done")
-    })
-    if ('error' %in% names(out)) {
-        returnResults[['error']] <- out$error
-    }
-    return (returnResults)
+        error = function(cond) {
+            print("There was an error here")
+            message(paste0("Error!!", cond))
+            errorResult = list()
+            errorResult[['error']] <- gettext(cond)
+            return (errorResult)
+            ## Choose a return value in case of error
+        },
+        finally={
+            print("Done")
+        })
+        if ('error' %in% names(out)) {
+            returnResults[['error']] <- out$error
+        }
+        return (returnResults)
 }

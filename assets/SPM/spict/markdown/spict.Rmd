@@ -1,0 +1,307 @@
+---
+title: "Data-limited stock assessment with SPiCT"
+output:
+  pdf_document:
+    extra_dependencies:
+      tabularx: null
+      booktabs: null
+      colortbl: null
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+keep_tex: true
+header-includes:
+  - \usepackage{float}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message=FALSE, warning = FALSE, fig.align = "center", fig.pos = "H")
+```
+
+
+# Method description
+
+The Stochastic Production Model in Continuous Time (SPiCT) is one of the
+official assessment models used by the International Council for the Exploration
+of the Sea (ICES). It is applied to estimate stock status and provide catch
+advice for around 20 data-limited stocks in the Northeast Atlantic. SPiCT is a
+state-space surplus production model that operates in continuous time, allowing
+for flexible handling of irregularly spaced data and the separation of process
+and observation error.
+
+## Assumptions of SPiCT
+
+SPiCT makes specific assumptions about the data, the stock, and the fishery.
+Being aware of these assumptions is essential for interpreting the results and
+understanding their limitations.
+
+- Exploitable biomass: Biomass in the model represents the exploitable
+  componentof the stock – the fraction of the population vulnerable to the
+  fishing gear. Changes in the proportion of vulnerable biomass over time are
+  not explicitly modelled.
+- No lagged cohort effects: SPiCT does not model delayed effects of strong or
+  weak year-classes on biomass dynamics. Variability in the size/age
+  structure that influences productivity is ignored.
+- Constant catchability (q): Catchability is assumed constant over time for each
+  index. Changes in fishing technology, survey methods, vessel efficiency,
+  or targeting behaviour that affect q can bias results if not accounted
+  for in the data.
+- Unmodelled gear selectivity: Selectivity patterns are assumed constant and are
+  not estimated. If selectivity changes over time (e.g. due to gear
+  modifications, seasonal closures, or changes in targeting), this may influence
+  estimated stock status.
+- Representative abundance index: Any index used (e.g. survey CPUE) is assumed
+  to be proportional to exploitable biomass and representative of the whole
+  stock’s dynamics in space and time. Biased or spatially restricted indices may
+  misrepresent true abundance trends.
+- Density dependence: Stock dynamics are assumed to follow a logistic surplus
+  production model with a single carrying capacity and intrinsic growth rate.
+- Closed population: The stock is assumed to be closed to immigration and
+  emigration. Significant movement into or out of the modelled area can bias
+  mortality estimates and biomass trends. Life-stage-specific migrations can
+  also affect the representativeness of abundance indices.
+- Reliable catch data: Catch (removals) data are assumed to be accurate and
+  include all sources of fishing mortality. Systematic under- or
+  over-reporting will bias the results.
+- Continuous-time dynamics: The model assumes continuous biomass dynamics, but
+  observations are discrete (typically annual or seasonal). Observation
+  intervals should be regular and cover a sufficient time span to capture
+  trends.
+- Process and observation error: SPiCT separates process error (true variability
+  in biomass dynamics) and observation error (measurement noise) in a
+  state-space framework. Both are assumed to be normally distributed on log
+  scale.
+
+&nbsp;
+&nbsp;
+&nbsp;
+
+# Input data and settings
+
+## Data
+
+The uploaded data set (\verb|`r input$file$name`|) contains a catch time series
+spanning from `r min(spict_dat$dataExplo$inp$timeC)` to `r max(spict_dat$dataExplo$inp$timeC)` and `r ifelse(spict_dat$dataExplo$inp$nindex
+       == 1, "a relative abundance index", paste0(spict_dat$dataExplo$inp$nindex, " relative abundance indices"))`
+       spanning from `r min(unlist(spict_dat$dataExplo$inp$timeI))` to `r max(unlist(spict_dat$dataExplo$inp$timeI))` (Figure 1).
+
+```{r echo=FALSE, fig.align="center", dpi=300, fig.width=9}
+inp <- spict_dat$dataExplo$inp
+if(any(!sapply(spict_dat$dataExplo$inp$obsI,is.null))) {
+    noi <- ifelse(inherits(spict_dat$dataExplo$inp$obsI, "list"),
+                  length(spict_dat$dataExplo$inp$obsI), 1)
+} else {
+    noi <- 1
+}
+
+n_panels <- noi + 1
+dims <- preferred_mfrow(n_panels)
+n_rows <- dims[1]
+height_in <- if (n_panels == 1) {
+                 3
+             } else if (n_panels == 2) {
+                 4
+             } else {
+                 3 * n_rows
+             }
+knitr::opts_current$set(fig.height = height_in)
+
+par(mfrow = preferred_mfrow(n_panels))
+plotSpict.data(inp, automfrow = FALSE, do.plot=noi)
+```
+```{r echo=FALSE,results='asis'}
+writeLines(captionSpict.plots(spict_dat, input, format = "withFigLatex", type = "explo1"))
+```
+
+
+```{r echo=FALSE, fig.align="center", dpi=300, fig.width=9}
+inp <- spict_dat$dataExplo$inp
+if(any(!sapply(spict_dat$dataExplo$inp$obsI,is.null))) {
+    noi <- ifelse(inherits(spict_dat$dataExplo$inp$obsI, "list"),
+                  length(spict_dat$dataExplo$inp$obsI), 1)
+} else {
+    noi <- 1
+}
+n_panels <- noi + 1
+dims <- preferred_mfrow(n_panels)
+n_rows <- dims[1]
+height_in <- if (n_panels == 1) {
+                 3
+             } else if (n_panels == 2) {
+                 4
+             } else {
+                 3 * n_rows
+             }
+knitr::opts_current$set(fig.height = height_in)
+par(mfrow = preferred_mfrow(n_panels))
+plotSpict.data.unc(inp, automfrow = FALSE, do.plot=noi)
+```
+```{r echo=FALSE,results='asis'}
+writeLines(captionSpict.plots(spict_dat, input, format = "withFigLatex", type = "explo2"))
+```
+
+
+&nbsp;
+
+## Priors
+
+```{r echo=FALSE, fig.align="center", dpi=300, fig.width=9, results = "hide"}
+inp <- spict_dat$dataExplo$inp
+nopriors <- tryCatch(spict::get.no.active.priors(inp), error = function(e) 0L)
+nopriors <- max(1L, nopriors)
+dims <- preferred_mfrow(nopriors)
+n_rows <- dims[1]
+height_in <- if (nopriors < 4) {
+                 3
+             } else {
+                 2 * n_rows
+             }
+knitr::opts_current$set(fig.height = height_in)
+par(mfrow = preferred_mfrow(nopriors))
+plotSpict.priors(inp, automfrow = FALSE, do.plot=nopriors)
+```
+```{r echo=FALSE,results='asis'}
+invisible(writeLines(captionSpict.plots(spict_dat, input, format = "withFigLatex", type = "priors")))
+```
+
+
+
+&nbsp;
+&nbsp;
+&nbsp;
+
+# Results
+
+The model `r if(spict_dat$results$opt$convergence == 0) "converged" else "did not converge, subsequent results should be interpreted with caution"`.
+
+## Main results
+
+```{r echo=FALSE, fig.align="center", dpi=300, fig.width=9, fig.height=8, results='hide'}
+plotSpict.sum(spict_dat, input)
+```
+```{r echo=FALSE,results='asis'}
+invisible(writeLines(captionSpict.plots(spict_dat, input, format = "withFigLatex", type = "sum")))
+```
+
+
+```{r echo=FALSE}
+tableSpict.estimates(spict_dat, input, format = "kable")
+```
+
+
+```{r echo=FALSE}
+tableSpict.refs_s(spict_dat, input, format = "kable")
+```
+
+
+```{r echo=FALSE}
+tableSpict.states(spict_dat, input, format = "kable")
+```
+
+
+
+
+```{r echo=FALSE, fig.align="center", dpi=300, fig.width=5, fig.height=4.5, results='hide'}
+plotSpict.prod(spict_dat, input)
+```
+```{r echo=FALSE,results='asis'}
+invisible(writeLines(captionSpict.plots(spict_dat, input, format = "withFigLatex", type = "prod")))
+```
+
+
+
+&nbsp;
+
+## Additional results
+
+```{r echo=FALSE, fig.align="center", dpi=300, fig.width=9, fig.height=4, results='hide'}
+plotSpict.abs(spict_dat, input)
+```
+```{r echo=FALSE,results='asis'}
+invisible(writeLines(captionSpict.plots(spict_dat, input, format = "withFigLatex", type = "abs")))
+```
+
+
+```{r echo=FALSE}
+tableSpict.refs_d(spict_dat, input, format = "kable")
+```
+
+
+```{r echo=FALSE}
+tableSpict.pred(spict_dat, input, format = "kable")
+```
+
+
+
+&nbsp;
+
+## Diagnostics
+
+
+```{r echo=FALSE, fig.align="center", dpi=300, fig.width=9, results='hide'}
+nopriors <- spict_dat$nPriors
+dims <- preferred_mfrow(nopriors)
+n_rows <- dims[1]
+height_in <- if (nopriors < 4) {
+                 3
+             } else {
+                 2 * n_rows
+             }
+knitr::opts_current$set(fig.height = height_in)
+par(mfrow = preferred_mfrow(nopriors))
+plotSpict.priors(spict_dat$results, automfrow = FALSE, do.plot=nopriors)
+```
+```{r echo=FALSE,results='asis'}
+invisible(writeLines(captionSpict.plots(spict_dat, input, format = "withFigLatex", type = "priors2")))
+```
+
+
+
+```{r echo=FALSE, fig.align="center", dpi=300, fig.width=9, fig.height=9, results='hide'}
+plotSpict.resid1(spict_dat, input)
+```
+```{r echo=FALSE,results='asis'}
+invisible(writeLines(captionSpict.plots(spict_dat, input, format = "withFigLatex", type = "resid1")))
+```
+
+
+
+```{r echo=FALSE, fig.align="center", dpi=300, fig.width=9, fig.height=9, results='hide'}
+if(spict_dat$results$opt$convergence == 0) {
+    plotSpict.resid2(spict_dat, input)
+} else {
+    plot.new()
+    legend("center",
+           legend = "The process residuals could not be estimated, because the model did not converge.",
+           pch = NA)
+}
+```
+```{r echo=FALSE,results='asis'}
+invisible(writeLines(captionSpict.plots(spict_dat, input, format = "withFigLatex", type = "resid2")))
+```
+
+
+
+&nbsp;
+&nbsp;
+&nbsp;
+
+
+# References
+
+Kokkalis, A., Berg, C.W., Kapur, M.S., Winker, H., Jacobsen, N.S., Taylor, M.H.,
+Ichinokawa, M., Miyagawa, M., Medeiros-Leal, W., Nielsen, J.R. and Mildenberger,
+T.K., 2024. Good practices for surplus production models. Fisheries Research,
+275, p.107010. https://doi.org/10.1016/j.fishres.2024.107010
+
+Mildenberger, T.K., Berg, C.W., Pedersen, M.W., Kokkalis, A. and Nielsen,
+J.R. 2020. Time-variant productivity in biomass dynamic models on seasonal and
+long-term scales. ICES Journal of Marine Science, 77(1), pp.174-187.
+https://doi.org/10.1093/icesjms/fsz154
+
+Mildenberger, T.K., Berg, C.W., Kempf, A., Rindorf, A., MacCall, A.D. and
+Taylor, M.H., 2025. Estimating Time-Varying Productivity and Reference Points: A
+Case of North Sea Demersal Fish Stocks. Fish and Fisheries.
+https://doi.org/10.1111/faf.12910
+
+Pedersen, M.W., and Berg, C.W. 2017. A stochastic surplus production model in
+continuous time. Fish and Fisheries, 18(2), 226-243.
+https://doi.org/10.1111/faf.12174

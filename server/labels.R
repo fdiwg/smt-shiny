@@ -1,7 +1,7 @@
 ########################### ALL LABELS ###########################
 output$homeInfo <- renderText({
     session$userData$page("home")
-  
+
     text <- "<h3>Stock Monitoring Tool for limited data</h3>"
 
     text <- paste0(text,"<p>")
@@ -75,9 +75,9 @@ This tool was designed to allow users with little to no programming experience t
 
 output$cmsyIntroOut <- renderText({
     session$userData$page("cmsy-intro")
-  
+
     sample_dataset_url = "https://data.d4science.org/shub/E_N0JSRlVEN3gwdmpjRnp5Y1BIWm5sS1QxZnUzUTRNSlp5ek50R2xlY0ZUZXVDUlFHTFFES3liblJGRSt4YWExMw=="
-  
+
     text <- "<h3><b>CMSY - Catch-Maximum Sustainable Yield</b></h3>"
     text <- paste0(text, "<p>")
     # text <- paste0(text, "The <b>CMSY</b> method for data-limited stock assessment. Described in <a target='_blank' href='https://www.researchgate.net/publication/309283306_Estimating_fisheries_reference_points_from_catch_and_resilience'>Froese et al 2017</a>")
@@ -246,6 +246,8 @@ output$lbmIntroOut <- renderText({
     linkEA <- "<a href='https://data.d4science.org/shub/E_Snp1NzhlUHlFOWg0M3lUL3lZWU0yMVVTVFY5NDhaYkI1ODY4blFtSi9NYlFiMVAyamxMNGc2QXh0TlpRNmdNdQ==' target='_blank'>click to download</a>"
     linkSE <- "<a href='https://data.d4science.org/shub/E_ZEhvM2ZpSVFZd0ZOSXl5MjlGZC90eC9vOUI1NG1hQ0NEMERtRGVHR2hqbThBZGxBYS9QWG5kc1BaWTluVHNvQw==' target='_blank'>click to download</a>"
     linkOSG <- "<a href='https://data.d4science.org/shub/E_SHJJRUJ5S1lxOGhLOW1zVWpKbUJFQzE1c2wzbnltRlVBUmYrUEphbDRkN1BxQzlYOUtwQWRzZ0JMdnJrSmRhZA==' target='_blank'>click to download</a>"
+    linkAL <- "<a href='https://data.d4science.org/shub/E_SHNLeTNvQklyYVljWlpVRUhaYWhKREUrakd3QisxSGc4T0kvZnI1OEdmVlJLTjRhM1dSajFSWVBXR3VHaG56Mg==' target='_blank'>click to download</a>"
+    linkLO <- "<a href='https://data.d4science.org/shub/E_VWxLOG5rUXBpVEo3bUh0b3NkQUhoZTVUOG1ZVm1aU09PTVNyd3M3U25CdTJvRXl4bmpXcitVQXUyU1ZBbjBXWg==' target='_blank'>click to download</a>"
 
     text <- paste0(text, "<br>")
     text <- paste0(text, "<b> Example data sets </b>")
@@ -411,54 +413,7 @@ output$elefanIntroOut <- renderText({
     text <- paste0(text, "</p>")
 
     text <- paste0(text, "<br>")
-    text <- paste0(text, "<h4>Assumptions of TropFishR:</h4>")
-    text <- paste0(text,
-                   "The above mentioned methods make specific assumptions about the data, the stock, or the ",
-                   "fisheries targeting the stock. It is important to be aware of these assumptions and, thus, the ",
-                   "limitations of the results.</p>")
-    text <- paste0(text, "<ul>")
-    text <- paste0(text, "<li><b>Representative length measurements:</b> ",
-                   "The routine assumes that the dataset is representative of the length distributions of the whole catch. ",
-                   "This means that either the length of all individuals in the catch were measured or ",
-                   "a randomised subsample of the catch was measured.", "</li>")
-    text <- paste0(text, "<br>")
-    text <- paste0(text, "<li><b>Gear/fleet selectivity:</b> ",
-                   "The routine assumes sigmoidal selectivity as it is commonly assumed for 'trawl-like' ",
-                   "fishing gear. While the selectivity of gillnets and hook-based methods might correspond ",
-                   "to a bell-shaped curve, the combination of various mesh and hook sizes might lead to ",
-                   "an overall 'trawl-like' fleet selectivity.",
-                   "</li>")
-    text <- paste0(text, "<br>")
-    text <- paste0(text, "<li><b>Equilibrium conditions:</b> ",
-                   "The routine assumes constant recruitment, fishing and natural mortality as well as somatic growth and maturation over time, i.e. within the year and over all years covered by the dataset.",
-                   "</li>")
-    text <- paste0(text, "<br>")
-    text <- paste0(text, "<li><b>Density dependence:</b> ",
-                   "The routine assumes density independent maturity and somatic growth. All reference points ",
-                   "are based on the 'per recruit' model, thus no assumptions are made about the stock recruitment ",
-                   "relationship.",
-                   "</li>")
-    text <- paste0(text, "<br>")
-    text <- paste0(text, "<li><b>Correlation of life-history parameters:</b> ",
-                   "The use of empirical formulae for the estimation of natural mortality assumes that the ",
-                   "growth parameters (",withMathJax("\\(L_\\infty\\)")," and ",withMathJax("\\(K\\)"),") are ",
-                   "reliable predictors of the natural mortality.",
-                   "</li>")
-    text <- paste0(text, "<br>")
-    text <- paste0(text, "<li><b>Somatic growth follows VBG:</b> ",
-                   "The estimation of growth parameters with ELEFAN assumes that the growth of individuals in length ",
-                   "follows the logistic von Bertlanffy growth (VBG) function. This is an often made assumption for the ",
-                   "growth of fish, but might not reflect well the growth of species with an exoskeleton, ",
-                   "such as crustaceans, nor the growth of early life stages of fish.",
-                   "</li>")
-    text <- paste0(text, "<br>")
-    text <- paste0(text, "<li><b>Closed population:</b> ",
-                   "The routine assumes that the stock (population) under study ",
-                   "is closed, meaning that there is no immigration or emigration taking place. Immigration and emigration can both bias estimated mortality rates and stock status. Furthermore, fish migrations ",
-                   "often vary for various life stages and might thus affect the representativeness of the length ",
-                   "measurements if the population is not closed.",
-                   "</li>")
-    text <- paste0(text, "</ul>")
+    text <- paste0(text, tropfishrAssumptionsHTML())
     text <- paste0(text, "<br>")
 
     text <- paste0(text,"<h4> Workflow considerations</h4>")
@@ -554,46 +509,7 @@ output$lbiIntroOut <- renderText({
     text <- paste0(text, "</p>")
 
     text <- paste0(text, "<br>")
-    text <- paste0(text, "<h4>Assumptions of LBIs:</h4>")
-    text <- paste0(text,
-                   "LBIs make specific assumptions about the data, the stock, or the ",
-                   "fisheries targeting the stock. It is important to be aware of these assumptions and, thus, the ",
-                   "limitations of the results.</p>")
-    text <- paste0(text, "<ul>")
-    text <- paste0(text, "<li><b>Representative length measurements:</b> ",
-                   "The routine assumes that the dataset is representative of the length distributions of the whole catch. ",
-                   "This means that either the length of all individuals in the catch were measured or ",
-                   "a randomised subsample of the catch was measured.", "</li>")
-    text <- paste0(text, "<br>")
-    text <- paste0(text, "<li><b>Equilibrium conditions:</b> ",
-                   "The routine assumes constant recruitment, fishing and natural mortality as well as somatic growth and maturation over time, i.e. within the year and over all years covered by the dataset.",
-                   "</li>")
-    text <- paste0(text, "<br>")
-    text <- paste0(text, "<li><b>Density dependence:</b> ",
-                   "The routine assumes density independent maturity and somatic growth. All reference points ",
-                   "are based on the 'per recruit' model, thus no assumptions are made about the stock recruitment ",
-                   "relationship.",
-                   "</li>")
-    text <- paste0(text, "<br>")
-    text <- paste0(text, "<li><b>Length-independent natural mortality:</b> ",
-                   "The current implementation of SMT assumes that the natural mortality is equal for all length ",
-                   "classes. (Note this assumption will be relaxed in the future.)",
-                   "</li>")
-    text <- paste0(text, "<br>")
-    text <- paste0(text, "<li><b>Somatic growth follows VBG:</b> ",
-                   "The estimation of growth parameters with ELEFAN assumes that the growth of individuals in length ",
-                   "follows the logistic von Bertlanffy growth (VBG) function. This is an often made assumption for the ",
-                   "growth of fish, but might not reflect well the growth of species with an exoskeleton, ",
-                   "such as crustaceans, nor the growth of early life stages of fish.",
-                   "</li>")
-    text <- paste0(text, "<br>")
-    text <- paste0(text, "<li><b>Closed population:</b> ",
-                   "The routine assumes that the stock (population) under study ",
-                   "is closed, meaning that there is no immigration or emigration taking place. Immigration and emigration can both bias estimated mortality rates and stock status. Furthermore, fish migrations ",
-                   "often vary for various life stages and might thus affect the representativeness of the length ",
-                   "measurements if the population is not closed.",
-                   "</li>")
-    text <- paste0(text, "</ul>")
+    text <- paste0(text, lbiAssumptionsHTML())
     text <- paste0(text, "<br>")
 
     text <- paste0(text,"<h4> Workflow considerations</h4>")
@@ -666,46 +582,7 @@ output$lbsprIntroOut <- renderText({
     text <- paste0(text, "</p>")
 
     text <- paste0(text, "<br>")
-    text <- paste0(text, "<h4>Assumptions of LBSPRs:</h4>")
-    text <- paste0(text,
-                   "LBSPRs make specific assumptions about the data, the stock, or the ",
-                   "fisheries targeting the stock. It is important to be aware of these assumptions and, thus, the ",
-                   "limitations of the results.</p>")
-    text <- paste0(text, "<ul>")
-    text <- paste0(text, "<li><b>Representative length measurements:</b> ",
-                   "The routine assumes that the dataset is representative of the length distributions of the whole catch. ",
-                   "This means that either the length of all individuals in the catch were measured or ",
-                   "a randomised subsample of the catch was measured.", "</li>")
-    text <- paste0(text, "<br>")
-    text <- paste0(text, "<li><b>Equilibrium conditions:</b> ",
-                   "The routine assumes constant recruitment, fishing and natural mortality as well as somatic growth and maturation over time, i.e. within the year and over all years covered by the dataset.",
-                   "</li>")
-    text <- paste0(text, "<br>")
-    text <- paste0(text, "<li><b>Density dependence:</b> ",
-                   "The routine assumes density independent maturity and somatic growth. All reference points ",
-                   "are based on the 'per recruit' model, thus no assumptions are made about the stock recruitment ",
-                   "relationship.",
-                   "</li>")
-    text <- paste0(text, "<br>")
-    text <- paste0(text, "<li><b>Length-independent natural mortality:</b> ",
-                   "The current implementation of SMT assumes that the natural mortality is equal for all length ",
-                   "classes. (Note this assumption will be relaxed in the future.)",
-                   "</li>")
-    text <- paste0(text, "<br>")
-    text <- paste0(text, "<li><b>Somatic growth follows VBG:</b> ",
-                   "The estimation of growth parameters with ELEFAN assumes that the growth of individuals in length ",
-                   "follows the logistic von Bertlanffy growth (VBG) function. This is an often made assumption for the ",
-                   "growth of fish, but might not reflect well the growth of species with an exoskeleton, ",
-                   "such as crustaceans, nor the growth of early life stages of fish.",
-                   "</li>")
-    text <- paste0(text, "<br>")
-    text <- paste0(text, "<li><b>Closed population:</b> ",
-                   "The routine assumes that the stock (population) under study ",
-                   "is closed, meaning that there is no immigration or emigration taking place. Immigration and emigration can both bias estimated mortality rates and stock status. Furthermore, fish migrations ",
-                   "often vary for various life stages and might thus affect the representativeness of the length ",
-                   "measurements if the population is not closed.",
-                   "</li>")
-    text <- paste0(text, "</ul>")
+    text <- paste0(text, lbsprAssumptionsHTML())
     text <- paste0(text, "<br>")
 
 
@@ -748,6 +625,160 @@ text <- paste0(text, "<li> Download the results as a zip archive ('Download Resu
     text <- paste0(text, "</ul>")
     text <- paste0(text, "<br>")
     text <- paste0(text, "<br>")
+
+    text
+})
+
+
+## Surplus production models - General Introduction
+## ---------------------------------
+output$spmIntroOut <- renderText({
+    session$userData$page('spm-intro')
+
+    text <- paste(c(
+        "<h3><b>Data-limited stock assessment with surplus production models</b></h3>",
+        "<br>",
+        "<p>Surplus production models (SPMs) describe how a fish population grows and how catches remove biomass over time. ",
+        "They are especially useful when detailed age or length data are missing. ",
+        "The Stock Monitoring Tool (SMT) currently implements three SPMs: ",
+        "(1) <b>SPiCT</b>, (2) <b>JABBA</b>, and (3) <b>CMSY</b>.</p>",
+        "<br>",
+        "<h4>1) Data-limited assessment with <b>SPiCT</b></h4>",
+        "<p><b>SPiCT</b> (Stochastic surplus Production model in Continuous Time) is a <i>state-space</i> surplus production model. ",
+        "It estimates biomass and fishing mortality trajectories from catches along with one or more relative abundance indices, ",
+        "while explicitly accounting for process and observation error. ",
+        "Typical outputs include <i>B/B<sub>MSY</sub></i>, <i>F/F<sub>MSY</sub></i>, MSY, and uncertainty intervals. ",
+        "Use SPiCT when you have catch and at least one time series of relative abundance and want to estimate biomass dynamics with rigorous uncertainty quantification. ",
+        "Find more information and options in the <b>SPiCT</b> tab in the left sidebar.</p>",
+        "<br>",
+        "<h4>2) Data-limited assessment with <b>JABBA</b></h4>",
+        "<p><b>JABBA</b> (Just Another Bayesian Biomass Assessment) is a <i>Bayesian</i> surplus production framework. ",
+        "It can combine multiple indices, specify informative priors, and produce posterior diagnostics, projections, and retrospective analyses. ",
+        "Use JABBA when you want a transparent Bayesian setup with flexible priors and multiple indices. ",
+        "Find more information in the <b>JABBA</b> tab in the left sidebar.</p>",
+        "<br>",
+        "<h4>3) Data-limited assessment with <b>CMSY</b></h4>",
+        "<p><b>CMSY</b> (Catch-MSY) is designed for <i>catch-only</i> situations, optionally augmented by resilience priors and index trends. ",
+        "It explores plausible productivity and depletion combinations consistent with the observed catches in order to estimate MSY, ",
+        "current stock status, and related reference points. FAO does not recommend the use of",
+        "CMSY, and notes that it should only be used when you have catches and limited auxiliary information, and no other information. ",
+        "If possible, length-based methods are considered preferable. Find more information in the <b>CMSY</b> tab in the left sidebar.</p>",
+        "<br>",
+        "<br>",
+        "<h4><b>Data formats for surplus production models</b></h4>",
+        "<p>SMT accepts two input formats for SPMs:</p>",
+        "<ol>",
+        "<li><b>Wide format</b>: one row per time step (e.g., year), with separate columns for <i>Catch</i> and each <i>Index</i> series ",
+        "(e.g., <code>Index1</code>, <code>Index2</code>, …). Dates/years are in a dedicated column.</li>",
+        "<li><b>Long format</b>: one row per observation with columns such as <i>Time</i>, <i>Series</i> (index name), and <i>Value</i>. ",
+        "This is tidy and convenient when you have many indices or missing years.</li>",
+        "</ol>",
+        "<p>Guidance on converting between formats is provided in the tutorial linked from the method pages.</p>",
+        "<br>",
+        "<b>Example datasets</b>",
+        "<p>Two examples illustrate both formats and different species:</p>",
+        "<ul>",
+        "<li>South Atlantic albacore (wide format): (",linkAL,")</li>",
+        "<li>New Zealand rock lobster (long format): (",linkLO,")</li>",
+        "</ul>",
+        "<p>Both data sets are taken from and are described in more detail in </p>",
+        "<a href='https://cdnsciencepub.com/doi/10.1139/f93-284' target='_blank'>Polacheck et al. (1993).</a>",
+        "<br>",
+        "<b>Import tips</b>",
+        "<ul>",
+        "<li>Save your dataset as <code>.csv</code>.</li>",
+        "<li>Common field separators are comma <code>,</code>, semicolon <code>;</code>, or tab, but any separator can be used and specified in the app.</li>",
+        "<li>Most methods on the SMT now automatically detect the decimal separator and also allow it to be specified. The default decimal separator might differ depending on the language settings of your spreadsheet manipulation program (e.g. Excel).</li>",
+        "</ul>"
+    ), collapse = "")
+
+    text
+})
+
+
+## SPiCT
+## ---------------------------------
+output$spictIntroOut <- renderText({
+    session$userData$page('spict-intro')
+
+    text <- "<h3><b>Data-limited stock assessment with SPiCT</b></h3><br>"
+
+    ## Intro
+    text <- paste0(text,
+                   "<p>The <b>Stochastic Production Model in Continuous Time (SPiCT)</b> ",
+                   "is one of the official assessment models used by the International Council for the Exploration of the Sea (ICES). ",
+                   "It is applied to estimate stock status and provide catch advice for around 20 data-limited stocks in the Northeast Atlantic. ",
+                   "SPiCT is a state-space surplus production model that operates in continuous time, allowing for flexible handling of irregularly spaced data and the separation of process and observation error.</p><br>"
+                   )
+
+    ## Method description
+    text <- paste0(text,
+                   "<h4>Method description</h4>",
+                   "<p>SPiCT fits a surplus production model to time series of catch and one or more relative abundance indices. ",
+                   "It estimates key biological parameters such as carrying capacity (<i>K</i>), intrinsic growth rate (<i>r</i>), and fishing mortality (<i>F</i>) over time. ",
+                   "The model can also estimate time-varying productivity, which is particularly useful when environmental conditions or ecosystem changes influence stock dynamics. ",
+                   "Results include biomass and fishing mortality relative to management reference points (e.g., <i>B</i><sub>MSY</sub> and <i>F</i><sub>MSY</sub>), ",
+                   "and projections can be used to evaluate sustainable catch levels.</p>"
+                   )
+
+    text <- paste0(text,
+                   "<p style='margin-left: 20px'>This workflow requires at least 10 years of catch and relative abundance data. ",
+                   "Ideally, a fishery-independent survey index is available, but a commercial CPUE time series may also be used, ",
+                   "provided it is representative of the exploited stock.</p><br>"
+                   )
+
+    ## Further info
+    text <- paste0(text,
+                   "<p><strong>Further information</strong><br>",
+                   "For background on surplus production models and SPiCT applications, see the ",
+                   "<a href='https://elearning.fao.org/course/view.php?id=502' target='_blank'>SDG Indicator 14.4.1 - Fish Stocks Sustainability eLearning course</a>. ",
+                   "<b>(Lesson 3)</b>.</p><br>"
+                   )
+
+    ## Assumptions
+    text <- paste0(text, spictAssumptionsHTML(), "<br>")
+
+    ## Workflow considerations
+    text <- paste0(text,
+                   "<h4>Workflow considerations</h4>",
+                   "<strong>To run the SPiCT assessment in the Stock Monitoring Tool:</strong>",
+                   "<ol>",
+                   "<li>Navigate to the <b>'Tool'</b> tab under SPiCT in the sidebar menu.</li>",
+                   "<li>Upload a SPiCT-compatible dataset (see the <b>'Data Considerations'</b> tab for details).</li>",
+                   "<li>Adjust the assessment settings:",
+                   "<ol type='a'>",
+                   "<li><b>Data Settings</b> – Select years to include, choose indices, and adjust model inputs.</li>",
+                   "<li><b>Priors</b> – Specify prior distributions for key parameters if desired.</li>",
+                   "<li><b>Other</b> – Adjust advanced model options, such as process error or time-step size.</li>",
+                   "</ol>",
+                   "</li>",
+                   "<li>Perform a quick check if the uploaded data and provided information corresponds the expectations by clicking <b>'Run Check'</b>.</li>",
+                   "<li>Run the assessment by clicking <b>'Run Assessment'</b>. A loading wheel will appear while the model runs.</li>",
+                   "<li>Download the PDF report (<b>'Download Report'</b>), which is also saved to your private workspace.</li>",
+                   "<li>Download the full results as a ZIP archive (<b>'Download Results (zip)'</b>).</li>",
+                   "<li>Click <b>'Reset'</b> to clear uploaded data and restore default settings.</li>",
+                   "</ol>",
+                   "<p>Additional guidance is available in the popup information buttons next to each input, and in the <b>Workflow</b>, <b>Data</b>, <b>Methods</b>, and <b>Results</b> tabs. ",
+                   "Error messages may appear in the center of the page or in place of figures if a problem occurs.</p><br>"
+                   )
+
+    ## Run time
+    text <- paste0(text,
+                   "<h4>Run time</h4>",
+                   "<p>Run time depends on the length of the time series, the number of abundance indices, and the Euler time-step setting. ",
+                   "These influences are explained in the corresponding information buttons. ",
+                   "For the example datasets, run time is typically <b>between 1-5 minutes</b>.</p><br>"
+                   )
+
+    ## References
+    text <- paste0(text,
+                   "<h4>References</h4><ul>",
+                   "<li>Kokkalis, A., Berg, C.W., Kapur, M.S., Winker, H., Jacobsen, N.S., Taylor, M.H., Ichinokawa, M., Miyagawa, M., Medeiros-Leal, W., Nielsen, J.R. and Mildenberger, T.K., 2024. Good practices for surplus production models. Fisheries Research, 275, p.107010. <a href='https://doi.org/10.1016/j.fishres.2024.107010' target='_blank'>https://doi.org/10.1016/j.fishres.2024.107010</a></li>",
+                   "<li>Mildenberger, T.K., Berg, C.W., Pedersen, M.W., Kokkalis, A. and Nielsen, J.R., 2020. Time-variant productivity in biomass dynamic models on seasonal and long-term scales. ICES Journal of Marine Science, 77(1), pp.174–187. <a href='https://doi.org/10.1093/icesjms/fsz154' target='_blank'>https://doi.org/10.1093/icesjms/fsz154</a></li>",
+                   "<li>Mildenberger, T.K., Berg, C.W., Kempf, A., Rindorf, A., MacCall, A.D. and Taylor, M.H., 2025. Estimating Time-Varying Productivity and Reference Points: A Case of North Sea Demersal Fish Stocks. Fish and Fisheries. <a href='https://doi.org/10.1111/faf.12910' target='_blank'>https://doi.org/10.1111/faf.12910</a></li>",
+                   "<li>Pedersen, M.W., and Berg, C.W., 2017. A stochastic surplus production model in continuous time. Fish and Fisheries, 18(2), 226–243. <a href='https://doi.org/10.1111/faf.12174' target='_blank'>https://doi.org/10.1111/faf.12174</a></li>",
+                   "</ul><br><br>"
+                   )
 
     text
 })
@@ -817,9 +848,9 @@ output$fishMethodsIntroOut <- renderText({
 
 output$cmsySampleDataset <- renderText({
     session$userData$page('cmsy-sample')
-  
+
     sample_dataset_url = "https://data.d4science.org/shub/E_N0JSRlVEN3gwdmpjRnp5Y1BIWm5sS1QxZnUzUTRNSlp5ek50R2xlY0ZUZXVDUlFHTFFES3liblJGRSt4YWExMw=="
-  
+
     link <- paste0("<a href='",sample_dataset_url,"' target='_blank'>Click Here</a>")
     text <- paste0("<p><h4>", link,"&nbsp; to download a sample dataset that can be used with <b>CMSY</b> methods", "</h4></p>")
     text <- paste0(text, "<hr />")
@@ -1169,4 +1200,20 @@ output$basicShaeferInfoText <- renderText({
 output$cmsyLegacyWarning <- renderText({
     text <- "<span style='margin-left: 20px;'>This computation may take several minutes to complete.</span>"
     text
+})
+
+
+
+## spict -------------------------
+output$spictVersion <- renderText({
+    text <- paste0("<span class='subTitle'>", "By <a href='https://github.com/DTUAqua/spict/blob/master/spict/DESCRIPTION' target='_blank'>SPiCT</a> version ", packageVersion("spict"),"</span>")
+    text
+})
+
+
+
+## glossary -------------------------
+output$glossary <- renderText({
+    session$userData$page("glossary")
+    render_glossary_html(glossary_df)
 })

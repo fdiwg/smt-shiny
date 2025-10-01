@@ -108,30 +108,57 @@ captionTropFishR.plots <- function(elefan_ga, input, format = "withFig", type){
                plot.num <- 1
                txt <- paste0("Uploaded length-frequency distributions per sampling time (x axis). Panel A shows the raw data, while panel B shows the restructured data. This means after subtracting the moving average (MA) of the count in each length class. The combination of bin size and MA critically affects the separation of peaks (i.e. potential cohorts) in the dataset and thus the estimation of growth parameters by ELEFAN. Blue shading indicates a high count per length bin (panel A) and a high positive value (panel B). Red shading indicates a negative value (only panel B). A good bin size value reduces noise in the data by aggregation. A good MA value leads to visually distinct peaks in particular among small length classes.")
            },
-           "growth" = {
+           "diag1" = {
                plot.num <- 2
+               txt <- paste0(
+                   "Number of samples by month. This plot shows how samples are distributed within and across years. ",
+                   "For TropFishR, the critical requirement is that the sampled length composition is representative of the overall fishery. ",
+                   "While uniform coverage of all months is not strictly necessary, sampling should reflect the seasonal and annual exploitation pattern, ",
+                   "and avoid strong biases from only targeting a narrow time window."
+               )
+           },
+           "diag2" = {
+               plot.num <- 3
+               txt <- paste0(
+                   "Length frequency distributions by month. ",
+                   "This plot shows the monthly size composition of the samples. ",
+                   "Pronounced shifts in the distributions may reflect true population dynamics (e.g. strong recruitment events or growth of cohorts), ",
+                   "changes in fleet selectivity, or biases from uneven or unrepresentative sampling across months or years."
+               )
+           },
+           "diag3" = {
+               plot.num <- 4
+               txt <- paste0(
+                   "Length frequency distributions by year. ",
+                   "This plot can help evaluate whether the chosen bin size is appropriate: ",
+                   "large variability between neighbouring bins may suggest that a wider bin size is needed. ",
+                   "A strongly right-skewed distribution may indicate dome-shaped gear selectivity or sampling bias."
+               )
+           },
+           "growth" = {
+               plot.num <- 5
                txt <- paste0("Uploaded raw (A) and restructured (B) length-frequency data with overlaid von Bertalanffy growth (VBG) curves fitted by ELEFAN with genetic algorithm. Ideally, the growth curves overlay with length bins with a high count or high positive value (blue shading) for raw (A) and restructured (B) data, respectively.")
            },
            "ga" = {
-               plot.num <- 3
+               plot.num <- 6
                txt <- paste0("Score graph of ELEFAN with genetic algorithm. Fitness value (y axis) corresponds here to the score value of ELEFAN (Rn) and in the lingo of genetic algorithm 'Generation' (x axis) refers to the iteration.  Ideally, the number of iterations (or generations) is large enough, so that there are no large jumps visible during the last iterations of the best and average score value.")
            },
            "mort" = {
-               plot.num <- 4
+               plot.num <- 7
                txt <- paste0("Estimated (total, fishing, and natural) mortality rates by length class (solid lines) and average levels for main exploited length classes (dashed lines), i.e. the length classes considered in the regression analysis of the length-converted catch curve. Note, that the natural mortality rates estimated by the empirical formulae after Then et al. (2015) and Pauly et al. (1980) are independent of length. By contrast, the formulae after Gislason et al. (2010) and Lorenzen et al. (2022) estimate length-dependent natural mortality rates based on the asymptotic length, growth coefficient, and body length of the fish.")
            },
            "cc" = {
-               plot.num <- 5
+               plot.num <- 8
                txt <- paste0("Logarithm of catch per length interval against relative age. Blue points correspond to points used in the regression analysis (blue line) of the catch curve for the estimation of total mortality (Z), which corresponds to the slope of the displayed regression line. The selection of points is automatic and based on a list of expert recommendations.")
            },"sel" = {
-               plot.num <- 6
+               plot.num <- 9
                if(input$select == "Estimate" || (is.null(input$l50_user) && is.null(input$l75_user)) || (is.null(input$l50_user) && is.null(input$wqs_user)) ||  (is.null(input$l1_user) && is.null(input$l2_user))){
                    txt <- "Estimated logistic gear selectivity used in the assessment as the probability of capture (y axis) at length (x axis). Displayed selection ogive is used for the yield per recruit analysis (YPR)."
                }else{
                    txt <- "Provided logistic gear selectivity used in the assessment as the probability of capture (y axis) at length (x axis). Displayed selection ogive is used for the yield per recruit analysis (YPR)."
                }
            },"ypr" = {
-               plot.num <- 7
+               plot.num <- 10
                refs <- paste0(withMathJax('\\(F_{30\\%SPR}\\)'),", ",
                               withMathJax('\\(F_{35\\%SPR}\\)'),", and",
                               withMathJax('\\(F_{40\\%SPR}\\)'))
@@ -141,7 +168,7 @@ captionTropFishR.plots <- function(elefan_ga, input, format = "withFig", type){
                    txt <- paste0("Yield per recruit (A) and biomass per recruit (B), as well as spawning potential ratio (C) for a range of fishing mortality rates (x axis). Grey segements indicate various reference points: Fmax is defined as the fishing mortality (F) leading to the maximum yield per recruit. F0.1 corresponds to F where the slope of the yield per recruit curve is equal to 10% of the slope in the origin and poses a more conservative reference point than Fmax. F0.5 corresponds to F where the biomass per recruit is equal to 50% of the biomass per recruit without fishing. ",refs," correspond to F that leads to a SPR of 30%, 35%, and 40% respectively.")
                }
            },"iso" = {
-               plot.num <- 8
+               plot.num <- 11
                txt <- paste0("Yield (A) and biomass (B) per recruit for a range of fishing mortality rates (x axis) and gear selectivity (y axis) combinations. Colors indicate high (red) to low (blue) yield and biomass. Gear selectivity is defined by the length at 50% selectivity (Ls50). The black dot indicates current yield and biomass per recruit.")
            }
            )
