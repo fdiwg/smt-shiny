@@ -1,4 +1,4 @@
-FROM rocker/shiny:4.3.0
+FROM rocker/shiny:4.5.1
 
 MAINTAINER Emmanuel Blondel "emmanuel.blondel@fao.org"
 
@@ -12,7 +12,6 @@ LABEL org.opencontainers.image.authors="Emmanuel Blondel <emmanuel.blondel@fao.o
 RUN apt-get update && apt-get install -y \
     sudo \
     pandoc \
-    pandoc-citeproc \
     libcurl4-openssl-dev \
     libcairo2-dev \
     libxt-dev \
