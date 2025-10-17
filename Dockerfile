@@ -33,7 +33,8 @@ RUN apt-get update && apt-get install -y \
     libsecret-1-dev \
     libnlopt-dev \
     libharfbuzz-dev \
-    libfribidi-dev
+    libfribidi-dev \
+    xz-utils
 
 RUN apt-get update && apt-get upgrade -y
 RUN apt-get update && apt-get -y install cmake
