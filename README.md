@@ -38,6 +38,24 @@ The following libraries can be installed from CRAN
 install.packages(c('shiny', 'rmarkdown', 'shinythemes', 'shinydashboard', 'RCurl', 'devtools', 'ggplot2', 'rfishbase', 'shinyBS', 'XML', 'futile.logger'), repos='https://cloud.r-project.org/')
 ```
 
+### CMSY availability (DataMiner decommissioned)
+
+CMSY was executed remotely on the D4Science DataMiner WPS service, which has been decommissioned.
+
+- The application no longer queries the D4Science registry for a DataMiner endpoint and no longer initialises a WPS client at session startup, with or without a `gcube-token`.
+- CMSY stays visible (introduction, sample dataset link, data upload) with a "CMSY temporarily unavailable" banner. Its run button is a plain disabled control that the global button-restoring helpers cannot re-enable. Execution and the CMSY report download are also refused server-side.
+- All other methods (ELEFAN_GA, LBI, LBSPR, SPiCT and the supporting tools) run locally and are unaffected. VRE workspace (StorageHub) uploads behave as before.
+- Session tokens are no longer written to the logs; only their presence is logged.
+
+Base-R regression tests for this behaviour are in `tests/`. Run them inside the application image:
+
+```
+docker run --rm --network none \
+  -v "$PWD":/srv/smt-shiny-src:ro \
+  ghcr.io/fdiwg/smt-shiny:<tag> \
+  bash /srv/smt-shiny-src/tests/run_in_image.sh
+```
+
 ### Docker
 
 #### Pull / Run the image from DockerHub

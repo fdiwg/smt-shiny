@@ -1,6 +1,21 @@
-tabCmsyIntro <- tabItem("cmsyIntro",htmlOutput("cmsyIntroOut"))
+## CMSY was executed on the D4Science DataMiner WPS service, which has been
+## decommissioned. CMSY execution is disabled until a replacement is integrated.
+cmsyUnavailableMessage <- paste(
+  "CMSY is temporarily unavailable while we work on a solution to ",
+  "adapt the tool to restore the method. You can still read the introduction,",
+  "download the sample dataset and load your data, but CMSY cannot currently be run.",
+  "All other SMT methods are unaffected."
+)
+
+cmsyUnavailableBanner <- function() {
+  div(class = "alert alert-warning", role = "alert",
+      style = "margin: 10px 0;",
+      tags$b("CMSY temporarily unavailable. "), cmsyUnavailableMessage)
+}
+
+tabCmsyIntro <- tabItem("cmsyIntro", cmsyUnavailableBanner(), htmlOutput("cmsyIntroOut"))
 #
-tabCmsySampleDataset <- tabItem("cmsySampleDataset",htmlOutput("cmsySampleDataset"))
+tabCmsySampleDataset <- tabItem("cmsySampleDataset", cmsyUnavailableBanner(), htmlOutput("cmsySampleDataset"))
 
 tabCmsy <- function(id) {
   
@@ -8,6 +23,7 @@ tabCmsy <- function(id) {
   
   tabItem("cmsyWidget",
           htmlOutput(ns("cmsyMethodTitle")),
+          cmsyUnavailableBanner(),
           # actionButton("cmsyDataConsiderations", "Data Considerations", class="topLevelInformationButton"),
           fluidRow(
             div(style = "display: inline-block; vertical-align:center; margin-left: 15px;",
@@ -456,9 +472,16 @@ prior to the last year with high biomass.</p>")),
               
               fluidRow(
                 div(style = "display: inline-block; vertical-align:center; margin-left: 50px;",
-                    disabled(actionButton(ns("go_cmsy"),
-                                          "Run CMSY Method", 
-                                          class="topLevelInformationButton"))
+                    ## Plain disabled button instead of actionButton("go_cmsy"):
+                    ## it has no 'action-button' class and no input binding, so
+                    ## js$enableAllButtons() and shinyjs::enable("go_cmsy")
+                    ## cannot re-enable it.
+                    tags$button(id = ns("go_cmsy_unavailable"),
+                                type = "button",
+                                class = "btn btn-default topLevelInformationButton",
+                                disabled = NA,
+                                title = cmsyUnavailableMessage,
+                                "Run CMSY Method (temporarily unavailable)")
                 ),
                 div(style = "display: inline-block; vertical-align:center; margin-left: 20px;",
                     actionButton(ns("reset_cmsy"), 
