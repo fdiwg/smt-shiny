@@ -363,11 +363,9 @@ ui <- tagList(
                                         #trace logs by user
                     fileLog <- sprintf("session_for_%s.log", sh_manager$getUserProfile()$username)
 
-                    if (!is.null(session$userData$sessionToken())) {
-                        flog.info("Session token is: %s", session$userData$sessionToken())
-                    } else {
-                        flog.info("Session token is: %s", "NULL")
-                    }
+                    ## never log the token value itself
+                    flog.info("Session token is: %s",
+                              if (!is.null(session$userData$sessionToken())) "present" else "NULL")
 
                     if (!is.null(session$userData$sessionMode())) {
                         flog.info("Session mode is: %s", session$userData$sessionMode())
@@ -425,21 +423,10 @@ ui <- tagList(
             ## }
     })
 
-    observeEvent(req(!is.null(session$userData$sessionToken())),{
-        icproxy = XML::xmlParse(content(GET("https://registry.d4science.org/icproxy/gcube/service//ServiceEndpoint/DataAnalysis/DataMiner?gcube-scope=/d4science.research-infrastructures.eu/D4Research/SDG-Indicator14.4.1"), "text"))
-        wps_uri = xpathSApply(icproxy, "//AccessPoint/Interface/Endpoint", xmlValue)[1]
-
-        flog.info("WPS url select : %s",wps_uri)
-        print(sprintf("WPS url select : %s",wps_uri))
-        WPS <- WPSClient$new(
-                             url = wps_uri,
-                             serviceVersion = "1.0.0", logger ="DEBUG",
-                             headers = c("gcube-token"= session$userData$sessionToken())
-                         )
-
-        session$userData$sessionWps(WPS)
-
-    },once=T)
+    ## The D4Science DataMiner WPS service (registry discovery + WPSClient
+    ## initialisation) has been decommissioned and is no longer contacted at
+    ## startup. sessionWps stays NULL; CMSY, its only consumer, is disabled
+    ## (see ui/SPM/cmsy/cmsyUI.R and server/SPM/cmsy/cmsyServer.R).
 
     session$userData$cmsy <- reactiveValues()
 

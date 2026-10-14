@@ -207,6 +207,18 @@ cmsyModule <- function(input, output, session) {
   
   observeEvent(input$go_cmsy, {
 
+    ## CMSY is unavailable (DataMiner decommissioned): refuse server-side,
+    ## before any computing overlay, button disabling or remote request.
+    ## The run button is not rendered, so this only catches crafted inputs.
+    flog.warn("CMSY run requested but CMSY is unavailable; request refused")
+    showModal(modalDialog(
+      title = "CMSY temporarily unavailable",
+      cmsyUnavailableMessage,
+      easyClose = TRUE,
+      footer = NULL
+    ))
+    return(NULL)
+
     query <- parseQueryString(session$clientData$url_search)
     
     if (is.null(fileContents$data)) {
@@ -363,7 +375,6 @@ cmsyModule <- function(input, output, session) {
           basePath <- paste0("/Home/",session$userData$sessionUsername(),"/Workspace")
           flog.info(paste0("Base path for upload: ", basePath))
           flog.info(paste0("Username for upload: ", session$userData$sessionUsername()))
-          flog.info(paste0("Token for upload: ", session$userData$sessionToken()))
           
           SH_MANAGER <- session$userData$storagehubManager()
           
@@ -405,6 +416,8 @@ cmsyModule <- function(input, output, session) {
     # For PDF output, change this to "report.pdf"
     filename = paste("CMSY_report_",format(Sys.time(), "%Y%m%d_%H%M_%s"),".pdf",sep=""),
     content = function(file) {
+      ## the report re-downloads CMSY charts from DataMiner result URLs
+      stop(cmsyUnavailableMessage)
       createCmsyPDFReport(file, cmsy, input)
     }
   )
