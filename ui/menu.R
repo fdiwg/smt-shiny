@@ -40,7 +40,9 @@ menuSPMs <- menuItem("Surplus production models",
                               menuSubItem("Information",
                                           tabName = "jabbaIntro"),
                               menuSubItem("Tool",
-                                          tabName = "jabbaWidget")
+                                          tabName = "jabbaWidget"),
+                              menuSubItem("Sample Dataset",
+                                          tabName = "jabbaSampleDataset")
                               ),
                      menuItem("CMSY",
                               menuSubItem("Introduction", tabName = "cmsyIntro"),

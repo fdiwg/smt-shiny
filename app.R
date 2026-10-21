@@ -134,6 +134,8 @@ source("assets/SPM/spict/algorithms/plotting.R")
 source("assets/SPM/spict/algorithms/tables.R")
 source("assets/SPM/spict/algorithms/captions.R")
 source("assets/SPM/spict/algorithms/output.R")
+## JABBA
+source("assets/SPM/jabba/algorithms/run_jabba.R")
 ## CMSY
 source("assets/SPM/cmsy/CmsyFunction.R")
 ## Others
@@ -237,6 +239,7 @@ ui <- tagList(
               tabSPICT("spictModule"),
               tabJABBAIntro,
               tabJABBA("jabbaModule"),
+              tabJABBASampleDataset,
               tabCmsyIntro,
               tabCmsySampleDataset,
               tabCmsy("cmsyModule"),
@@ -317,6 +320,7 @@ ui <- tagList(
                        'spict' = {isolate({updateTabItems(session, "smt-tabs", "spictWidget")})},
                        'jabba-intro' = {isolate({updateTabItems(session, "smt-tabs", "jabbaIntro")})},
                        'jabba' = {isolate({updateTabItems(session, "smt-tabs", "jabbaWidget")})},
+                       'jabba-sample' = {isolate({updateTabItems(session, "smt-tabs", "jabbaSampleDataset")})},
                        'basic-shaefer' = {isolate({updateTabItems(session, "smt-tabs", "BasicSchaefer")})},
                        'basic-von-bertalannfy' = {isolate({updateTabItems(session, "smt-tabs", "BasicVonBertalannfy")})},
                        'seasonal-von-bertalannfy' = {isolate({updateTabItems(session, "smt-tabs", "SeasonalVonBertalannfy")})},
