@@ -37,7 +37,7 @@ RUN apt-get update && apt-get install -y \
     xz-utils
 
 RUN apt-get update && apt-get upgrade -y
-RUN apt-get update && apt-get -y install cmake
+RUN apt-get update && apt-get -y install cmake jags
 
 # install core package dependencies
 RUN install2.r --error --skipinstalled --ncpus -1 remotes

@@ -42,6 +42,8 @@
     {"package": "LBSPR", "version": "0.1.6", "repos": "https://cran.r-project.org"},
     {"package": "rintrojs", "version": "0.3.4", "repos": "https://cran.r-project.org"},
     {"repo": "DTUAqua/spict/spict", "from": "github", "dependencies": true},
+    {"package": "rjags", "version": "4-17", "repos": "https://cran.r-project.org"},
+    {"repo": "jabbamodel/JABBA", "ref": "c62db86c99dc5b5a0e115fd53fdd40f7c882b7c9", "from": "github", "dependencies": true},
     {"package": "shinybusy", "version": "0.3.3", "repos": "https://cran.r-project.org"}
   ]
 }
