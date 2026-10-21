@@ -205,19 +205,23 @@ clearResults <- function(id) {
   shinyjs::runjs(localJs)
 }
 
-uploadToIMarineFolder <- function(manager, reportFileName, basePath, folderName){
+## `description` is optional so that existing callers keep their behaviour.
+## Returns (invisibly) the item identifier returned by StoragehubManager$uploadFile(),
+## which stops on any non-200 response.
+uploadToIMarineFolder <- function(manager, reportFileName, basePath, folderName, description = "CMSY report"){
   folderID <- manager$searchWSFolderID(folderPath = folderName)
   if (is.null(folderID)) {
     flog.info("Creating folder [%s] in i-Marine workspace", folderName)
     manager$createFolder(name = folderName)
   }
   flog.info("Trying to upload %s to i-Marine workspace folder %s", reportFileName, file.path(basePath, folderName))
-  manager$uploadFile(
+  fileID <- manager$uploadFile(
     folderPath = file.path(basePath, folderName),
     file = reportFileName,
-    description = "CMSY report"
+    description = description
   )
   flog.info("File %s successfully uploaded to the i-Marine folder %s", reportFileName, file.path(basePath, uploadFolderName))
+  invisible(fileID)
 }
 
 
