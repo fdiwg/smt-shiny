@@ -1,0 +1,384 @@
+---
+title: "Stock assessment with JABBA"
+subtitle: "`r paste0(params$context$settings$assessment, ' / ', params$context$settings$scenario)`"
+date: "`r format(params$context$run_time, '%d %B %Y, %H:%M %Z')`"
+output:
+  pdf_document:
+    number_sections: true
+    toc: false
+    extra_dependencies:
+      booktabs: null
+      longtable: null
+      colortbl: null
+      float: null
+      amsmath: null
+header-includes:
+  - \usepackage{float}
+params:
+  jabba_result: NULL
+  context: NULL
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, fig.align = "center", fig.pos = "H")
+library(knitr)
+library(kableExtra)
+res <- params$jabba_result
+ctx <- params$context
+fit <- res$fit
+yrs <- fit$yr
+y1 <- min(yrs); yN <- max(yrs)
+fmt <- function(x, digits = 3) ifelse(is.na(x), "n/a", formatC(x, digits = digits, format = "fg", big.mark = ","))
+fmt_num <- function(x, digits = 3) ifelse(is.na(x), "n/a", formatC(x, digits = digits, format = "f"))
+esc <- function(x) gsub("([%&_#$])", "\\\\\\1", as.character(x))
+tbl <- function(df, caption, col.names = names(df), align = NULL, font = 9, longtable = FALSE, widths = NULL, escape = TRUE, label = NULL) {
+  if (is.null(align)) align <- c("l", rep("r", ncol(df) - 1))
+  k <- knitr::kable(df, format = "latex", booktabs = TRUE, longtable = longtable, caption = esc(caption), label = label,
+                    col.names = col.names, align = align, linesep = "", escape = escape, row.names = FALSE)
+  opts <- if (longtable) c("repeat_header") else c("HOLD_position")
+  k <- kableExtra::kable_styling(k, font_size = font, latex_options = opts)
+  if (!is.null(widths)) for (i in seq_along(widths)) if (!is.na(widths[i])) k <- kableExtra::column_spec(k, i, width = widths[i])
+  k
+}
+na_text <- "not available"
+quick <- isTRUE(ctx$mcmc$quickmcmc)
+is_sample <- isTRUE(ctx$source$is_bundled_sample)
+est <- ctx$summary
+getq <- function(q, col = "median") { i <- match(q, est$quantity); if (is.na(i)) NA_real_ else est[[col]][i] }
+## exploitation terminology of this run (F/Fmsy, JABBA's convention, or H/Hmsy)
+tm <- if (!is.null(ctx$terms)) ctx$terms else jabba_harvest_terms()
+conv_ok <- isTRUE(ctx$convergence_available)
+cs <- ctx$convergence_summary
+```
+
+```{r warnings-top, results="asis"}
+if (quick) cat("\\begin{center}\\colorbox{yellow}{\\parbox{0.95\\linewidth}{\\textbf{Quick MCMC test run.} This report was produced from a run with JABBA's reduced quick-MCMC settings. It serves to check the workflow only; it is not a basis for scientific or management advice.}}\\end{center}\n\n")
+if (is_sample) cat("\\begin{center}\\colorbox{yellow}{\\parbox{0.95\\linewidth}{\\textbf{Synthetic demonstration data.} The input file is the SMT sample dataset, which illustrates the file format only and is not a real stock.}}\\end{center}\n\n")
+```
+
+# Summary
+
+```{r summary-text, results="asis"}
+bb <- getq(paste0("B_Bmsy.cur")); bbl <- getq("B_Bmsy.cur", "lower_95"); bbu <- getq("B_Bmsy.cur", "upper_95")
+hh <- getq(tm$cur); hhl <- getq(tm$cur, "lower_95"); hhu <- getq(tm$cur, "upper_95")
+msy <- getq("MSY"); msyl <- getq("MSY", "lower_95"); msyu <- getq("MSY", "upper_95")
+cat(sprintf("This report describes the JABBA assessment **%s** (scenario *%s*) completed on %s with the %s production model, catch data from %d to %d and %d abundance index series (%d non-missing index observations). ",
+            esc(ctx$settings$assessment), esc(ctx$settings$scenario), format(ctx$run_time, "%Y-%m-%d %H:%M"), ctx$settings$model.type, y1, yN, ctx$checks$n_indices, ctx$checks$n_cpue_obs))
+cat(sprintf("Posterior medians (95\\%% credible intervals) in %d: $B/B_{MSY}$ = %s (%s--%s), %s = %s (%s--%s); MSY = %s (%s--%s) %s. ",
+            yN, fmt_num(bb), fmt_num(bbl), fmt_num(bbu), tm$ratio_tex, fmt_num(hh), fmt_num(hhl), fmt_num(hhu), fmt(msy, 5), fmt(msyl, 5), fmt(msyu, 5), esc(ctx$settings$catch.metric)))
+if (!is.null(ctx$kobe)) cat(sprintf("The posterior probability that the stock is in the green Kobe quadrant in %d is %s\\%%, in the red quadrant %s\\%%. ", ctx$kobe$year[1], fmt_num(ctx$kobe$probability[1], 1), fmt_num(ctx$kobe$probability[4], 1)))
+cat("\n\n")
+if (conv_ok) {
+  cat(sprintf("**MCMC convergence diagnostics** (section 7.2): R-hat and effective sample sizes were computed from the chain-ordered draws of this run's own JAGS fit; %d of %d parameters are flagged (R-hat above %s or ESS below %s). Favourable diagnostics do not prove convergence. A completed run does not by itself make the assessment reliable: fit to the indices (section 5), sensitivity to seeds, priors and data choices must be examined before any use for advice.\n",
+              cs$n_flagged, cs$n_params, format(cs$thresholds$rhat), format(cs$thresholds$ess)))
+} else {
+  cat("**MCMC convergence cannot be assessed from this report or within SMT for this run** (section 7.2): the chain-ordered draws of the fit are not available, so no trace plot, R-hat or effective sample size is reported. A completed run does not by itself make the assessment reliable: fit to the indices (section 5), sensitivity to seeds, priors and data choices must be examined before any use for advice.\n")
+}
+```
+
+# Method description
+
+JABBA (Just Another Bayesian Biomass Assessment; Winker et al., 2018) is a Bayesian state-space surplus production model fitted in JAGS (Plummer, 2003). The stock is represented by an aggregate biomass $B_t$ whose dynamics follow a generalised Pella-Tomlinson production function with carrying capacity $K$, intrinsic rate of increase $r$ and shape parameter $m$ ($m = 2$ gives the Schaefer model; the Fox model is the limit $m \rightarrow 1$). Process error on biomass and observation error on each abundance index are separated; catches may be treated as observed with error. Priors are placed on $K$, $r$, the initial depletion $\psi = B_{`r y1`}/K$, process variance and observation variances.
+
+The exploitation rate is reported as `r tm$sym_tex`, with reference point `r tm$ref_tex` $= MSY/B_{MSY}$ and $B_{MSY} = K\,m^{-1/(m-1)}$ (JABBA option `harvest.label` = "`r tm$label`", selected at run time). Posterior distributions are summarised by their median and the 2.5 % and 97.5 % quantiles (95 % credible intervals). Stock status is expressed as $B_t/B_{MSY}$ and `r tm$ratio_tex`.
+
+# Input data
+
+```{r input-table}
+src <- data.frame(
+  item = c("Input file", "Year column", "Catch column", "Index column(s)", "SE column(s)", "Years used", "Number of years", "Number of index series", "Index observations (non-missing)", "Input checks"),
+  value = c(
+    if (!is.null(ctx$source$file_name)) ctx$source$file_name else "n/a",
+    ctx$selected_columns$year, ctx$selected_columns$catch,
+    paste(ctx$selected_columns$cpue, collapse = ", "),
+    if (length(ctx$selected_columns$se)) paste(ctx$selected_columns$se, collapse = ", ") else "none (observation error estimated)",
+    paste0(y1, "-", yN), ctx$checks$n_years, ctx$checks$n_indices, paste0(ctx$checks$n_cpue_obs, " in ", ctx$checks$n_cpue_years, " years"),
+    paste(ctx$checks$messages, collapse = "; ")
+  ), stringsAsFactors = FALSE)
+tbl(src, "Input data summary (as uploaded and mapped at run time).", col.names = c("Item", "Value"), align = c("l", "l"), widths = c("5cm", "10cm"))
+```
+
+```{r input-data-table, results="asis"}
+cat_tab <- res$data$catch
+cp <- res$data$cpue
+dat_tab <- data.frame(Year = cat_tab$Year, Catch = fmt(cat_tab$Catch, 6), stringsAsFactors = FALSE)
+for (nm in names(cp)[-1]) dat_tab[[nm]] <- fmt_num(cp[[nm]], 3)
+if (!is.null(res$data$se)) for (nm in names(res$data$se)[-1]) dat_tab[[paste0(nm, " (SE)")]] <- fmt_num(res$data$se[[nm]], 3)
+## Wide inputs (many index/SE series) are split into blocks of at most 6 series, each with the Year column.
+series <- setdiff(names(dat_tab), "Year")
+blocks <- split(series, ceiling(seq_along(series) / 6))
+for (i in seq_along(blocks)) {
+  part <- dat_tab[, c("Year", blocks[[i]]), drop = FALSE]
+  capt <- if (length(blocks) == 1) sprintf("Catch %s and abundance indices used in the assessment (n/a = missing value).", ctx$settings$catch.metric) else sprintf("Input data used in the assessment, part %d of %d (catch %s; n/a = missing value).", i, length(blocks), ctx$settings$catch.metric)
+  cat(tbl(part, capt, col.names = names(part), longtable = TRUE, font = if (ncol(part) > 6) 7 else 8, label = paste0("input-data-", i)), "\n\n")
+}
+```
+
+```{r input-plots, fig.width=7, fig.height=3.2, fig.cap=esc("Catch time series (JABBA::jbplot_catch) and abundance indices (JABBA::jbplot_indices).")}
+par(mfrow = c(1, 2))
+p1 <- jabba_try_plot("jbplot_catch", res, add = TRUE, as.png = FALSE, verbose = FALSE)
+p2 <- jabba_try_plot("jbplot_indices", res, as.png = FALSE, add = TRUE, object = "input")
+```
+
+# Model configuration
+
+```{r priors}
+js <- ctx$jabba_settings
+s <- ctx$settings
+pr <- function(x, i) if (!is.null(x) && length(x) >= i) x[i] else NA
+r_line <- if (identical(s$r.dist, "range")) sprintf("range %s-%s, converted by JABBA to lognormal (mean %s, log-SD %s)", fmt_num(pr(s$r.prior,1)), fmt_num(pr(s$r.prior,2)), fmt_num(pr(js$r.pr,1), 4), fmt_num(pr(js$r.pr,2), 4)) else sprintf("lognormal, mean %s, CV %s (log-SD %s)", fmt_num(pr(s$r.prior,1)), fmt_num(pr(s$r.prior,2)), fmt_num(pr(js$r.pr,2), 4))
+k_line <- if (is.null(s$K.prior)) sprintf("JABBA default: lognormal with mean 8 x max(catch) = %s, CV 1", fmt(pr(js$K.pr,1), 6)) else if (identical(s$K.dist, "range")) sprintf("range %s-%s (lognormal mean %s, log-SD %s)", fmt(pr(s$K.prior,1), 6), fmt(pr(s$K.prior,2), 6), fmt(pr(js$K.pr,1), 6), fmt_num(pr(js$K.pr,2), 4)) else sprintf("lognormal, mean %s, CV %s (log-SD %s)", fmt(pr(s$K.prior,1), 6), fmt_num(pr(s$K.prior,2)), fmt_num(pr(js$K.pr,2), 4))
+psi_line <- sprintf("%s, mean %s, CV %s", s$psi.dist, fmt_num(pr(s$psi.prior,1)), fmt_num(pr(s$psi.prior,2)))
+b_line <- if (isTRUE(as.logical(s$b.prior[1]) ) || !identical(as.character(s$b.prior[1]), "FALSE")) sprintf("%s prior: mean %s, CV %s, year %s", s$b.prior[4], s$b.prior[1], s$b.prior[2], s$b.prior[3]) else "none"
+adv <- ctx$advanced
+adv_obsE <- if (is.null(adv)) "n/a" else sprintf("requested: %s; effective: %s (JABBA default rule: %s)", if (is.character(adv$fixed_obsE$requested)) adv$fixed_obsE$requested else fmt_num(adv$fixed_obsE$requested, 4), if (is.na(adv$fixed_obsE$effective)) "n/a" else fmt_num(adv$fixed_obsE$effective, 4), adv$fixed_obsE$default_rule)
+adv_proc <- if (is.null(adv)) "n/a" else if (isTRUE(adv$proc_dev_all$effective)) "all years (proc.dev.all = TRUE, JABBA default)" else sprintf("from the first index year %s (proc.dev.all = FALSE): earlier years follow the production equation approximately deterministically (process precision fixed at 10,000, i.e. very small but nonzero deviations)", adv$proc_dev_all$start_year)
+adv_pb <- if (is.null(adv) || all(is.na(adv$P_bound$effective))) "n/a" else sprintf("%s to %s (%s): soft penalty on log(B/K) outside the interval, normal penalty with precision 1,000; not a hard constraint", fmt_num(adv$P_bound$effective[1], 3), fmt_num(adv$P_bound$effective[2], 3), if (is.character(adv$P_bound$requested)) "JABBA default" else "requested")
+cfg <- data.frame(
+  item = c("Production model", "Shape parameter m", "Bmsy/K", "Recruitment impairment Plim", "Catch error",
+           "Prior for r", "Prior for K", sprintf("Prior for psi = B%s/K", y1), "Biomass-status prior",
+           "Observation variance", "Process variance", "Process error",
+           "Minimum observation error (fixed.obsE)", "Process deviations (proc.dev.all)", "Soft bounds on B/K (P_bound)",
+           "Exploitation measure"),
+  value = c(
+    s$model.type,
+    if (!is.null(js$mu.m)) fmt_num(js$mu.m, 3) else "n/a",
+    if (!is.null(js$BmsyK)) fmt_num(js$BmsyK, 3) else "n/a",
+    fmt_num(s$Plim, 2),
+    if (isTRUE(s$add.catch.CV)) sprintf("estimated with CV %s (type: %s)", fmt_num(s$catch.cv), s$catch.error) else "catch treated as known",
+    r_line, k_line, psi_line, b_line,
+    if (isTRUE(s$sigma.est)) "additional observation variance estimated" else "fixed (not estimated)",
+    if (isTRUE(s$sigma.proc)) sprintf("estimated (inverse-gamma prior %s, %s)", fmt_num(pr(js$igamma,1), 3), fmt_num(pr(js$igamma,2), 3)) else "fixed",
+    if (isTRUE(s$proc.dyn)) "dynamic process error" else "constant process error",
+    adv_obsE, adv_proc, adv_pb,
+    sprintf("%s and %s (JABBA option harvest.label = \"%s\")", tm$sym, tm$ratio, tm$label)
+  ), stringsAsFactors = FALSE)
+tbl(cfg, "Model configuration and priors captured at run time.", col.names = c("Setting", "Value"), align = c("l", "l"), widths = c("5cm", "10cm"))
+```
+
+```{r prior-posterior, fig.width=7, fig.height=4.5, fig.cap=esc("Prior (grey) and posterior (blue) distributions of the model parameters (JABBA::jbplot_ppdist).")}
+p <- jabba_try_plot("jbplot_ppdist", res, as.png = FALSE, verbose = FALSE)
+```
+
+# MCMC settings
+
+```{r mcmc}
+m <- ctx$mcmc
+mc <- data.frame(
+  item = c("Requested iterations / burn-in / thinning / chains", "Used by JABBA", "Quick MCMC test run", "Saved posterior draws (all chains)", "Random seed", "Posterior predictive checks", "Chain-ordered draws for diagnostics"),
+  value = c(
+    sprintf("%s / %s / %s / %s", m$requested$ni, m$requested$nb, m$requested$nt, m$requested$nc),
+    sprintf("%s / %s / %s / %s%s", m$used$ni, m$used$nb, m$used$nt, m$used$nc, if (quick) " (JABBA quick-MCMC override)" else ""),
+    if (quick) "YES - reduced settings; results are for workflow checks only" else "no",
+    if (is.na(m$n_saved)) "n/a" else format(m$n_saved, big.mark = ","),
+    as.character(m$seed),
+    if (isTRUE(m$do_ppc)) "requested" else "not requested",
+    if (conv_ok) sprintf("captured from this run's fit (%d chains x %s kept draws per chain), see section 7.2", cs$n_chains, format(cs$n_keep, big.mark = ",")) else sprintf("not available: %s", if (!is.null(ctx$convergence_reason)) ctx$convergence_reason else "unknown reason")
+  ), stringsAsFactors = FALSE)
+tbl(mc, "MCMC settings. JAGS was run through R2jags::jags() by JABBA::fit_jabba().", col.names = c("Setting", "Value"), align = c("l", "l"), widths = c("6cm", "9cm"))
+```
+
+# Results
+
+## Parameter estimates and reference points
+
+```{r estimates}
+et <- est
+et$median <- fmt(et$median, 5); et$lower_95 <- fmt(et$lower_95, 5); et$upper_95 <- fmt(et$upper_95, 5)
+tbl(et, "Posterior medians and 95 % credible intervals (2.5 % and 97.5 % posterior quantiles) of parameters, reference points and stock status (JABBA element estimates).", col.names = c("Quantity", "Description", "Median", "2.5 %", "97.5 %"), align = c("l", "l", "r", "r", "r"), widths = c("2.3cm", "6.3cm", NA, NA, NA))
+```
+
+```{r refpts}
+rp <- fit$refpts
+if (is.data.frame(rp) && nrow(rp) >= 2) {
+  rpt <- data.frame(quantity = c("K", "Bmsy", tm$ref, "MSY"),
+                    median = fmt(c(rp$k[1], rp$bmsy[1], rp$fmsy[1], rp$msy[1]), 5),
+                    logse = fmt_num(c(rp$k[2], rp$bmsy[2], rp$fmsy[2], rp$msy[2]), 3), stringsAsFactors = FALSE)
+  tbl(rpt, sprintf("Reference points: posterior median and standard deviation on the log scale (JABBA element refpts; the column JABBA names fmsy is reported here as %s).", tm$ref), col.names = c("Reference point", "Median", "SD (log)"))
+} else cat("Reference-point table: ", na_text, ".\n")
+```
+
+## Trajectories
+
+```{r summary-plot, fig.width=7, fig.height=8, fig.cap=esc(sprintf("Posterior medians and 95 %% credible intervals of biomass, %s, B/Bmsy, %s, B/K and surplus production (JABBA::jbplot_summary).", tm$name, tm$ratio))}
+p <- jabba_try_plot("jbplot_summary", res, as.png = FALSE, add = FALSE, verbose = FALSE)
+```
+
+```{r ts-tables, results="asis"}
+ts <- ctx$timeseries
+if (is.null(ts)) {
+  cat("Time-series tables: ", na_text, ".\n\n")
+} else {
+  hcol <- function(suffix = "") ts[[paste0(tm$sym, suffix)]]
+  rcol <- function(suffix = "") ts[[paste0(tm$sym, "_", tm$ref, suffix)]]
+  t1 <- data.frame(Year = ts$year,
+                   B = fmt(ts$B, 5), B_l = fmt(ts$B_lower, 5), B_u = fmt(ts$B_upper, 5),
+                   H = fmt_num(hcol(), 3), H_l = fmt_num(hcol("_lower"), 3), H_u = fmt_num(hcol("_upper"), 3), stringsAsFactors = FALSE)
+  cat(tbl(t1, sprintf("Annual biomass %s and %s: posterior median, 2.5 %% and 97.5 %% quantiles.", ctx$settings$catch.metric, tm$name),
+          col.names = c("Year", "$B$", "2.5 \\%", "97.5 \\%", tm$sym_tex, "2.5 \\%", "97.5 \\%"), longtable = TRUE, font = 8, escape = FALSE, label = "ts-biomass"), "\n\n")
+  t2 <- data.frame(Year = ts$year,
+                   bb = fmt_num(ts$B_Bmsy, 3), bbl = fmt_num(ts$B_Bmsy_lower, 3), bbu = fmt_num(ts$B_Bmsy_upper, 3),
+                   hh = fmt_num(rcol(), 3), hhl = fmt_num(rcol("_lower"), 3), hhu = fmt_num(rcol("_upper"), 3),
+                   bk = fmt_num(ts$B_K, 3), bkl = fmt_num(ts$B_K_lower, 3), bku = fmt_num(ts$B_K_upper, 3), stringsAsFactors = FALSE)
+  cat(tbl(t2, "Annual stock status relative to MSY reference points and to K: posterior median, 2.5 % and 97.5 % quantiles.",
+          col.names = c("Year", "$B/B_{MSY}$", "2.5 \\%", "97.5 \\%", tm$ratio_tex, "2.5 \\%", "97.5 \\%", "$B/K$", "2.5 \\%", "97.5 \\%"), longtable = TRUE, font = 8, escape = FALSE, label = "ts-status"), "\n\n")
+}
+```
+
+# Fit to the abundance indices
+
+```{r cpue-fits, fig.width=7, fig.height=4.5, fig.cap=esc("Observed (points) and predicted (line, 95 % CI) abundance indices (JABBA::jbplot_cpuefits).")}
+p <- jabba_try_plot("jbplot_cpuefits", res, as.png = FALSE, add = FALSE, verbose = FALSE)
+```
+
+```{r log-fits, fig.width=7, fig.height=4.5, fig.cap=esc("Fits on the log scale (JABBA::jbplot_logfits).")}
+p <- jabba_try_plot("jbplot_logfits", res, as.png = FALSE, add = FALSE, verbose = FALSE)
+```
+
+```{r residuals, fig.width=7, fig.height=3.8, fig.cap=esc("Log residuals by index with loess smoother (JABBA::jbplot_residuals, left) and standardised residuals (JABBA::jbplot_stdresiduals, right).")}
+par(mfrow = c(1, 2))
+p1 <- jabba_try_plot("jbplot_residuals", res, as.png = FALSE, add = TRUE, verbose = FALSE)
+p2 <- jabba_try_plot("jbplot_stdresiduals", res, as.png = FALSE, add = TRUE, verbose = FALSE)
+```
+
+```{r runs-plot, fig.width=7, fig.height=4, fig.cap=esc("Runs test on the log residuals per index (JABBA::jbplot_runstest): green = no evidence of non-random residual patterns (p > 0.05), red = evidence of non-randomness; dashed lines are the 3-sigma limits.")}
+p <- jabba_try_plot("jbplot_runstest", res, as.png = FALSE, add = FALSE, verbose = FALSE)
+```
+
+```{r runs-table}
+if (is.data.frame(ctx$runs) && nrow(ctx$runs) > 0) {
+  rt <- ctx$runs
+  rt[] <- lapply(rt, function(x) if (is.numeric(x)) fmt_num(x, 3) else as.character(x))
+  tbl(rt, "Runs test results per index as returned by JABBA::jbrunstest (p-value of the Wald-Wolfowitz runs test on the log residuals; sigma3 = TRUE when all residuals lie within the 3-sigma limits).", col.names = names(rt))
+} else cat("Runs test table: ", na_text, " (JABBA::jbrunstest did not return a table for this run).\n")
+```
+
+# Stock status
+
+```{r kobe, fig.width=6, fig.height=5.5, fig.cap=esc(sprintf("Kobe plot: posterior trajectory of B/Bmsy and %s with the %d posterior (50, 80 and 95 %% probability regions) (JABBA::jbplot_kobe).", tm$ratio, yN))}
+p <- jabba_try_plot("jbplot_kobe", res, as.png = FALSE, add = TRUE, verbose = FALSE)
+```
+
+```{r kobe-probs}
+if (!is.null(ctx$kobe)) {
+  kp <- ctx$kobe[, c("quadrant", "probability")]
+  kp$probability <- fmt_num(kp$probability, 1)
+  tbl(kp, sprintf("Posterior probabilities (%% of %s draws) of the Kobe quadrants in %d.", format(ctx$kobe$draws[1], big.mark = ","), ctx$kobe$year[1]), col.names = c("Quadrant", "Probability (%)"), widths = c("10cm", NA))
+} else cat("Kobe quadrant probabilities: ", na_text, ".\n")
+```
+
+# Diagnostics
+
+## Goodness of fit
+
+```{r gof}
+st <- ctx$stats
+if (is.data.frame(st) && nrow(st) > 0) {
+  gt <- data.frame(statistic = c("N (observations)", "p (parameters)", "DF", "SDNR", "RMSE (%)", "DIC"), value = fmt_num(st$Value, 2), stringsAsFactors = FALSE)
+  tbl(gt, "Goodness-of-fit statistics (JABBA element stats): SDNR = standard deviation of the normalised residuals (values near 1 indicate adequate observation-error assumptions), RMSE = root mean squared error of the log residuals in percent, DIC = deviance information criterion.", col.names = c("Statistic", "Value"))
+} else cat("Goodness-of-fit statistics: ", na_text, ".\n")
+```
+
+## Model parameters and MCMC convergence
+
+```{r parameters}
+pt <- ctx$parameters
+if (!is.null(pt)) {
+  pt$median <- fmt(pt$median, 5); pt$lower_95 <- fmt(pt$lower_95, 5); pt$upper_95 <- fmt(pt$upper_95, 5)
+  tbl(pt, "Model parameters (JABBA element pars): posterior median and 95 % credible interval. sigma2 = process variance, tau2 = observation variance, q = catchability, m = shape (fixed for Schaefer and Fox).",
+      col.names = c("Parameter", "Median", "2.5 %", "97.5 %"))
+} else cat("Parameter table: ", na_text, ".\n")
+```
+
+```{r convergence, results="asis"}
+if (conv_ok) {
+  ct <- ctx$convergence_table
+  ct_show <- data.frame(parameter = esc(ct$parameter), node = esc(ct$node),
+                        Rhat = ifelse(is.na(ct$Rhat), "n/a", fmt_num(ct$Rhat, 3)), Rhat_u = ifelse(is.na(ct$Rhat_upper), "n/a", fmt_num(ct$Rhat_upper, 3)),
+                        ESS = ifelse(is.na(ct$ESS), "n/a", format(ct$ESS, big.mark = ",")), flag = ifelse(nzchar(ct$flag), esc(ct$flag), "-"), stringsAsFactors = FALSE)
+  cat(tbl(ct_show, sprintf("MCMC convergence diagnostics computed from the chain-ordered, post-burn-in, thinned draws of this run (%d chains x %s draws per chain; iterations %s, burn-in %s, thinning %s). R-hat = conventional Gelman-Rubin potential scale reduction factor (coda::gelman.diag, Brooks-Gelman correction, whole chains, raw scale; not the rank-normalised split-R-hat), with its 97.5 %% upper limit; ESS = autocorrelation-based effective sample size (coda::effectiveSize) summed over chains. Flags: R-hat above %s or ESS below %s.",
+                           cs$n_chains, format(cs$n_keep, big.mark = ","), format(cs$n_iter, big.mark = ","), format(cs$n_burnin, big.mark = ","), cs$n_thin, format(cs$thresholds$rhat), format(cs$thresholds$ess)),
+          col.names = c("Parameter", "JAGS node", "R-hat", "R-hat 97.5 \\%", "ESS", "Flag"), align = c("l", "l", "r", "r", "r", "l"), font = 8, escape = FALSE), "\n\n")
+  cat("\\begin{center}\\fcolorbox{black}{gray!15}{\\parbox{0.95\\linewidth}{\\textbf{Interpretation.} ", esc(ctx$convergence_statement), "}}\\end{center}\n\n")
+  cat("The chain-ordered draws were obtained through a guarded, per-run adapted copy of the pinned `JABBA::fit_jabba()` function that retains the R2jags object of the same fit (SMT adaptation; no installed package is modified and the fit is identical to a plain JABBA call at the same seed). R2jags' own `n.eff` (a between-chain estimator, R2WinBUGS formula, rounded) is a different quantity from the ESS above and is not reported here; JABBA's `Geweke.p` and `Heidel.p` columns were computed by the package on randomly permuted draws and are not convergence diagnostics; both remain in the downloadable fitted object.\n\n")
+  nodes <- ct$node[!grepl("fixed", ct$flag)]
+  groups <- split(nodes, ceiling(seq_along(nodes) / 9))
+  for (g in seq_along(groups)) {
+    nr <- ceiling(length(groups[[g]]) / 3)
+    f <- tempfile(pattern = sprintf("trace_%d_", g), fileext = ".png")
+    grDevices::png(f, width = 2100, height = 560 * nr, res = 250)
+    jabba_plot_traces(res, nodes = groups[[g]], ncol = 3, cex = 0.8)
+    grDevices::dev.off()
+    cat(sprintf("\\begin{figure}[H]\\centering\\includegraphics[width=0.95\\linewidth]{%s}\\caption{%s}\\end{figure}\n\n", f,
+                esc(sprintf("Trace plots of the chain-ordered MCMC draws (%d chains, colours; x = iteration after burn-in, thinned)%s. Each panel gives the parameter's R-hat and ESS; red when flagged.", cs$n_chains, if (length(groups) > 1) sprintf(", part %d of %d", g, length(groups)) else ""))))
+  }
+} else {
+  cat("\\begin{center}\\colorbox{yellow}{\\parbox{0.95\\linewidth}{\\textbf{MCMC convergence cannot be assessed for this run.} ", esc(ctx$convergence_statement), "}}\\end{center}\n\n")
+  cat(sprintf("Details: JABBA %s takes its posteriors from `R2jags::jags()`'s `sims.list`, which R2jags builds after randomly permuting the pooled draws of all chains (`as.bugs.array2()`). SMT normally recovers the chain-ordered draws from the same fit through a guarded adaptation of the pinned `fit_jabba()`; for this run that was not possible (%s). Consequently (i) no trace plot can be drawn; (ii) Gelman-Rubin R-hat and effective sample sizes are not available; (iii) the `Geweke.p` and `Heidel.p` columns that JABBA stores in `fit$pars` were computed on the permuted draws and are not reported because they cannot indicate convergence. The downloadable fitted object is left unchanged. For an actual assessment, run JABBA directly with several chains and inspect chain-level diagnostics, and compare SMT runs with different seeds.\n\n",
+              esc(ctx$versions$jabba), esc(if (!is.null(ctx$convergence_reason)) ctx$convergence_reason else "reason not recorded")))
+}
+hist_cap <- if (conv_ok) "Marginal posterior distributions of the model parameters (histograms of the pooled draws of all chains; red line = posterior median). They show the spread of the posterior sample; convergence is addressed by the table and trace plots above." else "Marginal posterior distributions of the model parameters (histograms of the pooled draws of all chains; red line = posterior median). These show the spread of the posterior sample only and cannot establish MCMC convergence."
+```
+
+```{r posterior-hist, fig.width=7, fig.height=4.5, fig.cap=esc(hist_cap)}
+pp <- fit$pars_posterior
+if (is.data.frame(pp) && ncol(pp) > 0) {
+  keep <- names(pp)[vapply(pp, function(x) is.numeric(x) && length(unique(x)) > 1, logical(1))]
+  if (length(keep) == 0) { plot.new(); text(0.5, 0.5, "No varying parameters to display.") } else {
+    nc_ <- 3; nr_ <- ceiling(length(keep) / nc_)
+    par(mfrow = c(nr_, nc_), mar = c(3.5, 3, 1.5, 0.5), mgp = c(2, 0.6, 0))
+    for (nm in keep) { hist(pp[[nm]], breaks = 40, col = "grey80", border = "grey50", main = nm, xlab = "", ylab = "Frequency", cex.main = 0.95); abline(v = median(pp[[nm]]), col = "red", lwd = 1.5) }
+  }
+} else { plot.new(); text(0.5, 0.5, "Posterior draws not available in the fitted object.") }
+```
+
+## Posterior predictive check
+
+```{r ppc, fig.width=6, fig.height=5, fig.cap=esc("Posterior predictive check per index (JABBA::jbplot_PPC): realised versus predicted discrepancy; the Bayesian p-value should be far from 0 and 1.")}
+if (isTRUE(ctx$mcmc$do_ppc) && is.data.frame(fit$PPC) && nrow(fit$PPC) > 0) {
+  p <- jabba_try_plot("jbplot_PPC", res, as.png = FALSE, add = FALSE, verbose = FALSE)
+} else {
+  plot.new(); text(0.5, 0.5, "Posterior predictive check not calculated:\n'Posterior predictive checks' was not selected for this run.")
+}
+```
+
+```{r procdev, fig.width=7, fig.height=3.5, fig.cap=esc("Process error deviations (JABBA::jbplot_procdev).")}
+p <- jabba_try_plot("jbplot_procdev", res, as.png = FALSE, add = TRUE, verbose = FALSE)
+```
+
+**Not run in SMT:** retrospective analysis (`JABBA::jbretro`, Mohn's rho), hindcast cross-validation (`JABBA::jbhcxval`, MASE) and projections. These require additional model runs and are not part of the SMT workflow; they should be performed when JABBA is run directly for an actual assessment.
+
+# Warnings and limitations
+
+```{r warnings-list, results="asis"}
+items <- character(0)
+if (quick) items <- c(items, "Quick MCMC test run: JABBA replaced the requested MCMC settings by its reduced quick-run settings. Repeat the run with the quick option switched off and adequate iterations before any interpretation.")
+if (is_sample) items <- c(items, "The input is the synthetic SMT sample dataset; it illustrates the file format only.")
+if (!isTRUE(ctx$checks$ok)) items <- c(items, paste("Input checks reported problems:", paste(ctx$checks$messages, collapse = "; ")))
+if (length(ctx$warnings)) items <- c(items, paste0("R warnings captured during the run: ", paste(esc(unique(ctx$warnings)), collapse = " | ")))
+items <- c(items,
+  "Results of a surplus production model depend on the representativeness of the catch and index series, on the production function and on the priors; sensitivity runs are required before use for advice.",
+  if (conv_ok) sprintf("MCMC convergence diagnostics (section 7.2) can reveal some failures to converge but do not prove convergence; %d of %d parameters are flagged in this run.", cs$n_flagged, cs$n_params) else "MCMC convergence cannot be assessed for this run (section 7.2): the chain-ordered draws of the fit are not available.",
+  "This report is generated automatically by the Stock Monitoring Tool and does not constitute scientific or management advice.")
+cat(paste0("- ", items, "\n"), sep = "")
+```
+
+# Software versions and reproducibility
+
+```{r versions}
+v <- ctx$versions
+vt <- data.frame(item = c("Stock Monitoring Tool", "JABBA", "JABBA source commit", "rjags", "R2jags", "coda", "JAGS", "R", "Random seed", "Run identifier", "Report file"),
+                 value = c(paste(v$smt_version, if (!is.na(v$smt_date)) paste0("(", v$smt_date, ")") else ""), v$jabba, v$jabba_sha, v$rjags, v$R2jags, v$coda, v$jags, v$r,
+                           as.character(ctx$mcmc$seed), ctx$run_id, ctx$report_name), stringsAsFactors = FALSE)
+vt$value[is.na(vt$value)] <- "n/a"
+tbl(vt, "Software versions and run identifiers. Re-running with the same data, settings, seed and software versions reproduces the MCMC sample on the same platform; results may differ across platforms or versions.", col.names = c("Item", "Value"), align = c("l", "l"), widths = c("5cm", "10cm"))
+```
+
+# References
+
+- Winker, H., Carvalho, F., Kapur, M. (2018). JABBA: Just Another Bayesian Biomass Assessment. *Fisheries Research*, 204, 275-288. https://doi.org/10.1016/j.fishres.2018.03.010
+- Kokkalis, A., Berg, C.W., Kapur, M.S., Winker, H., Jacobsen, N.S., Taylor, M.H., Ichinokawa, M., Miyagawa, M., Medeiros-Leal, W., Nielsen, J.R., Mildenberger, T.K. (2024). Good practices for surplus production models. *Fisheries Research*, 275, 107010. https://doi.org/10.1016/j.fishres.2024.107010
+- Plummer, M. (2003). JAGS: A program for analysis of Bayesian graphical models using Gibbs sampling. *Proceedings of the 3rd International Workshop on Distributed Statistical Computing (DSC 2003)*, Vienna, Austria.
+- Su, Y.-S., Yajima, M. R2jags: Using R to Run 'JAGS'. R package. https://CRAN.R-project.org/package=R2jags
+- Plummer, M., Best, N., Cowles, K., Vines, K. (2006). CODA: Convergence Diagnosis and Output Analysis for MCMC. *R News*, 6(1), 7-11.
+- `r sub("^R ", "R Core Team. R: A language and environment for statistical computing, ", ctx$versions$r)`. R Foundation for Statistical Computing, Vienna, Austria. https://www.R-project.org/

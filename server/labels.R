@@ -1217,3 +1217,267 @@ output$glossary <- renderText({
     session$userData$page("glossary")
     render_glossary_html(glossary_df)
 })
+
+## JABBA -------------------------
+output$jabbaIntroOut <- renderText({
+    session$userData$page('jabba-intro')
+    HTML('
+<h3><strong>Stock assessment with JABBA</strong></h3>
+
+<p>
+<strong>JABBA — Just Another Bayesian Biomass Assessment</strong>
+is a Bayesian state-space surplus production model for estimating fish
+stock status from catch and abundance data. It is useful when age- or
+length-structured assessment data are unavailable, but informative catch
+histories and relative abundance indices exist.
+</p>
+
+<h4>Method description</h4>
+
+<p>
+JABBA represents the stock as an aggregate biomass whose dynamics reflect
+surplus production and fishery removals. It fits catch and one or more
+abundance-index time series, such as standardised commercial catch per
+unit effort (CPUE) or survey indices.
+</p>
+
+<p>
+The model supports <strong>Schaefer, Fox and Pella–Tomlinson</strong>
+production functions. Bayesian estimation combines information from the
+observations with prior distributions for model parameters. A state-space
+framework distinguishes variability in stock dynamics from observation
+uncertainty.
+</p>
+
+<p>
+Outputs include biomass and exploitation-rate trajectories, management
+reference points, uncertainty intervals, model-fit plots and diagnostics.
+Biomass and exploitation relative to their MSY reference
+points—<strong>B/B<sub>MSY</sub></strong> and
+<strong>F/F<sub>MSY</sub></strong> (JABBA&#39;s convention, the
+default; H/H<sub>MSY</sub> can be selected as the terminology in the
+assessment settings)—describe stock status. Posterior
+estimates are reported as medians with 95&#37; credible intervals
+(2.5&#37; and 97.5&#37; posterior quantiles).
+</p>
+
+<p>
+A successful model run does not necessarily mean that the assessment is
+reliable. Results should be examined for convergence, fit to the
+observations, sensitivity to priors and consistency with knowledge of
+the fishery.
+</p>
+
+<h4>Data considerations</h4>
+
+<p>For the JABBA workflow implemented in SMT, prepare:</p>
+
+<ul>
+  <li>
+    <strong>Year:</strong> one row per year, with a consistent annual
+    time step.
+  </li>
+  <li>
+    <strong>Catch:</strong> annual removals for the assessed stock,
+    expressed in consistent units and covering the relevant fisheries.
+  </li>
+  <li>
+    <strong>Abundance index:</strong> at least one informative CPUE or
+    survey-index time series.
+  </li>
+  <li>
+    <strong>Index uncertainty:</strong> associated uncertainty estimates
+    where available, using the format and statistical scale expected
+    by the input controls.
+  </li>
+</ul>
+
+<p>
+Use the <strong>JABBA Sample Dataset</strong> as a formatting template.
+The supplied data are synthetic and demonstrate the interface; they are
+not a validated assessment example.
+</p>
+
+<p>
+Commercial CPUE should be standardised where necessary to account for
+changes in gear, fishing practices, season, area and other factors
+affecting catch rates. Different indices may use different units, but
+each series should be internally consistent and informative about the
+same assessed stock.
+</p>
+
+<p>
+Do not replace missing observations with zero. Review missing values
+and catch gaps using the input checks and data guidance. Longer time
+series can help, but their information content and contrast in
+exploitation are more important than meeting a universal minimum
+number of years.
+</p>
+
+<h4>Assumptions and limitations</h4>
+
+<ul>
+  <li>
+    <strong>Representative stock unit:</strong> catches and abundance
+    indices should describe the same biological stock and assessment
+    area. Substantial migration or mixing can undermine this
+    correspondence.
+  </li>
+  <li>
+    <strong>Aggregate biomass dynamics:</strong> age, size and
+    recruitment processes are represented indirectly through surplus
+    production. Strong cohort effects or changes in stock composition
+    may not be captured adequately.
+  </li>
+  <li>
+    <strong>Production function:</strong> the selected production model
+    and its productivity assumptions must provide a reasonable
+    approximation of stock dynamics.
+  </li>
+  <li>
+    <strong>Abundance–biomass relationship:</strong> each index is assumed
+    to track biomass through the model’s catchability relationship.
+    Unaccounted changes in technology, targeting, selectivity or spatial
+    coverage can bias results.
+  </li>
+  <li>
+    <strong>Catch coverage:</strong> catches should represent total
+    removals as closely as possible. Allowing catch uncertainty does
+    not automatically correct systematic under-reporting.
+  </li>
+  <li>
+    <strong>Priors:</strong> prior distributions can strongly influence
+    results when observations contain little information. Their sources
+    and sensitivity should be documented.
+  </li>
+  <li>
+    <strong>Error structure:</strong> separating process and observation
+    error depends on both model assumptions and available information;
+    it does not guarantee that both components can be estimated precisely.
+  </li>
+  <li>
+    <strong>Reference points:</strong> MSY-based quantities depend on
+    the assumed production dynamics. They should be interpreted
+    alongside uncertainty, diagnostics and management objectives.
+  </li>
+</ul>
+
+<h4>Workflow considerations</h4>
+
+<p><strong>To run JABBA in the Stock Monitoring Tool:</strong></p>
+
+<ol>
+  <li>Open the <strong>JABBA method</strong> page in the sidebar.</li>
+  <li>Upload a CSV dataset and check the preview.</li>
+  <li>
+    Map the year, catch, abundance-index and uncertainty columns.
+  </li>
+  <li>
+    Select the assessment years, production model and relevant prior
+    distributions. Three further JABBA options (minimum observation
+    error, start of process deviations, soft bounds on B/K) are kept at
+    their package defaults in this version.
+  </li>
+  <li>
+    Click <strong>Check Input</strong> and resolve reported problems.
+  </li>
+  <li>
+    Set the MCMC controls, including iterations, burn-in, thinning,
+    chains and seed.
+  </li>
+  <li>Click <strong>Run Assessment</strong>.</li>
+  <li>
+    Examine model fit, biomass trajectories, stock-status plots and
+    convergence diagnostics before interpreting the assessment.
+  </li>
+  <li>
+    Download the <strong>PDF report</strong>, which is generated
+    automatically after each successful run, and the result files
+    (summary table, fitted JABBA object, full output archive). When the
+    SMT is opened from the VRE with your account, the PDF report is also
+    uploaded once to the <em>StockMonitoringTool</em> folder of your
+    private workspace; the run status shows whether the upload
+    succeeded. If the PDF could not be generated, the other downloads
+    stay available and <strong>Retry PDF report</strong> generates it
+    again without re-running the assessment.
+  </li>
+  <li>
+    Use <strong>Reset</strong> to clear the current inputs and results.
+  </li>
+</ol>
+
+<p>
+<strong>Quick MCMC is intended for checking the workflow.</strong>
+Final assessment settings should be chosen using convergence
+diagnostics and the stability of posterior estimates across chains and
+seeds. For each run SMT shows per-chain trace plots, the conventional
+Gelman&ndash;Rubin R-hat and the autocorrelation-based effective sample
+size computed from the chain-ordered draws of that run&#39;s own JAGS
+fit (Convergence tab and PDF report). These diagnostics can reveal some
+failures to converge; favourable diagnostics do not prove convergence.
+If the draws cannot be captured for a run, the run status and the PDF
+state that convergence cannot be assessed. Confirm important results
+with longer runs and different seeds, and compare plausible alternative
+priors and model settings before drawing management conclusions.
+</p>
+
+<p>
+Additional explanations are provided through the workflow, data,
+methods and results information controls.
+</p>
+
+<h4>Run time</h4>
+
+<p>
+Run time depends on the dataset, model settings, number of chains
+and MCMC iterations, and available computing resources.
+Quick runs use reduced sampling for demonstration and troubleshooting.
+Rendering the PDF report and uploading it to the workspace add to the
+run time. No fixed completion time is guaranteed.
+</p>
+
+<h4>Further information</h4>
+
+<p>
+The
+<a href="https://github.com/jabbamodel/JABBA"
+   target="_blank" rel="noopener noreferrer">official JABBA repository</a>
+provides source code, tutorials and assessment examples.
+</p>
+
+<h4>References</h4>
+
+<ul>
+  <li>
+    Winker, H., Carvalho, F. and Kapur, M. (2018).
+    JABBA: Just Another Bayesian Biomass Assessment.
+    <em>Fisheries Research</em>, <strong>204</strong>, 275–288.
+    <a href="https://doi.org/10.1016/j.fishres.2018.03.010"
+       target="_blank" rel="noopener noreferrer">
+      https://doi.org/10.1016/j.fishres.2018.03.010
+    </a>
+  </li>
+  <li>
+    Kokkalis, A., Berg, C.W., Kapur, M.S., Winker, H.,
+    Jacobsen, N.S., Taylor, M.H., Ichinokawa, M., Miyagawa, M.,
+    Medeiros-Leal, W., Nielsen, J.R. and Mildenberger, T.K. (2024).
+    Good practices for surplus production models.
+    <em>Fisheries Research</em>, <strong>275</strong>, 107010.
+    <a href="https://doi.org/10.1016/j.fishres.2024.107010"
+       target="_blank" rel="noopener noreferrer">
+      https://doi.org/10.1016/j.fishres.2024.107010
+    </a>
+  </li>
+</ul>
+')
+})
+
+output$jabbaSamplePreview <- DT::renderDataTable({
+  dat <- utils::read.csv("www/data/jabba_sample.csv", stringsAsFactors = FALSE)
+  DT::datatable(dat, options = list(scrollX = TRUE, pageLength = 10))
+})
+
+output$downloadJabbaSampleData <- downloadHandler(
+  filename = function() "jabba_sample.csv",
+  content = function(file) file.copy("www/data/jabba_sample.csv", file, overwrite = TRUE)
+)

@@ -38,6 +38,20 @@ The following libraries can be installed from CRAN
 install.packages(c('shiny', 'rmarkdown', 'shinythemes', 'shinydashboard', 'RCurl', 'devtools', 'ggplot2', 'rfishbase', 'shinyBS', 'XML', 'futile.logger'), repos='https://cloud.r-project.org/')
 ```
 
+### JABBA (Bayesian surplus production model)
+
+Since version 0.8.0 the SMT runs [JABBA](https://github.com/jabbamodel/JABBA) locally, under *Surplus production models*.
+JABBA requires the JAGS sampler at the system level and the R packages `rjags` and `JABBA`:
+
+- system: `jags` (`sudo apt install jags`, installed in the Docker image before `renv::restore()`)
+- R: `rjags`, `R2jags`, `coda`, `gplots`, `randtests`, `reshape` from CRAN and `JABBA` from GitHub, all pinned in `renv.lock`
+  (JABBA 2.3.7, commit `c62db86c99dc5b5a0e115fd53fdd40f7c882b7c9`).
+
+The application starts without these packages; the JABBA tool then reports that JABBA is not installed.
+The bundled sample file `www/data/jabba_sample.csv` is synthetic demonstration data illustrating the input format; it is not a validated assessment example.
+
+After each successful run the JABBA tool renders a PDF report (`assets/SPM/jabba/markdown/jabba_report.Rmd`, rendered with the LaTeX installation already present in the image) and, when the application was opened from the VRE with a user token, uploads it once to the `StockMonitoringTool` folder of the user's workspace, as the other assessment methods do. The run status shows whether the report and the upload succeeded; a failed report or upload keeps the fitted result and the other downloads available.
+
 ### CMSY availability (DataMiner decommissioned)
 
 CMSY was executed remotely on the D4Science DataMiner WPS service, which has been decommissioned.
@@ -47,14 +61,7 @@ CMSY was executed remotely on the D4Science DataMiner WPS service, which has bee
 - All other methods (ELEFAN_GA, LBI, LBSPR, SPiCT and the supporting tools) run locally and are unaffected. VRE workspace (StorageHub) uploads behave as before.
 - Session tokens are no longer written to the logs; only their presence is logged.
 
-Base-R regression tests for this behaviour are in `tests/`. Run them inside the application image:
-
-```
-docker run --rm --network none \
-  -v "$PWD":/srv/smt-shiny-src:ro \
-  ghcr.io/fdiwg/smt-shiny:<tag> \
-  bash /srv/smt-shiny-src/tests/run_in_image.sh
-```
+Local validation results and limitations for this behaviour are summarised in the relevant pull request.
 
 ### Docker
 
